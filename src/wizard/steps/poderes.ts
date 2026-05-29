@@ -8,6 +8,8 @@ export interface PoderEntry {
   img: string;
   eligible: boolean;
   selected: boolean;
+  tipo: string;
+  subtipo: string;
 }
 
 export interface PoderesContext {
@@ -37,6 +39,8 @@ export function preparePoderesContext(
     img: p.img,
     eligible: isEligible(p.name.toLowerCase().replace(/\s+/g, "_"), stateForEligibility),
     selected: state.poderes.includes(p.id),
+    tipo: (p.system as { tipo?: string }).tipo ?? "",
+    subtipo: (p.system as { subtipo?: string }).subtipo ?? "",
   }));
 
   return {

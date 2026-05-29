@@ -314,6 +314,18 @@ export function defineWizardApp(): void {
           });
         });
       });
+
+      // ── Poder search filter ──────────────────────────────────────────────
+      const poderSearch = root.querySelector<HTMLInputElement>("#t20w-poder-search");
+      if (poderSearch) {
+        poderSearch.addEventListener("input", () => {
+          const q = poderSearch.value.toLowerCase();
+          root.querySelectorAll<HTMLElement>(".t20w-poder-row").forEach(item => {
+            const name = (item.dataset["poderName"] ?? "").toLowerCase();
+            item.style.display = name.includes(q) ? "" : "none";
+          });
+        });
+      }
     }
 
     _gatherFormData(): FormData {
