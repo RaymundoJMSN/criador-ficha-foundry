@@ -53,19 +53,9 @@ export function defineWizardApp(): void {
       position: { width: 720, height: 600 },
     };
 
+    // Single PART — avoids @partial-block / sibling-PART layout issues
     static PARTS = {
-      shell: { template: TPL("shell") },
-      nivel: { template: TPL("nivel") },
-      atributos: { template: TPL("atributos") },
-      raca: { template: TPL("raca") },
-      origem: { template: TPL("origem") },
-      classe: { template: TPL("classe") },
-      pericias: { template: TPL("pericias") },
-      divindade: { template: TPL("divindade") },
-      poderes: { template: TPL("poderes") },
-      magias: { template: TPL("magias") },
-      equipamento: { template: TPL("equipamento") },
-      revisao: { template: TPL("revisao") },
+      wizard: { template: TPL("wizard") },
     };
 
     _state = new WizardState();
@@ -244,6 +234,18 @@ export function defineWizardApp(): void {
         showBack: stepIdx > 0,
         showNext: stepIdx < STEP_ORDER.length - 1,
         showCreate: stepIdx === STEP_ORDER.length - 1,
+        // Boolean switches for wizard.hbs single-template approach
+        showNivel:       step === WizardStep.Nivel,
+        showAtributos:   step === WizardStep.Atributos,
+        showRaca:        step === WizardStep.Raca,
+        showOrigem:      step === WizardStep.Origem,
+        showClasse:      step === WizardStep.Classe,
+        showPericias:    step === WizardStep.Pericias,
+        showDivindade:   step === WizardStep.Divindade,
+        showPoderes:     step === WizardStep.Poderes,
+        showMagias:      step === WizardStep.Magias,
+        showEquipamento: step === WizardStep.Equipamento,
+        showRevisao:     step === WizardStep.Revisao,
         ...(stepCtx as object),
       };
     }

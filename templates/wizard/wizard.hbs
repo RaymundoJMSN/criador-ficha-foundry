@@ -1,0 +1,237 @@
+<div class="t20w-wizard">
+  <nav class="t20w-steps">
+    {{#each steps}}
+      <button
+        type="button"
+        class="t20w-step-btn {{#if this.active}}active{{/if}} {{#if this.done}}done{{/if}}"
+        data-action="goStep"
+        data-step="{{this.id}}"
+        {{#unless this.reachable}}disabled{{/unless}}
+      >{{this.label}}</button>
+    {{/each}}
+  </nav>
+
+  <div class="t20w-content">
+
+    {{#if showNivel}}
+    <section class="t20w-step">
+      <h2>{{stepTitle}}</h2>
+      <div class="form-group">
+        <label for="t20w-nivel">Nível</label>
+        <input id="t20w-nivel" type="number" name="nivel" min="1" max="20" value="{{state.nivel}}" />
+      </div>
+      <div class="form-group">
+        <label for="t20w-nome">Nome do Personagem</label>
+        <input id="t20w-nome" type="text" name="nome" value="{{state.nome}}" placeholder="Nome..." />
+      </div>
+    </section>
+    {{/if}}
+
+    {{#if showAtributos}}
+    <section class="t20w-step">
+      <h2>{{stepTitle}}</h2>
+      <div class="form-group">
+        <label>Método</label>
+        <select name="metodoAtributos">
+          {{#each metodos}}
+            <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.nome}} ({{this.categoria}})</option>
+          {{/each}}
+        </select>
+      </div>
+      {{#if isCompra}}
+      <table class="t20w-attrs">
+        <thead><tr><th>Atributo</th><th>Valor</th><th>Custo</th></tr></thead>
+        <tbody>
+          {{#each atributos}}
+          <tr>
+            <td>{{this.label}}</td>
+            <td><input type="number" name="attr-{{this.id}}" min="-1" max="4" value="{{this.value}}" /></td>
+            <td>{{this.custo}}</td>
+          </tr>
+          {{/each}}
+        </tbody>
+        <tfoot><tr><td colspan="2">Pontos restantes</td><td class="{{#if pontosNegativo}}t20w-over{{/if}}">{{pontosRestantes}}</td></tr></tfoot>
+      </table>
+      {{else}}
+      <p class="t20w-hint">{{metodoDescricao}}</p>
+      {{/if}}
+    </section>
+    {{/if}}
+
+    {{#if showRaca}}
+    <section class="t20w-step">
+      <h2>{{stepTitle}}</h2>
+      <div class="t20w-item-grid">
+        {{#each racas}}
+        <label class="t20w-item-card {{#if this.selected}}selected{{/if}}">
+          <input type="radio" name="racaId" value="{{this.id}}" {{#if this.selected}}checked{{/if}} />
+          <img src="{{this.img}}" alt="{{this.name}}" />
+          <span>{{this.name}}</span>
+        </label>
+        {{/each}}
+      </div>
+    </section>
+    {{/if}}
+
+    {{#if showOrigem}}
+    <section class="t20w-step">
+      <h2>{{stepTitle}}</h2>
+      <div class="t20w-list">
+        {{#each origens}}
+        <label class="t20w-list-item {{#if this.selected}}selected{{/if}}">
+          <input type="radio" name="origemId" value="{{this.id}}" {{#if this.selected}}checked{{/if}} />
+          <strong>{{this.nome}}</strong>
+          <small>Perícias: {{this.periciasList}}</small>
+        </label>
+        {{/each}}
+      </div>
+    </section>
+    {{/if}}
+
+    {{#if showClasse}}
+    <section class="t20w-step">
+      <h2>{{stepTitle}}</h2>
+      <div class="t20w-item-grid">
+        {{#each classes}}
+        <label class="t20w-item-card {{#if this.selected}}selected{{/if}}">
+          <input type="radio" name="classeId" value="{{this.id}}" {{#if this.selected}}checked{{/if}} />
+          <img src="{{this.img}}" alt="{{this.name}}" />
+          <div><span>{{this.name}}</span><small>PV +{{this.pvPorNivel}} | PM +{{this.pmPorNivel}}</small></div>
+        </label>
+        {{/each}}
+      </div>
+    </section>
+    {{/if}}
+
+    {{#if showPericias}}
+    <section class="t20w-step">
+      <h2>{{stepTitle}}</h2>
+      <p class="t20w-hint">Escolhas restantes: <strong>{{choicesRemaining}}</strong></p>
+      <div class="t20w-pericias-list">
+        {{#each pericias}}
+        <label class="t20w-pericia {{#if this.locked}}locked{{/if}}">
+          <input type="checkbox" name="pericia-{{this.id}}" value="{{this.id}}"
+            {{#if this.checked}}checked{{/if}} {{#if this.locked}}disabled{{/if}} />
+          {{this.nome}}{{#if this.inata}} <span class="t20w-badge">Inata</span>{{/if}}
+        </label>
+        {{/each}}
+      </div>
+    </section>
+    {{/if}}
+
+    {{#if showDivindade}}
+    <section class="t20w-step">
+      <h2>{{stepTitle}}</h2>
+      {{#if obrigatoria}}<p class="t20w-hint t20w-required">⚠ Esta classe exige uma divindade.</p>
+      {{else}}<p class="t20w-hint">Opcional — pule se não quiser ser devoto.</p>{{/if}}
+      <div class="t20w-list">
+        {{#each divindades}}
+        <label class="t20w-list-item {{#if this.selected}}selected{{/if}}">
+          <input type="radio" name="divindadeId" value="{{this.id}}" {{#if this.selected}}checked{{/if}} />
+          <strong>{{this.nome}}</strong>
+          <small>{{this.poderesCount}} poder(es) concedido(s)</small>
+        </label>
+        {{/each}}
+      </div>
+    </section>
+    {{/if}}
+
+    {{#if showPoderes}}
+    <section class="t20w-step">
+      <h2>{{stepTitle}}</h2>
+      <p class="t20w-hint">Selecionados: <strong>{{selectedCount}}</strong></p>
+      <div class="t20w-item-grid">
+        {{#each poderes}}
+        <label class="t20w-item-card {{#if this.selected}}selected{{/if}} {{#unless this.eligible}}ineligible{{/unless}}">
+          <input type="checkbox" name="poder-{{this.id}}" value="{{this.id}}" {{#if this.selected}}checked{{/if}} />
+          <img src="{{this.img}}" alt="{{this.name}}" />
+          <span>{{this.name}}</span>
+          {{#unless this.eligible}}<small class="t20w-ineligible">Pré-requisito não atendido</small>{{/unless}}
+        </label>
+        {{/each}}
+      </div>
+    </section>
+    {{/if}}
+
+    {{#if showMagias}}
+    <section class="t20w-step">
+      <h2>{{stepTitle}}</h2>
+      {{#if isConjurador}}
+      <p class="t20w-hint">Selecionadas: <strong>{{selectedCount}}</strong></p>
+      <div class="t20w-list">
+        {{#each magias}}
+        <label class="t20w-list-item {{#if this.selected}}selected{{/if}}">
+          <input type="checkbox" name="magia-{{this.id}}" value="{{this.id}}" {{#if this.selected}}checked{{/if}} />
+          <strong>{{this.name}}</strong>
+          <small>Círculo {{this.circulo}} · {{this.escola}} · {{this.tipo}}</small>
+        </label>
+        {{/each}}
+      </div>
+      {{else}}
+      <p class="t20w-hint">Sua classe não conjura magias. Clique em Próximo.</p>
+      {{/if}}
+    </section>
+    {{/if}}
+
+    {{#if showEquipamento}}
+    <section class="t20w-step">
+      <h2>{{stepTitle}}</h2>
+      <p class="t20w-hint">Saldo: <strong>T$ {{saldo}}</strong></p>
+      <div class="t20w-equipment-layout">
+        <div class="t20w-shop">
+          {{#each itens}}
+          <label class="t20w-shop-item {{#unless this.affordable}}t20w-disabled{{/unless}}">
+            <input type="checkbox" name="equip-{{this.id}}" value="{{this.id}}"
+              {{#if this.inCart}}checked{{/if}} {{#unless this.affordable}}disabled{{/unless}} />
+            <img src="{{this.img}}" alt="{{this.name}}" />
+            <span>{{this.name}}</span>
+            <small>T$ {{this.preco}}</small>
+          </label>
+          {{/each}}
+        </div>
+        {{#if carrinho.length}}
+        <aside class="t20w-cart">
+          <h3>Carrinho</h3>
+          <ul>{{#each carrinho}}<li>{{this.name}} ×{{this.qty}} — T$ {{this.subtotal}}</li>{{/each}}</ul>
+          <strong>Total: T$ {{totalCarrinho}}</strong>
+        </aside>
+        {{/if}}
+      </div>
+    </section>
+    {{/if}}
+
+    {{#if showRevisao}}
+    <section class="t20w-step">
+      <h2>{{stepTitle}}</h2>
+      <dl class="t20w-summary">
+        <dt>Nome</dt><dd>{{nome}}</dd>
+        <dt>Nível</dt><dd>{{nivel}}</dd>
+        <dt>Raça</dt><dd>{{racaNome}}</dd>
+        <dt>Origem</dt><dd>{{origemNome}}</dd>
+        <dt>Classe</dt><dd>{{classeNome}}</dd>
+        {{#if divindadeNome}}<dt>Divindade</dt><dd>{{divindadeNome}}</dd>{{/if}}
+      </dl>
+      <table class="t20w-attrs-summary"><tbody>
+        {{#each atributos}}<tr><th>{{this.label}}</th><td>{{this.value}}</td></tr>{{/each}}
+      </tbody></table>
+      <ul class="t20w-summary-counts">
+        <li>Poderes: {{poderesSelecionados}}</li>
+        <li>Magias: {{magiasSelecionadas}}</li>
+        <li>Equipamento: {{equipamentoSelecionado}} item(s)</li>
+        <li>Dinheiro restante: T$ {{dinheiroRestante}}</li>
+      </ul>
+    </section>
+    {{/if}}
+
+    {{#if errors.length}}
+    <ul class="t20w-errors">{{#each errors}}<li>{{this}}</li>{{/each}}</ul>
+    {{/if}}
+
+  </div>
+
+  <footer class="t20w-footer">
+    {{#if showBack}}<button type="button" data-action="back">← Voltar</button>{{/if}}
+    {{#if showNext}}<button type="button" data-action="next">Próximo →</button>{{/if}}
+    {{#if showCreate}}<button type="button" data-action="create">✦ Criar Personagem</button>{{/if}}
+  </footer>
+</div>
