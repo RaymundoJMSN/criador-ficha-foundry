@@ -1,11 +1,14 @@
 import progressaoDataRaw from "../data/progressao_classes.json";
-const progressaoData = progressaoDataRaw as unknown as Record<string, {
-  pv_por_nivel: number;
-  pm_por_nivel: number;
-  pericias_inatas: string[];
-  pericias_escolha: string[];
-  pericias_numero: number;
-}>;
+const progressaoData = progressaoDataRaw as unknown as Record<
+  string,
+  {
+    pv_por_nivel: number;
+    pm_por_nivel: number;
+    pericias_inatas: string[];
+    pericias_escolha: string[];
+    pericias_numero: number;
+  }
+>;
 
 /**
  * Normalize a pericia field that may be string, array, null, or object.
@@ -14,11 +17,14 @@ const progressaoData = progressaoDataRaw as unknown as Record<string, {
 export function normalizePericias(value: unknown): string[] {
   if (!value) return [];
   if (Array.isArray(value)) {
-    return value.map(String).filter(s => s.trim().length > 0);
+    return value.map(String).filter((s) => s.trim().length > 0);
   }
   if (typeof value === "string") {
     // Split on comma, semicolon, or whitespace
-    return value.split(/[,;\s]+/).map(s => s.trim()).filter(s => s.length > 0);
+    return value
+      .split(/[,;\s]+/)
+      .map((s) => s.trim())
+      .filter((s) => s.length > 0);
   }
   if (typeof value === "object") {
     // {misticismo: true, vontade: true} or {misticismo: 1}

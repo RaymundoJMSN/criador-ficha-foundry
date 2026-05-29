@@ -44,7 +44,9 @@ function toSlug(name: string): string {
 
 function formatAtributos(data: Record<string, unknown>): string {
   const fixos = data["atributos_fixos"] as Array<{ atributo: string; valor: number }> | undefined;
-  const escolhas = data["atributos_escolha"] as Array<{ valor: number; quantidade: number }> | undefined;
+  const escolhas = data["atributos_escolha"] as
+    | Array<{ valor: number; quantidade: number }>
+    | undefined;
 
   const parts: string[] = [];
   if (fixos) {
@@ -90,9 +92,7 @@ export function prepareRacaContext(
     const nameSlug = toSlug(selectedFoundry.name);
     const dbRaca =
       racasData.find(
-        (r) =>
-          String(r["id"]) === nameSlug ||
-          toSlug(String(r["nome"] ?? "")) === nameSlug
+        (r) => String(r["id"]) === nameSlug || toSlug(String(r["nome"] ?? "")) === nameSlug
       ) ?? null;
 
     selectedDetail = {

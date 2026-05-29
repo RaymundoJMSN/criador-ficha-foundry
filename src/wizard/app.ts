@@ -184,9 +184,9 @@ export function defineWizardApp(): void {
           break;
         }
         case WizardStep.Pericias: {
-          const classe = CompendiumIndex.getAll("classe").find(
-            (c) => c.id === state.classeId
-          ) as IndexedClasse | undefined;
+          const classe = CompendiumIndex.getAll("classe").find((c) => c.id === state.classeId) as
+            | IndexedClasse
+            | undefined;
           const intMod = state.atributosBase.int ?? 0;
           stepCtx = preparePericiaContext(state, classe, intMod, errors);
           break;
@@ -215,9 +215,7 @@ export function defineWizardApp(): void {
         }
         case WizardStep.Revisao: {
           const racaItem = CompendiumIndex.getAll("race").find((r) => r.id === state.racaId);
-          const classeItem = CompendiumIndex.getAll("classe").find(
-            (c) => c.id === state.classeId
-          );
+          const classeItem = CompendiumIndex.getAll("classe").find((c) => c.id === state.classeId);
           stepCtx = prepareRevisaoContext(
             state,
             racaItem?.name ?? state.racaId,
@@ -235,17 +233,17 @@ export function defineWizardApp(): void {
         showNext: stepIdx < STEP_ORDER.length - 1,
         showCreate: stepIdx === STEP_ORDER.length - 1,
         // Boolean switches for wizard.hbs single-template approach
-        showNivel:       step === WizardStep.Nivel,
-        showAtributos:   step === WizardStep.Atributos,
-        showRaca:        step === WizardStep.Raca,
-        showOrigem:      step === WizardStep.Origem,
-        showClasse:      step === WizardStep.Classe,
-        showPericias:    step === WizardStep.Pericias,
-        showDivindade:   step === WizardStep.Divindade,
-        showPoderes:     step === WizardStep.Poderes,
-        showMagias:      step === WizardStep.Magias,
+        showNivel: step === WizardStep.Nivel,
+        showAtributos: step === WizardStep.Atributos,
+        showRaca: step === WizardStep.Raca,
+        showOrigem: step === WizardStep.Origem,
+        showClasse: step === WizardStep.Classe,
+        showPericias: step === WizardStep.Pericias,
+        showDivindade: step === WizardStep.Divindade,
+        showPoderes: step === WizardStep.Poderes,
+        showMagias: step === WizardStep.Magias,
         showEquipamento: step === WizardStep.Equipamento,
-        showRevisao:     step === WizardStep.Revisao,
+        showRevisao: step === WizardStep.Revisao,
         ...(stepCtx as object),
       };
     }
@@ -320,7 +318,7 @@ export function defineWizardApp(): void {
       if (poderSearch) {
         poderSearch.addEventListener("input", () => {
           const q = poderSearch.value.toLowerCase();
-          root.querySelectorAll<HTMLElement>(".t20w-poder-row").forEach(item => {
+          root.querySelectorAll<HTMLElement>(".t20w-poder-row").forEach((item) => {
             const name = (item.dataset["poderName"] ?? "").toLowerCase();
             item.style.display = name.includes(q) ? "" : "none";
           });
@@ -353,15 +351,12 @@ export function defineWizardApp(): void {
       } else if (action === "back") {
         this.applyFormData(this._gatherFormData());
         this.prevStep();
-      }
-      else if (action === "goStep") {
+      } else if (action === "goStep") {
         const s = target.dataset["step"] as WizardStep;
         if (s) this.goToStep(s);
       } else if (action === "create") {
         if (!this._state.isComplete()) {
-          this._errors = [
-            "Preencha todos os campos obrigatórios antes de criar o personagem.",
-          ];
+          this._errors = ["Preencha todos os campos obrigatórios antes de criar o personagem."];
           this.render();
           return;
         }
@@ -374,7 +369,9 @@ export function defineWizardApp(): void {
 /** Open (or re-focus) the wizard. Must call defineWizardApp() first (done in init hook). */
 export function openWizard(): void {
   if (!_WizardAppClass) {
-    console.error(`${MODULE_ID} | openWizard: WizardApp not defined yet — call defineWizardApp() in init`);
+    console.error(
+      `${MODULE_ID} | openWizard: WizardApp not defined yet — call defineWizardApp() in init`
+    );
     return;
   }
   // eslint-disable-next-line @typescript-eslint/no-explicit-any

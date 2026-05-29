@@ -5,6 +5,7 @@
 **Goal:** Fix all broken wizard screens and replace unusable UIs with select+detail pattern. After this plan, all 11 steps are navigable and functional.
 
 **Root causes:**
+
 1. `pericias.inatas` in tormenta20 items is a comma/space string, not array — spread character-by-character
 2. Raça/Origem/Classe/Divindade rendered as radio grids with 100+ items — unusable
 3. Poderes renders image-only grid, no names, no eligibility text
@@ -17,24 +18,25 @@
 
 ## File Map
 
-| File | Action | Change |
-|---|---|---|
-| `scripts/port-t20db.mjs` | Modify | Add `racas.json` export (raça sub-choices) |
-| `src/data/racas.json` | Generate | Raça sub-choices from T20-DB |
-| `src/data/progressao_classes.json` | Generate | Full class progressão (perícias + levels) |
-| `src/rules/pericias.ts` | Modify | Handle string/array inatas + use data fallback |
-| `src/rules/origem.ts` | Modify | getPick2Options() — 2 of N powers to choose |
-| `src/wizard/steps/pericias.ts` | Modify | Fix inatas/escolhas parsing |
-| `src/wizard/steps/raca.ts` | Modify | Add subescolhas (free atrib, variants) |
-| `src/wizard/steps/origem.ts` | Modify | Add pick-2 UI data |
-| `templates/wizard/wizard.hbs` | Modify | All steps: select+detail instead of radio grid; list for poderes |
-| `src/wizard/app.ts` | Modify | _onRender listeners for select+detail + pick-2 interactions |
+| File                               | Action   | Change                                                           |
+| ---------------------------------- | -------- | ---------------------------------------------------------------- |
+| `scripts/port-t20db.mjs`           | Modify   | Add `racas.json` export (raça sub-choices)                       |
+| `src/data/racas.json`              | Generate | Raça sub-choices from T20-DB                                     |
+| `src/data/progressao_classes.json` | Generate | Full class progressão (perícias + levels)                        |
+| `src/rules/pericias.ts`            | Modify   | Handle string/array inatas + use data fallback                   |
+| `src/rules/origem.ts`              | Modify   | getPick2Options() — 2 of N powers to choose                      |
+| `src/wizard/steps/pericias.ts`     | Modify   | Fix inatas/escolhas parsing                                      |
+| `src/wizard/steps/raca.ts`         | Modify   | Add subescolhas (free atrib, variants)                           |
+| `src/wizard/steps/origem.ts`       | Modify   | Add pick-2 UI data                                               |
+| `templates/wizard/wizard.hbs`      | Modify   | All steps: select+detail instead of radio grid; list for poderes |
+| `src/wizard/app.ts`                | Modify   | \_onRender listeners for select+detail + pick-2 interactions     |
 
 ---
 
 ### Task 1: Port additional T20-DB data (racas + progressao_classes)
 
 **Files:**
+
 - Modify: `scripts/port-t20db.mjs`
 - Create (generated): `src/data/racas.json`, `src/data/progressao_classes.json`
 
@@ -54,21 +56,23 @@ Add this block at the end of the script (before `console.log("Done.")`):
 // 8. racas.json — raça sub-choices (free attributes, variants)
 {
   const racaDir = join(T20DB, "racas");
-  const files = readdirSync(racaDir).filter(f => f.endsWith(".json"));
-  const racas = files.map(f => {
-    const r = readJson(join(racaDir, f));
-    return {
-      id: r.id,
-      nome: r.nome,
-      descricao: r.descricao ?? "",
-      atributos: r.atributos ?? {},           // fixed bonuses {for:1, des:0, ...}
-      atributos_escolha: r.atributos_escolha ?? null, // {quantidade: 1, opcoes: [...]} or null
-      pericias_bonus: r.pericias_bonus ?? [],
-      poderes_automaticos: r.poderes_automaticos ?? [],
-      tamanho: r.tamanho ?? "medio",
-      deslocamento: r.deslocamento ?? 9,
-    };
-  }).sort((a,b) => a.id.localeCompare(b.id));
+  const files = readdirSync(racaDir).filter((f) => f.endsWith(".json"));
+  const racas = files
+    .map((f) => {
+      const r = readJson(join(racaDir, f));
+      return {
+        id: r.id,
+        nome: r.nome,
+        descricao: r.descricao ?? "",
+        atributos: r.atributos ?? {}, // fixed bonuses {for:1, des:0, ...}
+        atributos_escolha: r.atributos_escolha ?? null, // {quantidade: 1, opcoes: [...]} or null
+        pericias_bonus: r.pericias_bonus ?? [],
+        poderes_automaticos: r.poderes_automaticos ?? [],
+        tamanho: r.tamanho ?? "medio",
+        deslocamento: r.deslocamento ?? 9,
+      };
+    })
+    .sort((a, b) => a.id.localeCompare(b.id));
   writeJson(join(OUT, "racas.json"), racas);
 }
 
@@ -82,8 +86,11 @@ Add this block at the end of the script (before `console.log("Done.")`):
       pv_por_nivel: data.pv_por_nivel ?? 0,
       pm_por_nivel: data.pm_por_nivel ?? 0,
       pericias_inatas: data.pericias_inatas ?? [],
-      pericias_escolha: (data.pericias_escolha ?? []).flatMap(g => g.opcoes ?? []),
-      pericias_numero: (data.pericias_escolha ?? []).reduce((sum, g) => sum + (g.quantidade ?? 0), 0),
+      pericias_escolha: (data.pericias_escolha ?? []).flatMap((g) => g.opcoes ?? []),
+      pericias_numero: (data.pericias_escolha ?? []).reduce(
+        (sum, g) => sum + (g.quantidade ?? 0),
+        0
+      ),
     };
   }
   writeJson(join(OUT, "progressao_classes.json"), result);
@@ -111,6 +118,7 @@ git push origin master
 ### Task 2: Fix Perícias — parse inatas/escolhas correctly
 
 **Files:**
+
 - Modify: `src/wizard/steps/pericias.ts`
 - Modify: `src/rules/pericias.ts`
 
@@ -123,13 +131,16 @@ The tormenta20 system returns `pericias.inatas` and `pericias.escolhas` as strin
 ```ts
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
-const progressaoData = require("../data/progressao_classes.json") as Record<string, {
-  pv_por_nivel: number;
-  pm_por_nivel: number;
-  pericias_inatas: string[];
-  pericias_escolha: string[];
-  pericias_numero: number;
-}>;
+const progressaoData = require("../data/progressao_classes.json") as Record<
+  string,
+  {
+    pv_por_nivel: number;
+    pm_por_nivel: number;
+    pericias_inatas: string[];
+    pericias_escolha: string[];
+    pericias_numero: number;
+  }
+>;
 
 /** Normalize a pericia field that may be string, array, or object. */
 export function normalizePericias(value: unknown): string[] {
@@ -137,7 +148,10 @@ export function normalizePericias(value: unknown): string[] {
   if (Array.isArray(value)) return value.map(String).filter(Boolean);
   if (typeof value === "string") {
     // "misticismo, vontade" or "misticismo vontade"
-    return value.split(/[,\s]+/).map(s => s.trim()).filter(Boolean);
+    return value
+      .split(/[,\s]+/)
+      .map((s) => s.trim())
+      .filter(Boolean);
   }
   if (typeof value === "object") {
     // Some systems store {misticismo: true, vontade: true}
@@ -162,9 +176,7 @@ export interface ClasseProgressao {
  */
 export function getClasseProgressao(classeNome: string): ClasseProgressao | null {
   // Try direct slug match
-  const slug = classeNome.toLowerCase()
-    .normalize("NFD").replace(/[̀-ͯ]/g, "")
-    .replace(/\s+/g, "_");
+  const slug = classeNome.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/\s+/g, "_");
   if (slug in progressaoData) return progressaoData[slug];
   // Try partial match
   for (const [key, val] of Object.entries(progressaoData)) {
@@ -199,16 +211,35 @@ export interface PericiaContext {
 }
 
 const PERICIA_NOMES: Record<string, string> = {
-  acrobacia: "Acrobacia", adestramento: "Adestramento", atletismo: "Atletismo",
-  atuacao: "Atuação", cavalgar: "Cavalgar", conhecimento: "Conhecimento",
-  cura: "Cura", diplomacia: "Diplomacia", enganacao: "Enganação",
-  fortitude: "Fortitude", furtividade: "Furtividade", guerra: "Guerra",
-  iniciativa: "Iniciativa", intimidacao: "Intimidação", intuicao: "Intuição",
-  investigacao: "Investigação", jogatina: "Jogatina", ladinagem: "Ladinagem",
-  luta: "Luta", misticismo: "Misticismo", nobreza: "Nobreza",
-  oficio: "Ofício", percepcao: "Percepção", pilotagem: "Pilotagem",
-  pontaria: "Pontaria", reflexos: "Reflexos", religiao: "Religião",
-  sobrevivencia: "Sobrevivência", vontade: "Vontade",
+  acrobacia: "Acrobacia",
+  adestramento: "Adestramento",
+  atletismo: "Atletismo",
+  atuacao: "Atuação",
+  cavalgar: "Cavalgar",
+  conhecimento: "Conhecimento",
+  cura: "Cura",
+  diplomacia: "Diplomacia",
+  enganacao: "Enganação",
+  fortitude: "Fortitude",
+  furtividade: "Furtividade",
+  guerra: "Guerra",
+  iniciativa: "Iniciativa",
+  intimidacao: "Intimidação",
+  intuicao: "Intuição",
+  investigacao: "Investigação",
+  jogatina: "Jogatina",
+  ladinagem: "Ladinagem",
+  luta: "Luta",
+  misticismo: "Misticismo",
+  nobreza: "Nobreza",
+  oficio: "Ofício",
+  percepcao: "Percepção",
+  pilotagem: "Pilotagem",
+  pontaria: "Pontaria",
+  reflexos: "Reflexos",
+  religiao: "Religião",
+  sobrevivencia: "Sobrevivência",
+  vontade: "Vontade",
 };
 
 export function preparePericiaContext(
@@ -236,7 +267,7 @@ export function preparePericiaContext(
     }
   }
 
-  const totalEscolhas = (numero) + Math.max(0, intModifier);
+  const totalEscolhas = numero + Math.max(0, intModifier);
   const treinadas = new Set([...inatas, ...state.periciasTreinadas]);
   const allPericias = Array.from(new Set([...inatas, ...escolhas])).sort();
 
@@ -252,7 +283,7 @@ export function preparePericiaContext(
     };
   });
 
-  const escolhasFeitas = state.periciasTreinadas.filter(p => !inatas.includes(p)).length;
+  const escolhasFeitas = state.periciasTreinadas.filter((p) => !inatas.includes(p)).length;
 
   return {
     stepTitle: "Perícias",
@@ -290,11 +321,12 @@ git push origin master
 Replace radio grids with `<select>` + detail card below. Much more usable for 100+ items.
 
 **Files:**
+
 - Modify: `templates/wizard/wizard.hbs` (sections: raca, origem, classe, divindade)
 - Modify: `src/wizard/steps/raca.ts` (add descricao, atributos_escolha)
 - Modify: `src/wizard/steps/origem.ts` (add pick-2 candidates)
 - Modify: `src/wizard/steps/divindade.ts` (add descricao)
-- Modify: `src/wizard/app.ts` (_onRender: select change → update detail card)
+- Modify: `src/wizard/app.ts` (\_onRender: select change → update detail card)
 
 - [ ] **Step 1: Update `src/wizard/steps/raca.ts`** — add full data for detail card
 
@@ -302,11 +334,14 @@ Replace radio grids with `<select>` + detail card below. Much more usable for 10
 import { createRequire } from "module";
 const require = createRequire(import.meta.url);
 const racasData = require("../../data/racas.json") as Array<{
-  id: string; nome: string; descricao: string;
+  id: string;
+  nome: string;
+  descricao: string;
   atributos: Record<string, number>;
   atributos_escolha: { quantidade: number; opcoes: string[] } | null;
   pericias_bonus: string[];
-  tamanho: string; deslocamento: number;
+  tamanho: string;
+  deslocamento: number;
 }>;
 
 import type { WizardState } from "../state.js";
@@ -322,7 +357,7 @@ export interface RacaDetail {
   id: string;
   name: string;
   descricao: string;
-  atributos: string;          // "+1 For, +1 Des" or "Escolha +1 em qualquer atributo"
+  atributos: string; // "+1 For, +1 Des" or "Escolha +1 em qualquer atributo"
   atributos_escolha: { quantidade: number; opcoes: string[] } | null;
   pericias_bonus: string[];
   tamanho: string;
@@ -339,10 +374,12 @@ export interface RacaContext {
 }
 
 function formatAtributos(atrs: Record<string, number>): string {
-  return Object.entries(atrs)
-    .filter(([, v]) => v !== 0)
-    .map(([k, v]) => `${v > 0 ? "+" : ""}${v} ${k.charAt(0).toUpperCase() + k.slice(1)}`)
-    .join(", ") || "Nenhum";
+  return (
+    Object.entries(atrs)
+      .filter(([, v]) => v !== 0)
+      .map(([k, v]) => `${v > 0 ? "+" : ""}${v} ${k.charAt(0).toUpperCase() + k.slice(1)}`)
+      .join(", ") || "Nenhum"
+  );
 }
 
 export function prepareRacaContext(
@@ -350,23 +387,26 @@ export function prepareRacaContext(
   racas: IndexedRace[],
   errors: string[] = []
 ): RacaContext {
-  const racaOptions: RacaOption[] = racas.map(r => ({
+  const racaOptions: RacaOption[] = racas.map((r) => ({
     id: r.id,
     name: r.name,
     selected: r.id === state.racaId,
   }));
 
-  const selectedFoundryRaca = racas.find(r => r.id === state.racaId);
+  const selectedFoundryRaca = racas.find((r) => r.id === state.racaId);
   let selectedDetail: RacaDetail | null = null;
 
   if (selectedFoundryRaca) {
     // Match T20-DB data by name slug
-    const slug = selectedFoundryRaca.name.toLowerCase()
-      .normalize("NFD").replace(/[̀-ͯ]/g, "")
+    const slug = selectedFoundryRaca.name
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[̀-ͯ]/g, "")
       .replace(/\s+/g, "_");
-    const dbRaca = racasData.find(r =>
-      r.id === slug ||
-      r.nome.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/\s+/g, "_") === slug
+    const dbRaca = racasData.find(
+      (r) =>
+        r.id === slug ||
+        r.nome.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/\s+/g, "_") === slug
     );
 
     selectedDetail = {
@@ -385,7 +425,8 @@ export function prepareRacaContext(
     stepTitle: "Raça",
     racaOptions,
     selectedDetail,
-    atributosEscolhaAtual: (state.escolhasPorItem["raca_atributos"] as Record<string, number>) ?? {},
+    atributosEscolhaAtual:
+      (state.escolhasPorItem["raca_atributos"] as Record<string, number>) ?? {},
     errors,
   };
 }
@@ -408,8 +449,8 @@ export interface OrigemDetail {
   nome: string;
   pericias: string[];
   itens_iniciais: string[];
-  poder_auto: string | null;   // auto-granted power id
-  pick2_candidates: string[];  // choose 1 from these
+  poder_auto: string | null; // auto-granted power id
+  pick2_candidates: string[]; // choose 1 from these
   pick2_escolhido: string | null; // user's pick so far
 }
 
@@ -420,12 +461,9 @@ export interface OrigemContext {
   errors: string[];
 }
 
-export function prepareOrigemContext(
-  state: WizardState,
-  errors: string[] = []
-): OrigemContext {
+export function prepareOrigemContext(state: WizardState, errors: string[] = []): OrigemContext {
   const origens = listOrigens();
-  const origemOptions: OrigemOption[] = origens.map(o => ({
+  const origemOptions: OrigemOption[] = origens.map((o) => ({
     id: o.id,
     nome: o.nome,
     selected: o.id === state.origemId,
@@ -631,6 +669,7 @@ Replace `{{#if showDivindade}}` section:
 - [ ] **Step 7: Update `src/wizard/steps/classe.ts`** — add `selectedClasse` to context
 
 Add to return object:
+
 ```ts
 selectedClasse: classes.find(c => c.id === state.classeId) ?? null,
 ```
@@ -638,6 +677,7 @@ selectedClasse: classes.find(c => c.id === state.classeId) ?? null,
 - [ ] **Step 8: Update `src/wizard/steps/divindade.ts`** — add `selectedDivindade`
 
 Add to return object:
+
 ```ts
 selectedDivindade: divindades.find(d => d.id === state.divindadeId) ?? null,
 ```
@@ -660,7 +700,7 @@ for (const name of ["racaId", "origemId", "classeId", "divindadeId"]) {
 }
 
 // Origem pick-2 radio → save to escolhasPorItem
-root.querySelectorAll<HTMLInputElement>("[name='origem_poder_escolha']").forEach(radio => {
+root.querySelectorAll<HTMLInputElement>("[name='origem_poder_escolha']").forEach((radio) => {
   radio.addEventListener("change", (e) => {
     const val = (e.target as HTMLInputElement).value;
     this._state.apply({
@@ -670,7 +710,7 @@ root.querySelectorAll<HTMLInputElement>("[name='origem_poder_escolha']").forEach
 });
 
 // Raça attribute choice radio
-root.querySelectorAll<HTMLInputElement>("[name='raca_atrib_escolha']").forEach(radio => {
+root.querySelectorAll<HTMLInputElement>("[name='raca_atrib_escolha']").forEach((radio) => {
   radio.addEventListener("change", (e) => {
     const val = (e.target as HTMLInputElement).value;
     this._state.apply({
@@ -703,6 +743,7 @@ git push origin master
 The poderes step currently shows image grid without names. Replace with filterable list.
 
 **Files:**
+
 - Modify: `templates/wizard/wizard.hbs` (poderes section)
 - Modify: `src/wizard/steps/poderes.ts` (add tipo filter)
 
@@ -748,7 +789,7 @@ const poderSearch = root.querySelector<HTMLInputElement>("#t20w-poder-search");
 if (poderSearch) {
   poderSearch.addEventListener("input", () => {
     const q = poderSearch.value.toLowerCase();
-    root.querySelectorAll<HTMLElement>(".t20w-poder-item").forEach(item => {
+    root.querySelectorAll<HTMLElement>(".t20w-poder-item").forEach((item) => {
       const name = item.dataset["poderName"]?.toLowerCase() ?? "";
       item.style.display = name.includes(q) ? "" : "none";
     });
@@ -759,6 +800,7 @@ if (poderSearch) {
 - [ ] **Step 3: Update `src/wizard/steps/poderes.ts`** to add `tipo` field
 
 In the `entries` map, add:
+
 ```ts
 tipo: (p as { system?: { tipo?: string } }).system?.tipo ?? "",
 ```
@@ -792,18 +834,19 @@ git push origin --tags
 
 ## Spec Coverage
 
-| Fix | Task |
-|---|---|
-| perícias.inatas string→array normalization | T2 |
-| T20-DB fallback for class pericias data | T2 |
-| Select+detail for Raça (+ sub-choices) | T3 |
-| Select+detail for Origem (+ pick-2) | T3 |
-| Select+detail for Classe | T3 |
-| Select+detail for Divindade | T3 |
-| Poderes list view + search + eligibility text | T4 |
-| raças.json + progressao_classes.json data | T1 |
+| Fix                                           | Task |
+| --------------------------------------------- | ---- |
+| perícias.inatas string→array normalization    | T2   |
+| T20-DB fallback for class pericias data       | T2   |
+| Select+detail for Raça (+ sub-choices)        | T3   |
+| Select+detail for Origem (+ pick-2)           | T3   |
+| Select+detail for Classe                      | T3   |
+| Select+detail for Divindade                   | T3   |
+| Poderes list view + search + eligibility text | T4   |
+| raças.json + progressao_classes.json data     | T1   |
 
 **Out of scope (post-MVP):**
+
 - Full sub-choice resolver (subescolhas.ts — Plan 3 stub)
 - Raça multiple free attribute choices
 - Equipamento cart functionality

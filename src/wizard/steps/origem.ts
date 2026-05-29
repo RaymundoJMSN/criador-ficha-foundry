@@ -24,10 +24,7 @@ export interface OrigemContext {
   errors: string[];
 }
 
-export function prepareOrigemContext(
-  state: WizardState,
-  errors: string[] = []
-): OrigemContext {
+export function prepareOrigemContext(state: WizardState, errors: string[] = []): OrigemContext {
   const origens = listOrigens();
   const origemOptions: OrigemOption[] = origens.map((o) => ({
     id: o.id,
@@ -40,8 +37,7 @@ export function prepareOrigemContext(
 
   if (selected) {
     const candidates = getPick2Candidates(selected.id);
-    const pick2Escolhido =
-      (state.escolhasPorItem["origem_poder"] as string | undefined) ?? null;
+    const pick2Escolhido = (state.escolhasPorItem["origem_poder"] as string | undefined) ?? null;
     selectedDetail = {
       id: selected.id,
       nome: selected.nome,

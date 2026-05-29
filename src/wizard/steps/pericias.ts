@@ -80,7 +80,7 @@ export function preparePericiaContext(
   const totalEscolhas = numero + Math.max(0, intModifier);
 
   // How many choices the user has already made (excluding inatas)
-  const escolhasFeitas = state.periciasTreinadas.filter(p => !inatas.includes(p)).length;
+  const escolhasFeitas = state.periciasTreinadas.filter((p) => !inatas.includes(p)).length;
 
   // All pericias to display = inatas ∪ escolhas (sorted)
   const allPericias = Array.from(new Set([...inatas, ...escolhas])).sort();
