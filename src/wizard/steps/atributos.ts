@@ -37,7 +37,11 @@ export function prepareAtributosContext(
   const atributos = (["for", "des", "con", "int", "sab", "car"] as const).map((id) => {
     const value = state.atributosBase[id] ?? 0;
     let custo = 0;
-    try { custo = pointBuyCost(value); } catch { /* invalid value */ }
+    try {
+      custo = pointBuyCost(value);
+    } catch {
+      /* invalid value */
+    }
     return { id, label: ATTR_LABELS[id], value, custo };
   });
 

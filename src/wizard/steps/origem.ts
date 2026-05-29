@@ -12,10 +12,7 @@ export interface OrigemContext {
   errors: string[];
 }
 
-export function prepareOrigemContext(
-  state: WizardState,
-  errors: string[] = []
-): OrigemContext {
+export function prepareOrigemContext(state: WizardState, errors: string[] = []): OrigemContext {
   return {
     stepTitle: "Origem",
     origens: listOrigens().map((o) => ({

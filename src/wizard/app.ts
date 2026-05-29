@@ -11,8 +11,7 @@ import { prepareClasseContext } from "./steps/classe.js";
 import { preparePericiaContext } from "./steps/pericias.js";
 import type { IndexedClasse, IndexedRace } from "../compendium/types.js";
 
-const TPL = (name: string) =>
-  `modules/${MODULE_ID}/templates/wizard/${name}.hbs`;
+const TPL = (name: string) => `modules/${MODULE_ID}/templates/wizard/${name}.hbs`;
 
 // @ts-expect-error fvtt-types ApplicationV2/HandlebarsApplicationMixin incomplete for v13
 export class WizardApp extends HandlebarsApplicationMixin(ApplicationV2) {
@@ -143,9 +142,9 @@ export class WizardApp extends HandlebarsApplicationMixin(ApplicationV2) {
         break;
       }
       case WizardStep.Pericias: {
-        const classe = CompendiumIndex.getAll("classe").find(
-          (c) => c.id === state.classeId
-        ) as IndexedClasse | undefined;
+        const classe = CompendiumIndex.getAll("classe").find((c) => c.id === state.classeId) as
+          | IndexedClasse
+          | undefined;
         const intMod = state.atributosBase.int ?? 0;
         stepCtx = preparePericiaContext(state, classe, intMod, errors);
         break;

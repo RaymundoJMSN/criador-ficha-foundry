@@ -38,12 +38,7 @@ const DEFAULT_STATE: WizardStateData = {
   detalhes: {},
 };
 
-const REQUIRED_FIELDS: (keyof WizardStateData)[] = [
-  "nome",
-  "racaId",
-  "origemId",
-  "classeId",
-];
+const REQUIRED_FIELDS: (keyof WizardStateData)[] = ["nome", "racaId", "origemId", "classeId"];
 
 export class WizardState implements WizardStateData {
   nivel!: number;
