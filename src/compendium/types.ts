@@ -41,9 +41,9 @@ export interface IndexedPoder extends IndexedBase {
 export interface IndexedMagia extends IndexedBase {
   type: "magia";
   system: {
-    circulo?: number;         // 1–5
-    escola?: string;          // "abj"|"adv"|"con"|"enc"|"evo"|"ilu"|"nec"|"tra"
-    tipo?: string;            // "arc" | "div"
+    circulo?: number; // 1–5
+    escola?: string; // "abj"|"adv"|"con"|"enc"|"evo"|"ilu"|"nec"|"tra"
+    tipo?: string; // "arc" | "div"
   };
 }
 

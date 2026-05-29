@@ -7,9 +7,9 @@ export function toSlug(name: string): string {
     .trim()
     .toLowerCase()
     .normalize("NFD")
-    .replace(/[̀-ͯ]/g, "")    // strip combining diacritics
-    .replace(/[^a-z0-9]+/g, "-")        // non-alphanum → hyphen
-    .replace(/^-+|-+$/g, "");           // strip leading/trailing hyphens
+    .replace(/[̀-ͯ]/g, "") // strip combining diacritics
+    .replace(/[^a-z0-9]+/g, "-") // non-alphanum → hyphen
+    .replace(/^-+|-+$/g, ""); // strip leading/trailing hyphens
 }
 
 export function namesMatch(a: string, b: string): boolean {
