@@ -250,6 +250,50 @@ export function defineWizardApp(): void {
       };
     }
 
+    _onRender(_context: unknown, _options: unknown): void {
+      // @ts-expect-error element not typed
+      const root = this.element as HTMLElement;
+
+      // ── Dynamic point buy ──────────────────────────────────────────────
+      const COST: Record<number, number> = { [-1]: -1, 0: 0, 1: 1, 2: 2, 3: 4, 4: 7 };
+      const BUDGET = 10;
+
+      const updatePointBuy = () => {
+        let spent = 0;
+        root.querySelectorAll<HTMLInputElement>("[name^='attr-']").forEach((inp) => {
+          const val = parseInt(inp.value, 10);
+          const cost = COST[val] ?? 0;
+          const row = inp.closest("tr");
+          if (row) {
+            const cell = row.querySelector("td:last-child");
+            if (cell) cell.textContent = String(isNaN(val) || !(val in COST) ? "?" : cost);
+          }
+          spent += isNaN(val) ? 0 : (COST[val] ?? 0);
+        });
+        const remaining = BUDGET - spent;
+        const foot = root.querySelector<HTMLElement>(".t20w-attrs tfoot td:last-child");
+        if (foot) {
+          foot.textContent = String(remaining);
+          foot.style.color = remaining < 0 ? "#f55" : "";
+        }
+      };
+
+      root.querySelectorAll<HTMLInputElement>("[name^='attr-']").forEach((inp) => {
+        inp.addEventListener("input", updatePointBuy);
+      });
+      updatePointBuy();
+
+      // ── Method select → re-render ───────────────────────────────────────
+      const sel = root.querySelector<HTMLSelectElement>("[name='metodoAtributos']");
+      if (sel) {
+        sel.addEventListener("change", () => {
+          this.applyFormData(this._gatherFormData());
+          // @ts-expect-error render not typed
+          this.render();
+        });
+      }
+    }
+
     _gatherFormData(): FormData {
       const fd = new FormData();
       // @ts-expect-error element not typed on untyped base
