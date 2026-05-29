@@ -25,11 +25,7 @@ export function getDivindade(id: string): Divindade | null {
   return divindadesData.find((d) => d.id === id) ?? null;
 }
 
-export function isDivindadeAcessa(
-  divindadeId: string,
-  racaId: string,
-  classeId: string
-): boolean {
+export function isDivindadeAcessa(divindadeId: string, racaId: string, classeId: string): boolean {
   const div = getDivindade(divindadeId);
   if (!div) return false;
 
@@ -40,23 +36,15 @@ export function isDivindadeAcessa(
   const racas = devotos_aceitos.racas_aceitas;
   const classes = devotos_aceitos.classes_aceitas;
 
-  const racaOk =
-    !racas ||
-    racas === "todas" ||
-    (Array.isArray(racas) && racas.includes(racaId));
+  const racaOk = !racas || racas === "todas" || (Array.isArray(racas) && racas.includes(racaId));
 
   const classeOk =
-    !classes ||
-    classes === "todas" ||
-    (Array.isArray(classes) && classes.includes(classeId));
+    !classes || classes === "todas" || (Array.isArray(classes) && classes.includes(classeId));
 
   return racaOk || classeOk;
 }
 
-export function listDivindadesParaPersonagem(
-  racaId: string,
-  classeId: string
-): Divindade[] {
+export function listDivindadesParaPersonagem(racaId: string, classeId: string): Divindade[] {
   return divindadesData.filter((d) => isDivindadeAcessa(d.id, racaId, classeId));
 }
 

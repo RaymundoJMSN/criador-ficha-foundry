@@ -1,9 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  countTreinaveis,
-  buildPericiaSet,
-  isInata,
-} from "../../src/rules/pericias.js";
+import { countTreinaveis, buildPericiaSet, isInata } from "../../src/rules/pericias.js";
 import type { IndexedClasse } from "../../src/compendium/types.js";
 
 function mockClasse(overrides: Partial<IndexedClasse["system"]> = {}): IndexedClasse {

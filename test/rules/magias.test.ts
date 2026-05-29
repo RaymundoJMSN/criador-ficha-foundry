@@ -1,9 +1,5 @@
 import { describe, it, expect } from "vitest";
-import {
-  getCirculosDesbloqueados,
-  isConjurador,
-  filterMagias,
-} from "../../src/rules/magias.js";
+import { getCirculosDesbloqueados, isConjurador, filterMagias } from "../../src/rules/magias.js";
 import type { IndexedMagia } from "../../src/compendium/types.js";
 
 function mockMagia(overrides: Partial<IndexedMagia["system"]> = {}): IndexedMagia {
@@ -54,18 +50,12 @@ describe("filterMagias", () => {
   });
 
   it("arcanista só recebe tipo arc", () => {
-    const magias = [
-      mockMagia({ circulo: 1, tipo: "arc" }),
-      mockMagia({ circulo: 1, tipo: "div" }),
-    ];
+    const magias = [mockMagia({ circulo: 1, tipo: "arc" }), mockMagia({ circulo: 1, tipo: "div" })];
     expect(filterMagias(magias, "arcanista", 1)).toHaveLength(1);
   });
 
   it("druida só recebe tipo div", () => {
-    const magias = [
-      mockMagia({ circulo: 1, tipo: "div" }),
-      mockMagia({ circulo: 1, tipo: "arc" }),
-    ];
+    const magias = [mockMagia({ circulo: 1, tipo: "div" }), mockMagia({ circulo: 1, tipo: "arc" })];
     const result = filterMagias(magias, "druida", 1);
     expect(result).toHaveLength(1);
     expect(result[0].system.tipo).toBe("div");

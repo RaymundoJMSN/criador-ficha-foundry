@@ -1,13 +1,6 @@
 import type { IndexedMagia } from "../compendium/types.js";
 
-const CONJURADORES = new Set([
-  "arcanista",
-  "bardo",
-  "clerigo",
-  "druida",
-  "paladino",
-  "xama",
-]);
+const CONJURADORES = new Set(["arcanista", "bardo", "clerigo", "druida", "paladino", "xama"]);
 
 const CLASSE_TIPO_MAGIA: Record<string, ("arc" | "div")[]> = {
   arcanista: ["arc"],
@@ -27,8 +20,7 @@ export function isConjurador(classeId: string): boolean {
 
 export function getCirculosDesbloqueados(classeId: string, nivel: number): number[] {
   if (!isConjurador(classeId)) return [];
-  return CIRCLE_UNLOCK_LEVELS
-    .map((threshold, i) => ({ circle: i + 1, threshold }))
+  return CIRCLE_UNLOCK_LEVELS.map((threshold, i) => ({ circle: i + 1, threshold }))
     .filter(({ threshold }) => nivel >= threshold)
     .map(({ circle }) => circle);
 }

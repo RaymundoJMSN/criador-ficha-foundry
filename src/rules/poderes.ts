@@ -18,10 +18,7 @@ export interface PartialWizardState {
   poderes: string[];
 }
 
-export function checkPrereqs(
-  prereqs: Prereq[],
-  state: PartialWizardState
-): PrereqCheckResult {
+export function checkPrereqs(prereqs: Prereq[], state: PartialWizardState): PrereqCheckResult {
   const unmet: Prereq[] = [];
 
   for (const req of prereqs) {

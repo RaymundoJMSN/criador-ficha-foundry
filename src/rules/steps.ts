@@ -39,15 +39,39 @@ export interface StepMeta {
 
 /** Metadata for each wizard step. */
 export const STEP_META: Record<WizardStep, StepMeta> = {
-  [WizardStep.Nivel]:      { conditional: false, required: true,  labelKey: "T20W.Wizard.Step.Nivel" },
-  [WizardStep.Atributos]:  { conditional: false, required: true,  labelKey: "T20W.Wizard.Step.Atributos" },
-  [WizardStep.Raca]:       { conditional: false, required: true,  labelKey: "T20W.Wizard.Step.Raca" },
-  [WizardStep.Origem]:     { conditional: false, required: true,  labelKey: "T20W.Wizard.Step.Origem" },
-  [WizardStep.Classe]:     { conditional: false, required: true,  labelKey: "T20W.Wizard.Step.Classe" },
-  [WizardStep.Pericias]:   { conditional: false, required: true,  labelKey: "T20W.Wizard.Step.Pericias" },
-  [WizardStep.Divindade]:  { conditional: true,  required: false, labelKey: "T20W.Wizard.Step.Divindade" },
-  [WizardStep.Poderes]:    { conditional: false, required: true,  labelKey: "T20W.Wizard.Step.Poderes" },
-  [WizardStep.Magias]:     { conditional: true,  required: false, labelKey: "T20W.Wizard.Step.Magias" },
-  [WizardStep.Equipamento]:{ conditional: false, required: true,  labelKey: "T20W.Wizard.Step.Equipamento" },
-  [WizardStep.Revisao]:    { conditional: false, required: true,  labelKey: "T20W.Wizard.Step.Revisao" },
+  [WizardStep.Nivel]: { conditional: false, required: true, labelKey: "T20W.Wizard.Step.Nivel" },
+  [WizardStep.Atributos]: {
+    conditional: false,
+    required: true,
+    labelKey: "T20W.Wizard.Step.Atributos",
+  },
+  [WizardStep.Raca]: { conditional: false, required: true, labelKey: "T20W.Wizard.Step.Raca" },
+  [WizardStep.Origem]: { conditional: false, required: true, labelKey: "T20W.Wizard.Step.Origem" },
+  [WizardStep.Classe]: { conditional: false, required: true, labelKey: "T20W.Wizard.Step.Classe" },
+  [WizardStep.Pericias]: {
+    conditional: false,
+    required: true,
+    labelKey: "T20W.Wizard.Step.Pericias",
+  },
+  [WizardStep.Divindade]: {
+    conditional: true,
+    required: false,
+    labelKey: "T20W.Wizard.Step.Divindade",
+  },
+  [WizardStep.Poderes]: {
+    conditional: false,
+    required: true,
+    labelKey: "T20W.Wizard.Step.Poderes",
+  },
+  [WizardStep.Magias]: { conditional: true, required: false, labelKey: "T20W.Wizard.Step.Magias" },
+  [WizardStep.Equipamento]: {
+    conditional: false,
+    required: true,
+    labelKey: "T20W.Wizard.Step.Equipamento",
+  },
+  [WizardStep.Revisao]: {
+    conditional: false,
+    required: true,
+    labelKey: "T20W.Wizard.Step.Revisao",
+  },
 };

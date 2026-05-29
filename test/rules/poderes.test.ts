@@ -26,7 +26,10 @@ describe("checkPrereqs", () => {
 
   it("atributo prereq NOT met", () => {
     const prereqs: Prereq[] = [{ tipo: "atributo", atributo: "for", valor: 1 }];
-    const result = checkPrereqs(prereqs, { ...baseState, atributosBase: { ...baseState.atributosBase, for: 0 } });
+    const result = checkPrereqs(prereqs, {
+      ...baseState,
+      atributosBase: { ...baseState.atributosBase, for: 0 },
+    });
     expect(result.eligible).toBe(false);
     expect(result.unmet[0].tipo).toBe("atributo");
   });

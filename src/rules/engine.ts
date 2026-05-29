@@ -101,9 +101,7 @@ export function getOptions(
       return listDivindadesParaPersonagem(state.racaId, state.classeId);
 
     case WizardStep.Magias: {
-      const magias = (compendiumItems ?? []).filter(
-        (i): i is IndexedMagia => i.type === "magia"
-      );
+      const magias = (compendiumItems ?? []).filter((i): i is IndexedMagia => i.type === "magia");
       return filterMagias(magias, state.classeId, state.nivel);
     }
 
