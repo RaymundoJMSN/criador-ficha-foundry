@@ -1,0 +1,333 @@
+{
+  "arcanista": {
+    "pericias_inatas": [
+      "misticismo",
+      "vontade"
+    ],
+    "pericias_escolha": [
+      "conhecimento",
+      "diplomacia",
+      "enganacao",
+      "guerra",
+      "iniciativa",
+      "intimidacao",
+      "intuicao",
+      "investigacao",
+      "nobreza",
+      "oficio",
+      "percepcao"
+    ],
+    "pericias_numero": 2,
+    "pv_por_nivel": 2,
+    "pm_por_nivel": 6
+  },
+  "barbaro": {
+    "pericias_inatas": [
+      "fortitude",
+      "luta"
+    ],
+    "pericias_escolha": [
+      "adestramento",
+      "atletismo",
+      "cavalgar",
+      "iniciativa",
+      "intimidacao",
+      "oficio",
+      "percepcao",
+      "pontaria",
+      "sobrevivencia",
+      "vontade"
+    ],
+    "pericias_numero": 4,
+    "pv_por_nivel": 6,
+    "pm_por_nivel": 3
+  },
+  "bardo": {
+    "pericias_inatas": [
+      "atuacao",
+      "reflexos"
+    ],
+    "pericias_escolha": [
+      "acrobacia",
+      "cavalgar",
+      "conhecimento",
+      "diplomacia",
+      "enganacao",
+      "furtividade",
+      "iniciativa",
+      "intuicao",
+      "investigacao",
+      "jogatina",
+      "ladinagem",
+      "luta",
+      "misticismo",
+      "nobreza",
+      "percepcao",
+      "pontaria",
+      "vontade"
+    ],
+    "pericias_numero": 6,
+    "pv_por_nivel": 3,
+    "pm_por_nivel": 4
+  },
+  "bucaneiro": {
+    "pericias_inatas": [
+      "reflexos"
+    ],
+    "pericias_escolha": [
+      "acrobacia",
+      "atletismo",
+      "atuacao",
+      "enganacao",
+      "fortitude",
+      "furtividade",
+      "iniciativa",
+      "intimidacao",
+      "jogatina",
+      "luta",
+      "oficio",
+      "percepcao",
+      "pilotagem",
+      "pontaria"
+    ],
+    "pericias_numero": 4,
+    "pv_por_nivel": 4,
+    "pm_por_nivel": 3
+  },
+  "cacador": {
+    "pericias_inatas": [
+      "sobrevivencia"
+    ],
+    "pericias_escolha": [
+      "adestramento",
+      "atletismo",
+      "cavalgar",
+      "cura",
+      "fortitude",
+      "furtividade",
+      "iniciativa",
+      "investigacao",
+      "luta",
+      "oficio",
+      "percepcao",
+      "pontaria",
+      "reflexos"
+    ],
+    "pericias_numero": 6,
+    "pv_por_nivel": 4,
+    "pm_por_nivel": 4
+  },
+  "cavaleiro": {
+    "pericias_inatas": [
+      "fortitude",
+      "luta"
+    ],
+    "pericias_escolha": [
+      "adestramento",
+      "atletismo",
+      "cavalgar",
+      "diplomacia",
+      "guerra",
+      "iniciativa",
+      "intimidacao",
+      "nobreza",
+      "percepcao",
+      "vontade"
+    ],
+    "pericias_numero": 2,
+    "pv_por_nivel": 5,
+    "pm_por_nivel": 3
+  },
+  "clerigo": {
+    "pericias_inatas": [
+      "religiao",
+      "vontade"
+    ],
+    "pericias_escolha": [
+      "conhecimento",
+      "cura",
+      "diplomacia",
+      "fortitude",
+      "iniciativa",
+      "intuicao",
+      "luta",
+      "misticismo",
+      "nobreza",
+      "oficio",
+      "percepcao"
+    ],
+    "pericias_numero": 2,
+    "pv_por_nivel": 4,
+    "pm_por_nivel": 5
+  },
+  "druida": {
+    "pericias_inatas": [
+      "sobrevivencia",
+      "vontade"
+    ],
+    "pericias_escolha": [
+      "adestramento",
+      "atletismo",
+      "cavalgar",
+      "conhecimento",
+      "cura",
+      "fortitude",
+      "iniciativa",
+      "intuicao",
+      "luta",
+      "misticismo",
+      "oficio",
+      "percepcao",
+      "religiao"
+    ],
+    "pericias_numero": 4,
+    "pv_por_nivel": 4,
+    "pm_por_nivel": 4
+  },
+  "guerreiro": {
+    "pericias_inatas": [
+      "fortitude"
+    ],
+    "pericias_escolha": [
+      "adestramento",
+      "atletismo",
+      "cavalgar",
+      "guerra",
+      "iniciativa",
+      "intimidacao",
+      "luta",
+      "oficio",
+      "percepcao",
+      "pontaria",
+      "reflexos"
+    ],
+    "pericias_numero": 2,
+    "pv_por_nivel": 5,
+    "pm_por_nivel": 3
+  },
+  "inventor": {
+    "pericias_inatas": [
+      "oficio",
+      "vontade"
+    ],
+    "pericias_escolha": [
+      "conhecimento",
+      "cura",
+      "diplomacia",
+      "fortitude",
+      "iniciativa",
+      "investigacao",
+      "luta",
+      "misticismo",
+      "oficio",
+      "pilotagem",
+      "percepcao",
+      "pontaria"
+    ],
+    "pericias_numero": 4,
+    "pv_por_nivel": 3,
+    "pm_por_nivel": 4
+  },
+  "ladino": {
+    "pericias_inatas": [
+      "ladinagem",
+      "reflexos"
+    ],
+    "pericias_escolha": [
+      "acrobacia",
+      "atletismo",
+      "atuacao",
+      "cavalgar",
+      "conhecimento",
+      "diplomacia",
+      "enganacao",
+      "furtividade",
+      "iniciativa",
+      "intimidacao",
+      "intuicao",
+      "investigacao",
+      "jogatina",
+      "luta",
+      "oficio",
+      "percepcao",
+      "pilotagem",
+      "pontaria"
+    ],
+    "pericias_numero": 8,
+    "pv_por_nivel": 3,
+    "pm_por_nivel": 4
+  },
+  "lutador": {
+    "pericias_inatas": [
+      "fortitude",
+      "luta"
+    ],
+    "pericias_escolha": [
+      "acrobacia",
+      "adestramento",
+      "atletismo",
+      "enganacao",
+      "furtividade",
+      "iniciativa",
+      "intimidacao",
+      "oficio",
+      "percepcao",
+      "pontaria",
+      "reflexos"
+    ],
+    "pericias_numero": 4,
+    "pv_por_nivel": 5,
+    "pm_por_nivel": 3
+  },
+  "nobre": {
+    "pericias_inatas": [
+      "vontade"
+    ],
+    "pericias_escolha": [
+      "adestramento",
+      "atuacao",
+      "cavalgar",
+      "conhecimento",
+      "diplomacia",
+      "enganacao",
+      "fortitude",
+      "guerra",
+      "iniciativa",
+      "intimidacao",
+      "intuicao",
+      "investigacao",
+      "jogatina",
+      "luta",
+      "nobreza",
+      "oficio",
+      "percepcao",
+      "pontaria"
+    ],
+    "pericias_numero": 4,
+    "pv_por_nivel": 4,
+    "pm_por_nivel": 4
+  },
+  "paladino": {
+    "pericias_inatas": [
+      "luta",
+      "vontade"
+    ],
+    "pericias_escolha": [
+      "adestramento",
+      "atletismo",
+      "cavalgar",
+      "cura",
+      "diplomacia",
+      "fortitude",
+      "guerra",
+      "iniciativa",
+      "intuicao",
+      "nobreza",
+      "percepcao",
+      "religiao"
+    ],
+    "pericias_numero": 2,
+    "pv_por_nivel": 5,
+    "pm_por_nivel": 3
+  }
+}

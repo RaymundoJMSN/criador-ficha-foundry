@@ -1,0 +1,1173 @@
+[
+  {
+    "id": "anao",
+    "nome": "Anão",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 6,
+    "atributos_fixos": [
+      {
+        "atributo": "con",
+        "valor": 2
+      },
+      {
+        "atributo": "sab",
+        "valor": 1
+      },
+      {
+        "atributo": "des",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": [],
+    "bonus_pericias": [],
+    "treinar_pericias": []
+  },
+  {
+    "id": "bugbear",
+    "nome": "Bugbear",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "atributos_fixos": [
+      {
+        "atributo": "for",
+        "valor": 2
+      },
+      {
+        "atributo": "des",
+        "valor": 1
+      },
+      {
+        "atributo": "car",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": [],
+    "bonus_pericias": [],
+    "treinar_pericias": []
+  },
+  {
+    "id": "centauro",
+    "nome": "Centauro",
+    "descricao": null,
+    "tamanho": "grande",
+    "deslocamento": 12,
+    "atributos_fixos": [
+      {
+        "atributo": "sab",
+        "valor": 2
+      },
+      {
+        "atributo": "for",
+        "valor": 1
+      },
+      {
+        "atributo": "int",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": [],
+    "bonus_pericias": [],
+    "treinar_pericias": []
+  },
+  {
+    "id": "ceratops",
+    "nome": "Ceratops",
+    "descricao": null,
+    "tamanho": "grande",
+    "deslocamento": 9,
+    "atributos_fixos": [
+      {
+        "atributo": "con",
+        "valor": 2
+      },
+      {
+        "atributo": "for",
+        "valor": 1
+      },
+      {
+        "atributo": "des",
+        "valor": -1
+      },
+      {
+        "atributo": "int",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": [],
+    "bonus_pericias": [],
+    "treinar_pericias": [
+      {
+        "tipo": "treinar_pericia",
+        "quantidade": 1
+      }
+    ]
+  },
+  {
+    "id": "dahllan",
+    "nome": "Dahllan",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "atributos_fixos": [
+      {
+        "atributo": "sab",
+        "valor": 2
+      },
+      {
+        "atributo": "des",
+        "valor": 1
+      },
+      {
+        "atributo": "int",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": [],
+    "bonus_pericias": [],
+    "treinar_pericias": []
+  },
+  {
+    "id": "duende",
+    "nome": "Duende",
+    "descricao": null,
+    "tamanho": "variavel",
+    "deslocamento": 9,
+    "atributos_fixos": [],
+    "atributos_escolha": [],
+    "bonus_pericias": [],
+    "treinar_pericias": []
+  },
+  {
+    "id": "eiradaan",
+    "nome": "Eiradaan",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "atributos_fixos": [
+      {
+        "atributo": "sab",
+        "valor": 2
+      },
+      {
+        "atributo": "car",
+        "valor": 1
+      },
+      {
+        "atributo": "for",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": [],
+    "bonus_pericias": [],
+    "treinar_pericias": []
+  },
+  {
+    "id": "elfo",
+    "nome": "Elfo",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 12,
+    "atributos_fixos": [
+      {
+        "atributo": "int",
+        "valor": 2
+      },
+      {
+        "atributo": "des",
+        "valor": 1
+      },
+      {
+        "atributo": "con",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": [],
+    "bonus_pericias": [
+      {
+        "pericia": "Misticismo",
+        "valor": 2
+      },
+      {
+        "pericia": "Percepção",
+        "valor": 2
+      }
+    ],
+    "treinar_pericias": []
+  },
+  {
+    "id": "elfo_do_mar",
+    "nome": "Elfo-do-Mar",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "atributos_fixos": [
+      {
+        "atributo": "des",
+        "valor": 2
+      },
+      {
+        "atributo": "con",
+        "valor": 1
+      },
+      {
+        "atributo": "int",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": [],
+    "bonus_pericias": [],
+    "treinar_pericias": []
+  },
+  {
+    "id": "finntroll",
+    "nome": "Finntroll",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "atributos_fixos": [
+      {
+        "atributo": "int",
+        "valor": 2
+      },
+      {
+        "atributo": "con",
+        "valor": 1
+      },
+      {
+        "atributo": "for",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": [],
+    "bonus_pericias": [
+      {
+        "pericia": "Misticismo",
+        "valor": 2
+      }
+    ],
+    "treinar_pericias": []
+  },
+  {
+    "id": "galokk",
+    "nome": "Galokk",
+    "descricao": null,
+    "tamanho": "grande",
+    "deslocamento": 9,
+    "atributos_fixos": [],
+    "atributos_escolha": [],
+    "bonus_pericias": [],
+    "treinar_pericias": [
+      {
+        "tipo": "qualquer_pericia",
+        "quantidade": 1
+      }
+    ]
+  },
+  {
+    "id": "gnoll",
+    "nome": "Gnoll",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "atributos_fixos": [
+      {
+        "atributo": "con",
+        "valor": 2
+      },
+      {
+        "atributo": "sab",
+        "valor": 1
+      },
+      {
+        "atributo": "int",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": [],
+    "bonus_pericias": [],
+    "treinar_pericias": []
+  },
+  {
+    "id": "goblin",
+    "nome": "Goblin",
+    "descricao": null,
+    "tamanho": "pequeno",
+    "deslocamento": 9,
+    "atributos_fixos": [
+      {
+        "atributo": "des",
+        "valor": 2
+      },
+      {
+        "atributo": "int",
+        "valor": 1
+      },
+      {
+        "atributo": "car",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": [],
+    "bonus_pericias": [],
+    "treinar_pericias": []
+  },
+  {
+    "id": "golem",
+    "nome": "Golem",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 6,
+    "atributos_fixos": [
+      {
+        "atributo": "for",
+        "valor": 2
+      },
+      {
+        "atributo": "con",
+        "valor": 1
+      },
+      {
+        "atributo": "car",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": [],
+    "bonus_pericias": [],
+    "treinar_pericias": []
+  },
+  {
+    "id": "golem_desperto",
+    "nome": "Golem Desperto",
+    "descricao": null,
+    "tamanho": "variavel",
+    "deslocamento": 9,
+    "atributos_fixos": [
+      {
+        "atributo": "for",
+        "valor": 1
+      },
+      {
+        "atributo": "car",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": [],
+    "bonus_pericias": [],
+    "treinar_pericias": []
+  },
+  {
+    "id": "harpia",
+    "nome": "Harpia",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "atributos_fixos": [
+      {
+        "atributo": "des",
+        "valor": 2
+      },
+      {
+        "atributo": "car",
+        "valor": 1
+      },
+      {
+        "atributo": "int",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": [],
+    "bonus_pericias": [
+      {
+        "pericia": "Intimidação",
+        "valor": 2
+      },
+      {
+        "pericia": "Sobrevivência",
+        "valor": 2
+      }
+    ],
+    "treinar_pericias": []
+  },
+  {
+    "id": "hobgoblin",
+    "nome": "Hobgoblin",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "atributos_fixos": [
+      {
+        "atributo": "con",
+        "valor": 2
+      },
+      {
+        "atributo": "des",
+        "valor": 1
+      },
+      {
+        "atributo": "car",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": [],
+    "bonus_pericias": [
+      {
+        "pericia": "Ofício (armeiro)",
+        "valor": 2
+      },
+      {
+        "pericia": "Furtividade",
+        "valor": 2
+      }
+    ],
+    "treinar_pericias": [
+      {
+        "tipo": "especificada",
+        "quantidade": 1
+      }
+    ]
+  },
+  {
+    "id": "humano",
+    "nome": "Humano",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "atributos_fixos": [],
+    "atributos_escolha": [
+      {
+        "valor": 1,
+        "quantidade": 3,
+        "atributos_diferentes": true,
+        "observacao": "+1 em três atributos diferentes"
+      }
+    ],
+    "bonus_pericias": [],
+    "treinar_pericias": [
+      {
+        "tipo": "qualquer_pericia",
+        "quantidade": 2
+      }
+    ]
+  },
+  {
+    "id": "hynne",
+    "nome": "Hynne",
+    "descricao": null,
+    "tamanho": "pequeno",
+    "deslocamento": 6,
+    "atributos_fixos": [
+      {
+        "atributo": "des",
+        "valor": 2
+      },
+      {
+        "atributo": "car",
+        "valor": 1
+      },
+      {
+        "atributo": "for",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": [],
+    "bonus_pericias": [
+      {
+        "pericia": "Enganação",
+        "valor": 2
+      }
+    ],
+    "treinar_pericias": []
+  },
+  {
+    "id": "kaijin",
+    "nome": "Kaijin",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "atributos_fixos": [
+      {
+        "atributo": "for",
+        "valor": 2
+      },
+      {
+        "atributo": "con",
+        "valor": 1
+      },
+      {
+        "atributo": "car",
+        "valor": -2
+      }
+    ],
+    "atributos_escolha": [],
+    "bonus_pericias": [],
+    "treinar_pericias": []
+  },
+  {
+    "id": "kallyanach",
+    "nome": "Kallyanach",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "atributos_fixos": [],
+    "atributos_escolha": [],
+    "bonus_pericias": [],
+    "treinar_pericias": []
+  },
+  {
+    "id": "kappa",
+    "nome": "Kappa",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "atributos_fixos": [
+      {
+        "atributo": "des",
+        "valor": 2
+      },
+      {
+        "atributo": "con",
+        "valor": 1
+      },
+      {
+        "atributo": "car",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": [],
+    "bonus_pericias": [],
+    "treinar_pericias": []
+  },
+  {
+    "id": "kliren",
+    "nome": "Kliren",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "atributos_fixos": [
+      {
+        "atributo": "int",
+        "valor": 2
+      },
+      {
+        "atributo": "car",
+        "valor": 1
+      },
+      {
+        "atributo": "for",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": [],
+    "bonus_pericias": [],
+    "treinar_pericias": [
+      {
+        "tipo": "qualquer_pericia",
+        "quantidade": 1
+      }
+    ]
+  },
+  {
+    "id": "kobold",
+    "nome": "Kobolds",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "atributos_fixos": [
+      {
+        "atributo": "des",
+        "valor": 2
+      },
+      {
+        "atributo": "for",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": [],
+    "bonus_pericias": [
+      {
+        "pericia": "Sobrevivência",
+        "valor": 2
+      }
+    ],
+    "treinar_pericias": []
+  },
+  {
+    "id": "lefou",
+    "nome": "Lefou",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "atributos_fixos": [],
+    "atributos_escolha": [],
+    "bonus_pericias": [],
+    "treinar_pericias": []
+  },
+  {
+    "id": "mashin",
+    "nome": "Mashin",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 6,
+    "atributos_fixos": [],
+    "atributos_escolha": [
+      {
+        "valor": 1,
+        "quantidade": 2,
+        "atributos_diferentes": true,
+        "observacao": "+1 em dois atributos a sua escolha"
+      }
+    ],
+    "bonus_pericias": [],
+    "treinar_pericias": [
+      {
+        "tipo": "qualquer_pericia",
+        "quantidade": 2
+      }
+    ]
+  },
+  {
+    "id": "medusa",
+    "nome": "Medusa",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "atributos_fixos": [
+      {
+        "atributo": "des",
+        "valor": 2
+      },
+      {
+        "atributo": "car",
+        "valor": 1
+      }
+    ],
+    "atributos_escolha": [],
+    "bonus_pericias": [],
+    "treinar_pericias": []
+  },
+  {
+    "id": "meio_elfo",
+    "nome": "Meio-Elfo",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "atributos_fixos": [],
+    "atributos_escolha": [],
+    "bonus_pericias": [],
+    "treinar_pericias": []
+  },
+  {
+    "id": "meio_orc",
+    "nome": "Meio-Orc",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "atributos_fixos": [],
+    "atributos_escolha": [],
+    "bonus_pericias": [
+      {
+        "pericia": "Intimidação",
+        "valor": 2
+      }
+    ],
+    "treinar_pericias": [
+      {
+        "tipo": "qualquer_pericia",
+        "quantidade": 1
+      }
+    ]
+  },
+  {
+    "id": "minauro",
+    "nome": "Minauro",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "atributos_fixos": [],
+    "atributos_escolha": [],
+    "bonus_pericias": [
+      {
+        "pericia": "Diplomacia",
+        "valor": 2
+      },
+      {
+        "pericia": "Investigação",
+        "valor": 2
+      }
+    ],
+    "treinar_pericias": []
+  },
+  {
+    "id": "minotauro",
+    "nome": "Minotauro",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "atributos_fixos": [
+      {
+        "atributo": "for",
+        "valor": 2
+      },
+      {
+        "atributo": "con",
+        "valor": 1
+      },
+      {
+        "atributo": "sab",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": [],
+    "bonus_pericias": [],
+    "treinar_pericias": []
+  },
+  {
+    "id": "moreau",
+    "nome": "Moreau",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "atributos_fixos": [],
+    "atributos_escolha": [],
+    "bonus_pericias": [],
+    "treinar_pericias": []
+  },
+  {
+    "id": "nagah",
+    "nome": "Nagah",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "atributos_fixos": [],
+    "atributos_escolha": [],
+    "bonus_pericias": [
+      {
+        "pericia": "Enganação",
+        "valor": 2
+      }
+    ],
+    "treinar_pericias": []
+  },
+  {
+    "id": "nezumi",
+    "nome": "Nezumi",
+    "descricao": null,
+    "tamanho": "pequeno",
+    "deslocamento": 9,
+    "atributos_fixos": [
+      {
+        "atributo": "con",
+        "valor": 2
+      },
+      {
+        "atributo": "des",
+        "valor": 1
+      },
+      {
+        "atributo": "int",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": [],
+    "bonus_pericias": [
+      {
+        "pericia": "Intimidação",
+        "valor": 2
+      }
+    ],
+    "treinar_pericias": []
+  },
+  {
+    "id": "ogro",
+    "nome": "Ogro",
+    "descricao": null,
+    "tamanho": "grande",
+    "deslocamento": 9,
+    "atributos_fixos": [
+      {
+        "atributo": "for",
+        "valor": 3
+      },
+      {
+        "atributo": "con",
+        "valor": 2
+      },
+      {
+        "atributo": "int",
+        "valor": -1
+      },
+      {
+        "atributo": "car",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": [],
+    "bonus_pericias": [],
+    "treinar_pericias": []
+  },
+  {
+    "id": "orc",
+    "nome": "Orc",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "atributos_fixos": [
+      {
+        "atributo": "for",
+        "valor": 2
+      },
+      {
+        "atributo": "con",
+        "valor": 1
+      },
+      {
+        "atributo": "int",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": [],
+    "bonus_pericias": [],
+    "treinar_pericias": []
+  },
+  {
+    "id": "osteon",
+    "nome": "Osteon",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "atributos_fixos": [],
+    "atributos_escolha": [],
+    "bonus_pericias": [],
+    "treinar_pericias": []
+  },
+  {
+    "id": "pteros",
+    "nome": "Pteros",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "atributos_fixos": [
+      {
+        "atributo": "sab",
+        "valor": 2
+      },
+      {
+        "atributo": "des",
+        "valor": 1
+      },
+      {
+        "atributo": "int",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": [],
+    "bonus_pericias": [
+      {
+        "pericia": "Percepção",
+        "valor": 2
+      },
+      {
+        "pericia": "Sobrevivência",
+        "valor": 2
+      }
+    ],
+    "treinar_pericias": []
+  },
+  {
+    "id": "qareen",
+    "nome": "Qareen",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "atributos_fixos": [
+      {
+        "atributo": "car",
+        "valor": 2
+      },
+      {
+        "atributo": "int",
+        "valor": 1
+      },
+      {
+        "atributo": "sab",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": [],
+    "bonus_pericias": [],
+    "treinar_pericias": []
+  },
+  {
+    "id": "satiro",
+    "nome": "Sátiro",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 12,
+    "atributos_fixos": [
+      {
+        "atributo": "car",
+        "valor": 2
+      },
+      {
+        "atributo": "des",
+        "valor": 1
+      },
+      {
+        "atributo": "sab",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": [],
+    "bonus_pericias": [
+      {
+        "pericia": "Atuação",
+        "valor": 2
+      },
+      {
+        "pericia": "Fortitude",
+        "valor": 2
+      }
+    ],
+    "treinar_pericias": []
+  },
+  {
+    "id": "sereia_tritao",
+    "nome": "Sereia/Tritão",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "atributos_fixos": [],
+    "atributos_escolha": [
+      {
+        "valor": 1,
+        "quantidade": 3,
+        "atributos_diferentes": true,
+        "observacao": "+1 em três atributos diferentes"
+      }
+    ],
+    "bonus_pericias": [],
+    "treinar_pericias": []
+  },
+  {
+    "id": "silfide",
+    "nome": "Sílfide",
+    "descricao": null,
+    "tamanho": "minusculo",
+    "deslocamento": 9,
+    "atributos_fixos": [
+      {
+        "atributo": "car",
+        "valor": 2
+      },
+      {
+        "atributo": "des",
+        "valor": 1
+      },
+      {
+        "atributo": "for",
+        "valor": -2
+      }
+    ],
+    "atributos_escolha": [],
+    "bonus_pericias": [],
+    "treinar_pericias": []
+  },
+  {
+    "id": "soterrado",
+    "nome": "Soterrado",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "atributos_fixos": [],
+    "atributos_escolha": [],
+    "bonus_pericias": [],
+    "treinar_pericias": []
+  },
+  {
+    "id": "suraggel",
+    "nome": "Suraggel",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "atributos_fixos": [],
+    "atributos_escolha": [],
+    "bonus_pericias": [],
+    "treinar_pericias": []
+  },
+  {
+    "id": "tabrachi",
+    "nome": "Tabrachi",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "atributos_fixos": [
+      {
+        "atributo": "con",
+        "valor": 2
+      },
+      {
+        "atributo": "for",
+        "valor": 1
+      },
+      {
+        "atributo": "car",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": [],
+    "bonus_pericias": [],
+    "treinar_pericias": []
+  },
+  {
+    "id": "tengu",
+    "nome": "Tengu",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "atributos_fixos": [
+      {
+        "atributo": "des",
+        "valor": 2
+      },
+      {
+        "atributo": "int",
+        "valor": 1
+      }
+    ],
+    "atributos_escolha": [],
+    "bonus_pericias": [
+      {
+        "pericia": "Percepção",
+        "valor": 2
+      }
+    ],
+    "treinar_pericias": []
+  },
+  {
+    "id": "trog",
+    "nome": "Trog",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "atributos_fixos": [
+      {
+        "atributo": "con",
+        "valor": 2
+      },
+      {
+        "atributo": "for",
+        "valor": 1
+      },
+      {
+        "atributo": "int",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": [],
+    "bonus_pericias": [],
+    "treinar_pericias": []
+  },
+  {
+    "id": "trog_anao",
+    "nome": "Trog Anão",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 6,
+    "atributos_fixos": [
+      {
+        "atributo": "con",
+        "valor": 2
+      },
+      {
+        "atributo": "for",
+        "valor": 1
+      },
+      {
+        "atributo": "int",
+        "valor": -1
+      },
+      {
+        "atributo": "des",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": [],
+    "bonus_pericias": [],
+    "treinar_pericias": []
+  },
+  {
+    "id": "velocis",
+    "nome": "Velocis",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 12,
+    "atributos_fixos": [
+      {
+        "atributo": "des",
+        "valor": 2
+      },
+      {
+        "atributo": "sab",
+        "valor": 1
+      },
+      {
+        "atributo": "int",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": [],
+    "bonus_pericias": [
+      {
+        "pericia": "Sobrevivência",
+        "valor": 2
+      }
+    ],
+    "treinar_pericias": []
+  },
+  {
+    "id": "voracis",
+    "nome": "Voracis",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "atributos_fixos": [
+      {
+        "atributo": "des",
+        "valor": 2
+      },
+      {
+        "atributo": "con",
+        "valor": 1
+      },
+      {
+        "atributo": "int",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": [],
+    "bonus_pericias": [
+      {
+        "pericia": "Atletismo",
+        "valor": 2
+      },
+      {
+        "pericia": "Sobrevivência",
+        "valor": 2
+      }
+    ],
+    "treinar_pericias": []
+  },
+  {
+    "id": "yidishan",
+    "nome": "Yidishan",
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "atributos_fixos": [],
+    "atributos_escolha": [],
+    "bonus_pericias": [],
+    "treinar_pericias": []
+  }
+]

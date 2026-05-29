@@ -133,4 +133,92 @@ function walkDir(dir) {
   writeJson(join(OUT, "slug-map.json"), {});
 }
 
+// 8. racas.json — all raças consolidated
+{
+  const racasDir = join(T20DB, "racas");
+  const racas = readdirSync(racasDir)
+    .filter((f) => f.endsWith(".json"))
+    .map((f) => {
+      const r = readJson(join(racasDir, f));
+
+      // Fixed attribute bonuses (tipo === "fixo")
+      const atributos_fixos =
+        r.modificadores_atributo?.tipo === "fixo"
+          ? (r.modificadores_atributo.fixos ?? []).map((b) => ({
+              atributo: b.atributo,
+              valor: b.valor,
+            }))
+          : [];
+
+      // Choosable attribute bonuses (tipo === "escolha")
+      const atributos_escolha =
+        r.modificadores_atributo?.tipo === "escolha"
+          ? (r.modificadores_atributo.escolhas ?? []).map((e) => ({
+              valor: e.valor,
+              quantidade: e.quantidade,
+              atributos_diferentes: e.atributos_diferentes ?? false,
+              observacao: e.observacao ?? null,
+            }))
+          : [];
+
+      // Bonus pericias from habilidades_raca effects
+      const bonus_pericias = [];
+      for (const hab of r.habilidades_raca ?? []) {
+        for (const ef of hab.efeitos ?? []) {
+          if (ef.tipo === "bonus_pericia" && Array.isArray(ef.pericias)) {
+            bonus_pericias.push(...ef.pericias.map((p) => ({ pericia: p, valor: ef.valor ?? 0 })));
+          }
+        }
+      }
+
+      // Bonus skill training (treinar_pericia) from habilidades_raca effects
+      const treinar_pericias = [];
+      for (const hab of r.habilidades_raca ?? []) {
+        for (const ef of hab.efeitos ?? []) {
+          if (ef.tipo === "treinar_pericia") {
+            treinar_pericias.push({
+              tipo: ef.escolha?.tipo ?? "especificada",
+              quantidade: ef.escolha?.quantidade ?? 1,
+            });
+          }
+        }
+      }
+
+      return {
+        id: r.id,
+        nome: r.nome,
+        descricao: r.descricao ?? null,
+        tamanho: r.tamanho ?? null,
+        deslocamento: r.deslocamento?.terrestre ?? null,
+        atributos_fixos,
+        atributos_escolha,
+        bonus_pericias,
+        treinar_pericias,
+      };
+    })
+    .sort((a, b) => a.id.localeCompare(b.id));
+  writeJson(join(OUT, "racas.json"), racas);
+}
+
+// 9. progressao_classes.json — skills + pv/pm per class
+{
+  const src = readJson(join(T20DB, "regras/progressao_classes.json"));
+  const result = {};
+  for (const [classeId, classeData] of Object.entries(src.classes ?? {})) {
+    // Flatten pericias_escolha into a single options list + number to pick
+    const escolhaBlocos = classeData.pericias_escolha ?? [];
+    const pericias_escolha = escolhaBlocos.flatMap((b) => b.opcoes ?? []);
+    const pericias_numero = escolhaBlocos.reduce((sum, b) => sum + (b.quantidade ?? 0), 0);
+
+    result[classeId] = {
+      pericias_inatas: classeData.pericias_inatas ?? [],
+      pericias_escolha,
+      pericias_numero,
+      pv_por_nivel: classeData.pv_por_nivel ?? null,
+      pm_por_nivel: classeData.pm_por_nivel ?? null,
+    };
+  }
+  writeJson(join(OUT, "progressao_classes.json"), result);
+}
+
 console.log("Done.");
