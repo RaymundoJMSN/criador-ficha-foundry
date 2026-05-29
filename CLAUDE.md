@@ -62,14 +62,17 @@ Estes fatos invalidam premissas "óbvias" vindas de outros sistemas. Mudou? Re-v
 em `system.json` + `templates/` + `tormenta20.mjs` do sistema instalado.
 
 **Tipos de Item:** `arma`, `equipamento`, `classe`, `comodo`, `consumivel`, `magia`, `mobilia`, `poder`, `race`, `tesouro`.
+
 - Raça = tipo **`race`** (inglês). **NÃO existe tipo `origem` nem `divindade`.**
 
 **Packs do sistema:** `racas`, `classes`, `poderes`, `poderes-distincao`, `equipamentos`, `equipamentos-magicos`, `magias`, `pocoes`, `parceiros`, ... (+ Actors/Journal/RollTable).
+
 - **Sem pack de origens, sem pack de divindades.** `poderes` e `poderes-distincao` são separados — indexar ambos.
 
 **Actor jogável = `character`.** Token attrs: `attributes.pv` (primário), `attributes.pm` (secundário).
 
 **Atributos:** `system.atributos.{for,des,con,int,sab,car}` é SchemaField com `base, racial, bonus, temp, value`.
+
 - `value` é **derivado** pelo sistema. O item `race` preenche `.racial` e seta `detalhes.raca`.
 - ➡️ **O wizard escreve SÓ `system.atributos.{attr}.base`.** Nunca `.value` nem `.racial`. Elimina dupla aplicação.
 
@@ -78,12 +81,14 @@ em `system.json` + `templates/` + `tormenta20.mjs` do sistema instalado.
 **Dinheiro:** `system.dinheiro` = `{tc, tl, to, tp}` (cobre/prata-Tibar/ouro/platina). Moeda principal = **`tl` (T$, Tibar)**. Dinheiro inicial vai em `dinheiro.tl`.
 
 **Classe (campos reais):** `system.inicial`, `system.niveis`, `system.pmPorNivel`, `system.pvPorNivel`, `system.pericias.{inatas,escolhas,numero,value}`.
+
 - ⚠️ `pericias.inatas` pode ser **string com vírgula/espaço**, não array — parsear, não fazer spread char-a-char.
 - ➡️ Reusar esses campos do item de classe em vez de re-tabelar (mas há fallback em `src/data/progressao_classes.json`).
 
 **Magia:** `system.circulo` (Number 1–5), `system.tipo` (`arc`/`div`), `system.escola` (`abj/adv/con/enc/evo/ilu/nec/tra`).
 
 **Poder:** `system.tipo/subtipo/alcance/area/ativacao/duracao/efeito`. **NÃO existe campo de pré-requisito estruturado** — só texto em `description.value`.
+
 - ➡️ **Validação de pré-requisito vem dos dados T20-DB** (`src/data/prereqs.json`), casados por slug.
 
 ---
@@ -91,32 +96,39 @@ em `system.json` + `templates/` + `tormenta20.mjs` do sistema instalado.
 ## Mapa de arquivos críticos
 
 **Raiz**
+
 - `module.json` — id `t20-ficha-wizard`, requires `tormenta20`, compat v13, `esmodules: dist/module.js`.
 - `vite.config.ts` — lib mode + copy plugin (templates/lang/assets). `vitest.config.ts` — testes de rules.
 - `scripts/port-t20db.mjs` — gera `src/data/*.json` a partir do T20-DB. **Re-rodar quando o T20-DB mudar.**
 
 **`src/`**
+
 - `module.ts` — hooks: `init` (define WizardApp, settings), `ready` (`CompendiumIndex.build()` + UI).
 - `constants.ts` — `MODULE_ID`, `SYSTEM_ID="tormenta20"`, `CHARACTER_TYPE="character"`, `ITEM_TYPES`, `EXTRA_MODULE_IDS[]` (aditivo, nunca filtro exclusivo).
 
 **`src/compendium/`** — leitura dos packs do sistema
+
 - `index.ts` — `CompendiumIndex` singleton. `build()` varre TODO `game.packs` Item, `getIndex({fields})` (campos explícitos, senão só traz `_id/name/img`), cacheia por tipo. API: `getAll(type)`, `getById(type,id)`, `rebuild()`.
 - `types.ts` — `IndexedRace/Classe/Poder/Magia/Item`. `slug.ts` — normalização de slug (espelha scripts T20-DB).
 
 **`src/data/`** — JSON portado do T20-DB (embutido no bundle)
+
 - `prereqs.json` (108KB) — `pre_requisitos[]` por slug de poder · `origens.json` · `divindades.json` · `atributos.json` (point buy + métodos) · `dinheiro.json` (por nível) · `racas.json` (atributos fixos/escolha — **parcial: falta variações/construtor**) · `poderes-por-nivel.json` (auto-grant) · `progressao_classes.json` · `slug-map.json` (overrides id↔nome Foundry).
 
 **`src/rules/`** — regras estruturais T20 (TS puro, testável)
+
 - `engine.ts` — orquestrador: `getOptions(step, state)`, `validate(step, choice, state)`. `steps.ts` — `WizardStep` enum + ordem + metadata (condicional/obrigatório).
 - `atributos.ts` — point buy + métodos rolagem · `pericias.ts` — treináveis = `classe.numero + max(0,Int) + raça`, `inatas` travadas · `poderes.ts` — `checkPrereqs`/`isEligible` (lê `prereqs.json`; **6 tipos hoje:** atributo/nivel/poder/classe/raca/pericias) · `magias.ts` — círculos/limites + filtro · `origem.ts` — pick-2 · `divindade.ts` — filtro devotos (raça OR classe), druida fixo, obrigatória clérigo/paladino/druida.
 - `subescolhas.ts` — ⚠️ **STUB.** Deve resolver: especialista escola, familiar, modificadores escolhíveis de raça, linhagem feiticeiro, construtor Duende/Golem, multipath classe, pick-2 origem. Ver ROADMAP F2/F3.
 
 **`src/wizard/`** — UI
+
 - `state.ts` — `WizardState` + `apply()/undo()/isComplete()/serialize()`. Campo-chave `escolhasPorItem: Record<string,unknown>` (todas as sub-escolhas). `detalhes` → `system.detalhes.*`.
 - `app.ts` — `WizardApp extends ApplicationV2` (HandlebarsApplicationMixin, PARTS). **Definida no hook `init`, não no top-level** (globals Foundry não existem antes). `_onRender` liga listeners.
 - `steps/` — um `prepare<Passo>Context()` por passo: `nivel, atributos, raca, origem, classe, pericias, divindade, poderes, magias, equipamento, revisao`.
 
 **`src/actor/`** — escrita
+
 - `writer.ts` — `ActorWriter.create(state)`: resolve ids via `pack.getDocument(id).toObject()`, monta data, `Actor.create()`, abre ficha. Se item sumiu (módulo removido) → notifica + cria sem ele.
 - `mapper.ts` — `WizardState` → schema `tormenta20`: `atributos.*.base` (só base!), `detalhes.*`, `dinheiro.*`, `items[]` (race/classe/poderes/magias/equip) com `escolhasPorItem` aplicado como flags/Active Effects.
 
@@ -139,6 +151,7 @@ ActorWriter      → resolve docs, mapper monta data, Actor.create("character")
 ```
 
 **Passos (ordem):** 1 Nível&Nome · 2 Atributos · 3 Raça · 4 Origem · 5 Classe · 6 Perícias · 7 Divindade · 8 Poderes · 9 Magias · 10 Equipamento · 11 Revisão.
+
 - Nível é passo 1 (perícias/poderes/magias dependem dele).
 - **Condicionais:** Divindade (pulável se classe não exige); Magias (pulada se classe não conjuradora).
 
@@ -146,37 +159,64 @@ ActorWriter      → resolve docs, mapper monta data, Actor.create("character")
 
 ## Paridade T20-DB ↔ módulo (o que reusa, o que falta)
 
-| Recurso T20-DB | Estado no módulo | Origem dos dados |
-|---|---|---|
-| Point buy + 7 métodos atributo | ✅ `rules/atributos.ts` | `data/atributos.json` |
-| Pré-requisitos de poder | ⚠️ parcial (6 de ~15 tipos) | `data/prereqs.json` |
-| Perícias por classe (inatas/escolhas/Int) | ✅ `rules/pericias.ts` | item `classe` + fallback `progressao_classes.json` |
-| Origem + pick-2 benefícios | ⚠️ regra ok, UI/materialização pendente | `data/origens.json` |
-| Divindade (devotos, druida, panteão) | ✅ `rules/divindade.ts` | `data/divindades.json` |
-| Magias (círculo/tipo/escola/limites) | ✅ filtro; limites a afinar | packs `magias` + regra |
-| **Modificadores escolhíveis de raça** (humano +1 livre) | ❌ stub | `data/racas.json` (`atributos_escolha`) |
-| **Variações de raça** (Suraggel, Hynne...) | ❌ não portado | T20-DB `racas/*.variacoes` |
-| **Construtor raça** (Golem, Duende) | ❌ não portado | T20-DB `racas/*.construtor` |
-| **Multipath classe** (Arcanista→Bruxo/Mago/Feiticeiro) | ❌ stub | `escolhasPorItem` |
-| **Linhagem feiticeiro / especialista escola / familiar** | ❌ stub | `subescolhas.ts` |
-| **Auto-grant poderes/habilidades por nível** | ❌ dados existem, não wired | `data/poderes-por-nivel.json` |
-| Dinheiro inicial por nível | ✅ regra | `data/dinheiro.json` |
+| Recurso T20-DB                                           | Estado no módulo                        | Origem dos dados                                   |
+| -------------------------------------------------------- | --------------------------------------- | -------------------------------------------------- |
+| Point buy + 7 métodos atributo                           | ✅ `rules/atributos.ts`                 | `data/atributos.json`                              |
+| Pré-requisitos de poder                                  | ⚠️ parcial (6 de ~15 tipos)             | `data/prereqs.json`                                |
+| Perícias por classe (inatas/escolhas/Int)                | ✅ `rules/pericias.ts`                  | item `classe` + fallback `progressao_classes.json` |
+| Origem + pick-2 benefícios                               | ⚠️ regra ok, UI/materialização pendente | `data/origens.json`                                |
+| Divindade (devotos, druida, panteão)                     | ✅ `rules/divindade.ts`                 | `data/divindades.json`                             |
+| Magias (círculo/tipo/escola/limites)                     | ✅ filtro; limites a afinar             | packs `magias` + regra                             |
+| **Modificadores escolhíveis de raça** (humano +1 livre)  | ❌ stub                                 | `data/racas.json` (`atributos_escolha`)            |
+| **Variações de raça** (Suraggel, Hynne...)               | ❌ não portado                          | T20-DB `racas/*.variacoes`                         |
+| **Construtor raça** (Golem, Duende)                      | ❌ não portado                          | T20-DB `racas/*.construtor`                        |
+| **Multipath classe** (Arcanista→Bruxo/Mago/Feiticeiro)   | ❌ stub                                 | `escolhasPorItem`                                  |
+| **Linhagem feiticeiro / especialista escola / familiar** | ❌ stub                                 | `subescolhas.ts`                                   |
+| **Auto-grant poderes/habilidades por nível**             | ❌ dados existem, não wired             | `data/poderes-por-nivel.json`                      |
+| Dinheiro inicial por nível                               | ✅ regra                                | `data/dinheiro.json`                               |
 
 Tudo o que está ❌/⚠️ está faseado no ROADMAP. **A lógica canônica vive no `motor/construtor.py` do T20-DB** — portar, não reinventar.
 
 ---
 
-## Princípio de reuso (NÃO reinventar)
+## Princípio de reuso (NÃO reinventar) — onde está a lógica canônica
 
-O T20-DB (`E:\rayna\Documents\Claude\Projects\Ideias e RPG\T20-DB`) já resolveu TODAS estas regras em Python
-(`motor/construtor.py`, `motor/prerequisitos.py`, `motor/level_up.py`, `data/`). Ao implementar uma
-sub-escolha/regra aqui:
+O T20-DB já resolveu TODAS estas regras em Python. **Está no disco como projeto irmão:**
 
-1. **Achar a lógica equivalente no T20-DB primeiro** (mesma sub-escolha, mesmos campos).
-2. Portar os DADOS via `scripts/port-t20db.mjs` (não copiar à mão — mantém sincronizado).
-3. Portar a LÓGICA para TS em `src/rules/`, espelhando o handler Python.
-4. Casar T20-DB id ↔ item Foundry por **slug** (mesma estratégia dos `scripts/sync_*_foundry.py` do T20-DB).
-5. Testar a regra em `vitest` com fixture dos dados portados.
+```
+T20-DB raiz = ../Ideias e RPG/T20-DB/   (relativo a este projeto; mesma pasta Projects)
+            = override via env T20DB_ROOT
+```
+
+`scripts/port-t20db.mjs` usa esse path (relativo, com fallback `T20DB_ROOT`) para portar os **dados** (`data/*.json`).
+A **lógica** NÃO é importada — é portada à mão para TS, espelhando o handler Python. Mapa exato de fontes:
+
+| Regra a implementar aqui            | Fonte canônica no T20-DB                                                       | Porta para                       |
+| ----------------------------------- | ------------------------------------------------------------------------------ | -------------------------------- |
+| Pré-requisitos (~15 tipos)          | `motor/prerequisitos.py` (321L)                                                | `src/rules/poderes.ts`           |
+| Aplicar atributos / point buy       | `motor/construtor.py::_aplicar_atributos` (L746)                               | `src/rules/atributos.ts`         |
+| **Raça: modificadores escolhíveis** | `motor/construtor.py::_aplicar_raca` (L860) + `_validar_modificadores` (L1394) | `src/rules/subescolhas.ts`       |
+| **Raça: construtor (Golem/Duende)** | `_validar_construtor` (L1504) + `_aplicar_construtor` (L1631)                  | `src/rules/subescolhas.ts`       |
+| **Raça: efeitos de habilidade**     | `_aplicar_efeitos_habilidade_raca` (L1768)                                     | `src/actor/mapper.ts` (flags/AE) |
+| **Classe: multipath/linhagem**      | `_aplicar_classe` (L2899) + `_aplicar_efeitos_linhagem_basica` (L3040)         | `src/rules/subescolhas.ts`       |
+| Origem: pick-2                      | `_aplicar_origem` (L3115)                                                      | `src/rules/origem.ts`            |
+| Divindade: filtro devotos           | `_aplicar_divindade` (L3234)                                                   | `src/rules/divindade.ts`         |
+| Perícias: contagem/Int              | `_aplicar_pericias` (L3323) + `motor/pericia_atributos.py`                     | `src/rules/pericias.ts`          |
+| Magias: círculo/limites             | `_aplicar_magias` (L3657) + `motor/calculos.py`                                | `src/rules/magias.ts`            |
+| **Auto-grant poderes por nível**    | `motor/level_up.py` (733L)                                                     | `src/rules/` + `mapper`          |
+| Slug T20-DB id ↔ item Foundry       | `scripts/sync_*_foundry.py` (T20-DB)                                           | `src/compendium/slug.ts`         |
+
+> ⚠️ Números de linha são referência; `construtor.py` evolui. Se a linha não bater, `grep -n "def _aplicar_<passo>"`.
+
+**Workflow ao implementar uma regra/sub-escolha:**
+
+1. Abrir o handler Python correspondente da tabela (`../Ideias e RPG/T20-DB/motor/...`). Ler a lógica.
+2. Portar os DADOS via `npm run port` (ou `node scripts/port-t20db.mjs`) — **não copiar JSON à mão**.
+3. Portar a LÓGICA para o `src/rules/` da tabela, espelhando o handler.
+4. Casar id ↔ item Foundry por **slug** (`src/compendium/slug.ts`).
+5. Testar em `vitest` com fixture dos dados portados.
+
+Se a sessão não conseguir ler `../Ideias e RPG/T20-DB/` (sandbox), pedir ao usuário para abrir os dois projetos juntos ou exportar `T20DB_ROOT`.
 
 ---
 
@@ -184,16 +224,16 @@ sub-escolha/regra aqui:
 
 Mudou alguma destas áreas? Atualizar este `CLAUDE.md` **no mesmo commit**:
 
-| Mudança | Seção |
-|---|---|
-| Novo módulo em `src/rules/` ou `src/compendium/` | Mapa de arquivos críticos |
-| Novo passo / mudança de ordem no wizard | Contrato de fluxo |
-| Novo campo em `WizardState` | Mapa → `src/wizard/state.ts` |
-| Novo tipo de pré-requisito em `rules/poderes.ts` | Paridade T20-DB + Mapa |
-| Sub-escolha implementada em `subescolhas.ts` | Paridade T20-DB (❌→✅) + ROADMAP |
-| Novo dado portado em `src/data/` | Mapa → `src/data/` + Paridade |
-| Fato novo descoberto sobre o sistema `tormenta20` | "Fatos do sistema" |
-| Fase concluída | ROADMAP (mover status) |
+| Mudança                                           | Seção                             |
+| ------------------------------------------------- | --------------------------------- |
+| Novo módulo em `src/rules/` ou `src/compendium/`  | Mapa de arquivos críticos         |
+| Novo passo / mudança de ordem no wizard           | Contrato de fluxo                 |
+| Novo campo em `WizardState`                       | Mapa → `src/wizard/state.ts`      |
+| Novo tipo de pré-requisito em `rules/poderes.ts`  | Paridade T20-DB + Mapa            |
+| Sub-escolha implementada em `subescolhas.ts`      | Paridade T20-DB (❌→✅) + ROADMAP |
+| Novo dado portado em `src/data/`                  | Mapa → `src/data/` + Paridade     |
+| Fato novo descoberto sobre o sistema `tormenta20` | "Fatos do sistema"                |
+| Fase concluída                                    | ROADMAP (mover status)            |
 
 **Por que:** sessão nova sem mapa fresco gasta 5-15 min explorando o repo. Manter vivo economiza tokens.
 

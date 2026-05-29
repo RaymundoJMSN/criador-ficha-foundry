@@ -1,9 +1,13 @@
 // @ts-check
 import { readFileSync, writeFileSync, readdirSync, statSync } from "fs";
-import { join, resolve } from "path";
+import { join, resolve, dirname } from "path";
+import { fileURLToPath } from "url";
 
-const T20DB = resolve("E:/rayna/Documents/Claude/Projects/Ideias e RPG/T20-DB/data");
-const OUT = resolve("E:/rayna/Documents/Claude/Projects/Modulo Foundry Ficha/src/data");
+const HERE = dirname(fileURLToPath(import.meta.url)); // scripts/
+// T20-DB is a sibling project under .../Projects/. Override with T20DB_ROOT env.
+const T20DB_ROOT = process.env.T20DB_ROOT ?? resolve(HERE, "../../Ideias e RPG/T20-DB");
+const T20DB = join(T20DB_ROOT, "data");
+const OUT = resolve(HERE, "../src/data");
 
 function readJson(path) {
   return JSON.parse(readFileSync(path, "utf-8"));

@@ -7,7 +7,8 @@
     "dev": "vite build --watch",
     "typecheck": "tsc --noEmit",
     "format": "prettier --write .",
-    "test": "vitest run"
+    "test": "vitest run",
+    "port": "node scripts/port-t20db.mjs"
   },
   "devDependencies": {
     "@league-of-foundry-developers/foundry-vtt-types": "github:League-of-Foundry-Developers/foundry-vtt-types#b3a6b69cedb1d67e19b5b537baa46505900873f7",
