@@ -107,13 +107,17 @@
     {{#if showPericias}}
     <section class="t20w-step">
       <h2>{{stepTitle}}</h2>
+
       <p class="t20w-hint">Escolhas restantes: <strong>{{choicesRemaining}}</strong></p>
-      <div class="t20w-pericias-list">
+
+      <div class="t20w-pericias-list" style="display:flex;flex-direction:column;gap:3px;max-height:360px;overflow-y:auto;">
         {{#each pericias}}
-        <label class="t20w-pericia {{#if this.locked}}locked{{/if}}">
+        <label style="display:flex;align-items:center;gap:8px;padding:5px 8px;background:rgba(255,255,255,0.04);border-radius:3px;{{#if this.locked}}opacity:0.7;{{/if}}">
           <input type="checkbox" name="pericia-{{this.id}}" value="{{this.id}}"
-            {{#if this.checked}}checked{{/if}} {{#if this.locked}}disabled{{/if}} />
-          {{this.nome}}{{#if this.inata}} <span class="t20w-badge">Inata</span>{{/if}}
+            {{#if this.checked}}checked{{/if}}
+            {{#if this.locked}}disabled{{/if}} />
+          <span style="flex:1;">{{this.nome}}</span>
+          {{#if this.inata}}<span style="font-size:0.72em;padding:1px 5px;background:#555;border-radius:3px;">Inata</span>{{/if}}
         </label>
         {{/each}}
       </div>

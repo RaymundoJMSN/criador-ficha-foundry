@@ -1,4 +1,5 @@
-import { countTreinaveis, buildPericiaSet } from "../../rules/pericias.js";
+import { countTreinaveis } from "../../rules/pericias.js";
+import { normalizePericias, getClasseProgressao } from "../../rules/progressao.js";
 import type { WizardState } from "../state.js";
 import type { IndexedClasse } from "../../compendium/types.js";
 
@@ -8,6 +9,7 @@ export interface PericiaEntry {
   checked: boolean;
   locked: boolean;
   inata: boolean;
+  escolhivel: boolean;
 }
 
 export interface PericiaContext {
@@ -59,27 +61,46 @@ export function preparePericiaContext(
     return { stepTitle: "Perícias", choicesRemaining: 0, pericias: [], errors };
   }
 
-  const totalEscolhas = countTreinaveis(classe, intModifier, 0);
-  const periciaSet = buildPericiaSet(classe, state.periciasTreinadas, []);
-  const allPericias = Array.from(
-    new Set([
-      ...(classe.system.pericias?.inatas ?? []),
-      ...(classe.system.pericias?.escolhas ?? []),
-      ...state.periciasTreinadas,
-    ])
-  ).sort();
+  // Parse inatas + escolhas from Foundry item — may be string or array
+  let inatas = normalizePericias(classe.system.pericias?.inatas);
+  let escolhas = normalizePericias(classe.system.pericias?.escolhas);
+  let numero = classe.system.pericias?.numero ?? 0;
 
-  const pericias: PericiaEntry[] = allPericias.map((id) => ({
-    id,
-    nome: PERICIA_NOMES[id] ?? id,
-    checked: periciaSet.treinadas.includes(id),
-    locked: periciaSet.inatas.includes(id),
-    inata: periciaSet.inatas.includes(id),
-  }));
+  // Fallback to T20-DB data when Foundry item has empty/corrupt pericias
+  if (inatas.length === 0 || escolhas.length === 0) {
+    const prog = getClasseProgressao(classe.name);
+    if (prog) {
+      if (inatas.length === 0) inatas = prog.pericias_inatas;
+      if (escolhas.length === 0) escolhas = prog.pericias_escolha;
+      if (numero === 0) numero = prog.pericias_numero;
+    }
+  }
+
+  // Total choices = class base + Int bonus (min 0)
+  const totalEscolhas = numero + Math.max(0, intModifier);
+
+  // How many choices the user has already made (excluding inatas)
+  const escolhasFeitas = state.periciasTreinadas.filter(p => !inatas.includes(p)).length;
+
+  // All pericias to display = inatas ∪ escolhas (sorted)
+  const allPericias = Array.from(new Set([...inatas, ...escolhas])).sort();
+
+  const pericias: PericiaEntry[] = allPericias.map((id) => {
+    const isInata = inatas.includes(id);
+    const isChosen = state.periciasTreinadas.includes(id);
+    return {
+      id,
+      nome: PERICIA_NOMES[id] ?? id,
+      checked: isInata || isChosen,
+      locked: isInata,
+      inata: isInata,
+      escolhivel: escolhas.includes(id) && !isInata,
+    };
+  });
 
   return {
     stepTitle: "Perícias",
-    choicesRemaining: Math.max(0, totalEscolhas - state.periciasTreinadas.length),
+    choicesRemaining: Math.max(0, totalEscolhas - escolhasFeitas),
     pericias,
     errors,
   };
