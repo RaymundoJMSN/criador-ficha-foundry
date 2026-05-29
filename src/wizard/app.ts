@@ -250,11 +250,32 @@ export function defineWizardApp(): void {
       };
     }
 
+    _gatherFormData(): FormData {
+      const fd = new FormData();
+      // @ts-expect-error element not typed on untyped base
+      const root = this.element as HTMLElement;
+      root.querySelectorAll("input, select, textarea").forEach((el) => {
+        const input = el as HTMLInputElement;
+        if (!input.name) return;
+        if (input.type === "checkbox" || input.type === "radio") {
+          if (input.checked) fd.append(input.name, input.value);
+        } else {
+          fd.append(input.name, input.value);
+        }
+      });
+      return fd;
+    }
+
     _onClickAction(event: MouseEvent, target: HTMLElement): void {
       event.preventDefault();
       const action = target.dataset["action"];
-      if (action === "next") void this.nextStep();
-      else if (action === "back") this.prevStep();
+      if (action === "next") {
+        this.applyFormData(this._gatherFormData());
+        void this.nextStep();
+      } else if (action === "back") {
+        this.applyFormData(this._gatherFormData());
+        this.prevStep();
+      }
       else if (action === "goStep") {
         const s = target.dataset["step"] as WizardStep;
         if (s) this.goToStep(s);

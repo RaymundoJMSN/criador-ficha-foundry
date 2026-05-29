@@ -1,5 +1,5 @@
 <div class="t20w-wizard">
-  <nav class="t20w-steps">
+  <nav class="t20w-steps" style="display:flex;flex-wrap:wrap;gap:4px;padding:6px 4px;border-bottom:1px solid #444;">
     {{#each steps}}
       <button
         type="button"
@@ -7,7 +7,8 @@
         data-action="goStep"
         data-step="{{this.id}}"
         {{#unless this.reachable}}disabled{{/unless}}
-      >{{this.label}}</button>
+        style="padding:2px 6px;font-size:0.75em;{{#if this.active}}outline:1px solid #f90;{{/if}}"
+      >{{localize this.label}}</button>
     {{/each}}
   </nav>
 
