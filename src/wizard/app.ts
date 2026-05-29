@@ -39,8 +39,14 @@ let _instance: unknown = null;
 export function defineWizardApp(): void {
   if (_WizardAppClass) return; // idempotent
 
-  // @ts-expect-error fvtt-types ApplicationV2/HandlebarsApplicationMixin incomplete for v13
-  _WizardAppClass = class WizardApp extends HandlebarsApplicationMixin(ApplicationV2) {
+  // In Foundry v13 these live in foundry.applications.api, not as bare globals
+  // @ts-expect-error fvtt-types foundry.applications.api not fully typed for v13
+  const AppV2 = foundry.applications.api.ApplicationV2;
+  // @ts-expect-error fvtt-types foundry.applications.api not fully typed for v13
+  const HbsMixin = foundry.applications.api.HandlebarsApplicationMixin;
+
+  // @ts-expect-error class expression with dynamic base
+  _WizardAppClass = class WizardApp extends HbsMixin(AppV2) {
     static DEFAULT_OPTIONS = {
       id: "t20w-wizard",
       window: { title: "T20W: Criar Personagem" },
