@@ -1,0 +1,6247 @@
+{
+  "ambidestria": [
+    {
+      "tipo": "atributo",
+      "atributo": "des",
+      "valor": 2
+    }
+  ],
+  "agrilhoar_os_caidos": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "arcanista",
+      "valor": 3
+    }
+  ],
+  "alquimia_arcana": [
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Ofício (alquimista)"
+    }
+  ],
+  "apoteose_celestial": [
+    {
+      "tipo": "poder",
+      "id": "heranca_superior"
+    },
+    {
+      "tipo": "linhagem",
+      "valor": "abencoada"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "arcanista",
+      "valor": 17
+    }
+  ],
+  "apoteose_draconica": [
+    {
+      "tipo": "poder",
+      "id": "heranca_superior"
+    },
+    {
+      "tipo": "linhagem",
+      "valor": "draconica"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "arcanista",
+      "valor": 17
+    }
+  ],
+  "apoteose_feerica": [
+    {
+      "tipo": "poder",
+      "id": "heranca_superior"
+    },
+    {
+      "tipo": "linhagem",
+      "valor": "feerica"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "arcanista",
+      "valor": 17
+    }
+  ],
+  "apoteose_rubra": [
+    {
+      "tipo": "poder",
+      "id": "heranca_superior"
+    },
+    {
+      "tipo": "linhagem",
+      "valor": "rubra"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "arcanista",
+      "valor": 17
+    }
+  ],
+  "asas_de_sapo": [
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Ofício (alquimista)"
+    }
+  ],
+  "caldeirao_do_bruxo": [
+    {
+      "tipo": "habilidade_classe",
+      "id": "bruxo"
+    },
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Ofício (alquimista)"
+    }
+  ],
+  "contingencia_arcana": [
+    {
+      "tipo": "magia",
+      "id": "runa_de_protecao"
+    }
+  ],
+  "contramagica_aprimorada": [
+    {
+      "tipo": "magia",
+      "id": "dissipar_magia"
+    }
+  ],
+  "contramagica_superior": [
+    {
+      "tipo": "poder",
+      "id": "contramagica_aprimorada"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "arcanista",
+      "valor": 9
+    }
+  ],
+  "escriba_arcano": [
+    {
+      "tipo": "habilidade_classe",
+      "id": "mago"
+    },
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Ofício (escriba)"
+    }
+  ],
+  "especialista_em_escola": [
+    {
+      "tipo": "habilidade_classe",
+      "valor": [
+        "bruxo",
+        "mago"
+      ]
+    }
+  ],
+  "familiar_aprimorado": [
+    {
+      "tipo": "poder",
+      "id": "familiar"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "arcanista",
+      "valor": 5
+    }
+  ],
+  "fluxo_de_mana": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "arcanista",
+      "valor": 10
+    }
+  ],
+  "foco_vital": [
+    {
+      "tipo": "habilidade_classe",
+      "id": "bruxo"
+    }
+  ],
+  "fortalecimento_arcano": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "arcanista",
+      "valor": 5
+    }
+  ],
+  "heranca_aprimorada": [
+    {
+      "tipo": "habilidade_classe",
+      "id": "feiticeiro"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "arcanista",
+      "valor": 6
+    },
+    {
+      "tipo": "linhagem_definida"
+    }
+  ],
+  "heranca_superior": [
+    {
+      "tipo": "poder",
+      "id": "heranca_aprimorada"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "arcanista",
+      "valor": 11
+    }
+  ],
+  "ingrediente_especial": [
+    {
+      "tipo": "poder",
+      "id": "caldeirao_do_bruxo"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "arcanista",
+      "valor": 5
+    }
+  ],
+  "linhagem_aprimorada_abencoada": [
+    {
+      "tipo": "linhagem",
+      "valor": "abencoada"
+    },
+    {
+      "tipo": "poder",
+      "id": "linhagem_basica_abencoada"
+    }
+  ],
+  "linhagem_aprimorada_draconica": [
+    {
+      "tipo": "linhagem",
+      "valor": "draconica"
+    },
+    {
+      "tipo": "poder",
+      "id": "linhagem_basica_draconica"
+    }
+  ],
+  "linhagem_aprimorada_feerica": [
+    {
+      "tipo": "linhagem",
+      "valor": "feerica"
+    },
+    {
+      "tipo": "poder",
+      "id": "linhagem_basica_feerica"
+    }
+  ],
+  "linhagem_aprimorada_rubra": [
+    {
+      "tipo": "linhagem",
+      "valor": "rubra"
+    },
+    {
+      "tipo": "poder",
+      "id": "linhagem_basica_rubra"
+    }
+  ],
+  "linhagem_basica_abencoada": [
+    {
+      "tipo": "habilidade_classe",
+      "valor": "feiticeiro"
+    },
+    {
+      "tipo": "linhagem",
+      "valor": "abencoada"
+    }
+  ],
+  "linhagem_basica_draconica": [
+    {
+      "tipo": "habilidade_classe",
+      "valor": "feiticeiro"
+    },
+    {
+      "tipo": "linhagem",
+      "valor": "draconica"
+    }
+  ],
+  "linhagem_basica_feerica": [
+    {
+      "tipo": "habilidade_classe",
+      "valor": "feiticeiro"
+    },
+    {
+      "tipo": "linhagem",
+      "valor": "feerica"
+    }
+  ],
+  "linhagem_basica_rubra": [
+    {
+      "tipo": "habilidade_classe",
+      "valor": "feiticeiro"
+    },
+    {
+      "tipo": "linhagem",
+      "valor": "rubra"
+    }
+  ],
+  "linhagem_superior_abencoada": [
+    {
+      "tipo": "linhagem",
+      "valor": "abencoada"
+    },
+    {
+      "tipo": "poder",
+      "id": "linhagem_aprimorada_abencoada"
+    }
+  ],
+  "linhagem_superior_draconica": [
+    {
+      "tipo": "linhagem",
+      "valor": "draconica"
+    },
+    {
+      "tipo": "poder",
+      "id": "linhagem_aprimorada_draconica"
+    }
+  ],
+  "linhagem_superior_feerica": [
+    {
+      "tipo": "linhagem",
+      "valor": "feerica"
+    },
+    {
+      "tipo": "poder",
+      "id": "linhagem_aprimorada_feerica"
+    }
+  ],
+  "linhagem_superior_rubra": [
+    {
+      "tipo": "linhagem",
+      "valor": "rubra"
+    },
+    {
+      "tipo": "poder",
+      "id": "linhagem_aprimorada_rubra"
+    }
+  ],
+  "memoria_subita": [
+    {
+      "tipo": "habilidade_classe",
+      "id": "mago"
+    }
+  ],
+  "mestre_em_escola": [
+    {
+      "tipo": "poder",
+      "id": "especialista_em_escola"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "arcanista",
+      "valor": 8
+    }
+  ],
+  "o_proprio_sangue": [
+    {
+      "tipo": "habilidade_classe",
+      "id": "feiticeiro"
+    }
+  ],
+  "raio_dividido": [
+    {
+      "tipo": "poder",
+      "id": "raio_arcano"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "arcanista",
+      "valor": 5
+    }
+  ],
+  "raio_elemental": [
+    {
+      "tipo": "poder",
+      "id": "raio_arcano"
+    }
+  ],
+  "raio_poderoso": [
+    {
+      "tipo": "poder",
+      "id": "raio_arcano"
+    }
+  ],
+  "sifao_de_mana": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "arcanista",
+      "valor": 17
+    }
+  ],
+  "tinta_do_mago": [
+    {
+      "tipo": "habilidade_classe",
+      "id": "mago"
+    },
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Ofício (escriba)"
+    }
+  ],
+  "trama_celere": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "arcanista",
+      "valor": 9
+    }
+  ],
+  "transliteracao_impossivel": [
+    {
+      "tipo": "poder",
+      "id": "escriba_arcano"
+    }
+  ],
+  "arqueiro": [
+    {
+      "tipo": "atributo",
+      "atributo": "sab",
+      "valor": 1
+    }
+  ],
+  "autoridade_feudal": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "cavaleiro",
+      "valor": 6
+    }
+  ],
+  "alma_inabalavel": [
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Intimidação"
+    }
+  ],
+  "arremesso_violento": [
+    {
+      "tipo": "poder",
+      "id": "furia_da_savana"
+    }
+  ],
+  "beberrao_selvagem": [
+    {
+      "tipo": "atributo",
+      "atributo": "con",
+      "valor": 3
+    }
+  ],
+  "brado_assombroso": [
+    {
+      "tipo": "poder",
+      "id": "brado_assustador"
+    }
+  ],
+  "brado_assustador": [
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Intimidação"
+    }
+  ],
+  "brado_sismico": [
+    {
+      "tipo": "poder_de_brado",
+      "quantidade": 1
+    }
+  ],
+  "brado_vitorioso": [
+    {
+      "tipo": "poder",
+      "id": "brado_assustador"
+    },
+    {
+      "tipo": "poder",
+      "id": "sangue_dos_inimigos"
+    }
+  ],
+  "critico_brutal": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "barbaro",
+      "valor": 6
+    }
+  ],
+  "enigma_do_aco": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "barbaro",
+      "valor": 17
+    }
+  ],
+  "espirito_inquebravel": [
+    {
+      "tipo": "poder",
+      "id": "alma_de_bronze"
+    }
+  ],
+  "espiritualista": [
+    {
+      "tipo": "atributo",
+      "atributo": "sab",
+      "valor": 2
+    },
+    {
+      "tipo": "poder",
+      "id": "totem_espiritual"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "barbaro",
+      "valor": 6
+    }
+  ],
+  "furia_elemental": [
+    {
+      "tipo": "poder",
+      "id": "totem_espiritual"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "barbaro",
+      "valor": 11
+    }
+  ],
+  "invocar_os_ancestrais": [
+    {
+      "tipo": "poder",
+      "id": "totem_espiritual"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "barbaro",
+      "valor": 11
+    }
+  ],
+  "manifestar_totem": [
+    {
+      "tipo": "poder",
+      "id": "totem_espiritual"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "barbaro",
+      "valor": 7
+    }
+  ],
+  "pele_de_aco": [
+    {
+      "tipo": "poder",
+      "id": "pele_de_ferro"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "barbaro",
+      "valor": 8
+    }
+  ],
+  "recuperacao_gutural": [
+    {
+      "tipo": "poder",
+      "id": "alma_de_bronze"
+    },
+    {
+      "tipo": "poder_de_brado",
+      "quantidade": 1
+    }
+  ],
+  "regeneracao_sobrenatural": [
+    {
+      "tipo": "atributo",
+      "atributo": "con",
+      "valor": 5
+    },
+    {
+      "tipo": "poder",
+      "id": "vigor_primal"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "barbaro",
+      "valor": 5
+    }
+  ],
+  "revide": [
+    {
+      "tipo": "poder",
+      "id": "frenesi"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "barbaro",
+      "valor": 11
+    }
+  ],
+  "sede_sanguinaria": [
+    {
+      "tipo": "poder",
+      "id": "sangue_dos_inimigos"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "barbaro",
+      "valor": 5
+    }
+  ],
+  "totem_espiritual": [
+    {
+      "tipo": "atributo",
+      "atributo": "sab",
+      "valor": 1
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "barbaro",
+      "valor": 4
+    }
+  ],
+  "acorde_poderoso": [
+    {
+      "tipo": "poder",
+      "id": "acorde_mistico"
+    }
+  ],
+  "balada_do_atirador": [
+    {
+      "tipo": "poder",
+      "id": "esgrima_magica"
+    }
+  ],
+  "celebridade_artoniana": [
+    {
+      "tipo": "poder",
+      "id": "estrelato"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "bardo",
+      "valor": 17
+    }
+  ],
+  "danca_das_laminas": [
+    {
+      "tipo": "poder",
+      "id": "esgrima_magica"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "bardo",
+      "valor": 10
+    }
+  ],
+  "espada_encantada": [
+    {
+      "tipo": "poder",
+      "id": "golpe_elemental"
+    }
+  ],
+  "estrelato": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "bardo",
+      "valor": 6
+    }
+  ],
+  "fascinar_em_massa": [
+    {
+      "tipo": "poder",
+      "id": "musica_balada_fascinante"
+    }
+  ],
+  "golpe_elemental": [
+    {
+      "tipo": "poder",
+      "id": "golpe_magico"
+    }
+  ],
+  "golpe_magico": [
+    {
+      "tipo": "poder",
+      "id": "esgrima_magica"
+    }
+  ],
+  "inspiracao_espirituosa": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "bardo",
+      "valor": 11
+    }
+  ],
+  "lendas_e_historias": [
+    {
+      "tipo": "atributo",
+      "atributo": "int",
+      "valor": 1
+    }
+  ],
+  "mago_vermelho": [
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Misticismo"
+    }
+  ],
+  "manipular": [
+    {
+      "tipo": "poder",
+      "id": "musica_balada_fascinante"
+    }
+  ],
+  "manipular_em_massa": [
+    {
+      "tipo": "poder",
+      "id": "fascinar_em_massa"
+    },
+    {
+      "tipo": "poder",
+      "id": "manipular"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "bardo",
+      "valor": 10
+    }
+  ],
+  "melodia_restauradora": [
+    {
+      "tipo": "poder",
+      "id": "musica_melodia_curativa"
+    }
+  ],
+  "mestre_dos_sussurros": [
+    {
+      "tipo": "atributo",
+      "atributo": "car",
+      "valor": 1
+    },
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Enganação"
+    },
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Investigação"
+    }
+  ],
+  "musica_marcha_vitoriosa": [
+    {
+      "tipo": "poder",
+      "id": "inspiracao_marcial"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "bardo",
+      "valor": 5
+    }
+  ],
+  "musica_requiem_sombrio": [
+    {
+      "tipo": "escola_de_magia_escolhida",
+      "valor": "necromancia"
+    }
+  ],
+  "portas_da_fama": [
+    {
+      "tipo": "poder",
+      "id": "estrelato"
+    }
+  ],
+  "prestidigitacao": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "bardo",
+      "valor": 6
+    }
+  ],
+  "ressoar": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "bardo",
+      "valor": 17
+    }
+  ],
+  "abusar_dos_fracos": [
+    {
+      "tipo": "poder",
+      "id": "flagelo_dos_mares"
+    }
+  ],
+  "amigos_no_porto": [
+    {
+      "tipo": "atributo",
+      "atributo": "car",
+      "valor": 1
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "bucaneiro",
+      "nivel": 6
+    }
+  ],
+  "aparar": [
+    {
+      "tipo": "poder",
+      "id": "esgrimista"
+    }
+  ],
+  "apostador": [
+    {
+      "tipo": "treinamento_pericia",
+      "pericia": "Jogatina"
+    }
+  ],
+  "en_garde": [
+    {
+      "tipo": "poder",
+      "id": "esgrimista"
+    }
+  ],
+  "esgrima_sambur": [
+    {
+      "tipo": "poder",
+      "id": "esgrimista"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "bucaneiro",
+      "nivel": 8
+    }
+  ],
+  "flagelo_dos_mares": [
+    {
+      "tipo": "treinamento_pericia",
+      "pericia": "Intimidação"
+    }
+  ],
+  "foliao": [
+    {
+      "tipo": "atributo",
+      "atributo": "car",
+      "valor": 1
+    }
+  ],
+  "grudar_o_cano": [
+    {
+      "tipo": "treinamento_pericia",
+      "pericia": "Luta"
+    },
+    {
+      "tipo": "poder",
+      "id": "pistoleiro"
+    }
+  ],
+  "presenca_paralisante": [
+    {
+      "tipo": "atributo",
+      "atributo": "car",
+      "valor": 1
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "bucaneiro",
+      "nivel": 4
+    }
+  ],
+  "remise": [
+    {
+      "tipo": "poder",
+      "id": "aparar"
+    }
+  ],
+  "ripostar": [
+    {
+      "tipo": "poder",
+      "id": "aparar"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "bucaneiro",
+      "nivel": 12
+    }
+  ],
+  "touche": [
+    {
+      "tipo": "poder",
+      "id": "esgrimista"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "bucaneiro",
+      "nivel": 10
+    }
+  ],
+  "armadilha_alquimica": [
+    {
+      "tipo": "poder",
+      "id": "armadilheiro"
+    }
+  ],
+  "armadilheiro": [
+    {
+      "tipo": "poder_tipo",
+      "tipo_poder": "armadilha",
+      "quantidade": 1
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "cacador",
+      "valor": 5
+    }
+  ],
+  "avanco_do_predador": [
+    {
+      "tipo": "poder",
+      "id": "impeto"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "cacador",
+      "valor": 11
+    }
+  ],
+  "bote": [
+    {
+      "tipo": "poder",
+      "id": "ambidestria"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "cacador",
+      "valor": 6
+    }
+  ],
+  "camuflagem": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "cacador",
+      "valor": 6
+    }
+  ],
+  "chuva_de_laminas": [
+    {
+      "tipo": "atributo",
+      "atributo": "des",
+      "valor": 4
+    },
+    {
+      "tipo": "poder",
+      "id": "ambidestria"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "cacador",
+      "valor": 12
+    }
+  ],
+  "curandeiro_dos_ermos": [
+    {
+      "tipo": "poder",
+      "id": "ervas_curativas"
+    }
+  ],
+  "elo_com_a_natureza": [
+    {
+      "tipo": "atributo",
+      "atributo": "sab",
+      "valor": 1
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "cacador",
+      "valor": 3
+    }
+  ],
+  "elo_com_a_natureza_maior": [
+    {
+      "tipo": "poder",
+      "id": "elo_com_a_natureza"
+    }
+  ],
+  "escaramuca": [
+    {
+      "tipo": "atributo",
+      "atributo": "des",
+      "valor": 2
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "cacador",
+      "valor": 6
+    }
+  ],
+  "escaramuca_superior": [
+    {
+      "tipo": "poder",
+      "id": "escaramuca"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "cacador",
+      "valor": 12
+    }
+  ],
+  "explorador_viajado": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "cacador",
+      "valor": 5
+    }
+  ],
+  "flecheiro": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "cacador",
+      "valor": 3
+    }
+  ],
+  "heroi_do_povo": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "cacador",
+      "valor": 5
+    }
+  ],
+  "laminas_guardias": [
+    {
+      "tipo": "poder",
+      "id": "ambidestria"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "cacador",
+      "valor": 5
+    }
+  ],
+  "pega": [
+    {
+      "tipo": "poder",
+      "id": "companheiro_animal"
+    }
+  ],
+  "primeiro_sangue": [
+    {
+      "tipo": "poder",
+      "id": "emboscar"
+    }
+  ],
+  "sequencia_dilaceradora": [
+    {
+      "tipo": "poder",
+      "id": "ambidestria"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "cacador",
+      "valor": 11
+    }
+  ],
+  "sequencia_do_predador": [
+    {
+      "tipo": "poder",
+      "id": "ambidestria"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "cacador",
+      "valor": 8
+    }
+  ],
+  "sombra_dos_ermos": [
+    {
+      "tipo": "poder",
+      "id": "camuflagem"
+    }
+  ],
+  "tempestade_de_laminas": [
+    {
+      "tipo": "poder",
+      "id": "chuva_de_laminas"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "cacador",
+      "valor": 17
+    }
+  ],
+  "tiro_de_abate": [
+    {
+      "tipo": "atributo",
+      "atributo": "sab",
+      "valor": 1
+    },
+    {
+      "tipo": "poder",
+      "id": "espreitar"
+    }
+  ],
+  "tiro_trespassante": [
+    {
+      "tipo": "poder",
+      "id": "arqueiro"
+    }
+  ],
+  "ultimo_sangue": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "cacador",
+      "valor": 5
+    }
+  ],
+  "armas_da_cavalaria": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "cavaleiro",
+      "valor": 5
+    }
+  ],
+  "cavaleiro_bandido": [
+    {
+      "tipo": "habilidade_classe",
+      "id": "codigo_de_honra"
+    },
+    {
+      "tipo": "habilidade_classe",
+      "id": "duelo"
+    }
+  ],
+  "cavaleiro_das_paixoes": [
+    {
+      "tipo": "poder_subcategoria",
+      "subcategoria": "paixao"
+    }
+  ],
+  "cavaleiro_sagrado": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "religiao"
+    },
+    {
+      "tipo": "devoto_divindade_aceita",
+      "classe_aceita": "paladino"
+    }
+  ],
+  "duelista_escudado": [
+    {
+      "tipo": "habilidade_classe",
+      "id": "duelo"
+    }
+  ],
+  "duelo_irrecusavel": [
+    {
+      "tipo": "habilidade_classe",
+      "id": "duelo"
+    }
+  ],
+  "estandarte": [
+    {
+      "tipo": "poder",
+      "id": "titulo"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "cavaleiro",
+      "valor": 14
+    }
+  ],
+  "grao_mestre": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "cavaleiro",
+      "valor": 17
+    }
+  ],
+  "honra_compartilhada": [
+    {
+      "tipo": "poder",
+      "id": "armadura_da_honra"
+    }
+  ],
+  "mestre_das_posturas": [
+    {
+      "tipo": "poder_subcategoria",
+      "subcategoria": "postura_combate",
+      "quantidade": 2
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "cavaleiro",
+      "valor": 11
+    }
+  ],
+  "montaria_corajosa": [
+    {
+      "tipo": "poder_caminho",
+      "id": "montaria"
+    }
+  ],
+  "acolito_escudeiro": [
+    {
+      "tipo": "poder",
+      "id": "autoridade_eclesiastica"
+    }
+  ],
+  "arma_divina": [
+    {
+      "tipo": "poder",
+      "id": "abencoar_arma"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "clerigo",
+      "valor": 7
+    }
+  ],
+  "autoridade_eclesiastica": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "clerigo",
+      "valor": 5
+    },
+    {
+      "tipo": "outro",
+      "descricao": "devoto de um deus maior"
+    }
+  ],
+  "bencao_de_batalha": [
+    {
+      "tipo": "magia",
+      "id": "bencao"
+    }
+  ],
+  "canalizar_abencoado": [
+    {
+      "tipo": "poder",
+      "id": "canalizar_energia",
+      "observacao": "deve canalizar energia positiva"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "clerigo",
+      "valor": 11
+    }
+  ],
+  "canalizar_amplo": [
+    {
+      "tipo": "poder",
+      "id": "canalizar_energia"
+    }
+  ],
+  "canalizar_concentrado": [
+    {
+      "tipo": "poder",
+      "id": "canalizar_energia"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "clerigo",
+      "valor": 11
+    }
+  ],
+  "canalizar_poderoso": [
+    {
+      "tipo": "poder",
+      "id": "canalizar_amplo"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "clerigo",
+      "valor": 9
+    }
+  ],
+  "canalizar_profanado": [
+    {
+      "tipo": "poder",
+      "id": "canalizar_energia",
+      "observacao": "deve canalizar energia negativa"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "clerigo",
+      "valor": 11
+    }
+  ],
+  "conversao_de_fe": [
+    {
+      "tipo": "poder",
+      "id": "autoridade_eclesiastica"
+    }
+  ],
+  "dizimar_infieis": [
+    {
+      "tipo": "poder",
+      "id": "abencoar_arma"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "clerigo",
+      "valor": 5
+    }
+  ],
+  "egide_da_fe": [
+    {
+      "tipo": "magia",
+      "id": "escudo_da_fe"
+    }
+  ],
+  "expulsar_comandar_mortos_vivos": [
+    {
+      "tipo": "poder",
+      "id": "canalizar_energia"
+    }
+  ],
+  "forca_da_devocao": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "clerigo",
+      "valor": 6
+    }
+  ],
+  "mestre_celebrante": [
+    {
+      "tipo": "poder",
+      "descricao": "qualquer poder de Missa"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "clerigo",
+      "valor": 12
+    }
+  ],
+  "missa_compartilhar_milagre": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "clerigo",
+      "valor": 17
+    }
+  ],
+  "presente_dos_deuses": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "clerigo",
+      "valor": 9
+    }
+  ],
+  "punicao_divina": [
+    {
+      "tipo": "poder",
+      "id": "prece_de_combate"
+    }
+  ],
+  "representante_divino": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "clerigo",
+      "valor": 17
+    }
+  ],
+  "solo_profanado": [
+    {
+      "tipo": "magia",
+      "id": "profanar"
+    }
+  ],
+  "solo_sagrado": [
+    {
+      "tipo": "magia",
+      "id": "consagrar"
+    }
+  ],
+  "companheiro_animal": [
+    {
+      "tipo": "atributo",
+      "atributo": "car",
+      "valor": 1
+    },
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Adestramento"
+    }
+  ],
+  "destruidor": [
+    {
+      "tipo": "atributo",
+      "atributo": "for",
+      "valor": 1
+    }
+  ],
+  "arma_tradicional": [
+    {
+      "tipo": "divindade_druida",
+      "divindade": "arton"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "druida",
+      "valor": 5
+    }
+  ],
+  "auspicio_da_madrugada": [
+    {
+      "tipo": "divindade_druida",
+      "divindade": "tenebra"
+    }
+  ],
+  "auspicio_da_meia_noite": [
+    {
+      "tipo": "divindade_druida",
+      "divindade": "tenebra"
+    }
+  ],
+  "auspicio_do_crepusculo": [
+    {
+      "tipo": "divindade_druida",
+      "divindade": "tenebra"
+    }
+  ],
+  "banquete_selvagem": [
+    {
+      "tipo": "divindade_druida",
+      "divindade": "megalokk"
+    },
+    {
+      "tipo": "poder",
+      "id": "forma_selvagem"
+    }
+  ],
+  "companheiro_aberrante": [
+    {
+      "tipo": "divindade_druida",
+      "divindade": "aharadak"
+    },
+    {
+      "tipo": "poder",
+      "id": "companheiro_animal"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "druida",
+      "valor": 6
+    }
+  ],
+  "companheiro_animal_aprimorado": [
+    {
+      "tipo": "poder",
+      "id": "companheiro_animal"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "druida",
+      "valor": 6
+    }
+  ],
+  "companheiro_animal_lendario": [
+    {
+      "tipo": "poder",
+      "id": "companheiro_animal"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "druida",
+      "valor": 18
+    }
+  ],
+  "companheiro_animal_magico": [
+    {
+      "tipo": "poder",
+      "id": "companheiro_animal"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "druida",
+      "valor": 8
+    }
+  ],
+  "companheiro_elemental": [
+    {
+      "tipo": "divindade_druida",
+      "divindade": "arton"
+    },
+    {
+      "tipo": "poder",
+      "id": "companheiro_animal"
+    }
+  ],
+  "erupcao_elemental": [
+    {
+      "tipo": "poder",
+      "id": "forma_elemental"
+    }
+  ],
+  "espirito_dos_equinocios": [
+    {
+      "tipo": "poder",
+      "id": "aspecto_da_primavera"
+    },
+    {
+      "tipo": "poder",
+      "id": "aspecto_do_outono"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "druida",
+      "valor": 10
+    }
+  ],
+  "espirito_dos_solsticios": [
+    {
+      "tipo": "poder",
+      "id": "aspecto_do_inverno"
+    },
+    {
+      "tipo": "poder",
+      "id": "aspecto_do_verao"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "druida",
+      "valor": 10
+    }
+  ],
+  "forca_da_natureza_forma": [
+    {
+      "tipo": "poder",
+      "id": "forma_selvagem_superior"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "druida",
+      "valor": 17
+    }
+  ],
+  "forca_dos_penhascos": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "druida",
+      "valor": 4
+    }
+  ],
+  "forma_aberrante": [
+    {
+      "tipo": "divindade_druida",
+      "divindade": "aharadak"
+    },
+    {
+      "tipo": "poder",
+      "id": "forma_selvagem"
+    }
+  ],
+  "forma_de_cardume": [
+    {
+      "tipo": "divindade_druida",
+      "divindade": "oceano"
+    },
+    {
+      "tipo": "poder",
+      "id": "forma_selvagem"
+    }
+  ],
+  "forma_elemental": [
+    {
+      "tipo": "divindade_druida",
+      "divindade": "arton"
+    },
+    {
+      "tipo": "poder",
+      "id": "forma_selvagem"
+    }
+  ],
+  "forma_esqueletica": [
+    {
+      "tipo": "divindade_druida",
+      "divindade": "tenebra"
+    },
+    {
+      "tipo": "poder",
+      "id": "forma_selvagem"
+    }
+  ],
+  "forma_primal": [
+    {
+      "tipo": "poder",
+      "id": "forma_selvagem"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "druida",
+      "valor": 18
+    }
+  ],
+  "forma_selvagem_aprimorada": [
+    {
+      "tipo": "poder",
+      "id": "forma_selvagem"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "druida",
+      "valor": 6
+    }
+  ],
+  "forma_selvagem_superior": [
+    {
+      "tipo": "poder",
+      "id": "forma_selvagem_aprimorada"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "druida",
+      "valor": 12
+    }
+  ],
+  "forma_vegetal": [
+    {
+      "tipo": "divindade_druida",
+      "divindade": "allihanna"
+    },
+    {
+      "tipo": "poder",
+      "id": "forma_selvagem"
+    }
+  ],
+  "instinto_venenoso": [
+    {
+      "tipo": "poder",
+      "id": "coracao_da_selva"
+    }
+  ],
+  "magia_natural": [
+    {
+      "tipo": "poder",
+      "id": "forma_selvagem"
+    }
+  ],
+  "metamorfose_instantanea": [
+    {
+      "tipo": "poder",
+      "id": "forma_selvagem"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "druida",
+      "valor": 11
+    }
+  ],
+  "oraculo_da_natureza": [
+    {
+      "tipo": "poder",
+      "id": "xama_mistico"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "druida",
+      "valor": 11
+    }
+  ],
+  "protecao_fungica": [
+    {
+      "tipo": "poder",
+      "id": "coracao_da_selva"
+    }
+  ],
+  "transformacao_repugnante": [
+    {
+      "tipo": "poder",
+      "id": "forma_aberrante"
+    }
+  ],
+  "xama_mistico": [
+    {
+      "tipo": "outro",
+      "restricao": "nao_possuir_poder",
+      "poder": "forma_selvagem"
+    }
+  ],
+  "emboscar": [
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Furtividade"
+    }
+  ],
+  "esgrimista": [
+    {
+      "tipo": "atributo",
+      "atributo": "int",
+      "valor": 1
+    }
+  ],
+  "especializacao_em_armadura": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "cavaleiro",
+      "valor": 12
+    }
+  ],
+  "analise_tatica": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Guerra"
+    }
+  ],
+  "ataque_reflexo": [
+    {
+      "tipo": "atributo",
+      "atributo": "des",
+      "valor": 1
+    }
+  ],
+  "bloqueio_brutal": [
+    {
+      "tipo": "atributo",
+      "atributo": "for",
+      "valor": 5
+    }
+  ],
+  "corte_agil": [
+    {
+      "tipo": "atributo",
+      "atributo": "des",
+      "valor": 1
+    }
+  ],
+  "criar_oportunidade": [
+    {
+      "tipo": "poder",
+      "id": "xadrez_de_batalha"
+    }
+  ],
+  "defesa_estrategica": [
+    {
+      "tipo": "atributo",
+      "atributo": "int",
+      "valor": 1
+    }
+  ],
+  "determinacao_inabalavel": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "guerreiro",
+      "valor": 11
+    }
+  ],
+  "estrategista_inspirador": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Guerra"
+    }
+  ],
+  "golpe_pessoal": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "guerreiro",
+      "valor": 5
+    }
+  ],
+  "investida_ricochete": [
+    {
+      "tipo": "poder",
+      "id": "bater_e_correr"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "guerreiro",
+      "valor": 5
+    }
+  ],
+  "mente_disciplinada": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "guerreiro",
+      "valor": 6
+    }
+  ],
+  "mestre_em_arma": [
+    {
+      "tipo": "poder",
+      "id": "especializacao_em_arma",
+      "observacao": "com a arma escolhida"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "guerreiro",
+      "valor": 12
+    }
+  ],
+  "operacoes_combinadas": [
+    {
+      "tipo": "poder",
+      "id": "ordens_de_engajamento"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "guerreiro",
+      "valor": 14
+    }
+  ],
+  "ordens_de_engajamento": [
+    {
+      "tipo": "poder",
+      "id": "criar_oportunidade"
+    },
+    {
+      "tipo": "poder",
+      "id": "xadrez_de_batalha"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "guerreiro",
+      "valor": 11
+    }
+  ],
+  "planejamento_marcial": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Guerra"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "guerreiro",
+      "valor": 10
+    }
+  ],
+  "resiliencia_marcial": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "guerreiro",
+      "valor": 4
+    }
+  ],
+  "tornado_de_dor": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "guerreiro",
+      "valor": 6
+    }
+  ],
+  "velho_de_guerra": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "guerreiro",
+      "valor": 17
+    }
+  ],
+  "xadrez_de_batalha": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Guerra"
+    }
+  ],
+  "inercia_do_aco": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "guerreiro",
+      "valor": 5
+    }
+  ],
+  "agite_antes_de_usar": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Ofício",
+      "especializacao": "alquimista"
+    }
+  ],
+  "ajuste_de_mira": [
+    {
+      "tipo": "poder",
+      "id": "balistica"
+    }
+  ],
+  "alquimista_de_batalha": [
+    {
+      "tipo": "poder",
+      "id": "alquimista_iniciado"
+    }
+  ],
+  "alquimista_eximio": [
+    {
+      "tipo": "poder",
+      "id": "alquimista_iniciado"
+    }
+  ],
+  "alquimista_iniciado": [
+    {
+      "tipo": "atributo",
+      "atributo": "int",
+      "valor": 1
+    },
+    {
+      "tipo": "atributo",
+      "atributo": "sab",
+      "valor": 1
+    },
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Ofício",
+      "especializacao": "alquimista"
+    }
+  ],
+  "alterar_programacao": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "oficio_artesao"
+    }
+  ],
+  "aparato_personalizado": [
+    {
+      "tipo": "poder",
+      "id": "engenhoqueiro"
+    }
+  ],
+  "armadura_avancada": [
+    {
+      "tipo": "poder",
+      "id": "armadura_mecanizada"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "inventor",
+      "valor": 7
+    }
+  ],
+  "armadura_mecanizada": [
+    {
+      "tipo": "poder",
+      "id": "engenhoqueiro"
+    }
+  ],
+  "armeiro": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Luta"
+    },
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Ofício",
+      "especializacao": "armeiro"
+    }
+  ],
+  "artesao_criativo": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "oficio_artesao"
+    }
+  ],
+  "ativacao_rapida": [
+    {
+      "tipo": "poder",
+      "id": "engenhoqueiro"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "inventor",
+      "valor": 7
+    }
+  ],
+  "automato": [
+    {
+      "tipo": "poder",
+      "id": "engenhoqueiro"
+    }
+  ],
+  "automato_alquimico": [
+    {
+      "tipo": "poder",
+      "id": "automato"
+    }
+  ],
+  "automato_engenhocado": [
+    {
+      "tipo": "poder",
+      "id": "automato_prototipado"
+    }
+  ],
+  "automato_prototipado": [
+    {
+      "tipo": "poder",
+      "id": "automato"
+    }
+  ],
+  "balistica": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Pontaria"
+    },
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Ofício",
+      "especializacao": "armeiro"
+    }
+  ],
+  "blindagem": [
+    {
+      "tipo": "poder",
+      "id": "couraceiro"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "inventor",
+      "valor": 8
+    }
+  ],
+  "cano_raiado": [
+    {
+      "tipo": "poder",
+      "id": "balistica"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "inventor",
+      "valor": 5
+    }
+  ],
+  "catalisador_experimental": [
+    {
+      "tipo": "poder",
+      "id": "engenhoqueiro"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "inventor",
+      "valor": 5
+    }
+  ],
+  "catalisador_instavel": [
+    {
+      "tipo": "poder",
+      "id": "alquimista_iniciado"
+    }
+  ],
+  "chutes_e_palavroes": [
+    {
+      "tipo": "poder",
+      "id": "engenhoqueiro"
+    }
+  ],
+  "conhecimento_de_formulas": [
+    {
+      "tipo": "poder",
+      "id": "alquimista_iniciado"
+    }
+  ],
+  "couraceiro": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Ofício",
+      "especializacao": "armeiro"
+    }
+  ],
+  "engenhoqueiro": [
+    {
+      "tipo": "atributo",
+      "atributo": "int",
+      "valor": 3
+    },
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Ofício",
+      "especializacao": "engenhoqueiro"
+    }
+  ],
+  "estilista": [
+    {
+      "tipo": "atributo",
+      "atributo": "car",
+      "valor": 1
+    },
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "oficio_alfaiate"
+    }
+  ],
+  "explicacao_cientifica": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "inventor",
+      "valor": 5
+    }
+  ],
+  "explorar_fraqueza": [
+    {
+      "tipo": "poder",
+      "id": "encontrar_fraqueza"
+    }
+  ],
+  "farmaceutico": [
+    {
+      "tipo": "atributo",
+      "atributo": "sab",
+      "valor": 1
+    },
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Ofício",
+      "especializacao": "alquimista"
+    }
+  ],
+  "farmacia_magica": [
+    {
+      "tipo": "poder",
+      "id": "alquimista_iniciado"
+    },
+    {
+      "tipo": "poder",
+      "id": "farmaceutico"
+    }
+  ],
+  "ferreiro": [
+    {
+      "tipo": "poder",
+      "id": "armeiro"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "inventor",
+      "valor": 5
+    }
+  ],
+  "forcar_a_calibragem": [
+    {
+      "tipo": "poder",
+      "id": "engenhoqueiro"
+    }
+  ],
+  "galvanizacao": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "oficio_artesao"
+    }
+  ],
+  "genio_inovador": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "inventor",
+      "valor": 17
+    }
+  ],
+  "golpe_de_genio": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "inventor",
+      "valor": 11
+    }
+  ],
+  "granadeiro": [
+    {
+      "tipo": "poder",
+      "id": "alquimista_de_batalha"
+    }
+  ],
+  "homunculo": [
+    {
+      "tipo": "poder",
+      "id": "alquimista_iniciado"
+    }
+  ],
+  "infusao_distante": [
+    {
+      "tipo": "poder",
+      "id": "alquimista_iniciado"
+    }
+  ],
+  "manutencao_eficiente": [
+    {
+      "tipo": "poder",
+      "id": "engenhoqueiro"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "inventor",
+      "valor": 5
+    }
+  ],
+  "mestre_alquimista": [
+    {
+      "tipo": "atributo",
+      "atributo": "int",
+      "valor": 3
+    },
+    {
+      "tipo": "atributo",
+      "atributo": "sab",
+      "valor": 3
+    },
+    {
+      "tipo": "poder",
+      "id": "alquimista_iniciado"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "inventor",
+      "valor": 10
+    }
+  ],
+  "mestre_cuca": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Ofício",
+      "especializacao": "cozinheiro"
+    }
+  ],
+  "mistura_fervilhante": [
+    {
+      "tipo": "poder",
+      "id": "alquimista_iniciado"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "inventor",
+      "valor": 5
+    }
+  ],
+  "oficina_de_campo": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Ofício",
+      "especializacao": "armeiro"
+    }
+  ],
+  "oficina_esoterica": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "misticismo"
+    },
+    {
+      "tipo": "poder",
+      "id": "oficina_de_campo"
+    }
+  ],
+  "pedra_de_amolar": [
+    {
+      "tipo": "poder",
+      "id": "armeiro"
+    }
+  ],
+  "saraivada_alquimica": [
+    {
+      "tipo": "poder",
+      "id": "granadeiro"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "inventor",
+      "valor": 7
+    }
+  ],
+  "sintese_rapida": [
+    {
+      "tipo": "poder",
+      "id": "alquimista_iniciado"
+    }
+  ],
+  "assassinar": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "ladino",
+      "valor": 5
+    }
+  ],
+  "assassino_em_serie": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "ladino",
+      "valor": 11
+    }
+  ],
+  "ataque_furtivo_letal": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "ladino",
+      "valor": 5
+    }
+  ],
+  "bombardeiro_furtivo": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Ofício",
+      "especializacao": "alquimista"
+    }
+  ],
+  "chefe_de_gangue": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "ladino",
+      "valor": 5
+    }
+  ],
+  "conhecimento_anatomico": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Cura"
+    }
+  ],
+  "finta_acrobatica": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Acrobacia"
+    },
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Enganação"
+    }
+  ],
+  "fuga_formidavel": [
+    {
+      "tipo": "atributo",
+      "atributo": "int",
+      "valor": 1
+    }
+  ],
+  "improvisacao_arcana": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Misticismo"
+    }
+  ],
+  "ladrao_arcano": [
+    {
+      "tipo": "poder",
+      "id": "roubo_de_mana"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "ladino",
+      "valor": 13
+    }
+  ],
+  "maos_rapidas": [
+    {
+      "tipo": "atributo",
+      "atributo": "des",
+      "valor": 2
+    },
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Ladinagem"
+    }
+  ],
+  "mao_na_boca": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Luta"
+    }
+  ],
+  "mente_criminosa": [
+    {
+      "tipo": "atributo",
+      "atributo": "int",
+      "valor": 1
+    }
+  ],
+  "mestre_assassino": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Cura"
+    },
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Percepção"
+    },
+    {
+      "tipo": "poder",
+      "id": "assassinar"
+    },
+    {
+      "tipo": "poder",
+      "id": "ataque_furtivo_letal"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "ladino",
+      "valor": 11
+    }
+  ],
+  "mestre_envenenador": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Cura"
+    },
+    {
+      "tipo": "poder",
+      "id": "veneno_persistente"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "ladino",
+      "valor": 11
+    }
+  ],
+  "oportunismo": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "ladino",
+      "valor": 6
+    }
+  ],
+  "papo_furado": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Diplomacia"
+    },
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Enganação"
+    }
+  ],
+  "precisao_furtiva": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Pontaria"
+    },
+    {
+      "tipo": "poder",
+      "id": "ataque_furtivo"
+    }
+  ],
+  "rei_do_crime": [
+    {
+      "tipo": "poder",
+      "id": "chefe_de_gangue"
+    },
+    {
+      "tipo": "poder",
+      "id": "contatos_no_submundo"
+    },
+    {
+      "tipo": "poder",
+      "id": "mente_criminosa"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "ladino",
+      "valor": 17
+    }
+  ],
+  "rolamento_defensivo": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Reflexos"
+    }
+  ],
+  "roubo_de_mana": [
+    {
+      "tipo": "poder",
+      "id": "truque_magico"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "ladino",
+      "valor": 7
+    }
+  ],
+  "senhor_do_submundo": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Intimidação"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "ladino",
+      "valor": 17
+    }
+  ],
+  "sombra": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Furtividade"
+    }
+  ],
+  "truque_de_palco": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Atuação"
+    }
+  ],
+  "truque_do_chapeu": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Enganação"
+    }
+  ],
+  "truque_magico": [
+    {
+      "tipo": "atributo",
+      "atributo": "int",
+      "valor": 1
+    }
+  ],
+  "velocidade_ladina": [
+    {
+      "tipo": "atributo",
+      "atributo": "des",
+      "valor": 2
+    },
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Iniciativa"
+    }
+  ],
+  "veneno_persistente": [
+    {
+      "tipo": "poder",
+      "id": "veneno_potente"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "ladino",
+      "valor": 8
+    }
+  ],
+  "veneno_potente": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Ofício",
+      "especializacao": "alquimista"
+    }
+  ],
+  "vestido_para_a_ocasiao": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Enganação"
+    }
+  ],
+  "caminhar_pelas_paredes": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Atletismo"
+    }
+  ],
+  "caminho_suave": [
+    {
+      "tipo": "atributo",
+      "atributo": "sab",
+      "valor": 1
+    }
+  ],
+  "chave": [
+    {
+      "tipo": "atributo",
+      "atributo": "int",
+      "valor": 1
+    },
+    {
+      "tipo": "poder",
+      "id": "lutador_de_chao"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "lutador",
+      "valor": 4
+    }
+  ],
+  "combinacao_chute_circular": [
+    {
+      "tipo": "outro",
+      "restricao": "outro_poder_combinacao_obrigatorio"
+    }
+  ],
+  "combinacao_esquiva_tecnica": [
+    {
+      "tipo": "outro",
+      "restricao": "um_poder_combinacao_obrigatorio"
+    }
+  ],
+  "combinacao_um_dois": [
+    {
+      "tipo": "poder",
+      "id": "jogo_de_pernas"
+    }
+  ],
+  "confianca_dos_ringues": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "lutador",
+      "valor": 8
+    }
+  ],
+  "danca_marcial": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Acrobacia"
+    },
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Atuação"
+    }
+  ],
+  "gingado_elusivo": [
+    {
+      "tipo": "poder",
+      "id": "danca_marcial"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "lutador",
+      "valor": 7
+    }
+  ],
+  "imobilizacao": [
+    {
+      "tipo": "poder",
+      "id": "chave"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "lutador",
+      "valor": 8
+    }
+  ],
+  "invencivel": [
+    {
+      "tipo": "poder",
+      "id": "nome_na_arena"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "lutador",
+      "valor": 17
+    }
+  ],
+  "jogo_de_pernas": [
+    {
+      "tipo": "atributo",
+      "atributo": "des",
+      "valor": 1
+    }
+  ],
+  "lingua_dos_becos": [
+    {
+      "tipo": "atributo",
+      "atributo": "for",
+      "valor": 1
+    },
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Intimidação"
+    }
+  ],
+  "mestre_das_combinacoes": [
+    {
+      "tipo": "outro",
+      "restricao": "dois_poderes_combinacao_minimo"
+    }
+  ],
+  "nome_na_arena": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "lutador",
+      "valor": 11
+    }
+  ],
+  "punhos_de_adamante": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "lutador",
+      "valor": 8
+    }
+  ],
+  "rolamento_escapatorio": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Acrobacia"
+    }
+  ],
+  "sarado": [
+    {
+      "tipo": "atributo",
+      "atributo": "for",
+      "valor": 3
+    }
+  ],
+  "sequencia_destruidora": [
+    {
+      "tipo": "poder",
+      "id": "trocacao"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "lutador",
+      "valor": 12
+    }
+  ],
+  "trincado": [
+    {
+      "tipo": "atributo",
+      "atributo": "con",
+      "valor": 3
+    },
+    {
+      "tipo": "poder",
+      "id": "sarado"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "lutador",
+      "valor": 10
+    }
+  ],
+  "trocacao": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "lutador",
+      "valor": 6
+    }
+  ],
+  "trocacao_tumultuosa": [
+    {
+      "tipo": "poder",
+      "id": "trocacao"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "lutador",
+      "valor": 8
+    }
+  ],
+  "magia_performatica": [
+    {
+      "tipo": "atributo",
+      "atributo": "car",
+      "valor": 1
+    },
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Atuação"
+    }
+  ],
+  "agente_de_elite": [
+    {
+      "tipo": "poder",
+      "id": "titulo"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "nobre",
+      "valor": 11
+    }
+  ],
+  "armadura_brilhante": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "nobre",
+      "valor": 8
+    }
+  ],
+  "comandante_de_campo": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "nobre",
+      "valor": 5
+    }
+  ],
+  "comitiva": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "nobre",
+      "valor": 5
+    }
+  ],
+  "estrategista": [
+    {
+      "tipo": "atributo",
+      "atributo": "int",
+      "valor": 1
+    },
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Guerra"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "nobre",
+      "valor": 6
+    }
+  ],
+  "fofocas_da_corte": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Intuição"
+    },
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Investigação"
+    }
+  ],
+  "general": [
+    {
+      "tipo": "poder",
+      "id": "estrategista"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "nobre",
+      "valor": 12
+    }
+  ],
+  "grito_tiranico": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "nobre",
+      "valor": 8
+    }
+  ],
+  "guarda_pessoal": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "nobre",
+      "valor": 5
+    }
+  ],
+  "inspirar_gloria": [
+    {
+      "tipo": "poder",
+      "id": "inspicar_confianca"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "nobre",
+      "valor": 8
+    }
+  ],
+  "instigar_violencia": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Guerra"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "nobre",
+      "valor": 11
+    }
+  ],
+  "insuflar_investida": [
+    {
+      "tipo": "poder",
+      "id": "estrategista"
+    }
+  ],
+  "legado_magico": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "nobre",
+      "valor": 11
+    }
+  ],
+  "liderar_pelo_exemplo": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "nobre",
+      "valor": 6
+    }
+  ],
+  "lider_energico": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Iniciativa"
+    }
+  ],
+  "lider_impiedoso": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "nobre",
+      "valor": 5
+    }
+  ],
+  "lingua_de_ouro": [
+    {
+      "tipo": "poder",
+      "id": "lingua_de_prata"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "nobre",
+      "valor": 8
+    }
+  ],
+  "linhagem_distinta": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "nobre",
+      "valor": 17
+    }
+  ],
+  "ordens_agressivas": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "nobre",
+      "valor": 5
+    }
+  ],
+  "ordens_encorajadoras": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "nobre",
+      "valor": 5
+    }
+  ],
+  "palavras_de_efeito": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "nobre",
+      "valor": 5
+    }
+  ],
+  "palavras_ressonantes": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "nobre",
+      "valor": 5
+    }
+  ],
+  "presenca_majestosa": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "nobre",
+      "valor": 16
+    }
+  ],
+  "protocolo_impecavel": [
+    {
+      "tipo": "pericia_treinada",
+      "pericia": "Nobreza"
+    },
+    {
+      "tipo": "poder",
+      "id": "jogo_da_corte"
+    }
+  ],
+  "senescal": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "nobre",
+      "valor": 5
+    }
+  ],
+  "arma_juramentada": [
+    {
+      "tipo": "devoto",
+      "valor": true
+    }
+  ],
+  "arma_sacramentada": [
+    {
+      "tipo": "poder",
+      "id": "arma_juramentada"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "paladino",
+      "valor": 11
+    }
+  ],
+  "arma_sagrada": [
+    {
+      "tipo": "narrativo",
+      "descricao": "devoto de uma divindade (exceto Lena e Marah)"
+    }
+  ],
+  "aura_antimagia": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "paladino",
+      "valor": 14
+    }
+  ],
+  "aura_ardente": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "paladino",
+      "valor": 10
+    }
+  ],
+  "aura_de_cura": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "paladino",
+      "valor": 6
+    }
+  ],
+  "aura_de_invencibilidade": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "paladino",
+      "valor": 18
+    }
+  ],
+  "aura_poderosa": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "paladino",
+      "valor": 6
+    }
+  ],
+  "aura_vingadora": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "paladino",
+      "valor": 8
+    }
+  ],
+  "bloqueio_divino": [
+    {
+      "tipo": "proficiencia",
+      "valor": "escudos"
+    }
+  ],
+  "convicao_heroica": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "paladino",
+      "valor": 11
+    }
+  ],
+  "egide_sagrada": [
+    {
+      "tipo": "habilidade",
+      "id": "bencao_da_justica"
+    },
+    {
+      "tipo": "escolha_grupo",
+      "grupo": "bencao_da_justica",
+      "valor": "egide_sagrada"
+    }
+  ],
+  "escudo_fraterno": [
+    {
+      "tipo": "poder",
+      "id": "egide_sagrada"
+    }
+  ],
+  "escudo_sagrado": [
+    {
+      "tipo": "poder",
+      "id": "bloqueio_divino"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "paladino",
+      "valor": 7
+    }
+  ],
+  "fulgor_ardente": [
+    {
+      "tipo": "poder",
+      "id": "fulgor_divino"
+    }
+  ],
+  "guardiao_celestial": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "paladino",
+      "valor": 17
+    }
+  ],
+  "investida_sagrada": [
+    {
+      "tipo": "poder",
+      "id": "montaria_sagrada"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "paladino",
+      "valor": 10
+    }
+  ],
+  "manto_de_batalha": [
+    {
+      "tipo": "nivel_classe",
+      "classe": "paladino",
+      "valor": 5
+    }
+  ],
+  "montaria_sagrada": [
+    {
+      "tipo": "habilidade",
+      "id": "bencao_da_justica"
+    },
+    {
+      "tipo": "escolha_grupo",
+      "grupo": "bencao_da_justica",
+      "valor": "montaria_sagrada"
+    }
+  ],
+  "paladino_do_reino": [
+    {
+      "tipo": "pericia",
+      "pericia": "Nobreza",
+      "valor": "treinado"
+    }
+  ],
+  "rajada_divina": [
+    {
+      "tipo": "poder",
+      "id": "luz_purificadora"
+    }
+  ],
+  "titulo": [
+    {
+      "tipo": "poder",
+      "id": "autoridade_feudal"
+    },
+    {
+      "tipo": "nivel_classe",
+      "classe": "cavaleiro",
+      "valor": 10
+    },
+    {
+      "tipo": "narrativo",
+      "descricao": "ter conquistado terras ou realizado um serviço para um nobre que possa se tornar seu suserano"
+    }
+  ],
+  "acuidade_com_arma": [
+    {
+      "tipo": "atributo",
+      "atributo": "des",
+      "valor": 1
+    }
+  ],
+  "arma_secundaria_grande": [
+    {
+      "tipo": "poder",
+      "id": "estilo_de_duas_armas"
+    }
+  ],
+  "arremesso_devastador": [
+    {
+      "tipo": "poder",
+      "id": "arremesso_potente"
+    }
+  ],
+  "arremesso_multiplo": [
+    {
+      "tipo": "atributo",
+      "atributo": "des",
+      "valor": 1
+    },
+    {
+      "tipo": "poder",
+      "id": "estilo_de_arremesso"
+    }
+  ],
+  "arremesso_potente": [
+    {
+      "tipo": "atributo",
+      "atributo": "for",
+      "valor": 1
+    },
+    {
+      "tipo": "poder",
+      "id": "estilo_de_arremesso"
+    }
+  ],
+  "ataque_com_escudo": [
+    {
+      "tipo": "poder",
+      "id": "estilo_de_arma_e_escudo"
+    }
+  ],
+  "ataque_com_o_cabo": [
+    {
+      "tipo": "poder",
+      "id": "estilo_de_arma_longa"
+    }
+  ],
+  "ataque_em_arco": [
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Luta"
+    },
+    {
+      "tipo": "nivel",
+      "valor": 4
+    }
+  ],
+  "ataque_pesado": [
+    {
+      "tipo": "poder",
+      "id": "estilo_de_duas_maos"
+    }
+  ],
+  "ataque_poderoso": [
+    {
+      "tipo": "atributo",
+      "atributo": "for",
+      "valor": 1
+    }
+  ],
+  "ataque_preciso": [
+    {
+      "tipo": "poder",
+      "id": "estilo_de_uma_arma"
+    }
+  ],
+  "bloqueio_com_escudo": [
+    {
+      "tipo": "poder",
+      "id": "estilo_de_arma_e_escudo"
+    }
+  ],
+  "bravura_indomita": [
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Vontade"
+    }
+  ],
+  "briga_de_rua": [
+    {
+      "tipo": "poder",
+      "id": "briga",
+      "alternativa": "estilo_desarmado"
+    }
+  ],
+  "carga_de_cavalaria": [
+    {
+      "tipo": "poder",
+      "id": "ginete"
+    }
+  ],
+  "catafractario": [
+    {
+      "tipo": "poder",
+      "id": "encouracado"
+    },
+    {
+      "tipo": "poder",
+      "id": "ginete"
+    }
+  ],
+  "chuva_de_golpes": [
+    {
+      "tipo": "poder",
+      "id": "briga",
+      "alternativa": "estilo_desarmado"
+    },
+    {
+      "tipo": "poder",
+      "id": "estilo_de_duas_armas"
+    }
+  ],
+  "combate_defensivo": [
+    {
+      "tipo": "atributo",
+      "atributo": "int",
+      "valor": 1
+    }
+  ],
+  "contra_ataque": [
+    {
+      "tipo": "poder",
+      "id": "combate_defensivo"
+    }
+  ],
+  "coragem_aguerrida": [
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Vontade"
+    }
+  ],
+  "corte_lacerante": [
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Luta"
+    }
+  ],
+  "defesa_armada": [
+    {
+      "tipo": "poder",
+      "id": "estilo_de_duas_maos"
+    }
+  ],
+  "derrubar_aprimorado": [
+    {
+      "tipo": "poder",
+      "id": "combate_defensivo"
+    }
+  ],
+  "desarmar_aprimorado": [
+    {
+      "tipo": "poder",
+      "id": "combate_defensivo"
+    }
+  ],
+  "disparo_preciso": [
+    {
+      "tipo": "poder",
+      "id": "estilo_de_disparo"
+    }
+  ],
+  "disparo_rapido": [
+    {
+      "tipo": "atributo",
+      "atributo": "des",
+      "valor": 1
+    },
+    {
+      "tipo": "poder",
+      "id": "estilo_de_disparo"
+    }
+  ],
+  "empunhadura_poderosa": [
+    {
+      "tipo": "atributo",
+      "atributo": "for",
+      "valor": 3
+    }
+  ],
+  "encastelado": [
+    {
+      "tipo": "poder",
+      "id": "encouracado"
+    },
+    {
+      "tipo": "nivel",
+      "valor": 5
+    }
+  ],
+  "encouracado": [
+    {
+      "tipo": "proficiencia",
+      "valor": "armaduras_pesadas"
+    }
+  ],
+  "escudo_heroico": [
+    {
+      "tipo": "poder",
+      "id": "ataque_com_escudo"
+    }
+  ],
+  "esquiva": [
+    {
+      "tipo": "atributo",
+      "atributo": "des",
+      "valor": 1
+    }
+  ],
+  "estilo_desarmado": [
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Luta"
+    }
+  ],
+  "estilo_de_arma_e_escudo": [
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Luta"
+    },
+    {
+      "tipo": "proficiencia",
+      "valor": "escudos"
+    }
+  ],
+  "estilo_de_arma_longa": [
+    {
+      "tipo": "atributo",
+      "atributo": "for",
+      "valor": 1
+    },
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Luta"
+    }
+  ],
+  "estilo_de_arremesso": [
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Pontaria"
+    }
+  ],
+  "estilo_de_disparo": [
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Pontaria"
+    }
+  ],
+  "estilo_de_duas_armas": [
+    {
+      "tipo": "atributo",
+      "atributo": "des",
+      "valor": 2
+    },
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Luta"
+    }
+  ],
+  "estilo_de_duas_maos": [
+    {
+      "tipo": "atributo",
+      "atributo": "for",
+      "valor": 2
+    },
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Luta"
+    }
+  ],
+  "estilo_de_uma_arma": [
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Luta"
+    }
+  ],
+  "estocada_pungente": [
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Luta"
+    }
+  ],
+  "estudar_o_adversario": [
+    {
+      "tipo": "atributo",
+      "atributo": "int",
+      "valor": 1
+    }
+  ],
+  "fanatico": [
+    {
+      "tipo": "nivel",
+      "valor": 12
+    },
+    {
+      "tipo": "poder",
+      "id": "encouracado"
+    }
+  ],
+  "finta_aprimorada": [
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Enganação"
+    }
+  ],
+  "foco_em_arma": [
+    {
+      "tipo": "proficiencia",
+      "descricao": "proficiência com a arma escolhida"
+    }
+  ],
+  "ginete": [
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Cavalgar"
+    }
+  ],
+  "inexpugnavel": [
+    {
+      "tipo": "poder",
+      "id": "encouracado"
+    },
+    {
+      "tipo": "nivel",
+      "valor": 6
+    }
+  ],
+  "matador_de_monstros": [
+    {
+      "tipo": "nivel",
+      "valor": 5
+    }
+  ],
+  "mira_apurada": [
+    {
+      "tipo": "atributo",
+      "atributo": "sab",
+      "valor": 1
+    },
+    {
+      "tipo": "poder",
+      "id": "disparo_preciso"
+    }
+  ],
+  "mobilidade": [
+    {
+      "tipo": "poder",
+      "id": "esquiva"
+    }
+  ],
+  "na_mosca": [
+    {
+      "tipo": "poder",
+      "id": "estilo_de_arremesso",
+      "alternativa": "estilo_de_disparo"
+    }
+  ],
+  "pancada_estonteante": [
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Luta"
+    }
+  ],
+  "piqueiro": [
+    {
+      "tipo": "poder",
+      "id": "estilo_de_arma_longa"
+    }
+  ],
+  "precisao_letal": [
+    {
+      "tipo": "nivel",
+      "valor": 11
+    }
+  ],
+  "presenca_aterradora": [
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Intimidação"
+    }
+  ],
+  "quebrar_aprimorado": [
+    {
+      "tipo": "poder",
+      "id": "ataque_poderoso"
+    }
+  ],
+  "reflexos_de_combate": [
+    {
+      "tipo": "atributo",
+      "atributo": "des",
+      "valor": 1
+    }
+  ],
+  "saque_rapido": [
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Iniciativa"
+    }
+  ],
+  "sentinela_implacavel": [
+    {
+      "tipo": "atributo",
+      "atributo": "sab",
+      "valor": 1
+    },
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Iniciativa"
+    },
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Percepção"
+    },
+    {
+      "tipo": "poder",
+      "id": "estilo_de_disparo"
+    }
+  ],
+  "trespassar": [
+    {
+      "tipo": "poder",
+      "id": "ataque_poderoso"
+    }
+  ],
+  "truque_da_mao_lesta": [
+    {
+      "tipo": "poder",
+      "id": "estilo_de_uma_arma"
+    }
+  ],
+  "vitalidade": [
+    {
+      "tipo": "atributo",
+      "atributo": "con",
+      "valor": 1
+    }
+  ],
+  "abraco_da_fenix": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de thyatis",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "adaga_noturna": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de tenebra",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "afinidade_com_a_tormenta": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de aharadak",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "alimentar_se_do_pavor": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de kallyadranoch ou megalokk",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "alma_de_mudanca": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de thwor ou valkaria",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "almejar_o_impossivel": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de thwor ou valkaria",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "andarilho_carregado": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de valkaria",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "anfibio": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de oceano",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "apostar_com_o_trapaceiro": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de hyninn",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "armadilha_divina": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de hyninn",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "armadura_de_ossos": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de tenebra",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "armas_da_ambicao": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de valkaria",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "armas_da_destruicao": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de arsenal",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "armas_da_selvageria": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de megalokk",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "arsenal_das_profundezas": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de oceano",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "astucia_da_serpente": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de sszzaas",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "ataque_piedoso": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de lena ou thyatis",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "aura_de_medo": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de kallyadranoch",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "aura_de_paz": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de marah",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "aura_restauradora": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de lena",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "aventureiro_inquieto": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de valkaria",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "a_ferramenta_certa": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de hyninn",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "baforada_draconica": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de kallyadranoch",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "barreira_de_coral": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de oceano",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "belo_presente": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de wynna",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "bencao_do_mana": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de wynna",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "biblioteca_divina": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de tanna_toh",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "cancioneiro_da_esperanca": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de marah",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "caricia_sombria": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de tenebra",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "centelha_magica": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de wynna",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "cerimonialista_divino": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de lin_wu",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "chamado_monstruoso": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de megalokk",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "companheiro_celeste": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de lena ou marah",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "companheiro_silvestre": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de allihanna",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "compreender_os_ermos": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de allihanna",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "conhecimento_enciclopedico": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de tanna_toh",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "conjurar_arma": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de arsenal",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "convicao_ambiciosa": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de valkaria",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "coragem_total": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de arsenal ou khalmyr ou lin_wu ou valkaria",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "corromper_equipamento": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de aharadak",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "curandeira_perfeita": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de lena",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "curar_o_espirito": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de lena",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "cura_gentil": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de lena",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "dedo_verde": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de allihanna",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "descanso_natural": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de allihanna",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "discurso_conciliador": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de marah",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "dom_da_esperanca": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de marah",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "dom_da_furtividade": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de hyninn",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "dom_da_imortalidade": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de thyatis",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "dom_da_profecia": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de thyatis",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "dom_da_ressurreicao": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de thyatis",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "dom_da_verdade": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de khalmyr",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "dom_da_vontade": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de khalmyr",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "dom_dos_segredos": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de sszzaas",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "egide_dos_mares": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de oceano",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "escamas_draconicas": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de kallyadranoch",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "escudo_magico": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de wynna",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "espada_justiceira": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de khalmyr",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "espada_solar": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de azgher",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "espalhar_a_corrupcao": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de aharadak",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "espirito_animal": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de allihanna",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "espirito_do_conhecimento": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de tanna_toh",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "estouro_da_trobada": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de allihanna",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "exaltar_honra": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de lin_wu",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "expurgar_a_derrota": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de arsenal",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "extase_da_loucura": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de aharadak ou nimb",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "familiar_elemental": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de wynna",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "familiar_ofidico": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de sszzaas",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "farsa_do_fingidor": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de hyninn",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "ferramentas_da_guerra": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de arsenal",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "fe_guerreira": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de arsenal",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "forma_de_macaco": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de hyninn",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "fulgor_solar": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de azgher",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "furia_divina": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de thwor",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "golpe_semantico": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de tanna_toh",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "golpe_tempestuoso": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de oceano",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "golpista_divino": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de hyninn",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "habitante_do_deserto": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de azgher",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "imolacao_sagrada": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de azgher ou thyatis",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "inimigo_de_tenebra": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de azgher",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "jubilo_na_dor": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de aharadak",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "jurista_divino": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de lin_wu ou khalmyr",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "kiai_divino": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de lin_wu",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "liberdade_divina": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de valkaria",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "magia_caotica": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de nimb",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "magia_piedosa": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de lena ou thyatis",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "magia_venenosa": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de sszzaas",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "manto_ardiloso": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de sszzaas",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "manto_da_penumbra": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de tenebra",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "mar_revolto": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de oceano",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "mediador_da_tempestade": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de aharadak",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "mente_analitica": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de tanna_toh",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "mente_vazia": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de lin_wu",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "mestre_de_si": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de lin_wu",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "mestre_dos_mares": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de oceano",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "mordida_de_vibora": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de sszzaas",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "navegador_sagrado": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de oceano",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "nimb": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de nimb",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "olhar_amedrontador": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de megalokk ou thwor",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "o_dobro_ou_nada": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de hyninn ou nimb",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "o_futuro_que_vier_disso": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de thwor",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "o_sol_que_nos_aquece": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de allihanna ou azgher",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "palavras_de_bondade": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de marah",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "palavra_de_poder": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de tanna_toh",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "passo_sombrio": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de tenebra",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "perceber_farsas": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de tanna_toh",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "percepcao_temporal": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de aharadak",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "pesquisa_abencoada": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de tanna_toh",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "pilar_de_heredrimm": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de khalmyr",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "poder_do_vinculo": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de wynna",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "poder_oculto": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de nimb",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "poder_sem_limites": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de kallyadranoch",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "presas_primordiais": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de kallyadranoch ou megalokk",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "presas_venenosas": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de sszzaas",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "proeminencia_solar": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de azgher",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "quebrar_encanto": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de khalmyr",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "redirecionar_destino": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de thyatis",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "rejeicao_divina": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de aharadak",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "remorso_do_belicista": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de marah",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "reparar_injustica": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de khalmyr",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "resplendor_divino": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de azgher",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "sangue_de_ferro": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de arsenal",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "sangue_ofidico": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de sszzaas",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "saque_celestial": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de lin_wu",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "servos_do_dragao": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de kallyadranoch",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "sopro_do_mar": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de oceano",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "sorte_dos_loucos": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de nimb",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "sorvo_de_mana": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de wynna",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "so_os_loucos_sabem": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de nimb",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "talento_artistico": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de marah",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "temor_arcano": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de kallyadranoch",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "terror_profundo": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de kallyadranoch ou megalokk ou thwor",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "teurgista_mistico": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de wynna",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "toque_de_nao_vida": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de tenebra",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "tradicao_de_lin_wu": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de lin_wu",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "transbordar_cura": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de lena",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "transmissao_da_loucura": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de nimb",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "trilha_desimpedida": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de allihanna",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "tropas_duyshidakk": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de thwor",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "urro_divino": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de megalokk",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "ushultt": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de thwor",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "visao_nas_trevas": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de tenebra",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "vitoria_a_qualquer_custo": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de arsenal",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "voz_da_civilizacao": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de tanna_toh",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "voz_da_natureza": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de allihanna",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "voz_dos_monstros": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de megalokk",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "zumbificar": [
+    {
+      "tipo": "outro",
+      "valor": "devoto de tenebra",
+      "atributo_chave_poder": "sab"
+    }
+  ],
+  "acrobatico": [
+    {
+      "tipo": "atributo",
+      "atributo": "des",
+      "valor": 2
+    }
+  ],
+  "ao_sabor_do_destino": [
+    {
+      "tipo": "nivel",
+      "valor": 6
+    }
+  ],
+  "aparencia_inofensiva": [
+    {
+      "tipo": "atributo",
+      "atributo": "car",
+      "valor": 1
+    }
+  ],
+  "atletico": [
+    {
+      "tipo": "atributo",
+      "atributo": "for",
+      "valor": 2
+    }
+  ],
+  "atraente": [
+    {
+      "tipo": "atributo",
+      "atributo": "car",
+      "valor": 1
+    }
+  ],
+  "caricias_revigorantes": [
+    {
+      "tipo": "atributo",
+      "atributo": "car",
+      "valor": 2
+    },
+    {
+      "tipo": "poder",
+      "id": "seducao_lasciva"
+    }
+  ],
+  "comandar": [
+    {
+      "tipo": "atributo",
+      "atributo": "car",
+      "valor": 1
+    }
+  ],
+  "costas_largas": [
+    {
+      "tipo": "atributo",
+      "atributo": "con",
+      "valor": 1
+    },
+    {
+      "tipo": "atributo",
+      "atributo": "for",
+      "valor": 1
+    }
+  ],
+  "foco_em_pericia": [
+    {
+      "tipo": "pericia_treinada",
+      "descricao": "treinado na perícia escolhida"
+    }
+  ],
+  "grandao": [
+    {
+      "tipo": "atributo",
+      "atributo": "con",
+      "valor": 2
+    }
+  ],
+  "impostor": [
+    {
+      "tipo": "atributo",
+      "atributo": "car",
+      "valor": 3
+    },
+    {
+      "tipo": "poder",
+      "id": "foco_em_pericia",
+      "detalhe": "Enganação"
+    }
+  ],
+  "inventario_organizado": [
+    {
+      "tipo": "atributo",
+      "atributo": "int",
+      "valor": 1
+    }
+  ],
+  "investigador": [
+    {
+      "tipo": "atributo",
+      "atributo": "int",
+      "valor": 1
+    }
+  ],
+  "lideranca_inspiradora": [
+    {
+      "tipo": "atributo",
+      "atributo": "car",
+      "valor": 1
+    }
+  ],
+  "medicina": [
+    {
+      "tipo": "atributo",
+      "atributo": "sab",
+      "valor": 1
+    },
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Cura"
+    }
+  ],
+  "meditacao_autoafirmativa": [
+    {
+      "tipo": "atributo",
+      "atributo": "sab",
+      "valor": 1
+    },
+    {
+      "tipo": "atributo",
+      "atributo": "car",
+      "valor": 1
+    },
+    {
+      "tipo": "nivel",
+      "valor": 5
+    }
+  ],
+  "parceiro": [
+    {
+      "tipo": "pericia_treinada",
+      "descricao": "Adestramento (animal) ou Diplomacia (humanoide)"
+    },
+    {
+      "tipo": "nivel",
+      "valor": 5
+    }
+  ],
+  "pose_assustadora": [
+    {
+      "tipo": "atributo",
+      "atributo": "car",
+      "valor": 1
+    },
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Intimidação"
+    }
+  ],
+  "seducao_lasciva": [
+    {
+      "tipo": "atributo",
+      "atributo": "car",
+      "valor": 1
+    },
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Enganação"
+    }
+  ],
+  "sentidos_agucados": [
+    {
+      "tipo": "atributo",
+      "atributo": "sab",
+      "valor": 1
+    },
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Percepção"
+    }
+  ],
+  "torcida": [
+    {
+      "tipo": "atributo",
+      "atributo": "car",
+      "valor": 1
+    }
+  ],
+  "venefico": [
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Ofício (alquimista)"
+    }
+  ],
+  "ventriloquismo": [
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Atuação"
+    },
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Enganação"
+    }
+  ],
+  "vontade_de_ferro": [
+    {
+      "tipo": "atributo",
+      "atributo": "sab",
+      "valor": 1
+    }
+  ],
+  "golpe_pessoal_perto_da_morte": [
+    {
+      "tipo": "outro",
+      "descricao": "Você está com 1/4 dos PV ou menos."
+    }
+  ],
+  "golpe_pessoal_ricocheteante": [
+    {
+      "tipo": "outro",
+      "descricao": "Apenas com armas de arremesso."
+    }
+  ],
+  "barreira_mistica": [
+    {
+      "tipo": "outro",
+      "valor": "lançar magias"
+    }
+  ],
+  "celebrar_ritual": [
+    {
+      "tipo": "outro",
+      "valor": "lançar magias"
+    },
+    {
+      "tipo": "pericia_treinada",
+      "descricao": "Misticismo ou Religião"
+    },
+    {
+      "tipo": "nivel",
+      "valor": 8
+    }
+  ],
+  "encantar_itens_maiores": [
+    {
+      "tipo": "outro",
+      "valor": "lançar magias de 5º círculo"
+    },
+    {
+      "tipo": "poder",
+      "id": "encantar_itens_medios"
+    }
+  ],
+  "encantar_itens_medios": [
+    {
+      "tipo": "outro",
+      "valor": "lançar magias de 4º círculo"
+    },
+    {
+      "tipo": "poder",
+      "id": "encantar_itens_menores"
+    }
+  ],
+  "encantar_itens_menores": [
+    {
+      "tipo": "outro",
+      "valor": "lançar magias de 3º círculo"
+    },
+    {
+      "tipo": "pericia_treinada",
+      "descricao": "Misticismo ou Religião"
+    }
+  ],
+  "escrever_pergaminho": [
+    {
+      "tipo": "outro",
+      "valor": "habilidade de classe Magias"
+    },
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Ofício (escriba)"
+    }
+  ],
+  "esoterismo": [
+    {
+      "tipo": "outro",
+      "valor": "lançar magias de 2º círculo"
+    }
+  ],
+  "especializacao_em_magia": [
+    {
+      "tipo": "poder",
+      "id": "foco_em_magia",
+      "detalhe": "com a magia escolhida"
+    }
+  ],
+  "estilo_esoterico": [
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Luta"
+    },
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Misticismo"
+    },
+    {
+      "tipo": "nivel",
+      "valor": 5
+    }
+  ],
+  "explosao_fulgente": [
+    {
+      "tipo": "outro",
+      "valor": "lançar magias"
+    }
+  ],
+  "foco_em_magia": [
+    {
+      "tipo": "habilidade_classe",
+      "valor": [
+        "magias_arcanista",
+        "magias_bardo",
+        "magias_clerigo",
+        "magias_druida"
+      ]
+    }
+  ],
+  "genese_elemental": [
+    {
+      "tipo": "outro",
+      "valor": "lançar magias de 2º círculo"
+    }
+  ],
+  "magia_acelerada": [
+    {
+      "tipo": "outro",
+      "valor": "lançar magias de 2º círculo"
+    }
+  ],
+  "magia_ampliada": [
+    {
+      "tipo": "outro",
+      "valor": "lançar magias"
+    }
+  ],
+  "magia_discreta": [
+    {
+      "tipo": "outro",
+      "valor": "lançar magias"
+    }
+  ],
+  "magia_dividida": [
+    {
+      "tipo": "outro",
+      "valor": "lançar magias de 2º círculo"
+    }
+  ],
+  "magia_ilimitada": [
+    {
+      "tipo": "outro",
+      "valor": "lançar magias"
+    }
+  ],
+  "preparar_pocao": [
+    {
+      "tipo": "outro",
+      "valor": "habilidade de classe Magias"
+    },
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Ofício (alquimista)"
+    }
+  ],
+  "afinidade_elemental_agua": [
+    {
+      "tipo": "raca",
+      "valor": "duende"
+    }
+  ],
+  "afinidade_elemental_fogo": [
+    {
+      "tipo": "raca",
+      "valor": "duende"
+    }
+  ],
+  "afinidade_elemental_vegetacao": [
+    {
+      "tipo": "raca",
+      "valor": "duende"
+    }
+  ],
+  "ajudante_nato": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": "qareen"
+    }
+  ],
+  "amo": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": "qareen"
+    }
+  ],
+  "amontoados_kobolds": [
+    {
+      "tipo": "raca",
+      "valor": "kobold"
+    }
+  ],
+  "armadilha_terrivel_kobolds": [
+    {
+      "tipo": "raca",
+      "valor": "kobold"
+    }
+  ],
+  "arma_amada": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "anao",
+        "hobgoblin"
+      ]
+    }
+  ],
+  "arma_natural_aprimorada": [
+    {
+      "tipo": "outro",
+      "valor": "arma natural fornecida por habilidade de raça"
+    }
+  ],
+  "arma_natural_habil": [
+    {
+      "tipo": "outro",
+      "valor": "arma natural fornecida por habilidade de raça"
+    }
+  ],
+  "arquearia_elfica": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": "elfo"
+    }
+  ],
+  "arsenal_de_lisandra": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": "dahllan"
+    }
+  ],
+  "asas_de_aco": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "harpia",
+        "kallyanach",
+        "pteros",
+        "suraggel"
+      ]
+    },
+    {
+      "tipo": "outro",
+      "valor": "possuir asas"
+    }
+  ],
+  "asas_extraplanares": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": "suraggel"
+    }
+  ],
+  "atracao_pela_polvora": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "anao",
+        "goblin",
+        "hobgoblin",
+        "kliren"
+      ]
+    },
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Ofício (alquimista)"
+    }
+  ],
+  "bencao_draconica_armamento_kallyanach": [
+    {
+      "tipo": "raca",
+      "valor": "kallyanach"
+    },
+    {
+      "tipo": "outro",
+      "subtipo": "limite_por_patamar",
+      "valor": "Bênção Dracônica",
+      "descricao": "Limite de uma escolha por patamar de nível (Bênção Dracônica)"
+    }
+  ],
+  "bencao_draconica_asas_draconicas": [
+    {
+      "tipo": "raca",
+      "valor": "kallyanach"
+    },
+    {
+      "tipo": "outro",
+      "subtipo": "limite_por_patamar",
+      "valor": "Bênção Dracônica",
+      "descricao": "Limite de uma escolha por patamar de nível (Bênção Dracônica)"
+    }
+  ],
+  "bencao_draconica_escamas_elementais": [
+    {
+      "tipo": "raca",
+      "valor": "kallyanach"
+    },
+    {
+      "tipo": "outro",
+      "subtipo": "limite_por_patamar",
+      "valor": "Bênção Dracônica",
+      "descricao": "Limite de uma escolha por patamar de nível (Bênção Dracônica)"
+    }
+  ],
+  "bencao_draconica_pratica_arcana": [
+    {
+      "tipo": "raca",
+      "valor": "kallyanach"
+    },
+    {
+      "tipo": "outro",
+      "subtipo": "limite_por_patamar",
+      "valor": "Bênção Dracônica",
+      "descricao": "Limite de uma escolha por patamar de nível (Bênção Dracônica)"
+    }
+  ],
+  "bencao_draconica_sentidos_draconicos": [
+    {
+      "tipo": "raca",
+      "valor": "kallyanach"
+    },
+    {
+      "tipo": "outro",
+      "subtipo": "limite_por_patamar",
+      "valor": "Bênção Dracônica",
+      "descricao": "Limite de uma escolha por patamar de nível (Bênção Dracônica)"
+    }
+  ],
+  "bencao_draconica_sopro_de_dragao": [
+    {
+      "tipo": "raca",
+      "valor": "kallyanach"
+    },
+    {
+      "tipo": "outro",
+      "subtipo": "limite_por_patamar",
+      "valor": "Bênção Dracônica",
+      "descricao": "Limite de uma escolha por patamar de nível (Bênção Dracônica)"
+    }
+  ],
+  "camuflagem_mimetica": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "sereia_tritao",
+        "trog"
+      ]
+    }
+  ],
+  "canto_da_sereia": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "sereia_tritao"
+      ]
+    }
+  ],
+  "cascos_poderosos": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "centauro",
+        "minotauro",
+        "satiro"
+      ]
+    }
+  ],
+  "chassi_gracioso": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "golem"
+      ]
+    }
+  ],
+  "citadino": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "humano",
+        "hynne",
+        "kliren",
+        "meio_elfo"
+      ]
+    }
+  ],
+  "comandar_aprimorado": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "humano"
+      ]
+    },
+    {
+      "tipo": "atributo",
+      "atributo": "car",
+      "valor": 2
+    },
+    {
+      "tipo": "poder",
+      "id": "comandar"
+    }
+  ],
+  "conforto_do_aco": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "anao"
+      ]
+    }
+  ],
+  "constricao_atroz": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "dahllan"
+      ]
+    }
+  ],
+  "coracao_de_pedra": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "anao",
+        "medusa"
+      ]
+    }
+  ],
+  "coro_sibilante": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "medusa"
+      ]
+    }
+  ],
+  "crescimento_feerico": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "duende",
+        "silfide"
+      ]
+    }
+  ],
+  "crianca_das_trevas": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "sulfure"
+      ]
+    }
+  ],
+  "crianca_da_luz": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "aggelus"
+      ]
+    }
+  ],
+  "devocao_iluminada": [
+    {
+      "tipo": "outro",
+      "valor": "sensibilidade a luz como habilidade racial"
+    },
+    {
+      "tipo": "outro",
+      "valor": "devoto de divindade que canalize energia positiva"
+    }
+  ],
+  "diferentao_kobolds": [
+    {
+      "tipo": "raca",
+      "valor": "kobold"
+    }
+  ],
+  "duas_cabecas": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "gnoll",
+        "kaijin",
+        "lefou",
+        "orc",
+        "trog"
+      ]
+    }
+  ],
+  "dupla_conjuracao": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "gnoll",
+        "kaijin",
+        "lefou",
+        "orc",
+        "trog"
+      ]
+    },
+    {
+      "tipo": "atributo",
+      "atributo": "des",
+      "valor": 2
+    },
+    {
+      "tipo": "outro",
+      "valor": "lançar magias"
+    },
+    {
+      "tipo": "poder",
+      "id": "dupla_inteligencia"
+    }
+  ],
+  "dupla_inteligencia": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "gnoll",
+        "kaijin",
+        "lefou",
+        "orc",
+        "trog"
+      ]
+    },
+    {
+      "tipo": "atributo",
+      "atributo": "int",
+      "valor": 2
+    },
+    {
+      "tipo": "poder",
+      "id": "duas_cabecas"
+    }
+  ],
+  "dupla_prontidao": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "gnoll",
+        "kaijin",
+        "lefou",
+        "orc",
+        "trog"
+      ]
+    },
+    {
+      "tipo": "atributo",
+      "atributo": "sab",
+      "valor": 2
+    },
+    {
+      "tipo": "poder",
+      "id": "duas_cabecas"
+    }
+  ],
+  "duro_como_aco": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "anao"
+      ]
+    },
+    {
+      "tipo": "nivel",
+      "valor": 11
+    }
+  ],
+  "encantar_objetos": [
+    {
+      "tipo": "raca",
+      "valor": "duende"
+    }
+  ],
+  "enfeiticar": [
+    {
+      "tipo": "raca",
+      "valor": "duende"
+    }
+  ],
+  "entre_as_pernas": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "goblin",
+        "hynne",
+        "kobolds"
+      ]
+    },
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Acrobacia"
+    }
+  ],
+  "escapada_criativa": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "goblin",
+        "meio_elfo"
+      ]
+    }
+  ],
+  "esgrima_elfica": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "elfo"
+      ]
+    }
+  ],
+  "estilo_classico": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "humano"
+      ]
+    }
+  ],
+  "estirpe_arcana": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "elfo",
+        "eiradaan",
+        "nagah"
+      ]
+    }
+  ],
+  "exaltacao_do_rejeitado": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "kaijin",
+        "lefou"
+      ]
+    },
+    {
+      "tipo": "outro",
+      "valor": "lançar magias divinas"
+    }
+  ],
+  "explosao_ossea": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "osteon"
+      ]
+    }
+  ],
+  "ex_familiar_kobolds": [
+    {
+      "tipo": "raca",
+      "valor": "kobold"
+    }
+  ],
+  "falatorio_criativo": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "goblin"
+      ]
+    }
+  ],
+  "familiar_de_elemento": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "qareen"
+      ]
+    },
+    {
+      "tipo": "outro",
+      "valor": "possuir um familiar"
+    }
+  ],
+  "familiar_de_luz": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "aggelus",
+        "qareen"
+      ]
+    },
+    {
+      "tipo": "outro",
+      "valor": "possuir um familiar"
+    }
+  ],
+  "familiar_de_trevas": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "sulfure",
+        "qareen"
+      ]
+    },
+    {
+      "tipo": "outro",
+      "valor": "possuir um familiar"
+    }
+  ],
+  "faro_aprimorado": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "minotauro",
+        "moreau_lobo"
+      ]
+    }
+  ],
+  "fragrancia_de_rosas": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "dahllan",
+        "duende"
+      ]
+    }
+  ],
+  "furia_aterrorizante": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "galokk",
+        "ogro"
+      ]
+    },
+    {
+      "tipo": "poder",
+      "id": "furia"
+    }
+  ],
+  "furia_natural": [
+    {
+      "tipo": "poder",
+      "id": "furia"
+    },
+    {
+      "tipo": "outro",
+      "valor": "arma natural por habilidade racial"
+    }
+  ],
+  "gavinhas": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "dahllan"
+      ]
+    },
+    {
+      "tipo": "nivel",
+      "valor": 5
+    }
+  ],
+  "ginete_de_javali": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "anao"
+      ]
+    }
+  ],
+  "glamour": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "duende",
+        "eiradaan",
+        "silfide"
+      ]
+    }
+  ],
+  "glamour_maior": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "duende",
+        "eiradaan",
+        "silfide"
+      ]
+    },
+    {
+      "tipo": "poder",
+      "id": "glamour"
+    },
+    {
+      "tipo": "nivel",
+      "valor": 5
+    }
+  ],
+  "golpe_dos_titas": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "galokk"
+      ]
+    }
+  ],
+  "golpe_no_joelho": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "goblin",
+        "hynne",
+        "kobolds"
+      ]
+    },
+    {
+      "tipo": "poder",
+      "id": "entre_as_pernas"
+    }
+  ],
+  "grande_marca_de_wynna": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "qareen"
+      ]
+    }
+  ],
+  "heranca_erudita": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "eiradaan",
+        "elfo",
+        "kallyanach"
+      ]
+    }
+  ],
+  "invisibilidade": [
+    {
+      "tipo": "raca",
+      "valor": "duende"
+    }
+  ],
+  "lingua_da_natureza": [
+    {
+      "tipo": "raca",
+      "valor": "duende"
+    }
+  ],
+  "logica_gnomica": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "kliren"
+      ]
+    }
+  ],
+  "magia_ofidica": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "medusa",
+        "moreau_serpente",
+        "nagah"
+      ]
+    },
+    {
+      "tipo": "outro",
+      "valor": "lançar magias"
+    }
+  ],
+  "mais_la_do_que_aqui": [
+    {
+      "tipo": "raca",
+      "valor": "duende"
+    }
+  ],
+  "maldicao": [
+    {
+      "tipo": "raca",
+      "valor": "duende"
+    }
+  ],
+  "manipulacao_esqueletica": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "osteon"
+      ]
+    }
+  ],
+  "maravilha_mecanica_adaptacao_elemental": [
+    {
+      "tipo": "raca",
+      "valor": "golem_desperto"
+    },
+    {
+      "tipo": "outro",
+      "subtipo": "chassi",
+      "valor": "mashin",
+      "descricao": "Chassi: mashin"
+    },
+    {
+      "tipo": "outro",
+      "subtipo": "limite_por_patamar",
+      "valor": "Maravilha Mecânica",
+      "descricao": "Limite de uma escolha por patamar de nível (Maravilha Mecânica)"
+    }
+  ],
+  "maravilha_mecanica_arma_acoplada": [
+    {
+      "tipo": "raca",
+      "valor": "golem_desperto"
+    },
+    {
+      "tipo": "outro",
+      "subtipo": "chassi",
+      "valor": "mashin",
+      "descricao": "Chassi: mashin"
+    },
+    {
+      "tipo": "outro",
+      "subtipo": "limite_por_patamar",
+      "valor": "Maravilha Mecânica",
+      "descricao": "Limite de uma escolha por patamar de nível (Maravilha Mecânica)"
+    }
+  ],
+  "maravilha_mecanica_arma_elemental": [
+    {
+      "tipo": "raca",
+      "valor": "golem_desperto"
+    },
+    {
+      "tipo": "outro",
+      "subtipo": "chassi",
+      "valor": "mashin",
+      "descricao": "Chassi: mashin"
+    },
+    {
+      "tipo": "outro",
+      "subtipo": "limite_por_patamar",
+      "valor": "Maravilha Mecânica",
+      "descricao": "Limite de uma escolha por patamar de nível (Maravilha Mecânica)"
+    },
+    {
+      "tipo": "narrativo",
+      "descricao": "Fonte de Energia (elemental)"
+    }
+  ],
+  "maravilha_mecanica_auxilio_de_mira": [
+    {
+      "tipo": "raca",
+      "valor": "golem_desperto"
+    },
+    {
+      "tipo": "outro",
+      "subtipo": "chassi",
+      "valor": "mashin",
+      "descricao": "Chassi: mashin"
+    },
+    {
+      "tipo": "outro",
+      "subtipo": "limite_por_patamar",
+      "valor": "Maravilha Mecânica",
+      "descricao": "Limite de uma escolha por patamar de nível (Maravilha Mecânica)"
+    }
+  ],
+  "maravilha_mecanica_caminho_da_perfeicao": [
+    {
+      "tipo": "raca",
+      "valor": "golem_desperto"
+    },
+    {
+      "tipo": "outro",
+      "subtipo": "chassi",
+      "valor": "mashin",
+      "descricao": "Chassi: mashin"
+    },
+    {
+      "tipo": "outro",
+      "subtipo": "limite_por_patamar",
+      "valor": "Maravilha Mecânica",
+      "descricao": "Limite de uma escolha por patamar de nível (Maravilha Mecânica)"
+    }
+  ],
+  "maravilha_mecanica_canalizar_reparos": [
+    {
+      "tipo": "raca",
+      "valor": "golem_desperto"
+    },
+    {
+      "tipo": "outro",
+      "subtipo": "chassi",
+      "valor": "mashin",
+      "descricao": "Chassi: mashin"
+    },
+    {
+      "tipo": "outro",
+      "subtipo": "limite_por_patamar",
+      "valor": "Maravilha Mecânica",
+      "descricao": "Limite de uma escolha por patamar de nível (Maravilha Mecânica)"
+    }
+  ],
+  "maravilha_mecanica_canhao_energetico": [
+    {
+      "tipo": "raca",
+      "valor": "golem_desperto"
+    },
+    {
+      "tipo": "outro",
+      "subtipo": "chassi",
+      "valor": "mashin",
+      "descricao": "Chassi: mashin"
+    },
+    {
+      "tipo": "outro",
+      "subtipo": "limite_por_patamar",
+      "valor": "Maravilha Mecânica",
+      "descricao": "Limite de uma escolha por patamar de nível (Maravilha Mecânica)"
+    },
+    {
+      "tipo": "narrativo",
+      "descricao": "Maravilha Mecânica: Arma Acoplada"
+    }
+  ],
+  "maravilha_mecanica_dinamo_de_mana": [
+    {
+      "tipo": "raca",
+      "valor": "golem_desperto"
+    },
+    {
+      "tipo": "outro",
+      "subtipo": "chassi",
+      "valor": "mashin",
+      "descricao": "Chassi: mashin"
+    },
+    {
+      "tipo": "outro",
+      "subtipo": "limite_por_patamar",
+      "valor": "Maravilha Mecânica",
+      "descricao": "Limite de uma escolha por patamar de nível (Maravilha Mecânica)"
+    }
+  ],
+  "maravilha_mecanica_pernas_aprimoradas": [
+    {
+      "tipo": "raca",
+      "valor": "golem_desperto"
+    },
+    {
+      "tipo": "outro",
+      "subtipo": "chassi",
+      "valor": "mashin",
+      "descricao": "Chassi: mashin"
+    },
+    {
+      "tipo": "outro",
+      "subtipo": "limite_por_patamar",
+      "valor": "Maravilha Mecânica",
+      "descricao": "Limite de uma escolha por patamar de nível (Maravilha Mecânica)"
+    }
+  ],
+  "maravilha_mecanica_reservatorio_alquimico": [
+    {
+      "tipo": "raca",
+      "valor": "golem_desperto"
+    },
+    {
+      "tipo": "outro",
+      "subtipo": "chassi",
+      "valor": "mashin",
+      "descricao": "Chassi: mashin"
+    },
+    {
+      "tipo": "outro",
+      "subtipo": "limite_por_patamar",
+      "valor": "Maravilha Mecânica",
+      "descricao": "Limite de uma escolha por patamar de nível (Maravilha Mecânica)"
+    },
+    {
+      "tipo": "narrativo",
+      "descricao": "Fonte de Energia (alquímica)"
+    }
+  ],
+  "marrada_poderosa": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "minotauro",
+        "satiro"
+      ]
+    }
+  ],
+  "meditacao_mistica": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "eiradaan",
+        "elfo"
+      ]
+    },
+    {
+      "tipo": "atributo",
+      "atributo": "sab",
+      "valor": 1
+    },
+    {
+      "tipo": "pericia_treinada",
+      "valor": "Vontade"
+    }
+  ],
+  "metamorfose_animal": [
+    {
+      "tipo": "raca",
+      "valor": "duende"
+    }
+  ],
+  "olhar_petrificante": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "medusa"
+      ]
+    },
+    {
+      "tipo": "nivel",
+      "valor": 9
+    }
+  ],
+  "organizadinhos_kobolds": [
+    {
+      "tipo": "raca",
+      "valor": "kobold"
+    }
+  ],
+  "ossos_afiados": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "osteon"
+      ]
+    }
+  ],
+  "os_do_fundo_kobolds": [
+    {
+      "tipo": "raca",
+      "valor": "kobold"
+    },
+    {
+      "tipo": "poder",
+      "id": "organizadinhos_kobolds"
+    }
+  ],
+  "o_ousado_kobolds": [
+    {
+      "tipo": "raca",
+      "valor": "kobold"
+    }
+  ],
+  "pestes_oportunistas_kobolds": [
+    {
+      "tipo": "raca",
+      "valor": "kobold"
+    }
+  ],
+  "pirata_oceanico": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "sereia_tritao"
+      ]
+    }
+  ],
+  "programacao_de_combate": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "golem"
+      ]
+    }
+  ],
+  "programacao_holistica": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "golem"
+      ]
+    }
+  ],
+  "protetor_eterno": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "minotauro"
+      ]
+    },
+    {
+      "tipo": "poder",
+      "id": "protetor_taurico"
+    }
+  ],
+  "protetor_taurico": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "minotauro"
+      ]
+    }
+  ],
+  "quadridestria": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "kaijin",
+        "lefou",
+        "nagah",
+        "orc",
+        "trog"
+      ]
+    },
+    {
+      "tipo": "poder",
+      "id": "estilo_de_duas_armas"
+    },
+    {
+      "tipo": "poder",
+      "id": "quatro_bracos"
+    },
+    {
+      "tipo": "nivel",
+      "valor": 5
+    }
+  ],
+  "quatro_bracos": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "kaijin",
+        "lefou",
+        "nagah",
+        "orc",
+        "trog"
+      ]
+    }
+  ],
+  "saliva_corrosiva": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "trog"
+      ]
+    }
+  ],
+  "sangue_magico": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "eiradaan",
+        "qareen",
+        "silfide"
+      ]
+    }
+  ],
+  "saraivada_florestal": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "dahllan"
+      ]
+    }
+  ],
+  "soco_foguete": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "golem"
+      ]
+    }
+  ],
+  "somos_explosivos_kobolds": [
+    {
+      "tipo": "raca",
+      "valor": "kobold"
+    }
+  ],
+  "sonhos_profeticos": [
+    {
+      "tipo": "raca",
+      "valor": "duende"
+    }
+  ],
+  "tatica_de_enxame_kobolds": [
+    {
+      "tipo": "raca",
+      "valor": "kobold"
+    },
+    {
+      "tipo": "poder",
+      "id": "amontoados_kobolds"
+    }
+  ],
+  "tradicao_de_ayrelynn": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "anao"
+      ]
+    }
+  ],
+  "tradicao_perdida": [
+    {
+      "tipo": "outro",
+      "valor": "não humano"
+    },
+    {
+      "tipo": "outro",
+      "valor": "habilidade de classe Magias"
+    }
+  ],
+  "tradicao_perdida_aprimorada": [
+    {
+      "tipo": "poder",
+      "id": "tradicao_perdida"
+    }
+  ],
+  "valentia_inata": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "hynne"
+      ]
+    }
+  ],
+  "valentia_nata": [
+    {
+      "tipo": "raca",
+      "valor": "hynne"
+    }
+  ],
+  "velocidade_do_pensamento": [
+    {
+      "tipo": "raca",
+      "valor": "duende"
+    }
+  ],
+  "veneno_aprimorado": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "medusa"
+      ]
+    },
+    {
+      "tipo": "atributo",
+      "atributo": "con",
+      "valor": 1
+    }
+  ],
+  "vigilancia_elfica": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "elfo",
+        "meio_elfo",
+        "naidora"
+      ]
+    }
+  ],
+  "visao_feerica": [
+    {
+      "tipo": "raca",
+      "valor": "duende"
+    }
+  ],
+  "vitalidade_das_fadas": [
+    {
+      "tipo": "habilidade_racial",
+      "valor": [
+        "dahllan",
+        "duende",
+        "satiro",
+        "silfide"
+      ]
+    }
+  ],
+  "voo": [
+    {
+      "tipo": "raca",
+      "valor": "duende"
+    }
+  ],
+  "armamento_aberrante": [
+    {
+      "tipo": "outro",
+      "valor": "outro poder da Tormenta"
+    }
+  ],
+  "asas_insetoides": [
+    {
+      "tipo": "outro",
+      "valor": "quatro outros poderes da Tormenta"
+    }
+  ],
+  "carapaca_corrompida": [
+    {
+      "tipo": "poder",
+      "id": "carapaca"
+    }
+  ],
+  "corpo_aberrante": [
+    {
+      "tipo": "outro",
+      "valor": "outro poder da Tormenta"
+    }
+  ],
+  "desprezar_a_realidade": [
+    {
+      "tipo": "outro",
+      "valor": "quatro outros poderes da Tormenta"
+    }
+  ],
+  "larva_explosiva": [
+    {
+      "tipo": "poder",
+      "id": "dentes_afiados"
+    }
+  ],
+  "legiao_aberrante": [
+    {
+      "tipo": "poder",
+      "id": "anatomia_insana"
+    },
+    {
+      "tipo": "outro",
+      "valor": "três outros poderes da Tormenta"
+    }
+  ],
+  "membros_extras": [
+    {
+      "tipo": "outro",
+      "valor": "quatro outros poderes da Tormenta"
+    }
+  ],
+  "repulsivo": [
+    {
+      "tipo": "atributo",
+      "atributo": "car",
+      "valor": -1,
+      "observacao": "ou menor"
+    }
+  ],
+  "simetria_radial": [
+    {
+      "tipo": "outro",
+      "valor": "quatro outros poderes Tormenta"
+    }
+  ],
+  "tempo_mistico": [
+    {
+      "tipo": "outro",
+      "valor": "dois outros poderes Tormenta"
+    }
+  ]
+}

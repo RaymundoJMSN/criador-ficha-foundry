@@ -1,0 +1,116 @@
+{
+  "compra_pontos": {
+    "pontos_iniciais": 10,
+    "atributo_inicial": 0,
+    "tabela_custo": [
+      {
+        "valor": -2,
+        "custo": null,
+        "observacao": "Não disponível por compra de pontos"
+      },
+      {
+        "valor": -1,
+        "custo": -1,
+        "observacao": "Reduzir para -1 concede 1 ponto adicional"
+      },
+      {
+        "valor": 0,
+        "custo": 0
+      },
+      {
+        "valor": 1,
+        "custo": 1
+      },
+      {
+        "valor": 2,
+        "custo": 2
+      },
+      {
+        "valor": 3,
+        "custo": 4
+      },
+      {
+        "valor": 4,
+        "custo": 7
+      }
+    ],
+    "reducao_minima": {
+      "valor": -1,
+      "pontos_ganhos": 1
+    }
+  },
+  "metodos": [
+    {
+      "id": "compra_pontos",
+      "nome": "Compra de Pontos",
+      "tipo": "compra_pontos",
+      "categoria": "oficial"
+    },
+    {
+      "id": "rolagem_padrao",
+      "nome": "Rolagem (Padrão)",
+      "tipo": "rolagem",
+      "categoria": "oficial"
+    },
+    {
+      "id": "classica",
+      "nome": "Clássica",
+      "tipo": "rolagem",
+      "categoria": "opcional"
+    },
+    {
+      "id": "epica",
+      "nome": "Épica",
+      "tipo": "rolagem",
+      "categoria": "opcional"
+    },
+    {
+      "id": "valkaria",
+      "nome": "Valkaria",
+      "tipo": "distribuicao_dados",
+      "categoria": "opcional"
+    },
+    {
+      "id": "khalmyr",
+      "nome": "Khalmyr",
+      "tipo": "valores_fixos",
+      "categoria": "opcional"
+    },
+    {
+      "id": "nimb",
+      "nome": "Nimb",
+      "tipo": "rolagem",
+      "categoria": "opcional"
+    }
+  ],
+  "tabela_conversao_padrao": [
+    {
+      "rolagem": "7 ou menos",
+      "atributo": -2
+    },
+    {
+      "rolagem": "8-9",
+      "atributo": -1
+    },
+    {
+      "rolagem": "10-11",
+      "atributo": 0
+    },
+    {
+      "rolagem": "12-13",
+      "atributo": 1
+    },
+    {
+      "rolagem": "14-15",
+      "atributo": 2
+    },
+    {
+      "rolagem": "16-17",
+      "atributo": 3
+    },
+    {
+      "rolagem": "18",
+      "atributo": 4
+    }
+  ]
+}

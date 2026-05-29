@@ -1,0 +1,105 @@
+{
+  "por_nivel": [
+    {
+      "nivel": 1,
+      "valor": "4d6",
+      "moeda": "T$"
+    },
+    {
+      "nivel": 2,
+      "valor": 300,
+      "moeda": "T$"
+    },
+    {
+      "nivel": 3,
+      "valor": 600,
+      "moeda": "T$"
+    },
+    {
+      "nivel": 4,
+      "valor": 1000,
+      "moeda": "T$"
+    },
+    {
+      "nivel": 5,
+      "valor": 2000,
+      "moeda": "T$"
+    },
+    {
+      "nivel": 6,
+      "valor": 3000,
+      "moeda": "T$"
+    },
+    {
+      "nivel": 7,
+      "valor": 5000,
+      "moeda": "T$"
+    },
+    {
+      "nivel": 8,
+      "valor": 7000,
+      "moeda": "T$"
+    },
+    {
+      "nivel": 9,
+      "valor": 10000,
+      "moeda": "T$"
+    },
+    {
+      "nivel": 10,
+      "valor": 13000,
+      "moeda": "T$"
+    },
+    {
+      "nivel": 11,
+      "valor": 19000,
+      "moeda": "T$"
+    },
+    {
+      "nivel": 12,
+      "valor": 27000,
+      "moeda": "T$"
+    },
+    {
+      "nivel": 13,
+      "valor": 36000,
+      "moeda": "T$"
+    },
+    {
+      "nivel": 14,
+      "valor": 49000,
+      "moeda": "T$"
+    },
+    {
+      "nivel": 15,
+      "valor": 66000,
+      "moeda": "T$"
+    },
+    {
+      "nivel": 16,
+      "valor": 88000,
+      "moeda": "T$"
+    },
+    {
+      "nivel": 17,
+      "valor": 110000,
+      "moeda": "T$"
+    },
+    {
+      "nivel": 18,
+      "valor": 150000,
+      "moeda": "T$"
+    },
+    {
+      "nivel": 19,
+      "valor": 200000,
+      "moeda": "T$"
+    },
+    {
+      "nivel": 20,
+      "valor": 260000,
+      "moeda": "T$"
+    }
+  ],
+  "nivel_1_dado": "4d6"
+}
