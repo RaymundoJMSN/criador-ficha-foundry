@@ -9,9 +9,16 @@ import { prepareRacaContext } from "./steps/raca.js";
 import { prepareOrigemContext } from "./steps/origem.js";
 import { prepareClasseContext } from "./steps/classe.js";
 import { preparePericiaContext } from "./steps/pericias.js";
-import type { IndexedClasse, IndexedRace } from "../compendium/types.js";
+import { prepareDivindadeContext } from "./steps/divindade.js";
+import { preparePoderesContext } from "./steps/poderes.js";
+import { prepareMagiasContext } from "./steps/magias.js";
+import { prepareEquipamentoContext } from "./steps/equipamento.js";
+import { prepareRevisaoContext } from "./steps/revisao.js";
+import { ActorWriter } from "../actor/writer.js";
+import type { IndexedClasse, IndexedRace, IndexedPoder, IndexedMagia } from "../compendium/types.js";
 
-const TPL = (name: string) => `modules/${MODULE_ID}/templates/wizard/${name}.hbs`;
+const TPL = (name: string) =>
+  `modules/${MODULE_ID}/templates/wizard/${name}.hbs`;
 
 // @ts-expect-error fvtt-types ApplicationV2/HandlebarsApplicationMixin incomplete for v13
 export class WizardApp extends HandlebarsApplicationMixin(ApplicationV2) {
@@ -22,18 +29,27 @@ export class WizardApp extends HandlebarsApplicationMixin(ApplicationV2) {
   };
 
   static PARTS = {
-    shell: { template: TPL("shell") },
-    nivel: { template: TPL("nivel") },
-    atributos: { template: TPL("atributos") },
-    raca: { template: TPL("raca") },
-    origem: { template: TPL("origem") },
-    classe: { template: TPL("classe") },
-    pericias: { template: TPL("pericias") },
+    shell:       { template: TPL("shell") },
+    nivel:       { template: TPL("nivel") },
+    atributos:   { template: TPL("atributos") },
+    raca:        { template: TPL("raca") },
+    origem:      { template: TPL("origem") },
+    classe:      { template: TPL("classe") },
+    pericias:    { template: TPL("pericias") },
+    divindade:   { template: TPL("divindade") },
+    poderes:     { template: TPL("poderes") },
+    magias:      { template: TPL("magias") },
+    equipamento: { template: TPL("equipamento") },
+    revisao:     { template: TPL("revisao") },
   };
 
   private _state = new WizardState();
   private _currentStep: WizardStep = WizardStep.Nivel;
   private _errors: string[] = [];
+
+  get state(): WizardState {
+    return this._state;
+  }
 
   goToStep(step: WizardStep): void {
     this._currentStep = step;
@@ -70,13 +86,13 @@ export class WizardApp extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   applyFormData(formData: FormData): void {
-    const nivel = parseInt((formData.get("nivel") as string) ?? "1", 10);
-    const nome = ((formData.get("nome") as string) ?? "").trim();
-    const metodoAtributos =
-      (formData.get("metodoAtributos") as string) ?? this._state.metodoAtributos;
+    const nivel = parseInt(formData.get("nivel") as string ?? "1", 10);
+    const nome = (formData.get("nome") as string ?? "").trim();
+    const metodoAtributos = (formData.get("metodoAtributos") as string) ?? this._state.metodoAtributos;
     const racaId = (formData.get("racaId") as string) ?? this._state.racaId;
     const origemId = (formData.get("origemId") as string) ?? this._state.origemId;
     const classeId = (formData.get("classeId") as string) ?? this._state.classeId;
+    const divindadeId = (formData.get("divindadeId") as string) ?? this._state.divindadeId;
 
     const atributosBase = { ...this._state.atributosBase };
     for (const attr of ["for", "des", "con", "int", "sab", "car"] as const) {
@@ -92,16 +108,33 @@ export class WizardApp extends HandlebarsApplicationMixin(ApplicationV2) {
       }
     }
 
+    const poderes: string[] = [];
+    // @ts-expect-error FormData.entries() not typed in this TS target
+    for (const [key] of formData.entries()) {
+      if ((key as string).startsWith("poder-")) {
+        poderes.push((key as string).replace("poder-", ""));
+      }
+    }
+
+    const magias: string[] = [];
+    // @ts-expect-error FormData.entries() not typed in this TS target
+    for (const [key] of formData.entries()) {
+      if ((key as string).startsWith("magia-")) {
+        magias.push((key as string).replace("magia-", ""));
+      }
+    }
+
     const patch: Partial<WizardState> = { atributosBase };
     if (formData.has("nivel")) (patch as Record<string, unknown>)["nivel"] = nivel;
     if (formData.has("nome")) (patch as Record<string, unknown>)["nome"] = nome;
-    if (formData.has("metodoAtributos"))
-      (patch as Record<string, unknown>)["metodoAtributos"] = metodoAtributos;
+    if (formData.has("metodoAtributos")) (patch as Record<string, unknown>)["metodoAtributos"] = metodoAtributos;
     if (formData.has("racaId")) (patch as Record<string, unknown>)["racaId"] = racaId;
     if (formData.has("origemId")) (patch as Record<string, unknown>)["origemId"] = origemId;
     if (formData.has("classeId")) (patch as Record<string, unknown>)["classeId"] = classeId;
-    if (periciasTreinadas.length > 0)
-      (patch as Record<string, unknown>)["periciasTreinadas"] = periciasTreinadas;
+    if (formData.has("divindadeId")) (patch as Record<string, unknown>)["divindadeId"] = divindadeId;
+    if (periciasTreinadas.length > 0) (patch as Record<string, unknown>)["periciasTreinadas"] = periciasTreinadas;
+    if (poderes.length > 0) (patch as Record<string, unknown>)["poderes"] = poderes;
+    if (magias.length > 0) (patch as Record<string, unknown>)["magias"] = magias;
 
     this._state.apply(patch as Parameters<typeof this._state.apply>[0]);
   }
@@ -142,11 +175,44 @@ export class WizardApp extends HandlebarsApplicationMixin(ApplicationV2) {
         break;
       }
       case WizardStep.Pericias: {
-        const classe = CompendiumIndex.getAll("classe").find((c) => c.id === state.classeId) as
-          | IndexedClasse
-          | undefined;
+        const classe = CompendiumIndex.getAll("classe").find(
+          (c) => c.id === state.classeId
+        ) as IndexedClasse | undefined;
         const intMod = state.atributosBase.int ?? 0;
         stepCtx = preparePericiaContext(state, classe, intMod, errors);
+        break;
+      }
+      case WizardStep.Divindade:
+        stepCtx = prepareDivindadeContext(state, errors);
+        break;
+      case WizardStep.Poderes: {
+        const poderes = CompendiumIndex.getAll("poder") as IndexedPoder[];
+        stepCtx = preparePoderesContext(state, poderes, errors);
+        break;
+      }
+      case WizardStep.Magias: {
+        const magias = CompendiumIndex.getAll("magia") as IndexedMagia[];
+        stepCtx = prepareMagiasContext(state, magias, errors);
+        break;
+      }
+      case WizardStep.Equipamento: {
+        const allEquip = [
+          ...CompendiumIndex.getAll("equipamento"),
+          ...CompendiumIndex.getAll("arma"),
+          ...CompendiumIndex.getAll("consumivel"),
+        ];
+        stepCtx = prepareEquipamentoContext(state, allEquip, errors);
+        break;
+      }
+      case WizardStep.Revisao: {
+        const racaItem = CompendiumIndex.getAll("race").find((r) => r.id === state.racaId);
+        const classeItem = CompendiumIndex.getAll("classe").find((c) => c.id === state.classeId);
+        stepCtx = prepareRevisaoContext(
+          state,
+          racaItem?.name ?? state.racaId,
+          classeItem?.name ?? state.classeId,
+          errors
+        );
         break;
       }
     }
@@ -169,6 +235,15 @@ export class WizardApp extends HandlebarsApplicationMixin(ApplicationV2) {
     else if (action === "goStep") {
       const s = target.dataset["step"] as WizardStep;
       if (s) this.goToStep(s);
+    } else if (action === "create") {
+      if (!this._state.isComplete()) {
+        this._errors = ["Preencha todos os campos obrigatórios antes de criar o personagem."];
+        // @ts-expect-error render not typed on untyped base
+        this.render();
+        return;
+      }
+      // @ts-expect-error close not typed on untyped base
+      void ActorWriter.create(this._state).then(() => this.close());
     }
   }
 }
