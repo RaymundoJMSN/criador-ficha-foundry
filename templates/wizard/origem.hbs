@@ -1,0 +1,17 @@
+<section class="t20w-step t20w-step-origem">
+  <h2>{{stepTitle}}</h2>
+
+  <div class="t20w-list">
+    {{#each origens}}
+      <label class="t20w-list-item {{#if this.selected}}selected{{/if}}">
+        <input type="radio" name="origemId" value="{{this.id}}" {{#if this.selected}}checked{{/if}} />
+        <strong>{{this.nome}}</strong>
+        <small>Perícias: {{this.periciasList}}</small>
+      </label>
+    {{/each}}
+  </div>
+
+  {{#if errors.length}}
+    <ul class="t20w-errors">{{#each errors}}<li>{{this}}</li>{{/each}}</ul>
+  {{/if}}
+</section>

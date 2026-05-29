@@ -1,0 +1,45 @@
+<section class="t20w-step t20w-step-atributos">
+  <h2>{{stepTitle}}</h2>
+
+  <div class="form-group">
+    <label>Método</label>
+    <select name="metodoAtributos">
+      {{#each metodos}}
+        <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>
+          {{this.nome}} ({{this.categoria}})
+        </option>
+      {{/each}}
+    </select>
+  </div>
+
+  {{#if isCompra}}
+    <table class="t20w-attrs">
+      <thead>
+        <tr><th>Atributo</th><th>Valor</th><th>Custo</th></tr>
+      </thead>
+      <tbody>
+        {{#each atributos}}
+          <tr>
+            <td>{{this.label}}</td>
+            <td>
+              <input type="number" name="attr-{{this.id}}" min="-1" max="4" value="{{this.value}}" />
+            </td>
+            <td>{{this.custo}}</td>
+          </tr>
+        {{/each}}
+      </tbody>
+      <tfoot>
+        <tr>
+          <td colspan="2">Pontos restantes</td>
+          <td class="{{#if pontosNegativo}}t20w-over{{/if}}">{{pontosRestantes}}</td>
+        </tr>
+      </tfoot>
+    </table>
+  {{else}}
+    <p class="t20w-hint">{{metodoDescricao}}</p>
+  {{/if}}
+
+  {{#if errors.length}}
+    <ul class="t20w-errors">{{#each errors}}<li>{{this}}</li>{{/each}}</ul>
+  {{/if}}
+</section>
