@@ -1,6 +1,5 @@
-import { createRequire } from "module";
-const require = createRequire(import.meta.url);
-const origensData = require("../data/origens.json") as Origem[];
+import origensDataRaw from "../data/origens.json";
+const origensData = origensDataRaw as unknown as Origem[];
 
 export interface OrigensBeneficio {
   pericias: string[];

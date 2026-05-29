@@ -1,5 +1,5 @@
 /** Wizard step identifiers — order matches STEP_ORDER array. */
-export const enum WizardStep {
+export enum WizardStep {
   Nivel = "nivel",
   Atributos = "atributos",
   Raca = "raca",

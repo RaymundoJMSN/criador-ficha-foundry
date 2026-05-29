@@ -1,6 +1,5 @@
-import { createRequire } from "module";
-const require = createRequire(import.meta.url);
-const prereqsData = require("../data/prereqs.json") as Record<string, Record<string, unknown>[]>;
+import prereqsDataRaw from "../data/prereqs.json";
+const prereqsData = prereqsDataRaw as unknown as Record<string, Record<string, unknown>[]>;
 
 type Prereq = Record<string, unknown>;
 

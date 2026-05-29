@@ -1,6 +1,4 @@
-import { createRequire } from "module";
-const require = createRequire(import.meta.url);
-const atributosData = require("../data/atributos.json") as typeof import("../data/atributos.json");
+import atributosData from "../data/atributos.json";
 
 /** Point buy cost table: attribute value → point cost. */
 const COST_TABLE: Record<number, number> = {};

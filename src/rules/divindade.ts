@@ -1,6 +1,5 @@
-import { createRequire } from "module";
-const require = createRequire(import.meta.url);
-const divindadesData = require("../data/divindades.json") as Divindade[];
+import divindadesDataRaw from "../data/divindades.json";
+const divindadesData = divindadesDataRaw as unknown as Divindade[];
 
 export interface DevotosAceitos {
   regra: "qualquer" | "lista_restrita" | "druida" | string;
