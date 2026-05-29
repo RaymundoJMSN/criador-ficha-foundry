@@ -1,0 +1,18 @@
+{
+  "T20W.Title": "T20 Ficha Wizard",
+  "T20W.OpenWizard": "Criar Personagem (Wizard)",
+  "T20W.Wizard.Step.Nivel": "Nível & Nome",
+  "T20W.Wizard.Step.Atributos": "Atributos",
+  "T20W.Wizard.Step.Raca": "Raça",
+  "T20W.Wizard.Step.Origem": "Origem",
+  "T20W.Wizard.Step.Classe": "Classe",
+  "T20W.Wizard.Step.Pericias": "Perícias",
+  "T20W.Wizard.Step.Divindade": "Divindade",
+  "T20W.Wizard.Step.Poderes": "Poderes",
+  "T20W.Wizard.Step.Magias": "Magias",
+  "T20W.Wizard.Step.Equipamento": "Equipamento",
+  "T20W.Wizard.Step.Revisao": "Revisão",
+  "T20W.Index.Building": "T20W: indexando compêndios…",
+  "T20W.Index.Done": "T20W: índice pronto ({count} itens)",
+  "T20W.Launcher.WIP": "T20W: Wizard em construção…"
+}
