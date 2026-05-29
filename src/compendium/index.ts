@@ -31,10 +31,10 @@ class CompendiumIndexClass {
     const packs = game.packs as Collection<CompendiumCollection<Item>>;
 
     for (const pack of packs) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-      if ((pack.documentName as any) !== "Item") continue;
+      // @ts-expect-error fvtt-types documentName typed as document type not string in v13
+      if (pack.documentName !== "Item") continue;
 
-      const index: Collection<Record<string, unknown>> = await (pack as any).getIndex({
+      const index: Collection<Record<string, unknown>> = await pack.getIndex({
         fields: INDEX_FIELDS,
       });
 
