@@ -1,0 +1,24 @@
+{
+  "id": "t20-ficha-wizard",
+  "title": "T20 Ficha Wizard",
+  "description": "Wizard de criação de personagem para Tormenta 20",
+  "version": "0.1.0",
+  "compatibility": {
+    "minimum": "13",
+    "verified": "13",
+    "maximum": "13"
+  },
+  "relationships": {
+    "requires": [{ "id": "tormenta20", "type": "system" }]
+  },
+  "esmodules": ["dist/module.js"],
+  "languages": [
+    {
+      "lang": "pt-BR",
+      "name": "Português (Brasil)",
+      "path": "lang/pt-BR.json"
+    }
+  ],
+  "authors": [{ "name": "RaymundoJMSN", "email": "yuri@lupalina.com.br" }],
+  "license": "MIT"
+}
