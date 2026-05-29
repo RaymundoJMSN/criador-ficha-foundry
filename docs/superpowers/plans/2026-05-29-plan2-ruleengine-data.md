@@ -21,7 +21,7 @@
 | `src/data/dinheiro.json`          | Create (generated) | Dinheiro inicial por nível (T$)                                |
 | `src/data/origens.json`           | Create (generated) | All origens (id, nome, pericias, poderes, itens_iniciais)      |
 | `src/data/divindades.json`        | Create (generated) | All divindades (id, nome, devotos_aceitos, poderes_concedidos) |
-| `src/data/prereqs.json`           | Create (generated) | Map slug→pre*requisitos[] extracted from poderes/\**/\_.json   |
+| `src/data/prereqs.json`           | Create (generated) | Map slug→pre\*requisitos[] extracted from poderes/\*\*/\_.json |
 | `src/data/poderes-por-nivel.json` | Create (generated) | Poder count per class per level (from progressao_classes.json) |
 | `src/data/slug-map.json`          | Create (manual)    | T20-DB id → Foundry item name overrides (starts empty `{}`)    |
 | `src/rules/steps.ts`              | Create             | WizardStep enum, STEP_ORDER, STEP_META                         |

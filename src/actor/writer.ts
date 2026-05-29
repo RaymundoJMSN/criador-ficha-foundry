@@ -59,7 +59,7 @@ export class ActorWriter {
     const data = mapStateToActorData(state, resolvedItems);
 
     const actor = (await Actor.create(data as unknown as Parameters<typeof Actor.create>[0])) as
-      | ({ name: string; id: string; sheet?: { render(force: boolean): void } })
+      | { name: string; id: string; sheet?: { render(force: boolean): void } }
       | null
       | undefined;
 

@@ -15,10 +15,14 @@ import { prepareMagiasContext } from "./steps/magias.js";
 import { prepareEquipamentoContext } from "./steps/equipamento.js";
 import { prepareRevisaoContext } from "./steps/revisao.js";
 import { ActorWriter } from "../actor/writer.js";
-import type { IndexedClasse, IndexedRace, IndexedPoder, IndexedMagia } from "../compendium/types.js";
+import type {
+  IndexedClasse,
+  IndexedRace,
+  IndexedPoder,
+  IndexedMagia,
+} from "../compendium/types.js";
 
-const TPL = (name: string) =>
-  `modules/${MODULE_ID}/templates/wizard/${name}.hbs`;
+const TPL = (name: string) => `modules/${MODULE_ID}/templates/wizard/${name}.hbs`;
 
 // @ts-expect-error fvtt-types ApplicationV2/HandlebarsApplicationMixin incomplete for v13
 export class WizardApp extends HandlebarsApplicationMixin(ApplicationV2) {
@@ -29,18 +33,18 @@ export class WizardApp extends HandlebarsApplicationMixin(ApplicationV2) {
   };
 
   static PARTS = {
-    shell:       { template: TPL("shell") },
-    nivel:       { template: TPL("nivel") },
-    atributos:   { template: TPL("atributos") },
-    raca:        { template: TPL("raca") },
-    origem:      { template: TPL("origem") },
-    classe:      { template: TPL("classe") },
-    pericias:    { template: TPL("pericias") },
-    divindade:   { template: TPL("divindade") },
-    poderes:     { template: TPL("poderes") },
-    magias:      { template: TPL("magias") },
+    shell: { template: TPL("shell") },
+    nivel: { template: TPL("nivel") },
+    atributos: { template: TPL("atributos") },
+    raca: { template: TPL("raca") },
+    origem: { template: TPL("origem") },
+    classe: { template: TPL("classe") },
+    pericias: { template: TPL("pericias") },
+    divindade: { template: TPL("divindade") },
+    poderes: { template: TPL("poderes") },
+    magias: { template: TPL("magias") },
     equipamento: { template: TPL("equipamento") },
-    revisao:     { template: TPL("revisao") },
+    revisao: { template: TPL("revisao") },
   };
 
   private _state = new WizardState();
@@ -86,9 +90,10 @@ export class WizardApp extends HandlebarsApplicationMixin(ApplicationV2) {
   }
 
   applyFormData(formData: FormData): void {
-    const nivel = parseInt(formData.get("nivel") as string ?? "1", 10);
-    const nome = (formData.get("nome") as string ?? "").trim();
-    const metodoAtributos = (formData.get("metodoAtributos") as string) ?? this._state.metodoAtributos;
+    const nivel = parseInt((formData.get("nivel") as string) ?? "1", 10);
+    const nome = ((formData.get("nome") as string) ?? "").trim();
+    const metodoAtributos =
+      (formData.get("metodoAtributos") as string) ?? this._state.metodoAtributos;
     const racaId = (formData.get("racaId") as string) ?? this._state.racaId;
     const origemId = (formData.get("origemId") as string) ?? this._state.origemId;
     const classeId = (formData.get("classeId") as string) ?? this._state.classeId;
@@ -127,12 +132,15 @@ export class WizardApp extends HandlebarsApplicationMixin(ApplicationV2) {
     const patch: Partial<WizardState> = { atributosBase };
     if (formData.has("nivel")) (patch as Record<string, unknown>)["nivel"] = nivel;
     if (formData.has("nome")) (patch as Record<string, unknown>)["nome"] = nome;
-    if (formData.has("metodoAtributos")) (patch as Record<string, unknown>)["metodoAtributos"] = metodoAtributos;
+    if (formData.has("metodoAtributos"))
+      (patch as Record<string, unknown>)["metodoAtributos"] = metodoAtributos;
     if (formData.has("racaId")) (patch as Record<string, unknown>)["racaId"] = racaId;
     if (formData.has("origemId")) (patch as Record<string, unknown>)["origemId"] = origemId;
     if (formData.has("classeId")) (patch as Record<string, unknown>)["classeId"] = classeId;
-    if (formData.has("divindadeId")) (patch as Record<string, unknown>)["divindadeId"] = divindadeId;
-    if (periciasTreinadas.length > 0) (patch as Record<string, unknown>)["periciasTreinadas"] = periciasTreinadas;
+    if (formData.has("divindadeId"))
+      (patch as Record<string, unknown>)["divindadeId"] = divindadeId;
+    if (periciasTreinadas.length > 0)
+      (patch as Record<string, unknown>)["periciasTreinadas"] = periciasTreinadas;
     if (poderes.length > 0) (patch as Record<string, unknown>)["poderes"] = poderes;
     if (magias.length > 0) (patch as Record<string, unknown>)["magias"] = magias;
 
@@ -175,9 +183,9 @@ export class WizardApp extends HandlebarsApplicationMixin(ApplicationV2) {
         break;
       }
       case WizardStep.Pericias: {
-        const classe = CompendiumIndex.getAll("classe").find(
-          (c) => c.id === state.classeId
-        ) as IndexedClasse | undefined;
+        const classe = CompendiumIndex.getAll("classe").find((c) => c.id === state.classeId) as
+          | IndexedClasse
+          | undefined;
         const intMod = state.atributosBase.int ?? 0;
         stepCtx = preparePericiaContext(state, classe, intMod, errors);
         break;

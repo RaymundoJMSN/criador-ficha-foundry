@@ -6,10 +6,7 @@ export interface ActorCreateData {
   name: string;
   type: "character";
   system: {
-    atributos: Record<
-      "for" | "des" | "con" | "int" | "sab" | "car",
-      { base: number }
-    >;
+    atributos: Record<"for" | "des" | "con" | "int" | "sab" | "car", { base: number }>;
     attributes: {
       nivel: { value: number };
     };
@@ -32,10 +29,7 @@ export interface ActorCreateData {
  * Converts WizardState into the data shape expected by tormenta20 Actor.create().
  * Items array is injected separately by writer.ts after resolving from packs.
  */
-export function mapStateToActorData(
-  state: WizardState,
-  items: unknown[] = []
-): ActorCreateData {
+export function mapStateToActorData(state: WizardState, items: unknown[] = []): ActorCreateData {
   const atributos = {} as ActorCreateData["system"]["atributos"];
   for (const attr of ["for", "des", "con", "int", "sab", "car"] as const) {
     atributos[attr] = { base: state.atributosBase[attr] ?? 0 };

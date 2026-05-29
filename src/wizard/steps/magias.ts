@@ -26,9 +26,7 @@ export function prepareMagiasContext(
   errors: string[] = []
 ): MagiasContext {
   const conjurador = isConjurador(state.classeId);
-  const filtered = conjurador
-    ? filterMagias(allMagias, state.classeId, state.nivel)
-    : [];
+  const filtered = conjurador ? filterMagias(allMagias, state.classeId, state.nivel) : [];
 
   return {
     stepTitle: "Magias",

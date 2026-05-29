@@ -20,7 +20,12 @@ export interface RevisaoContext {
 }
 
 const ATTR_LABELS: Record<string, string> = {
-  for: "For", des: "Des", con: "Con", int: "Int", sab: "Sab", car: "Car",
+  for: "For",
+  des: "Des",
+  con: "Con",
+  int: "Int",
+  sab: "Sab",
+  car: "Car",
 };
 
 export function prepareRevisaoContext(
