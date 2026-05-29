@@ -292,6 +292,28 @@ export function defineWizardApp(): void {
           this.render();
         });
       }
+
+      // ── Select dropdowns → re-render on change to show detail card ──────
+      for (const name of ["racaId", "origemId", "classeId", "divindadeId"]) {
+        const dropdown = root.querySelector<HTMLSelectElement>(`[name="${name}"]`);
+        if (dropdown) {
+          dropdown.addEventListener("change", () => {
+            this.applyFormData(this._gatherFormData());
+            // @ts-expect-error render not typed
+            this.render();
+          });
+        }
+      }
+
+      // ── Origem pick-2 radio → save to escolhasPorItem ───────────────────
+      root.querySelectorAll<HTMLInputElement>("[name='origem_poder_escolha']").forEach((radio) => {
+        radio.addEventListener("change", (e) => {
+          const val = (e.target as HTMLInputElement).value;
+          this._state.apply({
+            escolhasPorItem: { ...this._state.escolhasPorItem, origem_poder: val },
+          });
+        });
+      });
     }
 
     _gatherFormData(): FormData {

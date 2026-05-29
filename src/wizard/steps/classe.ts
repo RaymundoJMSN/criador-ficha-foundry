@@ -11,6 +11,7 @@ export interface ClasseContext {
     pmPorNivel: number;
     selected: boolean;
   }>;
+  selectedClasse: IndexedClasse | null;
   errors: string[];
 }
 
@@ -29,6 +30,7 @@ export function prepareClasseContext(
       pmPorNivel: c.system.pmPorNivel ?? 0,
       selected: c.id === state.classeId,
     })),
+    selectedClasse: classes.find((c) => c.id === state.classeId) ?? null,
     errors,
   };
 }

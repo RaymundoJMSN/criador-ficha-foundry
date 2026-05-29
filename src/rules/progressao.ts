@@ -1,6 +1,5 @@
-import { createRequire } from "module";
-const require = createRequire(import.meta.url);
-const progressaoData = require("../data/progressao_classes.json") as Record<string, {
+import progressaoDataRaw from "../data/progressao_classes.json";
+const progressaoData = progressaoDataRaw as unknown as Record<string, {
   pv_por_nivel: number;
   pm_por_nivel: number;
   pericias_inatas: string[];

@@ -62,45 +62,101 @@
     {{#if showRaca}}
     <section class="t20w-step">
       <h2>{{stepTitle}}</h2>
-      <div class="t20w-item-grid">
-        {{#each racas}}
-        <label class="t20w-item-card {{#if this.selected}}selected{{/if}}">
-          <input type="radio" name="racaId" value="{{this.id}}" {{#if this.selected}}checked{{/if}} />
-          <img src="{{this.img}}" alt="{{this.name}}" />
-          <span>{{this.name}}</span>
-        </label>
-        {{/each}}
+      <div class="form-group">
+        <label for="t20w-raca-sel">Raça</label>
+        <select id="t20w-raca-sel" name="racaId" style="width:100%;padding:6px;">
+          <option value="">— escolha uma raça —</option>
+          {{#each racaOptions}}
+            <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.name}}</option>
+          {{/each}}
+        </select>
       </div>
+      {{#if selectedDetail}}
+      <div style="margin-top:12px;padding:10px;background:rgba(255,255,255,0.05);border-radius:4px;">
+        <h3 style="margin:0 0 6px;">{{selectedDetail.name}}</h3>
+        {{#if selectedDetail.descricao}}<p style="font-size:0.85em;opacity:0.8;margin:0 0 8px;">{{selectedDetail.descricao}}</p>{{/if}}
+        <dl style="display:grid;grid-template-columns:max-content 1fr;gap:2px 12px;font-size:0.85em;margin:0;">
+          {{#if selectedDetail.atributosTexto}}<dt>Atributos</dt><dd>{{selectedDetail.atributosTexto}}</dd>{{/if}}
+          <dt>Tamanho</dt><dd>{{selectedDetail.tamanho}}</dd>
+          <dt>Deslocamento</dt><dd>{{selectedDetail.deslocamento}}m</dd>
+          {{#if selectedDetail.pericias_bonus.length}}<dt>Perícias bônus</dt><dd>{{selectedDetail.pericias_bonus}}</dd>{{/if}}
+        </dl>
+        {{#if selectedDetail.atributosEscolha}}
+        <div style="margin-top:10px;">
+          <strong style="font-size:0.85em;">Escolha {{selectedDetail.atributosEscolha.quantidade}} atributo(s) para +1:</strong>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;">
+            {{#each selectedDetail.atributosEscolha.opcoes}}
+            <label style="display:flex;align-items:center;gap:4px;font-size:0.9em;">
+              <input type="radio" name="raca_atrib_escolha" value="{{this}}" />{{this}}
+            </label>
+            {{/each}}
+          </div>
+        </div>
+        {{/if}}
+      </div>
+      {{/if}}
+      {{#if errors.length}}<ul class="t20w-errors">{{#each errors}}<li>{{this}}</li>{{/each}}</ul>{{/if}}
     </section>
     {{/if}}
 
     {{#if showOrigem}}
     <section class="t20w-step">
       <h2>{{stepTitle}}</h2>
-      <div class="t20w-list">
-        {{#each origens}}
-        <label class="t20w-list-item {{#if this.selected}}selected{{/if}}">
-          <input type="radio" name="origemId" value="{{this.id}}" {{#if this.selected}}checked{{/if}} />
-          <strong>{{this.nome}}</strong>
-          <small>Perícias: {{this.periciasList}}</small>
-        </label>
-        {{/each}}
+      <div class="form-group">
+        <label for="t20w-origem-sel">Origem</label>
+        <select id="t20w-origem-sel" name="origemId" style="width:100%;padding:6px;">
+          <option value="">— escolha uma origem —</option>
+          {{#each origemOptions}}
+            <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.nome}}</option>
+          {{/each}}
+        </select>
       </div>
+      {{#if selectedDetail}}
+      <div style="margin-top:12px;padding:10px;background:rgba(255,255,255,0.05);border-radius:4px;">
+        <h3 style="margin:0 0 6px;">{{selectedDetail.nome}}</h3>
+        {{#if selectedDetail.pericias.length}}<p style="font-size:0.85em;margin:0 0 4px;"><strong>Perícias:</strong> {{selectedDetail.pericias}}</p>{{/if}}
+        {{#if selectedDetail.itens_iniciais.length}}<p style="font-size:0.85em;margin:0 0 4px;"><strong>Itens iniciais:</strong> {{selectedDetail.itens_iniciais}}</p>{{/if}}
+        {{#if selectedDetail.poder_auto}}<p style="font-size:0.85em;margin:0 0 8px;"><strong>Poder automático:</strong> {{selectedDetail.poder_auto}}</p>{{/if}}
+        {{#if selectedDetail.pick2_candidates.length}}
+        <div style="margin-top:8px;">
+          <strong style="font-size:0.85em;">Escolha 1 poder adicional:</strong>
+          <div style="display:flex;flex-direction:column;gap:4px;margin-top:6px;">
+            {{#each selectedDetail.pick2_candidates}}
+            <label style="display:flex;align-items:center;gap:6px;font-size:0.9em;">
+              <input type="radio" name="origem_poder_escolha" value="{{this}}" />{{this}}
+            </label>
+            {{/each}}
+          </div>
+        </div>
+        {{/if}}
+      </div>
+      {{/if}}
+      {{#if errors.length}}<ul class="t20w-errors">{{#each errors}}<li>{{this}}</li>{{/each}}</ul>{{/if}}
     </section>
     {{/if}}
 
     {{#if showClasse}}
     <section class="t20w-step">
       <h2>{{stepTitle}}</h2>
-      <div class="t20w-item-grid">
-        {{#each classes}}
-        <label class="t20w-item-card {{#if this.selected}}selected{{/if}}">
-          <input type="radio" name="classeId" value="{{this.id}}" {{#if this.selected}}checked{{/if}} />
-          <img src="{{this.img}}" alt="{{this.name}}" />
-          <div><span>{{this.name}}</span><small>PV +{{this.pvPorNivel}} | PM +{{this.pmPorNivel}}</small></div>
-        </label>
-        {{/each}}
+      <div class="form-group">
+        <label for="t20w-classe-sel">Classe</label>
+        <select id="t20w-classe-sel" name="classeId" style="width:100%;padding:6px;">
+          <option value="">— escolha uma classe —</option>
+          {{#each classes}}
+            <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.name}}</option>
+          {{/each}}
+        </select>
       </div>
+      {{#if selectedClasse}}
+      <div style="margin-top:12px;padding:10px;background:rgba(255,255,255,0.05);border-radius:4px;">
+        <h3 style="margin:0 0 6px;">{{selectedClasse.name}}</h3>
+        <dl style="display:grid;grid-template-columns:max-content 1fr;gap:2px 12px;font-size:0.85em;margin:0;">
+          <dt>PV por nível</dt><dd>+{{selectedClasse.pvPorNivel}}</dd>
+          <dt>PM por nível</dt><dd>+{{selectedClasse.pmPorNivel}}</dd>
+        </dl>
+      </div>
+      {{/if}}
+      {{#if errors.length}}<ul class="t20w-errors">{{#each errors}}<li>{{this}}</li>{{/each}}</ul>{{/if}}
     </section>
     {{/if}}
 
@@ -127,17 +183,24 @@
     {{#if showDivindade}}
     <section class="t20w-step">
       <h2>{{stepTitle}}</h2>
-      {{#if obrigatoria}}<p class="t20w-hint t20w-required">⚠ Esta classe exige uma divindade.</p>
-      {{else}}<p class="t20w-hint">Opcional — pule se não quiser ser devoto.</p>{{/if}}
-      <div class="t20w-list">
-        {{#each divindades}}
-        <label class="t20w-list-item {{#if this.selected}}selected{{/if}}">
-          <input type="radio" name="divindadeId" value="{{this.id}}" {{#if this.selected}}checked{{/if}} />
-          <strong>{{this.nome}}</strong>
-          <small>{{this.poderesCount}} poder(es) concedido(s)</small>
-        </label>
-        {{/each}}
+      {{#if obrigatoria}}<p style="color:#f90;font-size:0.9em;">⚠ Esta classe exige uma divindade.</p>
+      {{else}}<p style="font-size:0.9em;opacity:0.7;">Opcional. Pule se não quiser ser devoto.</p>{{/if}}
+      <div class="form-group">
+        <label for="t20w-div-sel">Divindade</label>
+        <select id="t20w-div-sel" name="divindadeId" style="width:100%;padding:6px;">
+          <option value="">— nenhuma —</option>
+          {{#each divindades}}
+            <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.nome}}</option>
+          {{/each}}
+        </select>
       </div>
+      {{#if selectedDivindade}}
+      <div style="margin-top:12px;padding:10px;background:rgba(255,255,255,0.05);border-radius:4px;">
+        <h3 style="margin:0 0 6px;">{{selectedDivindade.nome}}</h3>
+        <p style="font-size:0.85em;margin:0;">{{selectedDivindade.poderesCount}} poder(es) concedido(s)</p>
+      </div>
+      {{/if}}
+      {{#if errors.length}}<ul class="t20w-errors">{{#each errors}}<li>{{this}}</li>{{/each}}</ul>{{/if}}
     </section>
     {{/if}}
 
