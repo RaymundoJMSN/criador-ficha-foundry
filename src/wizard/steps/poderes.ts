@@ -1,4 +1,4 @@
-import { isEligible } from "../../rules/poderes.js";
+import { describeUnmet } from "../../rules/poderes.js";
 import type { WizardState } from "../state.js";
 import type { IndexedPoder } from "../../compendium/types.js";
 
@@ -7,9 +7,11 @@ export interface PoderEntry {
   name: string;
   img: string;
   eligible: boolean;
+  unmet: string[];
   selected: boolean;
   tipo: string;
   subtipo: string;
+  descricao: string;
 }
 
 export interface PoderesContext {
@@ -33,15 +35,21 @@ export function preparePoderesContext(
     poderes: state.poderes,
   };
 
-  const entries: PoderEntry[] = poderes.map((p) => ({
-    id: p.id,
-    name: p.name,
-    img: p.img,
-    eligible: isEligible(p.name.toLowerCase().replace(/\s+/g, "_"), stateForEligibility),
-    selected: state.poderes.includes(p.id),
-    tipo: (p.system as { tipo?: string }).tipo ?? "",
-    subtipo: (p.system as { subtipo?: string }).subtipo ?? "",
-  }));
+  const entries: PoderEntry[] = poderes.map((p) => {
+    const slug = p.name.toLowerCase().replace(/\s+/g, "_");
+    const unmet = describeUnmet(slug, stateForEligibility);
+    return {
+      id: p.id,
+      name: p.name,
+      img: p.img,
+      eligible: unmet.length === 0,
+      unmet,
+      selected: state.poderes.includes(p.id),
+      tipo: (p.system as { tipo?: string }).tipo ?? "",
+      subtipo: (p.system as { subtipo?: string }).subtipo ?? "",
+      descricao: (p.system as { descricao?: string }).descricao ?? "",
+    };
+  });
 
   return {
     stepTitle: "Poderes",
