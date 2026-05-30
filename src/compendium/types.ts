@@ -35,6 +35,7 @@ export interface IndexedPoder extends IndexedBase {
   system: {
     tipo?: string;
     subtipo?: string;
+    descricao?: string;
   };
 }
 

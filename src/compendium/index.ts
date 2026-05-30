@@ -7,6 +7,7 @@ const RELEVANT_TYPES = new Set<string>(Object.values(ITEM_TYPES));
 const INDEX_FIELDS = [
   "system.tipo",
   "system.subtipo",
+  "system.descricao",
   "system.circulo",
   "system.escola",
   "system.atributos",
