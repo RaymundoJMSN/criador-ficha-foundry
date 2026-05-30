@@ -137,7 +137,11 @@ export function defineWizardApp(): void {
       if (formData.has("nivel")) patch["nivel"] = nivel;
       if (formData.has("nome")) patch["nome"] = nome;
       if (formData.has("metodoAtributos")) patch["metodoAtributos"] = metodoAtributos;
-      if (formData.has("racaId")) patch["racaId"] = racaId;
+      if (formData.has("racaId")) {
+        patch["racaId"] = racaId;
+        const racaItem = CompendiumIndex.getAll("race").find((r) => r.id === racaId);
+        patch["racaNome"] = racaItem?.name ?? "";
+      }
       if (formData.has("origemId")) patch["origemId"] = origemId;
       if (formData.has("classeId")) patch["classeId"] = classeId;
       if (formData.has("divindadeId")) patch["divindadeId"] = divindadeId;

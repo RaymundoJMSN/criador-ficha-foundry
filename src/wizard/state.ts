@@ -4,6 +4,7 @@ export interface WizardStateData {
   metodoAtributos: string;
   atributosBase: Record<"for" | "des" | "con" | "int" | "sab" | "car", number>;
   racaId: string;
+  racaNome: string;
   origemId: string;
   classeId: string;
   subclasseId: string;
@@ -24,6 +25,7 @@ const DEFAULT_STATE: WizardStateData = {
   metodoAtributos: "compra_pontos",
   atributosBase: { for: 0, des: 0, con: 0, int: 0, sab: 0, car: 0 },
   racaId: "",
+  racaNome: "",
   origemId: "",
   classeId: "",
   subclasseId: "",
@@ -46,6 +48,7 @@ export class WizardState implements WizardStateData {
   metodoAtributos!: string;
   atributosBase!: Record<"for" | "des" | "con" | "int" | "sab" | "car", number>;
   racaId!: string;
+  racaNome!: string;
   origemId!: string;
   classeId!: string;
   subclasseId!: string;
@@ -82,6 +85,7 @@ export class WizardState implements WizardStateData {
       metodoAtributos: this.metodoAtributos,
       atributosBase: { ...this.atributosBase },
       racaId: this.racaId,
+      racaNome: this.racaNome,
       origemId: this.origemId,
       classeId: this.classeId,
       subclasseId: this.subclasseId,
