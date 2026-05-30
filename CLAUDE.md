@@ -191,7 +191,7 @@ ActorWriter      → resolve docs, mapper monta data, Actor.create("character")
 | Point buy + 7 métodos atributo                           | ✅ `rules/atributos.ts`                 | `data/atributos.json`                              |
 | Pré-requisitos de poder                                  | ⚠️ parcial (6 de ~15 tipos) + `formatPrereq`/`describeUnmet` legíveis | `data/prereqs.json`                                |
 | Passo Poderes legível (descrição + motivo + filtro)      | ✅ Plan 6A (`steps/poderes.ts` + `wizard.hbs` + `app.ts`) | item poder (`system.descricao`) + `prereqs.json` |
-| Descrição de classe no painel                            | ✅ Plan 6A                              | `data/classes.json` (`descricao`)                  |
+| Descrição de classe no painel                            | ✅ Plan 6A                              | item Foundry (`IndexedClasse.system.descricao`)    |
 | Perícias por classe (fixas/obrigatorias/escolhas/Int/raça)| ✅ modelo canônico (`pericias.ts`), escrita slug→code | `data/classes.json` (NÃO o item Foundry)           |
 | Origem + pick-2 benefícios                               | ⚠️ UI/detalhe ok; materialização (itens/poder no actor) pendente | `data/origens.json`                                |
 | Divindade (devotos, druida, panteão)                     | ✅ `rules/divindade.ts`                 | `data/divindades.json`                             |
