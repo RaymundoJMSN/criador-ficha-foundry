@@ -55,7 +55,8 @@ export function preparePericiaContext(
   state: WizardState,
   classe: IndexedClasse | undefined,
   intModifier: number,
-  errors: string[] = []
+  errors: string[] = [],
+  racialBonus = 0
 ): PericiaContext {
   if (!classe) {
     return { stepTitle: "Perícias", choicesRemaining: 0, pericias: [], errors };
@@ -76,8 +77,8 @@ export function preparePericiaContext(
     }
   }
 
-  // Total choices = class base + Int bonus (min 0)
-  const totalEscolhas = numero + Math.max(0, intModifier);
+  // Total choices = class base + Int bonus (min 0) + racial free skills
+  const totalEscolhas = numero + Math.max(0, intModifier) + racialBonus;
 
   // How many choices the user has already made (excluding inatas)
   const escolhasFeitas = state.periciasTreinadas.filter((p) => !inatas.includes(p)).length;

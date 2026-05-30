@@ -9,6 +9,7 @@ import { prepareRacaContext } from "./steps/raca.js";
 import { prepareOrigemContext } from "./steps/origem.js";
 import { prepareClasseContext } from "./steps/classe.js";
 import { preparePericiaContext } from "./steps/pericias.js";
+import { getRaceSkillBonus } from "../rules/raca.js";
 import { prepareDivindadeContext } from "./steps/divindade.js";
 import { preparePoderesContext } from "./steps/poderes.js";
 import { prepareMagiasContext } from "./steps/magias.js";
@@ -192,7 +193,8 @@ export function defineWizardApp(): void {
             | IndexedClasse
             | undefined;
           const intMod = state.atributosBase.int ?? 0;
-          stepCtx = preparePericiaContext(state, classe, intMod, errors);
+          const racialBonus = getRaceSkillBonus(state.racaNome || state.racaId);
+          stepCtx = preparePericiaContext(state, classe, intMod, errors, racialBonus);
           break;
         }
         case WizardStep.Divindade:
