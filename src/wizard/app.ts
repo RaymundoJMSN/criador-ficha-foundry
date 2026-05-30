@@ -381,17 +381,22 @@ export function defineWizardApp(): void {
         });
       });
 
-      // ── Poder search filter ──────────────────────────────────────────────
+      // ── Poder search + category filter ──────────────────────────────────
       const poderSearch = root.querySelector<HTMLInputElement>("#t20w-poder-search");
-      if (poderSearch) {
-        poderSearch.addEventListener("input", () => {
-          const q = poderSearch.value.toLowerCase();
-          root.querySelectorAll<HTMLElement>(".t20w-poder-row").forEach((item) => {
-            const name = (item.dataset["poderName"] ?? "").toLowerCase();
-            item.style.display = name.includes(q) ? "" : "none";
-          });
+      const poderCat = root.querySelector<HTMLSelectElement>("#t20w-poder-cat");
+      const applyPoderFilter = () => {
+        const q = (poderSearch?.value ?? "").toLowerCase();
+        const cat = poderCat?.value ?? "";
+        root.querySelectorAll<HTMLElement>(".t20w-poder-row").forEach((item) => {
+          const name = (item.dataset["poderName"] ?? "").toLowerCase();
+          const c = item.dataset["poderCat"] ?? "";
+          const matchName = name.includes(q);
+          const matchCat = !cat || c === cat;
+          item.style.display = matchName && matchCat ? "" : "none";
         });
-      }
+      };
+      if (poderSearch) poderSearch.addEventListener("input", applyPoderFilter);
+      if (poderCat) poderCat.addEventListener("change", applyPoderFilter);
     }
 
     _gatherFormData(): FormData {

@@ -261,25 +261,35 @@
     <section class="t20w-step">
       <h2>{{stepTitle}}</h2>
 
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap;">
         <span style="font-size:0.9em;">Selecionados: <strong>{{selectedCount}}</strong></span>
+        <select id="t20w-poder-cat" style="padding:4px 8px;background:rgba(255,255,255,0.08);border:1px solid #555;color:inherit;border-radius:3px;">
+          <option value="">Todas as categorias</option>
+          {{#each categorias}}<option value="{{this}}">{{this}}</option>{{/each}}
+        </select>
         <input type="text" id="t20w-poder-search" placeholder="Filtrar poderes..."
-               style="flex:1;padding:4px 8px;background:rgba(255,255,255,0.08);border:1px solid #555;color:inherit;border-radius:3px;" />
+               style="flex:1;min-width:120px;padding:4px 8px;background:rgba(255,255,255,0.08);border:1px solid #555;color:inherit;border-radius:3px;" />
       </div>
 
       <div class="t20w-poderes-list" style="display:flex;flex-direction:column;gap:3px;max-height:360px;overflow-y:auto;">
         {{#each poderes}}
         <label class="t20w-poder-row"
                data-poder-name="{{this.name}}"
-               style="display:flex;align-items:center;gap:8px;padding:5px 8px;background:rgba(255,255,255,0.04);border-radius:3px;cursor:pointer;{{#unless this.eligible}}opacity:0.55;{{/unless}}">
+               data-poder-cat="{{this.tipo}}"
+               style="display:flex;align-items:flex-start;gap:8px;padding:6px 8px;background:rgba(255,255,255,0.04);border-radius:3px;cursor:pointer;{{#unless this.eligible}}opacity:0.55;{{/unless}}">
           <input type="checkbox" name="poder-{{this.id}}" value="{{this.id}}"
                  {{#if this.selected}}checked{{/if}} />
           <img src="{{this.img}}" style="width:24px;height:24px;object-fit:contain;flex-shrink:0;border-radius:2px;" onerror="this.style.display='none'" />
-          <span style="flex:1;font-size:0.9em;">{{this.name}}</span>
-          {{#if this.tipo}}<small style="opacity:0.55;font-size:0.75em;">{{this.tipo}}</small>{{/if}}
-          {{#unless this.eligible}}
-            <small style="color:#f77;font-size:0.72em;flex-shrink:0;">Pré-req. não atendido</small>
-          {{/unless}}
+          <div style="flex:1;">
+            <div style="display:flex;align-items:center;gap:8px;">
+              <span style="font-size:0.9em;font-weight:600;">{{this.name}}</span>
+              {{#if this.tipo}}<small style="opacity:0.55;font-size:0.72em;">{{this.tipo}}</small>{{/if}}
+            </div>
+            {{#if this.descricao}}<div style="font-size:0.78em;opacity:0.75;margin-top:2px;">{{this.descricao}}</div>{{/if}}
+            {{#unless this.eligible}}
+              <div style="color:#f77;font-size:0.72em;margin-top:2px;">Requer: {{#each this.unmet}}{{this}}{{#unless @last}}; {{/unless}}{{/each}}</div>
+            {{/unless}}
+          </div>
         </label>
         {{/each}}
       </div>

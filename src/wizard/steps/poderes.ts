@@ -17,6 +17,7 @@ export interface PoderEntry {
 export interface PoderesContext {
   stepTitle: string;
   poderes: PoderEntry[];
+  categorias: string[];
   selectedCount: number;
   errors: string[];
 }
@@ -45,15 +46,18 @@ export function preparePoderesContext(
       eligible: unmet.length === 0,
       unmet,
       selected: state.poderes.includes(p.id),
-      tipo: (p.system as { tipo?: string }).tipo ?? "",
-      subtipo: (p.system as { subtipo?: string }).subtipo ?? "",
-      descricao: (p.system as { descricao?: string }).descricao ?? "",
+      tipo: p.system.tipo ?? "",
+      subtipo: p.system.subtipo ?? "",
+      descricao: p.system.descricao ?? "",
     };
   });
+
+  const categorias = [...new Set(entries.map((e) => e.tipo).filter(Boolean))].sort();
 
   return {
     stepTitle: "Poderes",
     poderes: entries,
+    categorias,
     selectedCount: state.poderes.length,
     errors,
   };
