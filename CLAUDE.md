@@ -80,6 +80,10 @@ em `system.json` + `templates/` + `tormenta20.mjs` do sistema instalado.
 
 **Dinheiro:** `system.dinheiro` = `{tc, tl, to, tp}` (cobre/prata-Tibar/ouro/platina). Moeda principal = **`tl` (T$, Tibar)**. Dinheiro inicial vai em `dinheiro.tl`.
 
+**Perícias (chaves do actor):** `system.pericias.{code}` onde **`code` = 4 letras** (`acro ades atle atua cava conh cura dipl enga fort furt guer inic inti intu inve joga ladi luta mist nobr perc pilo pont refl reli sobr vont`). Treino = `system.pericias.{code}.treinado` (Boolean). **NÃO** é o slug completo (`fortitude`).
+
+- ⚠️ Dados portados (progressao/racas/origens) usam slug completo. **Traduzir slug→code via `src/rules/pericia-slug.ts` (`toPericiaCode`) antes de escrever no actor.** "Ofício" não tem code único (explode em alfa/alqu/...) → mapeia para `null` e é pulado.
+
 **Classe (campos reais):** `system.inicial`, `system.niveis`, `system.pmPorNivel`, `system.pvPorNivel`, `system.pericias.{inatas,escolhas,numero,value}`.
 
 - ⚠️ `pericias.inatas` pode ser **string com vírgula/espaço**, não array — parsear, não fazer spread char-a-char.
@@ -118,12 +122,12 @@ em `system.json` + `templates/` + `tormenta20.mjs` do sistema instalado.
 **`src/rules/`** — regras estruturais T20 (TS puro, testável)
 
 - `engine.ts` — orquestrador: `getOptions(step, state)`, `validate(step, choice, state)`. `steps.ts` — `WizardStep` enum + ordem + metadata (condicional/obrigatório).
-- `atributos.ts` — point buy + métodos rolagem · `pericias.ts` — treináveis = `classe.numero + max(0,Int) + raça`, `inatas` travadas · `poderes.ts` — `checkPrereqs`/`isEligible` (lê `prereqs.json`; **6 tipos hoje:** atributo/nivel/poder/classe/raca/pericias) · `magias.ts` — círculos/limites + filtro · `origem.ts` — pick-2 · `divindade.ts` — filtro devotos (raça OR classe), druida fixo, obrigatória clérigo/paladino/druida.
-- `subescolhas.ts` — ⚠️ **STUB.** Deve resolver: especialista escola, familiar, modificadores escolhíveis de raça, linhagem feiticeiro, construtor Duende/Golem, multipath classe, pick-2 origem. Ver ROADMAP F2/F3.
+- `atributos.ts` — point buy + métodos rolagem · `pericias.ts` — `countTreinaveis(classe, Int, raça)` · `raca.ts` — `getRaca(id|nome)`, `getRaceSkillBonus` (soma `treinar_pericias`) · `pericia-slug.ts` — `toPericiaCode(slug)` (slug completo → code 4 letras do actor) · `poderes.ts` — `checkPrereqs`/`isEligible` (lê `prereqs.json`; **6 tipos hoje:** atributo/nivel/poder/classe/raca/pericias) · `magias.ts` — círculos/limites + filtro · `origem.ts` — pick-2 + `formatItensIniciais` · `divindade.ts` — filtro devotos (raça OR classe), druida fixo, obrigatória clérigo/paladino/druida.
+- `subescolhas.ts` — ⚠️ **parcial.** ✅ **modificadores escolhíveis de raça** (`getRaceModifierGroups`/`validateRaceModifiers`, porta `_validar_modificadores`; choices em `escolhasPorItem.raca_modificadores: string[][]`, aplicados em `atributos.*.base` pelo mapper). Stub ainda: especialista escola, familiar, linhagem feiticeiro, construtor Duende/Golem, multipath classe, pick-2 origem. Ver ROADMAP F2/F3.
 
 **`src/wizard/`** — UI
 
-- `state.ts` — `WizardState` + `apply()/undo()/isComplete()/serialize()`. Campo-chave `escolhasPorItem: Record<string,unknown>` (todas as sub-escolhas). `detalhes` → `system.detalhes.*`.
+- `state.ts` — `WizardState` + `apply()/undo()/isComplete()/serialize()`. Campo-chave `escolhasPorItem: Record<string,unknown>` (todas as sub-escolhas; ex. `raca_modificadores`, `origem_poder`). `racaNome` (nome do item Foundry, p/ resolver slug de raça fora do compêndio). `detalhes` → `system.detalhes.*`.
 - `app.ts` — `WizardApp extends ApplicationV2` (HandlebarsApplicationMixin, PARTS). **Definida no hook `init`, não no top-level** (globals Foundry não existem antes). `_onRender` liga listeners.
 - `steps/` — um `prepare<Passo>Context()` por passo: `nivel, atributos, raca, origem, classe, pericias, divindade, poderes, magias, equipamento, revisao`.
 
@@ -163,11 +167,11 @@ ActorWriter      → resolve docs, mapper monta data, Actor.create("character")
 | -------------------------------------------------------- | --------------------------------------- | -------------------------------------------------- |
 | Point buy + 7 métodos atributo                           | ✅ `rules/atributos.ts`                 | `data/atributos.json`                              |
 | Pré-requisitos de poder                                  | ⚠️ parcial (6 de ~15 tipos)             | `data/prereqs.json`                                |
-| Perícias por classe (inatas/escolhas/Int)                | ✅ `rules/pericias.ts`                  | item `classe` + fallback `progressao_classes.json` |
-| Origem + pick-2 benefícios                               | ⚠️ regra ok, UI/materialização pendente | `data/origens.json`                                |
+| Perícias por classe (inatas/escolhas/Int/raça)           | ✅ count + escrita (slug→code 4 letras) | item `classe` + fallback `progressao_classes.json` |
+| Origem + pick-2 benefícios                               | ⚠️ UI/detalhe ok; materialização (itens/poder no actor) pendente | `data/origens.json`                                |
 | Divindade (devotos, druida, panteão)                     | ✅ `rules/divindade.ts`                 | `data/divindades.json`                             |
 | Magias (círculo/tipo/escola/limites)                     | ✅ filtro; limites a afinar             | packs `magias` + regra                             |
-| **Modificadores escolhíveis de raça** (humano +1 livre)  | ❌ stub                                 | `data/racas.json` (`atributos_escolha`)            |
+| **Modificadores escolhíveis de raça** (humano +1 livre)  | ✅ `subescolhas.ts` (UI selects + base) | `data/racas.json` (`atributos_escolha`)            |
 | **Variações de raça** (Suraggel, Hynne...)               | ❌ não portado                          | T20-DB `racas/*.variacoes`                         |
 | **Construtor raça** (Golem, Duende)                      | ❌ não portado                          | T20-DB `racas/*.construtor`                        |
 | **Multipath classe** (Arcanista→Bruxo/Mago/Feiticeiro)   | ❌ stub                                 | `escolhasPorItem`                                  |

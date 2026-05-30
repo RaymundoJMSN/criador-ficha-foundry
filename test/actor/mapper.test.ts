@@ -25,6 +25,43 @@ describe("mapStateToActorData — perícias", () => {
   });
 });
 
+describe("mapStateToActorData — race choosable modifiers", () => {
+  it("adds humano +1 choices to atributos.base", () => {
+    const state = new WizardState({
+      nome: "Hero",
+      racaNome: "Humano",
+      atributosBase: { for: 1, des: 0, con: 0, int: 2, sab: 0, car: 0 },
+      escolhasPorItem: { raca_modificadores: [["for", "des", "con"]] },
+    });
+    const data = mapStateToActorData(state);
+    expect(data.system.atributos.for.base).toBe(2); // 1 + 1
+    expect(data.system.atributos.des.base).toBe(1); // 0 + 1
+    expect(data.system.atributos.con.base).toBe(1); // 0 + 1
+    expect(data.system.atributos.int.base).toBe(2); // unchanged
+  });
+
+  it("does not touch base when no modifier choices stored", () => {
+    const state = new WizardState({
+      nome: "Hero",
+      racaNome: "Humano",
+      atributosBase: { for: 1, des: 0, con: 0, int: 0, sab: 0, car: 0 },
+    });
+    const data = mapStateToActorData(state);
+    expect(data.system.atributos.for.base).toBe(1);
+  });
+
+  it("ignores invalid choices (no partial application)", () => {
+    const state = new WizardState({
+      nome: "Hero",
+      racaNome: "Humano",
+      atributosBase: { for: 1, des: 0, con: 0, int: 0, sab: 0, car: 0 },
+      escolhasPorItem: { raca_modificadores: [["for", "for"]] }, // wrong: dup + count
+    });
+    const data = mapStateToActorData(state);
+    expect(data.system.atributos.for.base).toBe(1); // unchanged
+  });
+});
+
 describe("mapStateToActorData — detalhes use names not ids", () => {
   it("resolves origem id to its display name", () => {
     const state = new WizardState({ nome: "Hero", origemId: "acolito" });

@@ -3,6 +3,7 @@ const racasData = racasDataRaw as unknown as Array<Record<string, unknown>>;
 
 import type { WizardState } from "../state.js";
 import type { IndexedRace } from "../../compendium/types.js";
+import { getRaceModifierGroups } from "../../rules/subescolhas.js";
 
 export interface RacaOption {
   id: string;
@@ -10,9 +11,29 @@ export interface RacaOption {
   selected: boolean;
 }
 
-export interface AtributoEscolha {
+const ATRIBUTO_OPCOES: Array<{ code: string; label: string }> = [
+  { code: "for", label: "Força" },
+  { code: "des", label: "Destreza" },
+  { code: "con", label: "Constituição" },
+  { code: "int", label: "Inteligência" },
+  { code: "sab", label: "Sabedoria" },
+  { code: "car", label: "Carisma" },
+];
+
+export interface ModSlot {
+  groupIndex: number;
+  slotIndex: number;
+  selected: string;
+  opcoes: Array<{ code: string; label: string; selected: boolean }>;
+}
+
+export interface ModGroup {
+  groupIndex: number;
+  valor: number;
   quantidade: number;
-  opcoes: string[];
+  diferentes: boolean;
+  observacao: string;
+  slots: ModSlot[];
 }
 
 export interface RacaDetail {
@@ -20,7 +41,7 @@ export interface RacaDetail {
   name: string;
   descricao: string;
   atributosTexto: string;
-  atributosEscolha: AtributoEscolha | null;
+  modGroups: ModGroup[];
   pericias_bonus: string[];
   tamanho: string;
   deslocamento: number | string;
@@ -62,16 +83,30 @@ function formatAtributos(data: Record<string, unknown>): string {
   return parts.join(", ") || "—";
 }
 
-function getAtributosEscolha(data: Record<string, unknown>): AtributoEscolha | null {
-  const escolhas = data["atributos_escolha"] as
-    | Array<{ valor: number; quantidade: number }>
-    | undefined;
-  if (!escolhas || escolhas.length === 0) return null;
-  const first = escolhas[0];
-  return {
-    quantidade: first.quantidade,
-    opcoes: ["For", "Des", "Con", "Int", "Sab", "Car"],
-  };
+function buildModGroups(racaSlug: string, choices: string[][]): ModGroup[] {
+  const groups = getRaceModifierGroups(racaSlug);
+  return groups.map((def, gi) => {
+    const qtd = def.quantidade ?? 1;
+    const picked = choices[gi] ?? [];
+    const slots: ModSlot[] = [];
+    for (let si = 0; si < qtd; si++) {
+      const sel = picked[si] ?? "";
+      slots.push({
+        groupIndex: gi,
+        slotIndex: si,
+        selected: sel,
+        opcoes: ATRIBUTO_OPCOES.map((o) => ({ ...o, selected: o.code === sel })),
+      });
+    }
+    return {
+      groupIndex: gi,
+      valor: def.valor ?? 1,
+      quantidade: qtd,
+      diferentes: Boolean(def.atributos_diferentes),
+      observacao: def.observacao ?? "",
+      slots,
+    };
+  });
 }
 
 export function prepareRacaContext(
@@ -95,12 +130,14 @@ export function prepareRacaContext(
         (r) => String(r["id"]) === nameSlug || toSlug(String(r["nome"] ?? "")) === nameSlug
       ) ?? null;
 
+    const choices = (state.escolhasPorItem["raca_modificadores"] as string[][] | undefined) ?? [];
+
     selectedDetail = {
       id: selectedFoundry.id,
       name: selectedFoundry.name,
       descricao: String(dbRaca?.["descricao"] ?? ""),
       atributosTexto: dbRaca ? formatAtributos(dbRaca) : "",
-      atributosEscolha: dbRaca ? getAtributosEscolha(dbRaca) : null,
+      modGroups: dbRaca ? buildModGroups(nameSlug, choices) : [],
       pericias_bonus: (dbRaca?.["bonus_pericias"] as string[] | undefined) ?? [],
       tamanho: String(dbRaca?.["tamanho"] ?? "médio"),
       deslocamento: (dbRaca?.["deslocamento"] as number | string | undefined) ?? 9,

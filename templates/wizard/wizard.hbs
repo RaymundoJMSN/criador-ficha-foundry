@@ -81,18 +81,21 @@
           <dt>Deslocamento</dt><dd>{{selectedDetail.deslocamento}}m</dd>
           {{#if selectedDetail.pericias_bonus.length}}<dt>Perícias bônus</dt><dd>{{selectedDetail.pericias_bonus}}</dd>{{/if}}
         </dl>
-        {{#if selectedDetail.atributosEscolha}}
+        {{#each selectedDetail.modGroups}}
         <div style="margin-top:10px;">
-          <strong style="font-size:0.85em;">Escolha {{selectedDetail.atributosEscolha.quantidade}} atributo(s) para +1:</strong>
+          <strong style="font-size:0.85em;">+{{this.valor}} em {{this.quantidade}} atributo(s){{#if this.diferentes}} diferentes{{/if}}:</strong>
           <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;">
-            {{#each selectedDetail.atributosEscolha.opcoes}}
-            <label style="display:flex;align-items:center;gap:4px;font-size:0.9em;">
-              <input type="radio" name="raca_atrib_escolha" value="{{this}}" />{{this}}
-            </label>
+            {{#each this.slots}}
+            <select name="raca_mod-{{this.groupIndex}}-{{this.slotIndex}}" style="padding:4px;">
+              <option value="">—</option>
+              {{#each this.opcoes}}
+              <option value="{{this.code}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>
+              {{/each}}
+            </select>
             {{/each}}
           </div>
         </div>
-        {{/if}}
+        {{/each}}
       </div>
       {{/if}}
       {{#if errors.length}}<ul class="t20w-errors">{{#each errors}}<li>{{this}}</li>{{/each}}</ul>{{/if}}

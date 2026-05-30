@@ -135,7 +135,28 @@ export function defineWizardApp(): void {
         }
       }
 
+      // Race choosable modifiers: name="raca_mod-{group}-{slot}" → string[][]
+      const racaMod: string[][] = [];
+      for (const [key, value] of formData.entries()) {
+        const m = /^raca_mod-(\d+)-(\d+)$/.exec(key as string);
+        if (!m) continue;
+        const g = parseInt(m[1], 10);
+        const s = parseInt(m[2], 10);
+        const v = (value as string) ?? "";
+        if (v) {
+          (racaMod[g] ??= [])[s] = v;
+        }
+      }
+
       const patch: Record<string, unknown> = { atributosBase };
+      if (formData.has("racaId") || racaMod.length > 0) {
+        // Normalize sparse arrays (skipped empty slots) to dense arrays.
+        const normalized = racaMod.map((grp) => (grp ?? []).filter((x) => x));
+        patch["escolhasPorItem"] = {
+          ...this._state.escolhasPorItem,
+          raca_modificadores: normalized,
+        };
+      }
       if (formData.has("nivel")) patch["nivel"] = nivel;
       if (formData.has("nome")) patch["nome"] = nome;
       if (formData.has("metodoAtributos")) patch["metodoAtributos"] = metodoAtributos;

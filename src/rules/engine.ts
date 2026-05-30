@@ -8,6 +8,7 @@ import {
   isDivindadeObrigatoria,
   isDivindadeAcessa,
 } from "./divindade.js";
+import { getRaceModifierGroups, validateRaceModifiers } from "./subescolhas.js";
 import type { IndexedMagia, AnyIndexed } from "../compendium/types.js";
 
 export interface EngineState {
@@ -16,6 +17,7 @@ export interface EngineState {
   metodoAtributos: string;
   atributosBase: AtributosBase;
   racaId: string;
+  racaNome?: string;
   origemId: string;
   classeId: string;
   subclasseId?: string;
@@ -51,9 +53,20 @@ export function validate(step: WizardStep, state: EngineState): ValidationResult
       }
       break;
 
-    case WizardStep.Raca:
-      if (!state.racaId) errors.push("Raça é obrigatória.");
+    case WizardStep.Raca: {
+      if (!state.racaId) {
+        errors.push("Raça é obrigatória.");
+        break;
+      }
+      const racaRef = state.racaNome || state.racaId;
+      if (getRaceModifierGroups(racaRef).length > 0) {
+        const choices = (state.escolhasPorItem["raca_modificadores"] as string[][]) ?? [];
+        const { errors: modErrors } = validateRaceModifiers(racaRef, choices);
+        if (modErrors.length > 0)
+          errors.push("Complete as escolhas de atributo da raça.");
+      }
       break;
+    }
 
     case WizardStep.Origem:
       if (!state.origemId) errors.push("Origem é obrigatória.");

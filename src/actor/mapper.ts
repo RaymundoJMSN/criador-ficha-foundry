@@ -3,6 +3,7 @@ import type { WizardState } from "../wizard/state.js";
 import { toPericiaCode } from "../rules/pericia-slug.js";
 import { getOrigem } from "../rules/origem.js";
 import { getDivindade } from "../rules/divindade.js";
+import { validateRaceModifiers } from "../rules/subescolhas.js";
 
 /** Output shape consumed by Actor.create() for tormenta20 system. */
 export interface ActorCreateData {
@@ -35,9 +36,16 @@ export interface ActorCreateData {
  * Items array is injected separately by writer.ts after resolving from packs.
  */
 export function mapStateToActorData(state: WizardState, items: unknown[] = []): ActorCreateData {
+  // Choosable racial modifiers (e.g. humano +1×3) are added to .base — the
+  // Foundry race item only applies *fixed* racial bonuses (.racial), so the
+  // player's free picks have no item to carry them. Invalid picks are dropped.
+  const choices = (state.escolhasPorItem["raca_modificadores"] as string[][] | undefined) ?? [];
+  const racaRef = state.racaNome || state.racaId;
+  const { modificadores } = validateRaceModifiers(racaRef, choices);
+
   const atributos = {} as ActorCreateData["system"]["atributos"];
   for (const attr of ["for", "des", "con", "int", "sab", "car"] as const) {
-    atributos[attr] = { base: state.atributosBase[attr] ?? 0 };
+    atributos[attr] = { base: (state.atributosBase[attr] ?? 0) + (modificadores[attr] ?? 0) };
   }
 
   // Trained perícias: translate T20-DB slugs → Foundry codes, drop unmappable.

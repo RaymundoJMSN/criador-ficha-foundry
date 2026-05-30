@@ -44,11 +44,11 @@ Objetivo: todos os 11 passos navegáveis e usáveis. Tirar do scaffolding.
 
 ---
 
-## F2 — Sub-escolhas core ❌ (o grande diferencial)
+## F2 — Sub-escolhas core 🔨 (o grande diferencial)
 
 Implementar `src/rules/subescolhas.ts` (hoje stub) + materialização no `mapper`. Portar de `T20-DB/motor/construtor.py`.
 
-- ❌ **Modificadores escolhíveis de raça** — humano +1 livre em 3 atributos diferentes; meio-elfo Int fixo + 2 escolhíveis. Dados: `racas.json.atributos_escolha`. Escreve em `atributos.*.base`.
+- ✅ **Modificadores escolhíveis de raça** — humano +1 em 3 atributos diferentes; mashin/sereia +1 em N. `getRaceModifierGroups`/`validateRaceModifiers` (porta `_validar_modificadores`); UI = N selects por grupo; choices em `escolhasPorItem.raca_modificadores`; mapper soma em `atributos.*.base`; engine valida no passo Raça. Dados: `racas.json.atributos_escolha`. *(meio-elfo Int fixo + 2 escolhíveis = não no JSON portado ainda.)*
 - ❌ **Multipath de classe** — Arcanista → Bruxo/Mago/Feiticeiro; Bárbaro→Trilha; etc. Sub-passo após escolher classe. Grava em `escolhasPorItem`.
 - ❌ **Pick-2 de origem** — escolher 2 entre perícias/poderes da origem; materializar por nome no pack. Regra já existe em `rules/origem.ts`, falta UI+writer.
 - ❌ Resolver genérico `resolveSubescolhas(context)` → `[{key,label,options}]` consumido pela UI.
