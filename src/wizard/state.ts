@@ -7,6 +7,7 @@ export interface WizardStateData {
   racaNome: string;
   origemId: string;
   classeId: string;
+  classeNome: string;
   subclasseId: string;
   divindadeId: string;
   periciasTreinadas: string[];
@@ -28,6 +29,7 @@ const DEFAULT_STATE: WizardStateData = {
   racaNome: "",
   origemId: "",
   classeId: "",
+  classeNome: "",
   subclasseId: "",
   divindadeId: "",
   periciasTreinadas: [],
@@ -51,6 +53,7 @@ export class WizardState implements WizardStateData {
   racaNome!: string;
   origemId!: string;
   classeId!: string;
+  classeNome!: string;
   subclasseId!: string;
   divindadeId!: string;
   periciasTreinadas!: string[];
@@ -88,6 +91,7 @@ export class WizardState implements WizardStateData {
       racaNome: this.racaNome,
       origemId: this.origemId,
       classeId: this.classeId,
+      classeNome: this.classeNome,
       subclasseId: this.subclasseId,
       divindadeId: this.divindadeId,
       periciasTreinadas: [...this.periciasTreinadas],

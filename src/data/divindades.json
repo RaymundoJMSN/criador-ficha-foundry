@@ -39,7 +39,12 @@
         "velocis",
         "voracis"
       ],
-      "classes_aceitas": ["barbaro", "cacador", "druida", "treinador"]
+      "classes_aceitas": [
+        "barbaro",
+        "cacador",
+        "druida",
+        "treinador"
+      ]
     },
     "poderes_concedidos": [
       "compreender_os_ermos",
@@ -70,16 +75,28 @@
         "voracis",
         "yidishan"
       ],
-      "classes_aceitas": ["barbaro", "cavaleiro", "guerreiro", "lutador"]
+      "classes_aceitas": [
+        "barbaro",
+        "cavaleiro",
+        "guerreiro",
+        "lutador"
+      ]
     },
-    "poderes_concedidos": ["conjurar_arma", "coragem_total", "fe_guerreira", "sangue_de_ferro"]
+    "poderes_concedidos": [
+      "conjurar_arma",
+      "coragem_total",
+      "fe_guerreira",
+      "sangue_de_ferro"
+    ]
   },
   {
     "id": "arton",
     "nome": "Arton",
     "devotos_aceitos": {
       "regra": "lista_restrita",
-      "classes_aceitas": ["druida"],
+      "classes_aceitas": [
+        "druida"
+      ],
       "racas_aceitas": [],
       "observacao": "Disponível APENAS para druidas. Como o clérigo do Panteão e o paladino do bem, o druida de Arton não é devotado a um único deus, nem tem acesso a poderes concedidos. Ser um druida de Arton conta como uma devoção."
     },
@@ -90,7 +107,11 @@
     "nome": "Azgher",
     "devotos_aceitos": {
       "regra": "lista_restrita",
-      "racas_aceitas": ["aggelus", "ceratops", "qareen"],
+      "racas_aceitas": [
+        "aggelus",
+        "ceratops",
+        "qareen"
+      ],
       "classes_aceitas": [
         "arcanista",
         "barbaro",
@@ -126,7 +147,13 @@
         "satiro",
         "silfide"
       ],
-      "classes_aceitas": ["bardo", "bucaneiro", "ladino", "inventor", "nobre"]
+      "classes_aceitas": [
+        "bardo",
+        "bucaneiro",
+        "ladino",
+        "inventor",
+        "nobre"
+      ]
     },
     "poderes_concedidos": [
       "apostar_com_o_trapaceiro",
@@ -150,7 +177,13 @@
         "naidora",
         "sulfure"
       ],
-      "classes_aceitas": ["arcanista", "cavaleiro", "guerreiro", "lutador", "nobre"]
+      "classes_aceitas": [
+        "arcanista",
+        "cavaleiro",
+        "guerreiro",
+        "lutador",
+        "nobre"
+      ]
     },
     "poderes_concedidos": [
       "aura_de_medo",
@@ -164,8 +197,18 @@
     "nome": "Khalmyr",
     "devotos_aceitos": {
       "regra": "lista_restrita",
-      "racas_aceitas": ["aggelus", "anao", "kobolds", "tengu"],
-      "classes_aceitas": ["cavaleiro", "guerreiro", "nobre", "paladino"]
+      "racas_aceitas": [
+        "aggelus",
+        "anao",
+        "kobolds",
+        "tengu"
+      ],
+      "classes_aceitas": [
+        "cavaleiro",
+        "guerreiro",
+        "nobre",
+        "paladino"
+      ]
     },
     "poderes_concedidos": [
       "coragem_total",
@@ -189,7 +232,10 @@
         "pteros",
         "velocis"
       ],
-      "classes_aceitas": ["nobre", "paladino"]
+      "classes_aceitas": [
+        "nobre",
+        "paladino"
+      ]
     },
     "poderes_concedidos": [
       "ataque_piedoso",
@@ -203,10 +249,26 @@
     "nome": "Lin-Wu",
     "devotos_aceitos": {
       "regra": "lista_restrita",
-      "racas_aceitas": ["anao", "kaijin", "kappa", "mashin", "tengu"],
-      "classes_aceitas": ["cavaleiro", "guerreiro", "nobre", "paladino"]
+      "racas_aceitas": [
+        "anao",
+        "kaijin",
+        "kappa",
+        "mashin",
+        "tengu"
+      ],
+      "classes_aceitas": [
+        "cavaleiro",
+        "guerreiro",
+        "nobre",
+        "paladino"
+      ]
     },
-    "poderes_concedidos": ["coragem_total", "kiai_divino", "mente_vazia", "tradicao_de_lin_wu"]
+    "poderes_concedidos": [
+      "coragem_total",
+      "kiai_divino",
+      "mente_vazia",
+      "tradicao_de_lin_wu"
+    ]
   },
   {
     "id": "marah",
@@ -223,7 +285,11 @@
         "satiro",
         "velocis"
       ],
-      "classes_aceitas": ["bardo", "nobre", "paladino"]
+      "classes_aceitas": [
+        "bardo",
+        "nobre",
+        "paladino"
+      ]
     },
     "poderes_concedidos": [
       "aura_de_paz",
@@ -262,7 +328,13 @@
         "voracis",
         "yidishan"
       ],
-      "classes_aceitas": ["barbaro", "cacador", "druida", "lutador", "treinador"]
+      "classes_aceitas": [
+        "barbaro",
+        "cacador",
+        "druida",
+        "lutador",
+        "treinador"
+      ]
     },
     "poderes_concedidos": [
       "olhar_amedrontador",
@@ -310,17 +382,37 @@
     "nome": "Oceano",
     "devotos_aceitos": {
       "regra": "lista_restrita",
-      "racas_aceitas": ["dahllan", "elfo_do_mar", "hynne", "kappa", "minotauro", "sereia_tritao"],
-      "classes_aceitas": ["barbaro", "bucaneiro", "cacador", "druida", "treinador"]
+      "racas_aceitas": [
+        "dahllan",
+        "elfo_do_mar",
+        "hynne",
+        "kappa",
+        "minotauro",
+        "sereia_tritao"
+      ],
+      "classes_aceitas": [
+        "barbaro",
+        "bucaneiro",
+        "cacador",
+        "druida",
+        "treinador"
+      ]
     },
-    "poderes_concedidos": ["anfibio", "arsenal_das_profundezas", "mestre_dos_mares", "sopro_do_mar"]
+    "poderes_concedidos": [
+      "anfibio",
+      "arsenal_das_profundezas",
+      "mestre_dos_mares",
+      "sopro_do_mar"
+    ]
   },
   {
     "id": "panteao",
     "nome": "Panteão",
     "devotos_aceitos": {
       "regra": "lista_restrita",
-      "classes_aceitas": ["clerigo"],
+      "classes_aceitas": [
+        "clerigo"
+      ],
       "racas_aceitas": [],
       "observacao": "Disponível apenas para personagens com o poder 'devoto_fiel'. Druidas NÃO podem cultuar o Panteão."
     },
@@ -331,8 +423,20 @@
     "nome": "Sszzaas",
     "devotos_aceitos": {
       "regra": "lista_restrita",
-      "racas_aceitas": ["finntroll", "medusa", "nagah", "tabrachi"],
-      "classes_aceitas": ["arcanista", "bardo", "bucaneiro", "inventor", "ladino", "nobre"]
+      "racas_aceitas": [
+        "finntroll",
+        "medusa",
+        "nagah",
+        "tabrachi"
+      ],
+      "classes_aceitas": [
+        "arcanista",
+        "bardo",
+        "bucaneiro",
+        "inventor",
+        "ladino",
+        "nobre"
+      ]
     },
     "poderes_concedidos": [
       "astucia_da_serpente",
@@ -346,8 +450,19 @@
     "nome": "Tanna-Toh",
     "devotos_aceitos": {
       "regra": "lista_restrita",
-      "racas_aceitas": ["golem", "kliren", "mashin", "tengu"],
-      "classes_aceitas": ["arcanista", "bardo", "inventor", "nobre", "paladino"]
+      "racas_aceitas": [
+        "golem",
+        "kliren",
+        "mashin",
+        "tengu"
+      ],
+      "classes_aceitas": [
+        "arcanista",
+        "bardo",
+        "inventor",
+        "nobre",
+        "paladino"
+      ]
     },
     "poderes_concedidos": [
       "conhecimento_enciclopedico",
@@ -380,9 +495,20 @@
         "tabrachi",
         "trog"
       ],
-      "classes_aceitas": ["arcanista", "bardo", "druida", "ladino", "treinador"]
+      "classes_aceitas": [
+        "arcanista",
+        "bardo",
+        "druida",
+        "ladino",
+        "treinador"
+      ]
     },
-    "poderes_concedidos": ["caricia_sombria", "manto_da_penumbra", "visao_nas_trevas", "zumbificar"]
+    "poderes_concedidos": [
+      "caricia_sombria",
+      "manto_da_penumbra",
+      "visao_nas_trevas",
+      "zumbificar"
+    ]
   },
   {
     "id": "thwor",
@@ -405,8 +531,17 @@
     "nome": "Thyatis",
     "devotos_aceitos": {
       "regra": "lista_restrita",
-      "racas_aceitas": ["aggelus", "eiradaan"],
-      "classes_aceitas": ["cavaleiro", "guerreiro", "inventor", "lutador", "paladino"]
+      "racas_aceitas": [
+        "aggelus",
+        "eiradaan"
+      ],
+      "classes_aceitas": [
+        "cavaleiro",
+        "guerreiro",
+        "inventor",
+        "lutador",
+        "paladino"
+      ]
     },
     "poderes_concedidos": [
       "ataque_piedoso",
@@ -450,7 +585,11 @@
         "silfide",
         "tengu"
       ],
-      "classes_aceitas": ["arcanista", "bardo", "treinador"]
+      "classes_aceitas": [
+        "arcanista",
+        "bardo",
+        "treinador"
+      ]
     },
     "poderes_concedidos": [
       "bencao_do_mana",

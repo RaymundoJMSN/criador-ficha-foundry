@@ -57,3 +57,13 @@ export function getRaceSkillBonus(idOrName: string): number {
   if (!raca) return 0;
   return (raca.treinar_pericias ?? []).reduce((sum, t) => sum + (t.quantidade ?? 0), 0);
 }
+
+/** Fixed (non-choosable) racial attribute modifiers, e.g. anão +2 con +1 sab -1 des. */
+export function getRaceFixedModifiers(idOrName: string): Partial<Record<string, number>> {
+  const raca = getRaca(idOrName);
+  const out: Partial<Record<string, number>> = {};
+  for (const f of raca?.atributos_fixos ?? []) {
+    out[f.atributo] = (out[f.atributo] ?? 0) + f.valor;
+  }
+  return out;
+}

@@ -131,7 +131,10 @@
   "especialista_em_escola": [
     {
       "tipo": "habilidade_classe",
-      "valor": ["bruxo", "mago"]
+      "valor": [
+        "bruxo",
+        "mago"
+      ]
     }
   ],
   "familiar_aprimorado": [
@@ -4888,7 +4891,12 @@
   "foco_em_magia": [
     {
       "tipo": "habilidade_classe",
-      "valor": ["magias_arcanista", "magias_bardo", "magias_clerigo", "magias_druida"]
+      "valor": [
+        "magias_arcanista",
+        "magias_bardo",
+        "magias_clerigo",
+        "magias_druida"
+      ]
     }
   ],
   "genese_elemental": [
@@ -4982,7 +4990,10 @@
   "arma_amada": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["anao", "hobgoblin"]
+      "valor": [
+        "anao",
+        "hobgoblin"
+      ]
     }
   ],
   "arma_natural_aprimorada": [
@@ -5012,7 +5023,12 @@
   "asas_de_aco": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["harpia", "kallyanach", "pteros", "suraggel"]
+      "valor": [
+        "harpia",
+        "kallyanach",
+        "pteros",
+        "suraggel"
+      ]
     },
     {
       "tipo": "outro",
@@ -5028,7 +5044,12 @@
   "atracao_pela_polvora": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["anao", "goblin", "hobgoblin", "kliren"]
+      "valor": [
+        "anao",
+        "goblin",
+        "hobgoblin",
+        "kliren"
+      ]
     },
     {
       "tipo": "pericia_treinada",
@@ -5110,37 +5131,55 @@
   "camuflagem_mimetica": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["sereia_tritao", "trog"]
+      "valor": [
+        "sereia_tritao",
+        "trog"
+      ]
     }
   ],
   "canto_da_sereia": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["sereia_tritao"]
+      "valor": [
+        "sereia_tritao"
+      ]
     }
   ],
   "cascos_poderosos": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["centauro", "minotauro", "satiro"]
+      "valor": [
+        "centauro",
+        "minotauro",
+        "satiro"
+      ]
     }
   ],
   "chassi_gracioso": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["golem"]
+      "valor": [
+        "golem"
+      ]
     }
   ],
   "citadino": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["humano", "hynne", "kliren", "meio_elfo"]
+      "valor": [
+        "humano",
+        "hynne",
+        "kliren",
+        "meio_elfo"
+      ]
     }
   ],
   "comandar_aprimorado": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["humano"]
+      "valor": [
+        "humano"
+      ]
     },
     {
       "tipo": "atributo",
@@ -5155,43 +5194,59 @@
   "conforto_do_aco": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["anao"]
+      "valor": [
+        "anao"
+      ]
     }
   ],
   "constricao_atroz": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["dahllan"]
+      "valor": [
+        "dahllan"
+      ]
     }
   ],
   "coracao_de_pedra": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["anao", "medusa"]
+      "valor": [
+        "anao",
+        "medusa"
+      ]
     }
   ],
   "coro_sibilante": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["medusa"]
+      "valor": [
+        "medusa"
+      ]
     }
   ],
   "crescimento_feerico": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["duende", "silfide"]
+      "valor": [
+        "duende",
+        "silfide"
+      ]
     }
   ],
   "crianca_das_trevas": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["sulfure"]
+      "valor": [
+        "sulfure"
+      ]
     }
   ],
   "crianca_da_luz": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["aggelus"]
+      "valor": [
+        "aggelus"
+      ]
     }
   ],
   "devocao_iluminada": [
@@ -5213,13 +5268,25 @@
   "duas_cabecas": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["gnoll", "kaijin", "lefou", "orc", "trog"]
+      "valor": [
+        "gnoll",
+        "kaijin",
+        "lefou",
+        "orc",
+        "trog"
+      ]
     }
   ],
   "dupla_conjuracao": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["gnoll", "kaijin", "lefou", "orc", "trog"]
+      "valor": [
+        "gnoll",
+        "kaijin",
+        "lefou",
+        "orc",
+        "trog"
+      ]
     },
     {
       "tipo": "atributo",
@@ -5238,7 +5305,13 @@
   "dupla_inteligencia": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["gnoll", "kaijin", "lefou", "orc", "trog"]
+      "valor": [
+        "gnoll",
+        "kaijin",
+        "lefou",
+        "orc",
+        "trog"
+      ]
     },
     {
       "tipo": "atributo",
@@ -5253,7 +5326,13 @@
   "dupla_prontidao": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["gnoll", "kaijin", "lefou", "orc", "trog"]
+      "valor": [
+        "gnoll",
+        "kaijin",
+        "lefou",
+        "orc",
+        "trog"
+      ]
     },
     {
       "tipo": "atributo",
@@ -5268,7 +5347,9 @@
   "duro_como_aco": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["anao"]
+      "valor": [
+        "anao"
+      ]
     },
     {
       "tipo": "nivel",
@@ -5290,7 +5371,11 @@
   "entre_as_pernas": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["goblin", "hynne", "kobolds"]
+      "valor": [
+        "goblin",
+        "hynne",
+        "kobolds"
+      ]
     },
     {
       "tipo": "pericia_treinada",
@@ -5300,31 +5385,45 @@
   "escapada_criativa": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["goblin", "meio_elfo"]
+      "valor": [
+        "goblin",
+        "meio_elfo"
+      ]
     }
   ],
   "esgrima_elfica": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["elfo"]
+      "valor": [
+        "elfo"
+      ]
     }
   ],
   "estilo_classico": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["humano"]
+      "valor": [
+        "humano"
+      ]
     }
   ],
   "estirpe_arcana": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["elfo", "eiradaan", "nagah"]
+      "valor": [
+        "elfo",
+        "eiradaan",
+        "nagah"
+      ]
     }
   ],
   "exaltacao_do_rejeitado": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["kaijin", "lefou"]
+      "valor": [
+        "kaijin",
+        "lefou"
+      ]
     },
     {
       "tipo": "outro",
@@ -5334,7 +5433,9 @@
   "explosao_ossea": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["osteon"]
+      "valor": [
+        "osteon"
+      ]
     }
   ],
   "ex_familiar_kobolds": [
@@ -5346,13 +5447,17 @@
   "falatorio_criativo": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["goblin"]
+      "valor": [
+        "goblin"
+      ]
     }
   ],
   "familiar_de_elemento": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["qareen"]
+      "valor": [
+        "qareen"
+      ]
     },
     {
       "tipo": "outro",
@@ -5362,7 +5467,10 @@
   "familiar_de_luz": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["aggelus", "qareen"]
+      "valor": [
+        "aggelus",
+        "qareen"
+      ]
     },
     {
       "tipo": "outro",
@@ -5372,7 +5480,10 @@
   "familiar_de_trevas": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["sulfure", "qareen"]
+      "valor": [
+        "sulfure",
+        "qareen"
+      ]
     },
     {
       "tipo": "outro",
@@ -5382,19 +5493,28 @@
   "faro_aprimorado": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["minotauro", "moreau_lobo"]
+      "valor": [
+        "minotauro",
+        "moreau_lobo"
+      ]
     }
   ],
   "fragrancia_de_rosas": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["dahllan", "duende"]
+      "valor": [
+        "dahllan",
+        "duende"
+      ]
     }
   ],
   "furia_aterrorizante": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["galokk", "ogro"]
+      "valor": [
+        "galokk",
+        "ogro"
+      ]
     },
     {
       "tipo": "poder",
@@ -5414,7 +5534,9 @@
   "gavinhas": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["dahllan"]
+      "valor": [
+        "dahllan"
+      ]
     },
     {
       "tipo": "nivel",
@@ -5424,19 +5546,29 @@
   "ginete_de_javali": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["anao"]
+      "valor": [
+        "anao"
+      ]
     }
   ],
   "glamour": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["duende", "eiradaan", "silfide"]
+      "valor": [
+        "duende",
+        "eiradaan",
+        "silfide"
+      ]
     }
   ],
   "glamour_maior": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["duende", "eiradaan", "silfide"]
+      "valor": [
+        "duende",
+        "eiradaan",
+        "silfide"
+      ]
     },
     {
       "tipo": "poder",
@@ -5450,13 +5582,19 @@
   "golpe_dos_titas": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["galokk"]
+      "valor": [
+        "galokk"
+      ]
     }
   ],
   "golpe_no_joelho": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["goblin", "hynne", "kobolds"]
+      "valor": [
+        "goblin",
+        "hynne",
+        "kobolds"
+      ]
     },
     {
       "tipo": "poder",
@@ -5466,13 +5604,19 @@
   "grande_marca_de_wynna": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["qareen"]
+      "valor": [
+        "qareen"
+      ]
     }
   ],
   "heranca_erudita": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["eiradaan", "elfo", "kallyanach"]
+      "valor": [
+        "eiradaan",
+        "elfo",
+        "kallyanach"
+      ]
     }
   ],
   "invisibilidade": [
@@ -5490,13 +5634,19 @@
   "logica_gnomica": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["kliren"]
+      "valor": [
+        "kliren"
+      ]
     }
   ],
   "magia_ofidica": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["medusa", "moreau_serpente", "nagah"]
+      "valor": [
+        "medusa",
+        "moreau_serpente",
+        "nagah"
+      ]
     },
     {
       "tipo": "outro",
@@ -5518,7 +5668,9 @@
   "manipulacao_esqueletica": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["osteon"]
+      "valor": [
+        "osteon"
+      ]
     }
   ],
   "maravilha_mecanica_adaptacao_elemental": [
@@ -5716,13 +5868,19 @@
   "marrada_poderosa": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["minotauro", "satiro"]
+      "valor": [
+        "minotauro",
+        "satiro"
+      ]
     }
   ],
   "meditacao_mistica": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["eiradaan", "elfo"]
+      "valor": [
+        "eiradaan",
+        "elfo"
+      ]
     },
     {
       "tipo": "atributo",
@@ -5743,7 +5901,9 @@
   "olhar_petrificante": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["medusa"]
+      "valor": [
+        "medusa"
+      ]
     },
     {
       "tipo": "nivel",
@@ -5759,7 +5919,9 @@
   "ossos_afiados": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["osteon"]
+      "valor": [
+        "osteon"
+      ]
     }
   ],
   "os_do_fundo_kobolds": [
@@ -5787,25 +5949,33 @@
   "pirata_oceanico": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["sereia_tritao"]
+      "valor": [
+        "sereia_tritao"
+      ]
     }
   ],
   "programacao_de_combate": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["golem"]
+      "valor": [
+        "golem"
+      ]
     }
   ],
   "programacao_holistica": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["golem"]
+      "valor": [
+        "golem"
+      ]
     }
   ],
   "protetor_eterno": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["minotauro"]
+      "valor": [
+        "minotauro"
+      ]
     },
     {
       "tipo": "poder",
@@ -5815,13 +5985,21 @@
   "protetor_taurico": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["minotauro"]
+      "valor": [
+        "minotauro"
+      ]
     }
   ],
   "quadridestria": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["kaijin", "lefou", "nagah", "orc", "trog"]
+      "valor": [
+        "kaijin",
+        "lefou",
+        "nagah",
+        "orc",
+        "trog"
+      ]
     },
     {
       "tipo": "poder",
@@ -5839,31 +6017,47 @@
   "quatro_bracos": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["kaijin", "lefou", "nagah", "orc", "trog"]
+      "valor": [
+        "kaijin",
+        "lefou",
+        "nagah",
+        "orc",
+        "trog"
+      ]
     }
   ],
   "saliva_corrosiva": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["trog"]
+      "valor": [
+        "trog"
+      ]
     }
   ],
   "sangue_magico": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["eiradaan", "qareen", "silfide"]
+      "valor": [
+        "eiradaan",
+        "qareen",
+        "silfide"
+      ]
     }
   ],
   "saraivada_florestal": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["dahllan"]
+      "valor": [
+        "dahllan"
+      ]
     }
   ],
   "soco_foguete": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["golem"]
+      "valor": [
+        "golem"
+      ]
     }
   ],
   "somos_explosivos_kobolds": [
@@ -5891,7 +6085,9 @@
   "tradicao_de_ayrelynn": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["anao"]
+      "valor": [
+        "anao"
+      ]
     }
   ],
   "tradicao_perdida": [
@@ -5913,7 +6109,9 @@
   "valentia_inata": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["hynne"]
+      "valor": [
+        "hynne"
+      ]
     }
   ],
   "valentia_nata": [
@@ -5931,7 +6129,9 @@
   "veneno_aprimorado": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["medusa"]
+      "valor": [
+        "medusa"
+      ]
     },
     {
       "tipo": "atributo",
@@ -5942,7 +6142,11 @@
   "vigilancia_elfica": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["elfo", "meio_elfo", "naidora"]
+      "valor": [
+        "elfo",
+        "meio_elfo",
+        "naidora"
+      ]
     }
   ],
   "visao_feerica": [
@@ -5954,7 +6158,12 @@
   "vitalidade_das_fadas": [
     {
       "tipo": "habilidade_racial",
-      "valor": ["dahllan", "duende", "satiro", "silfide"]
+      "valor": [
+        "dahllan",
+        "duende",
+        "satiro",
+        "silfide"
+      ]
     }
   ],
   "voo": [

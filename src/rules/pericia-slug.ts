@@ -45,6 +45,9 @@ const SLUG_TO_CODE: Record<string, string> = {
 /** All 28 core Foundry perícia codes. */
 export const PERICIA_CODES: string[] = Object.values(SLUG_TO_CODE);
 
+/** All 28 core perícia full slugs (T20-DB ids). */
+export const PERICIA_SLUGS: string[] = Object.keys(SLUG_TO_CODE);
+
 const CODE_SET = new Set(PERICIA_CODES);
 
 function normalize(value: string): string {

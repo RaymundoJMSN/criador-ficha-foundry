@@ -8,7 +8,14 @@ import {
   isDivindadeObrigatoria,
   isDivindadeAcessa,
 } from "./divindade.js";
-import { getRaceModifierGroups, validateRaceModifiers } from "./subescolhas.js";
+import {
+  getRaceModifierGroups,
+  validateRaceModifiers,
+  getRaceAttributeTotals,
+} from "./subescolhas.js";
+import { getClasse } from "./classe.js";
+import { getRaceSkillBonus } from "./raca.js";
+import { buildPericiaPlan, computeTrained, type PericiaPicks } from "./pericias.js";
 import type { IndexedMagia, AnyIndexed } from "../compendium/types.js";
 
 export interface EngineState {
@@ -20,6 +27,7 @@ export interface EngineState {
   racaNome?: string;
   origemId: string;
   classeId: string;
+  classeNome?: string;
   subclasseId?: string;
   divindadeId?: string;
   periciasTreinadas: string[];
@@ -75,6 +83,26 @@ export function validate(step: WizardStep, state: EngineState): ValidationResult
     case WizardStep.Classe:
       if (!state.classeId) errors.push("Classe é obrigatória.");
       break;
+
+    case WizardStep.Pericias: {
+      const classe = getClasse(state.classeNome || state.classeId);
+      if (classe) {
+        const racaRef = state.racaNome || state.racaId;
+        const choices = (state.escolhasPorItem["raca_modificadores"] as string[][]) ?? [];
+        const totals = getRaceAttributeTotals(racaRef, choices);
+        const intFinal = (state.atributosBase.int ?? 0) + (totals.int ?? 0);
+        const plan = buildPericiaPlan(classe, intFinal, getRaceSkillBonus(racaRef));
+        const picks = (state.escolhasPorItem["pericias"] as PericiaPicks) ?? {
+          obrigatorias: [],
+          escolhas: [],
+          extras_int: [],
+          raca: [],
+        };
+        const { errors: pErrors } = computeTrained(plan, picks);
+        errors.push(...pErrors);
+      }
+      break;
+    }
 
     case WizardStep.Divindade:
       if (isDivindadeObrigatoria(state.classeId) && !state.divindadeId) {

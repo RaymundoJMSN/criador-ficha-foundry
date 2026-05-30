@@ -225,4 +225,55 @@ function walkDir(dir) {
   writeJson(join(OUT, "progressao_classes.json"), result);
 }
 
+// 10. classes.json — canonical per-class rules (rich source: data/classes/*.json)
+//     This is the AUTHORITATIVE perícia/pv/pm/progression source. Foundry's
+//     classe item carries NO rules — only the item to attach to the actor.
+{
+  const normPericia = (s) =>
+    String(s)
+      .toLowerCase()
+      .normalize("NFD")
+      .replace(/[̀-ͯ]/g, "")
+      .replace(/[^a-z0-9]+/g, "_")
+      .replace(/^_+|_+$/g, "");
+
+  const dir = join(T20DB, "classes");
+  const result = {};
+  for (const file of readdirSync(dir)) {
+    if (!file.endsWith(".json")) continue;
+    const c = readJson(join(dir, file));
+    const car = c.caracteristicas ?? {};
+    const per = car.pericias ?? {};
+    const pv = car.pontos_de_vida ?? {};
+    const pm = car.pontos_de_mana ?? {};
+
+    const escolhasRaw = per.escolhas ?? {};
+    result[c.id] = {
+      nome: c.nome ?? c.id,
+      pericias: {
+        fixas: (per.fixas ?? []).map(normPericia),
+        escolhas_obrigatorias: (per.escolhas_obrigatorias ?? []).map((g) => ({
+          quantidade: g.quantidade ?? 1,
+          opcoes: (g.opcoes ?? []).map(normPericia),
+        })),
+        escolhas: {
+          quantidade: escolhasRaw.quantidade ?? 0,
+          opcoes: (escolhasRaw.opcoes ?? []).map(normPericia),
+        },
+      },
+      pv: {
+        inicial: pv.inicial ?? null,
+        por_nivel: pv.por_nivel ?? null,
+        soma_atributo_inicial: pv.soma_atributo_inicial ?? null,
+        soma_atributo_por_nivel: pv.soma_atributo_por_nivel ?? null,
+      },
+      pm: { por_nivel: pm.por_nivel ?? 0 },
+      proficiencias: car.proficiencias ?? [],
+      habilidades_classe_ids: c.habilidades_classe_ids ?? [],
+      poderes_classe_ids: c.poderes_classe_ids ?? [],
+    };
+  }
+  writeJson(join(OUT, "classes.json"), result);
+}
+
 console.log("Done.");

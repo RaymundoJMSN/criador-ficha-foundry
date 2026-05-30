@@ -1,6 +1,9 @@
 {
   "arcanista": {
-    "pericias_inatas": ["misticismo", "vontade"],
+    "pericias_inatas": [
+      "misticismo",
+      "vontade"
+    ],
     "pericias_escolha": [
       "conhecimento",
       "diplomacia",
@@ -19,7 +22,10 @@
     "pm_por_nivel": 6
   },
   "barbaro": {
-    "pericias_inatas": ["fortitude", "luta"],
+    "pericias_inatas": [
+      "fortitude",
+      "luta"
+    ],
     "pericias_escolha": [
       "adestramento",
       "atletismo",
@@ -37,7 +43,10 @@
     "pm_por_nivel": 3
   },
   "bardo": {
-    "pericias_inatas": ["atuacao", "reflexos"],
+    "pericias_inatas": [
+      "atuacao",
+      "reflexos"
+    ],
     "pericias_escolha": [
       "acrobacia",
       "cavalgar",
@@ -62,7 +71,9 @@
     "pm_por_nivel": 4
   },
   "bucaneiro": {
-    "pericias_inatas": ["reflexos"],
+    "pericias_inatas": [
+      "reflexos"
+    ],
     "pericias_escolha": [
       "acrobacia",
       "atletismo",
@@ -84,7 +95,9 @@
     "pm_por_nivel": 3
   },
   "cacador": {
-    "pericias_inatas": ["sobrevivencia"],
+    "pericias_inatas": [
+      "sobrevivencia"
+    ],
     "pericias_escolha": [
       "adestramento",
       "atletismo",
@@ -105,7 +118,10 @@
     "pm_por_nivel": 4
   },
   "cavaleiro": {
-    "pericias_inatas": ["fortitude", "luta"],
+    "pericias_inatas": [
+      "fortitude",
+      "luta"
+    ],
     "pericias_escolha": [
       "adestramento",
       "atletismo",
@@ -123,7 +139,10 @@
     "pm_por_nivel": 3
   },
   "clerigo": {
-    "pericias_inatas": ["religiao", "vontade"],
+    "pericias_inatas": [
+      "religiao",
+      "vontade"
+    ],
     "pericias_escolha": [
       "conhecimento",
       "cura",
@@ -142,7 +161,10 @@
     "pm_por_nivel": 5
   },
   "druida": {
-    "pericias_inatas": ["sobrevivencia", "vontade"],
+    "pericias_inatas": [
+      "sobrevivencia",
+      "vontade"
+    ],
     "pericias_escolha": [
       "adestramento",
       "atletismo",
@@ -163,7 +185,9 @@
     "pm_por_nivel": 4
   },
   "guerreiro": {
-    "pericias_inatas": ["fortitude"],
+    "pericias_inatas": [
+      "fortitude"
+    ],
     "pericias_escolha": [
       "adestramento",
       "atletismo",
@@ -182,7 +206,10 @@
     "pm_por_nivel": 3
   },
   "inventor": {
-    "pericias_inatas": ["oficio", "vontade"],
+    "pericias_inatas": [
+      "oficio",
+      "vontade"
+    ],
     "pericias_escolha": [
       "conhecimento",
       "cura",
@@ -202,7 +229,10 @@
     "pm_por_nivel": 4
   },
   "ladino": {
-    "pericias_inatas": ["ladinagem", "reflexos"],
+    "pericias_inatas": [
+      "ladinagem",
+      "reflexos"
+    ],
     "pericias_escolha": [
       "acrobacia",
       "atletismo",
@@ -228,7 +258,10 @@
     "pm_por_nivel": 4
   },
   "lutador": {
-    "pericias_inatas": ["fortitude", "luta"],
+    "pericias_inatas": [
+      "fortitude",
+      "luta"
+    ],
     "pericias_escolha": [
       "acrobacia",
       "adestramento",
@@ -247,7 +280,9 @@
     "pm_por_nivel": 3
   },
   "nobre": {
-    "pericias_inatas": ["vontade"],
+    "pericias_inatas": [
+      "vontade"
+    ],
     "pericias_escolha": [
       "adestramento",
       "atuacao",
@@ -273,7 +308,10 @@
     "pm_por_nivel": 4
   },
   "paladino": {
-    "pericias_inatas": ["luta", "vontade"],
+    "pericias_inatas": [
+      "luta",
+      "vontade"
+    ],
     "pericias_escolha": [
       "adestramento",
       "atletismo",

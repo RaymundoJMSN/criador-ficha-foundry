@@ -4,6 +4,9 @@ import { toPericiaCode } from "../rules/pericia-slug.js";
 import { getOrigem } from "../rules/origem.js";
 import { getDivindade } from "../rules/divindade.js";
 import { validateRaceModifiers } from "../rules/subescolhas.js";
+import { getClasse } from "../rules/classe.js";
+import { getRaceSkillBonus, getRaceFixedModifiers } from "../rules/raca.js";
+import { buildPericiaPlan, computeTrained, type PericiaPicks } from "../rules/pericias.js";
 
 /** Output shape consumed by Actor.create() for tormenta20 system. */
 export interface ActorCreateData {
@@ -48,9 +51,22 @@ export function mapStateToActorData(state: WizardState, items: unknown[] = []): 
     atributos[attr] = { base: (state.atributosBase[attr] ?? 0) + (modificadores[attr] ?? 0) };
   }
 
-  // Trained perícias: translate T20-DB slugs → Foundry codes, drop unmappable.
+  // Trained perícias — canonical: derive from class spec + the player's picks
+  // (NOT from the Foundry item, which has no perícia rules). Falls back to the
+  // legacy flat periciasTreinadas list when no structured picks exist.
+  const classe = state.classeNome ? getClasse(state.classeNome) : null;
+  const picks = state.escolhasPorItem["pericias"] as PericiaPicks | undefined;
+  let trainedSlugs: string[];
+  if (classe && picks) {
+    const fixedInt = getRaceFixedModifiers(racaRef)["int"] ?? 0;
+    const intFinal = (state.atributosBase.int ?? 0) + fixedInt + (modificadores["int"] ?? 0);
+    const plan = buildPericiaPlan(classe, intFinal, getRaceSkillBonus(racaRef));
+    trainedSlugs = computeTrained(plan, picks).trained;
+  } else {
+    trainedSlugs = state.periciasTreinadas;
+  }
   const pericias: Record<string, { treinado: true }> = {};
-  for (const slug of state.periciasTreinadas) {
+  for (const slug of trainedSlugs) {
     const code = toPericiaCode(slug);
     if (code) pericias[code] = { treinado: true };
   }

@@ -10,7 +10,15 @@ import { prepareOrigemContext } from "./steps/origem.js";
 import { prepareClasseContext } from "./steps/classe.js";
 import { preparePericiaContext } from "./steps/pericias.js";
 import { getRaceSkillBonus } from "../rules/raca.js";
+import { getRaceAttributeTotals } from "../rules/subescolhas.js";
 import { toSlug } from "../compendium/slug.js";
+
+/** Final Int = base + racial (fixed + chosen). Drives the perícia Int bonus. */
+function finalInt(state: WizardState): number {
+  const choices = (state.escolhasPorItem["raca_modificadores"] as string[][] | undefined) ?? [];
+  const totals = getRaceAttributeTotals(state.racaNome || state.racaId, choices);
+  return (state.atributosBase.int ?? 0) + (totals.int ?? 0);
+}
 import { prepareDivindadeContext } from "./steps/divindade.js";
 import { preparePoderesContext } from "./steps/poderes.js";
 import { prepareMagiasContext } from "./steps/magias.js";
@@ -114,10 +122,28 @@ export function defineWizardApp(): void {
         if (v !== null) atributosBase[attr] = parseInt(v as string, 10);
       }
 
-      const periciasTreinadas: string[] = [];
-      for (const [key] of formData.entries()) {
-        if ((key as string).startsWith("pericia-")) {
-          periciasTreinadas.push((key as string).replace("pericia-", ""));
+      // Canonical perícia picks → escolhasPorItem.pericias (4 buckets).
+      const perObrig: string[][] = [];
+      const perEsc: string[] = [];
+      const perInt: string[] = [];
+      const perRaca: string[] = [];
+      let sawPericia = false;
+      for (const [key, value] of formData.entries()) {
+        const k = key as string;
+        const v = value as string;
+        const mo = /^per_obrig-(\d+)$/.exec(k);
+        if (mo) {
+          sawPericia = true;
+          (perObrig[parseInt(mo[1], 10)] ??= []).push(v);
+        } else if (k.startsWith("per_esc-")) {
+          sawPericia = true;
+          perEsc.push(k.replace("per_esc-", ""));
+        } else if (k.startsWith("per_int-")) {
+          sawPericia = true;
+          perInt.push(k.replace("per_int-", ""));
+        } else if (k.startsWith("per_raca-")) {
+          sawPericia = true;
+          perRaca.push(k.replace("per_raca-", ""));
         }
       }
 
@@ -149,14 +175,24 @@ export function defineWizardApp(): void {
       }
 
       const patch: Record<string, unknown> = { atributosBase };
+      let escolhas: Record<string, unknown> | null = null;
       if (formData.has("racaId") || racaMod.length > 0) {
         // Normalize sparse arrays (skipped empty slots) to dense arrays.
         const normalized = racaMod.map((grp) => (grp ?? []).filter((x) => x));
-        patch["escolhasPorItem"] = {
-          ...this._state.escolhasPorItem,
-          raca_modificadores: normalized,
+        escolhas = { ...(escolhas ?? this._state.escolhasPorItem), raca_modificadores: normalized };
+      }
+      if (sawPericia) {
+        escolhas = {
+          ...(escolhas ?? this._state.escolhasPorItem),
+          pericias: {
+            obrigatorias: perObrig.map((g) => (g ?? []).filter(Boolean)),
+            escolhas: perEsc,
+            extras_int: perInt,
+            raca: perRaca,
+          },
         };
       }
+      if (escolhas) patch["escolhasPorItem"] = escolhas;
       if (formData.has("nivel")) patch["nivel"] = nivel;
       if (formData.has("nome")) patch["nome"] = nome;
       if (formData.has("metodoAtributos")) patch["metodoAtributos"] = metodoAtributos;
@@ -166,9 +202,12 @@ export function defineWizardApp(): void {
         patch["racaNome"] = racaItem?.name ?? "";
       }
       if (formData.has("origemId")) patch["origemId"] = origemId;
-      if (formData.has("classeId")) patch["classeId"] = classeId;
+      if (formData.has("classeId")) {
+        patch["classeId"] = classeId;
+        const classeItem = CompendiumIndex.getAll("classe").find((c) => c.id === classeId);
+        patch["classeNome"] = classeItem?.name ?? "";
+      }
       if (formData.has("divindadeId")) patch["divindadeId"] = divindadeId;
-      if (periciasTreinadas.length > 0) patch["periciasTreinadas"] = periciasTreinadas;
       if (poderes.length > 0) patch["poderes"] = poderes;
       if (magias.length > 0) patch["magias"] = magias;
 
@@ -215,12 +254,9 @@ export function defineWizardApp(): void {
           break;
         }
         case WizardStep.Pericias: {
-          const classe = CompendiumIndex.getAll("classe").find((c) => c.id === state.classeId) as
-            | IndexedClasse
-            | undefined;
-          const intMod = state.atributosBase.int ?? 0;
-          const racialBonus = getRaceSkillBonus(state.racaNome || state.racaId);
-          stepCtx = preparePericiaContext(state, classe, intMod, errors, racialBonus);
+          const intFinal = finalInt(state);
+          const racaBonus = getRaceSkillBonus(state.racaNome || state.racaId);
+          stepCtx = preparePericiaContext(state, intFinal, racaBonus, errors);
           break;
         }
         case WizardStep.Divindade:

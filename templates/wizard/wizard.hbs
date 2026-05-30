@@ -166,20 +166,70 @@
     {{#if showPericias}}
     <section class="t20w-step">
       <h2>{{stepTitle}}</h2>
+      {{#unless hasClasse}}<p style="opacity:0.7;">Escolha uma classe antes de definir perícias.</p>{{/unless}}
 
-      <p class="t20w-hint">Escolhas restantes: <strong>{{choicesRemaining}}</strong></p>
-
-      <div class="t20w-pericias-list" style="display:flex;flex-direction:column;gap:3px;max-height:360px;overflow-y:auto;">
-        {{#each pericias}}
-        <label style="display:flex;align-items:center;gap:8px;padding:5px 8px;background:rgba(255,255,255,0.04);border-radius:3px;{{#if this.locked}}opacity:0.7;{{/if}}">
-          <input type="checkbox" name="pericia-{{this.id}}" value="{{this.id}}"
-            {{#if this.checked}}checked{{/if}}
-            {{#if this.locked}}disabled{{/if}} />
-          <span style="flex:1;">{{this.nome}}</span>
-          {{#if this.inata}}<span style="font-size:0.72em;padding:1px 5px;background:#555;border-radius:3px;">Inata</span>{{/if}}
-        </label>
-        {{/each}}
+      {{#if fixas.length}}
+      <div style="margin-bottom:10px;">
+        <strong style="font-size:0.85em;">Treinadas pela classe:</strong>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:4px;">
+          {{#each fixas}}<span style="font-size:0.8em;padding:2px 8px;background:#3a3a3a;border-radius:3px;">{{this.nome}}</span>{{/each}}
+        </div>
       </div>
+      {{/if}}
+
+      {{#each obrigatorias}}
+      <div style="margin-bottom:10px;">
+        <strong style="font-size:0.85em;">Escolha {{this.quantidade}} (obrigatória):</strong>
+        <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:4px;">
+          {{#each this.opcoes}}
+          <label style="font-size:0.9em;display:flex;align-items:center;gap:4px;">
+            <input type="radio" name="per_obrig-{{../groupIndex}}" value="{{this.id}}" {{#if this.checked}}checked{{/if}} />{{this.nome}}
+          </label>
+          {{/each}}
+        </div>
+      </div>
+      {{/each}}
+
+      {{#if escolhasQtd}}
+      <div style="margin-bottom:10px;">
+        <strong style="font-size:0.85em;">Perícias da classe — escolha {{escolhasQtd}} (restam {{escolhasRestantes}}):</strong>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:2px 12px;margin-top:4px;max-height:200px;overflow-y:auto;">
+          {{#each escolhasOpcoes}}
+          <label style="font-size:0.88em;display:flex;align-items:center;gap:6px;">
+            <input type="checkbox" name="per_esc-{{this.id}}" value="{{this.id}}" {{#if this.checked}}checked{{/if}} />{{this.nome}}
+          </label>
+          {{/each}}
+        </div>
+      </div>
+      {{/if}}
+
+      {{#if intBonus}}
+      <div style="margin-bottom:10px;">
+        <strong style="font-size:0.85em;">Perícias extras por Inteligência — até {{intBonus}} (qualquer):</strong>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:2px 12px;margin-top:4px;max-height:160px;overflow-y:auto;">
+          {{#each intOpcoes}}
+          <label style="font-size:0.88em;display:flex;align-items:center;gap:6px;">
+            <input type="checkbox" name="per_int-{{this.id}}" value="{{this.id}}" {{#if this.checked}}checked{{/if}} />{{this.nome}}
+          </label>
+          {{/each}}
+        </div>
+      </div>
+      {{/if}}
+
+      {{#if racaBonus}}
+      <div style="margin-bottom:10px;">
+        <strong style="font-size:0.85em;">Perícias de raça — escolha {{racaBonus}} (qualquer):</strong>
+        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:2px 12px;margin-top:4px;max-height:160px;overflow-y:auto;">
+          {{#each racaOpcoes}}
+          <label style="font-size:0.88em;display:flex;align-items:center;gap:6px;">
+            <input type="checkbox" name="per_raca-{{this.id}}" value="{{this.id}}" {{#if this.checked}}checked{{/if}} />{{this.nome}}
+          </label>
+          {{/each}}
+        </div>
+      </div>
+      {{/if}}
+
+      {{#if errors.length}}<ul class="t20w-errors">{{#each errors}}<li>{{this}}</li>{{/each}}</ul>{{/if}}
     </section>
     {{/if}}
 

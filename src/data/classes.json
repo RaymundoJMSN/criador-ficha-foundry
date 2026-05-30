@@ -1,0 +1,1276 @@
+{
+  "arcanista": {
+    "nome": "Arcanista",
+    "pericias": {
+      "fixas": [
+        "misticismo",
+        "vontade"
+      ],
+      "escolhas_obrigatorias": [],
+      "escolhas": {
+        "quantidade": 2,
+        "opcoes": [
+          "conhecimento",
+          "diplomacia",
+          "enganacao",
+          "guerra",
+          "iniciativa",
+          "intimidacao",
+          "intuicao",
+          "investigacao",
+          "nobreza",
+          "oficio",
+          "percepcao"
+        ]
+      }
+    },
+    "pv": {
+      "inicial": 8,
+      "por_nivel": 2,
+      "soma_atributo_inicial": "con",
+      "soma_atributo_por_nivel": "con"
+    },
+    "pm": {
+      "por_nivel": 6
+    },
+    "proficiencias": [
+      "armas_simples",
+      "armaduras_leves"
+    ],
+    "habilidades_classe_ids": [
+      "caminho_do_arcanista",
+      "magias_arcanista",
+      "poder_de_arcanista",
+      "alta_arcana"
+    ],
+    "poderes_classe_ids": [
+      "agrilhoar_os_caidos",
+      "alquimia_arcana",
+      "apoteose_celestial",
+      "apoteose_draconica",
+      "apoteose_feerica",
+      "apoteose_rubra",
+      "arcanista_de_linha_de_frente",
+      "arcano_de_batalha",
+      "asas_de_sapo",
+      "aumento_de_atributo",
+      "caldeirao_do_bruxo",
+      "conhecimento_magico",
+      "contingencia_arcana",
+      "contramagica_aprimorada",
+      "contramagica_superior",
+      "envolto_em_misterio",
+      "escriba_arcano",
+      "especialista_em_escola",
+      "especialista_em_invocacoes",
+      "familiar",
+      "familiar_aprimorado",
+      "fluxo_de_mana",
+      "foco_vital",
+      "fortalecimento_arcano",
+      "heranca_aprimorada",
+      "heranca_superior",
+      "ingrediente_especial",
+      "linhagem_aprimorada_abencoada",
+      "linhagem_aprimorada_draconica",
+      "linhagem_aprimorada_feerica",
+      "linhagem_aprimorada_rubra",
+      "linhagem_basica_abencoada",
+      "linhagem_basica_draconica",
+      "linhagem_basica_feerica",
+      "linhagem_basica_rubra",
+      "linhagem_superior_abencoada",
+      "linhagem_superior_draconica",
+      "linhagem_superior_feerica",
+      "linhagem_superior_rubra",
+      "magia_performatica",
+      "magia_pungente",
+      "memoria_subita",
+      "mestre_em_escola",
+      "o_proprio_sangue",
+      "poder_magico",
+      "raio_arcano",
+      "raio_dividido",
+      "raio_elemental",
+      "raio_poderoso",
+      "sifao_de_mana",
+      "tinta_do_mago",
+      "trama_celere",
+      "transliteracao_impossivel"
+    ]
+  },
+  "barbaro": {
+    "nome": "Bárbaro",
+    "pericias": {
+      "fixas": [
+        "fortitude",
+        "luta"
+      ],
+      "escolhas_obrigatorias": [],
+      "escolhas": {
+        "quantidade": 4,
+        "opcoes": [
+          "adestramento",
+          "atletismo",
+          "cavalgar",
+          "iniciativa",
+          "intimidacao",
+          "oficio",
+          "percepcao",
+          "pontaria",
+          "sobrevivencia",
+          "vontade"
+        ]
+      }
+    },
+    "pv": {
+      "inicial": 24,
+      "por_nivel": 6,
+      "soma_atributo_inicial": "con",
+      "soma_atributo_por_nivel": "con"
+    },
+    "pm": {
+      "por_nivel": 3
+    },
+    "proficiencias": [
+      "armas_simples",
+      "armaduras_leves",
+      "armas_marciais",
+      "escudos"
+    ],
+    "habilidades_classe_ids": [
+      "furia",
+      "poder_de_barbaro",
+      "instinto_selvagem",
+      "reducao_de_dano_classe",
+      "furia_titanica"
+    ],
+    "poderes_classe_ids": [
+      "alma_de_bronze",
+      "alma_inabalavel",
+      "ampliar_brado",
+      "arremesso_violento",
+      "aumento_de_atributo",
+      "beberrao_selvagem",
+      "brado_assombroso",
+      "brado_assustador",
+      "brado_retardante",
+      "brado_sismico",
+      "brado_vitorioso",
+      "critico_brutal",
+      "destruidor",
+      "enigma_do_aco",
+      "espiritualista",
+      "espirito_inquebravel",
+      "esquiva_sobrenatural",
+      "forca_indomavel",
+      "frenesi",
+      "furia_bestial",
+      "furia_da_savana",
+      "furia_elemental",
+      "furia_raivosa",
+      "golpe_poderoso",
+      "impeto",
+      "impiedoso",
+      "investida_imprudente",
+      "invocar_os_ancestrais",
+      "manifestar_totem",
+      "pele_de_aco",
+      "pele_de_ferro",
+      "recuperacao_gutural",
+      "regeneracao_sobrenatural",
+      "revide",
+      "rigidez_selvagem",
+      "sangue_dos_inimigos",
+      "sede_sanguinaria",
+      "supersticao",
+      "totem_espiritual",
+      "vigor_primal"
+    ]
+  },
+  "bardo": {
+    "nome": "Bardo",
+    "pericias": {
+      "fixas": [
+        "atuacao",
+        "reflexos"
+      ],
+      "escolhas_obrigatorias": [],
+      "escolhas": {
+        "quantidade": 6,
+        "opcoes": [
+          "acrobacia",
+          "cavalgar",
+          "conhecimento",
+          "diplomacia",
+          "enganacao",
+          "furtividade",
+          "iniciativa",
+          "intuicao",
+          "investigacao",
+          "jogatina",
+          "ladinagem",
+          "luta",
+          "misticismo",
+          "nobreza",
+          "percepcao",
+          "pontaria",
+          "vontade"
+        ]
+      }
+    },
+    "pv": {
+      "inicial": 12,
+      "por_nivel": 3,
+      "soma_atributo_inicial": "con",
+      "soma_atributo_por_nivel": "con"
+    },
+    "pm": {
+      "por_nivel": 4
+    },
+    "proficiencias": [
+      "armas_simples",
+      "armaduras_leves",
+      "armas_marciais"
+    ],
+    "habilidades_classe_ids": [
+      "inspiracao",
+      "magias_bardo",
+      "ecletico",
+      "poder_de_bardo",
+      "artista_completo"
+    ],
+    "poderes_classe_ids": [
+      "acorde_mistico",
+      "acorde_poderoso",
+      "adereço_musical",
+      "apresentacao_impactante",
+      "arte_magica",
+      "aumentar_repertorio",
+      "aumento_de_atributo",
+      "balada_do_atirador",
+      "celebridade_artoniana",
+      "danca_acrobatica",
+      "danca_das_laminas",
+      "esgrima_magica",
+      "espada_encantada",
+      "estrelato",
+      "fascinar_em_massa",
+      "golpe_elemental",
+      "golpe_magico",
+      "historia_de_acampamento",
+      "inspiracao_espirituosa",
+      "inspiracao_marcial",
+      "inspiracao_resoluta",
+      "inspiracao_revigorante",
+      "lendas_e_historias",
+      "mago_vermelho",
+      "magia_performatica",
+      "manipular",
+      "manipular_em_massa",
+      "melodia_restauradora",
+      "mestre_dos_sussurros",
+      "musica_balada_fascinante",
+      "musica_cancao_assustadora",
+      "musica_marcha_vitoriosa",
+      "musica_melodia_curativa",
+      "musica_requiem_sombrio",
+      "musica_sonata_da_distracao",
+      "parodia",
+      "portas_da_fama",
+      "prestidigitacao",
+      "ressoar",
+      "triunfo_do_amor"
+    ]
+  },
+  "bucaneiro": {
+    "nome": "Bucaneiro",
+    "pericias": {
+      "fixas": [
+        "reflexos"
+      ],
+      "escolhas_obrigatorias": [
+        {
+          "quantidade": 1,
+          "opcoes": [
+            "luta",
+            "pontaria"
+          ]
+        }
+      ],
+      "escolhas": {
+        "quantidade": 4,
+        "opcoes": [
+          "acrobacia",
+          "atletismo",
+          "atuacao",
+          "enganacao",
+          "fortitude",
+          "furtividade",
+          "iniciativa",
+          "intimidacao",
+          "jogatina",
+          "luta",
+          "oficio",
+          "percepcao",
+          "pilotagem",
+          "pontaria"
+        ]
+      }
+    },
+    "pv": {
+      "inicial": 16,
+      "por_nivel": 4,
+      "soma_atributo_inicial": "con",
+      "soma_atributo_por_nivel": "con"
+    },
+    "pm": {
+      "por_nivel": 3
+    },
+    "proficiencias": [
+      "armas_simples",
+      "armaduras_leves",
+      "armas_marciais"
+    ],
+    "habilidades_classe_ids": [
+      "audacia",
+      "insolencia",
+      "evasao",
+      "poder_de_bucaneiro",
+      "esquiva_sagaz",
+      "panache",
+      "evasao_aprimorada",
+      "sorte_de_nimb"
+    ],
+    "poderes_classe_ids": [
+      "abusar_dos_fracos",
+      "amigos_no_porto",
+      "aparar",
+      "apostador",
+      "ataque_acrobatico",
+      "aumento_de_atributo",
+      "aventureiro_avido",
+      "bravata_audaz",
+      "bravata_imprudente",
+      "en_garde",
+      "esgrimista",
+      "flagelo_dos_mares",
+      "foliao",
+      "grudar_o_cano",
+      "pernas_do_mar",
+      "pistoleiro",
+      "presenca_paralisante",
+      "ripostar",
+      "touche",
+      "ardil_afiado",
+      "bloqueio_desconcertante",
+      "bom_de_trago",
+      "charme_cafajeste",
+      "cobrir_de_polvora",
+      "cortejo_de_espadas",
+      "dancar_nas_cordas",
+      "entrada_triunfal",
+      "esgrima_sambur",
+      "estampido_ensurdecedor",
+      "estocada_no_flanco",
+      "gole_da_coragem",
+      "golpe_humilhante",
+      "introducao_calorosa",
+      "lobo_do_mar",
+      "lorotas_da_terra_e_do_mar",
+      "onda_de_sangue",
+      "passo_das_ondas",
+      "pirouette",
+      "remise",
+      "sucesso_atrai_sucesso"
+    ]
+  },
+  "cacador": {
+    "nome": "Caçador",
+    "pericias": {
+      "fixas": [
+        "sobrevivencia"
+      ],
+      "escolhas_obrigatorias": [
+        {
+          "quantidade": 1,
+          "opcoes": [
+            "luta",
+            "pontaria"
+          ]
+        }
+      ],
+      "escolhas": {
+        "quantidade": 6,
+        "opcoes": [
+          "adestramento",
+          "atletismo",
+          "cavalgar",
+          "cura",
+          "fortitude",
+          "furtividade",
+          "iniciativa",
+          "investigacao",
+          "luta",
+          "oficio",
+          "percepcao",
+          "pontaria",
+          "reflexos"
+        ]
+      }
+    },
+    "pv": {
+      "inicial": 16,
+      "por_nivel": 4,
+      "soma_atributo_inicial": "con",
+      "soma_atributo_por_nivel": "con"
+    },
+    "pm": {
+      "por_nivel": 4
+    },
+    "proficiencias": [
+      "armas_simples",
+      "armaduras_leves",
+      "armas_marciais",
+      "escudos"
+    ],
+    "habilidades_classe_ids": [
+      "marca_da_presa",
+      "rastreador",
+      "poder_de_cacador",
+      "explorador",
+      "caminho_do_explorador",
+      "mestre_cacador"
+    ],
+    "poderes_classe_ids": [
+      "ambidestria",
+      "armadilha_arataca",
+      "armadilha_espinhos",
+      "armadilha_laco",
+      "armadilha_rede",
+      "armadilheiro",
+      "arqueiro",
+      "aumento_de_atributo",
+      "bote",
+      "camuflagem",
+      "chuva_de_laminas",
+      "companheiro_animal",
+      "elo_com_a_natureza",
+      "emboscar",
+      "empatia_selvagem",
+      "escaramuca",
+      "escaramuca_superior",
+      "espreitar",
+      "ervas_curativas",
+      "impeto_cacador",
+      "inimigo_de",
+      "olho_do_falcao",
+      "ponto_fraco"
+    ]
+  },
+  "cavaleiro": {
+    "nome": "Cavaleiro",
+    "pericias": {
+      "fixas": [
+        "fortitude",
+        "luta"
+      ],
+      "escolhas_obrigatorias": [],
+      "escolhas": {
+        "quantidade": 2,
+        "opcoes": [
+          "adestramento",
+          "atletismo",
+          "cavalgar",
+          "diplomacia",
+          "guerra",
+          "iniciativa",
+          "intimidacao",
+          "nobreza",
+          "percepcao",
+          "vontade"
+        ]
+      }
+    },
+    "pv": {
+      "inicial": 20,
+      "por_nivel": 5,
+      "soma_atributo_inicial": "con",
+      "soma_atributo_por_nivel": "con"
+    },
+    "pm": {
+      "por_nivel": 3
+    },
+    "proficiencias": [
+      "armas_simples",
+      "armaduras_leves",
+      "armas_marciais",
+      "armaduras_pesadas",
+      "escudos"
+    ],
+    "habilidades_classe_ids": [
+      "codigo_de_honra",
+      "baluarte",
+      "duelo",
+      "poder_de_cavaleiro",
+      "caminho_do_cavaleiro",
+      "resoluto",
+      "bravura_final"
+    ],
+    "poderes_classe_ids": [
+      "armadura_da_honra",
+      "aumento_de_atributo",
+      "autoridade_feudal",
+      "desprezar_os_covardes",
+      "escudeiro",
+      "especializacao_em_armadura",
+      "estandarte",
+      "etiqueta",
+      "investida_destruidora",
+      "montaria_corajosa",
+      "pajem",
+      "postura_aríete_implacavel",
+      "postura_castigo_de_ferro",
+      "postura_foco_de_batalha",
+      "postura_muralha_intransponivel",
+      "postura_provocacao_petulante",
+      "postura_torre_inabalavel",
+      "solidez",
+      "titulo",
+      "torre_armada"
+    ]
+  },
+  "clerigo": {
+    "nome": "Clérigo",
+    "pericias": {
+      "fixas": [
+        "religiao",
+        "vontade"
+      ],
+      "escolhas_obrigatorias": [],
+      "escolhas": {
+        "quantidade": 2,
+        "opcoes": [
+          "conhecimento",
+          "cura",
+          "diplomacia",
+          "fortitude",
+          "iniciativa",
+          "intuicao",
+          "luta",
+          "misticismo",
+          "nobreza",
+          "oficio",
+          "percepcao"
+        ]
+      }
+    },
+    "pv": {
+      "inicial": 16,
+      "por_nivel": 4,
+      "soma_atributo_inicial": "con",
+      "soma_atributo_por_nivel": "con"
+    },
+    "pm": {
+      "por_nivel": 5
+    },
+    "proficiencias": [
+      "armas_simples",
+      "armaduras_leves",
+      "armaduras_pesadas",
+      "escudos"
+    ],
+    "habilidades_classe_ids": [
+      "devoto_fiel",
+      "magias_clerigo",
+      "mao_da_divindade"
+    ],
+    "poderes_classe_ids": [
+      "abencoar_arma",
+      "aumento_de_atributo",
+      "autoridade_eclesiastica",
+      "canalizar_energia",
+      "canalizar_amplo",
+      "comunhao_vital",
+      "conhecimento_magico",
+      "expulsar_comandar_mortos_vivos",
+      "liturgia_magica",
+      "magia_sagrada_profana",
+      "mestre_celebrante",
+      "missa_bencao_da_vida",
+      "missa_chamado_as_armas",
+      "missa_elevacao_do_espirito",
+      "missa_escudo_divino",
+      "missa_superar_as_limitacoes",
+      "prece_de_combate",
+      "simbolo_sagrado_energizado",
+      "acolito_escudeiro",
+      "arma_divina",
+      "bencao_de_batalha",
+      "canalizar_abencoado",
+      "canalizar_concentrado",
+      "canalizar_profanado",
+      "canalizar_poderoso",
+      "conversao_de_fe",
+      "dizimar_infieis",
+      "egide_da_fe",
+      "forca_da_devocao",
+      "liturgia_marcial",
+      "missa_compartilhar_milagre",
+      "missa_imposicao_da_vontade",
+      "missa_mente_abencoada",
+      "presente_dos_deuses",
+      "punicao_divina",
+      "representante_divino",
+      "solo_profanado",
+      "solo_sagrado"
+    ]
+  },
+  "druida": {
+    "nome": "Druida",
+    "pericias": {
+      "fixas": [
+        "sobrevivencia",
+        "vontade"
+      ],
+      "escolhas_obrigatorias": [],
+      "escolhas": {
+        "quantidade": 4,
+        "opcoes": [
+          "adestramento",
+          "atletismo",
+          "cavalgar",
+          "conhecimento",
+          "cura",
+          "fortitude",
+          "iniciativa",
+          "intuicao",
+          "luta",
+          "misticismo",
+          "oficio",
+          "percepcao",
+          "religiao"
+        ]
+      }
+    },
+    "pv": {
+      "inicial": 16,
+      "por_nivel": 4,
+      "soma_atributo_inicial": "con",
+      "soma_atributo_por_nivel": "con"
+    },
+    "pm": {
+      "por_nivel": 4
+    },
+    "proficiencias": [
+      "armas_simples",
+      "armaduras_leves",
+      "escudos"
+    ],
+    "habilidades_classe_ids": [
+      "devoto_fiel",
+      "empatia_selvagem",
+      "magias_druida",
+      "caminho_dos_ermos",
+      "forca_da_natureza"
+    ],
+    "poderes_classe_ids": [
+      "aspecto_do_inverno",
+      "aspecto_do_outono",
+      "aspecto_da_primavera",
+      "aspecto_do_verao",
+      "aumento_de_atributo",
+      "companheiro_animal",
+      "companheiro_animal_aprimorado",
+      "companheiro_animal_lendario",
+      "companheiro_animal_magico",
+      "coracao_da_selva",
+      "espirito_dos_equinocios",
+      "espirito_dos_solsticios",
+      "forca_dos_penhascos",
+      "forma_primal",
+      "forma_selvagem",
+      "forma_selvagem_aprimorada",
+      "forma_selvagem_superior",
+      "liberdade_da_pradaria",
+      "magia_natural",
+      "presas_afiadas",
+      "segredos_da_natureza",
+      "tranquilidade_dos_lagos",
+      "arma_tradicional",
+      "auspicio_do_crepusculo",
+      "auspicio_da_madrugada",
+      "auspicio_da_meia_noite",
+      "banquete_selvagem",
+      "ciclo_da_vida",
+      "companheiro_aberrante",
+      "companheiro_elemental",
+      "erupcao_elemental",
+      "forca_da_natureza_forma",
+      "forma_aberrante",
+      "forma_de_cardume",
+      "forma_elemental",
+      "forma_esqueletica",
+      "forma_vegetal",
+      "instinto_venenoso",
+      "metamorfose_instantanea",
+      "oraculo_da_natureza",
+      "orador_dos_elementos",
+      "protecao_fungica",
+      "transformacao_repugnante",
+      "xama_mistico"
+    ]
+  },
+  "guerreiro": {
+    "nome": "Guerreiro",
+    "pericias": {
+      "fixas": [
+        "fortitude"
+      ],
+      "escolhas_obrigatorias": [
+        {
+          "quantidade": 1,
+          "opcoes": [
+            "luta",
+            "pontaria"
+          ]
+        }
+      ],
+      "escolhas": {
+        "quantidade": 2,
+        "opcoes": [
+          "adestramento",
+          "atletismo",
+          "cavalgar",
+          "guerra",
+          "iniciativa",
+          "intimidacao",
+          "luta",
+          "oficio",
+          "percepcao",
+          "pontaria",
+          "reflexos"
+        ]
+      }
+    },
+    "pv": {
+      "inicial": 20,
+      "por_nivel": 5,
+      "soma_atributo_inicial": "con",
+      "soma_atributo_por_nivel": "con"
+    },
+    "pm": {
+      "por_nivel": 3
+    },
+    "proficiencias": [
+      "armas_simples",
+      "armaduras_leves",
+      "armas_marciais",
+      "armaduras_pesadas",
+      "escudos"
+    ],
+    "habilidades_classe_ids": [
+      "ataque_especial",
+      "durao",
+      "ataque_extra",
+      "campeao"
+    ],
+    "poderes_classe_ids": [
+      "ambidestria",
+      "analise_tatica",
+      "arqueiro",
+      "arremesso_de_investida",
+      "ataque_reflexo",
+      "aumento_de_atributo",
+      "bater_e_correr",
+      "bloqueio_brutal",
+      "corte_agil",
+      "criar_oportunidade",
+      "defesa_estrategica",
+      "determinacao_inabalavel",
+      "destruidor",
+      "estrategista_inspirador",
+      "esgrimista",
+      "especializacao_em_arma",
+      "especializacao_em_armadura",
+      "executor",
+      "fender_defesas",
+      "golpe_de_raspao",
+      "golpe_demolidor",
+      "golpe_pessoal",
+      "inercia_do_aco",
+      "impeto",
+      "investida_ricochete",
+      "manobra_dupla",
+      "mente_disciplinada",
+      "mestre_em_arma",
+      "operacoes_combinadas",
+      "ordens_de_engajamento",
+      "planejamento_marcial",
+      "recuperar_folego",
+      "resiliencia_marcial",
+      "romper_resistencias",
+      "soldado_de_infantaria",
+      "solidez",
+      "tornado_de_dor",
+      "valentao",
+      "velho_de_guerra",
+      "xadrez_de_batalha"
+    ]
+  },
+  "inventor": {
+    "nome": "Inventor",
+    "pericias": {
+      "fixas": [
+        "oficio",
+        "vontade"
+      ],
+      "escolhas_obrigatorias": [],
+      "escolhas": {
+        "quantidade": 4,
+        "opcoes": [
+          "conhecimento",
+          "cura",
+          "diplomacia",
+          "fortitude",
+          "iniciativa",
+          "investigacao",
+          "luta",
+          "misticismo",
+          "oficio",
+          "pilotagem",
+          "percepcao",
+          "pontaria"
+        ]
+      }
+    },
+    "pv": {
+      "inicial": 12,
+      "por_nivel": 3,
+      "soma_atributo_inicial": "con",
+      "soma_atributo_por_nivel": "con"
+    },
+    "pm": {
+      "por_nivel": 4
+    },
+    "proficiencias": [
+      "armas_simples",
+      "armaduras_leves"
+    ],
+    "habilidades_classe_ids": [
+      "engenhosidade",
+      "prototipo",
+      "fabricar_item_superior",
+      "comerciante",
+      "encontrar_fraqueza",
+      "fabricar_item_magico",
+      "olho_do_dragao",
+      "obra_prima"
+    ],
+    "poderes_classe_ids": [
+      "agite_antes_de_usar",
+      "ajuste_de_mira",
+      "alquimista_de_batalha",
+      "alquimista_iniciado",
+      "armeiro",
+      "ativacao_rapida",
+      "aumento_de_atributo",
+      "automato",
+      "automato_prototipado",
+      "balistica",
+      "blindagem",
+      "cano_raiado",
+      "catalisador_instavel",
+      "chutes_e_palavroes",
+      "conhecimento_de_formulas",
+      "couraceiro",
+      "engenhoqueiro",
+      "farmaceutico",
+      "ferreiro",
+      "granadeiro",
+      "homunculo",
+      "invencao_potente",
+      "maestria_em_pericia",
+      "manutencao_eficiente",
+      "mestre_alquimista",
+      "mestre_cuca",
+      "mistura_fervilhante",
+      "oficina_de_campo",
+      "pedra_de_amolar",
+      "sintese_rapida"
+    ]
+  },
+  "ladino": {
+    "nome": "Ladino",
+    "pericias": {
+      "fixas": [
+        "ladinagem",
+        "reflexos"
+      ],
+      "escolhas_obrigatorias": [],
+      "escolhas": {
+        "quantidade": 8,
+        "opcoes": [
+          "acrobacia",
+          "atletismo",
+          "atuacao",
+          "cavalgar",
+          "conhecimento",
+          "diplomacia",
+          "enganacao",
+          "furtividade",
+          "iniciativa",
+          "intimidacao",
+          "intuicao",
+          "investigacao",
+          "jogatina",
+          "luta",
+          "oficio",
+          "percepcao",
+          "pilotagem",
+          "pontaria"
+        ]
+      }
+    },
+    "pv": {
+      "inicial": 12,
+      "por_nivel": 3,
+      "soma_atributo_inicial": "con",
+      "soma_atributo_por_nivel": "con"
+    },
+    "pm": {
+      "por_nivel": 4
+    },
+    "proficiencias": [
+      "armas_simples",
+      "armaduras_leves"
+    ],
+    "habilidades_classe_ids": [
+      "ataque_furtivo",
+      "especialista",
+      "evasao",
+      "esquiva_sobrenatural",
+      "olhos_nas_costas",
+      "evasao_aprimorada",
+      "a_pessoa_certa_para_o_trabalho"
+    ],
+    "poderes_classe_ids": [
+      "assassinar",
+      "aumento_de_atributo",
+      "contatos_no_submundo",
+      "emboscar",
+      "escapista",
+      "fuga_formidavel",
+      "gatuno",
+      "ladrao_arcano",
+      "mao_na_boca",
+      "maos_rapidas",
+      "mente_criminosa",
+      "oportunismo",
+      "rolamento_defensivo",
+      "roubo_de_mana",
+      "saqueador_de_tumbas",
+      "sombra",
+      "truque_magico",
+      "velocidade_ladina",
+      "veneno_persistente",
+      "veneno_potente",
+      "ameaca_brutal",
+      "assassino_em_serie",
+      "ataque_furtivo_letal",
+      "bombardeiro_furtivo",
+      "chefe_de_gangue",
+      "conhecimento_anatomico",
+      "enganar_os_olhos",
+      "finta_acrobatica",
+      "improvisacao_arcana",
+      "investida_rasteira",
+      "mestre_assassino",
+      "mestre_envenenador",
+      "papo_furado",
+      "precisao_furtiva",
+      "rei_do_crime",
+      "sabotagem_corrosiva",
+      "senhor_do_submundo",
+      "truque_de_palco",
+      "truque_do_chapeu",
+      "vestido_para_a_ocasiao"
+    ]
+  },
+  "lutador": {
+    "nome": "Lutador",
+    "pericias": {
+      "fixas": [
+        "fortitude",
+        "luta"
+      ],
+      "escolhas_obrigatorias": [],
+      "escolhas": {
+        "quantidade": 4,
+        "opcoes": [
+          "acrobacia",
+          "adestramento",
+          "atletismo",
+          "enganacao",
+          "furtividade",
+          "iniciativa",
+          "intimidacao",
+          "oficio",
+          "percepcao",
+          "pontaria",
+          "reflexos"
+        ]
+      }
+    },
+    "pv": {
+      "inicial": 20,
+      "por_nivel": 5,
+      "soma_atributo_inicial": "con",
+      "soma_atributo_por_nivel": "con"
+    },
+    "pm": {
+      "por_nivel": 3
+    },
+    "proficiencias": [
+      "armas_simples",
+      "armaduras_leves"
+    ],
+    "habilidades_classe_ids": [
+      "briga",
+      "golpe_relampago",
+      "casca_grossa",
+      "golpe_cruel",
+      "golpe_violento",
+      "dono_da_rua"
+    ],
+    "poderes_classe_ids": [
+      "arma_improvisada",
+      "ate_acertar",
+      "aumento_de_atributo",
+      "bracos_calejados",
+      "cabecada",
+      "chave",
+      "confianca_dos_ringues",
+      "convencido",
+      "golpe_baixo",
+      "golpe_imprudente",
+      "imobilizacao",
+      "lingua_dos_becos",
+      "lutador_de_chao",
+      "nome_na_arena",
+      "punhos_de_adamante",
+      "rasteira",
+      "sarado",
+      "sequencia_destruidora",
+      "trincado",
+      "trocacao",
+      "trocacao_tumultuosa",
+      "valentao",
+      "voadora",
+      "aquecimento",
+      "caminhar_pelas_paredes",
+      "caminho_suave",
+      "combinacao_boca_do_estomago",
+      "combinacao_chute_circular",
+      "combinacao_chute_no_joelho",
+      "combinacao_esquiva_tecnica",
+      "combinacao_quebra_guarda",
+      "combinacao_um_dois",
+      "combinacao_tecnica_sacrificio",
+      "corpo_fechado",
+      "danca_marcial",
+      "gingado_elusivo",
+      "invencivel",
+      "jogo_de_pernas",
+      "mestre_das_combinacoes",
+      "rilhar_os_dentes",
+      "rolamento_escapatorio",
+      "ruas_furiosas",
+      "sequencia_defensiva"
+    ]
+  },
+  "nobre": {
+    "nome": "Nobre",
+    "pericias": {
+      "fixas": [
+        "vontade"
+      ],
+      "escolhas_obrigatorias": [
+        {
+          "quantidade": 1,
+          "opcoes": [
+            "diplomacia",
+            "intimidacao"
+          ]
+        }
+      ],
+      "escolhas": {
+        "quantidade": 4,
+        "opcoes": [
+          "adestramento",
+          "atuacao",
+          "cavalgar",
+          "conhecimento",
+          "diplomacia",
+          "enganacao",
+          "fortitude",
+          "guerra",
+          "iniciativa",
+          "intimidacao",
+          "intuicao",
+          "investigacao",
+          "jogatina",
+          "luta",
+          "nobreza",
+          "oficio",
+          "percepcao",
+          "pontaria"
+        ]
+      }
+    },
+    "pv": {
+      "inicial": 16,
+      "por_nivel": 4,
+      "soma_atributo_inicial": "con",
+      "soma_atributo_por_nivel": "con"
+    },
+    "pm": {
+      "por_nivel": 4
+    },
+    "proficiencias": [
+      "armas_simples",
+      "armaduras_leves",
+      "armas_marciais",
+      "armaduras_pesadas",
+      "escudos"
+    ],
+    "habilidades_classe_ids": [
+      "autoconfianca",
+      "espolio",
+      "orgulho",
+      "palavras_afiadas",
+      "riqueza",
+      "gritar_ordens",
+      "presenca_aristocratica",
+      "realeza"
+    ],
+    "poderes_classe_ids": [
+      "agente_de_elite",
+      "armadura_brilhante",
+      "aumento_de_atributo",
+      "autoridade_feudal",
+      "comandante_de_campo",
+      "comitiva",
+      "discurso_de_batalha",
+      "educacao_privilegiada",
+      "estrategista",
+      "executor",
+      "favor",
+      "fofocas_da_corte",
+      "general",
+      "grito_tiranico",
+      "guarda_pessoal",
+      "hedonismo_aristocratico",
+      "inspicar_confianca",
+      "instigar_violencia",
+      "insuflar_investida",
+      "inspirar_gloria",
+      "jogo_da_corte",
+      "legado_magico",
+      "lider_energico",
+      "lider_impiedoso",
+      "liderar_pelo_exemplo",
+      "linhagem_distinta",
+      "lingua_de_ouro",
+      "lingua_de_prata",
+      "lingua_rapida",
+      "ordens_agressivas",
+      "ordens_encorajadoras",
+      "palavras_de_efeito",
+      "palavras_ressonantes",
+      "presenca_majestosa",
+      "protocolo_impecavel",
+      "senescal",
+      "titulo",
+      "voz_limpida",
+      "voz_poderosa"
+    ]
+  },
+  "paladino": {
+    "nome": "Paladino",
+    "pericias": {
+      "fixas": [
+        "luta",
+        "vontade"
+      ],
+      "escolhas_obrigatorias": [],
+      "escolhas": {
+        "quantidade": 2,
+        "opcoes": [
+          "adestramento",
+          "atletismo",
+          "cavalgar",
+          "cura",
+          "diplomacia",
+          "fortitude",
+          "guerra",
+          "iniciativa",
+          "intuicao",
+          "nobreza",
+          "percepcao",
+          "religiao"
+        ]
+      }
+    },
+    "pv": {
+      "inicial": 20,
+      "por_nivel": 5,
+      "soma_atributo_inicial": "con",
+      "soma_atributo_por_nivel": "con"
+    },
+    "pm": {
+      "por_nivel": 3
+    },
+    "proficiencias": [
+      "armas_simples",
+      "armaduras_leves",
+      "armas_marciais",
+      "armaduras_pesadas",
+      "escudos"
+    ],
+    "habilidades_classe_ids": [
+      "abencado",
+      "codigo_do_heroi",
+      "golpe_divino",
+      "cura_pelas_maos",
+      "aura_sagrada",
+      "bencao_da_justica",
+      "vingador_sagrado"
+    ],
+    "poderes_classe_ids": [
+      "arma_sagrada",
+      "aumento_de_atributo",
+      "aura_antimagia",
+      "aura_ardente",
+      "aura_de_cura",
+      "aura_de_invencibilidade",
+      "aura_poderosa",
+      "fulgor_divino",
+      "julgamento_divino_arrependimento",
+      "julgamento_divino_autoridade",
+      "julgamento_divino_coragem",
+      "julgamento_divino_iluminacao",
+      "julgamento_divino_justica",
+      "julgamento_divino_libertacao",
+      "julgamento_divino_salvacao",
+      "julgamento_divino_vindicacao",
+      "julgamento_divino_zelo",
+      "orar",
+      "virtude_caridade",
+      "virtude_castidade",
+      "virtude_compaixao",
+      "virtude_humildade",
+      "virtude_temperanca"
+    ]
+  }
+}

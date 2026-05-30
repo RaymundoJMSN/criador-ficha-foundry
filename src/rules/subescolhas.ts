@@ -9,7 +9,7 @@
  * Still stubbed (see ROADMAP F2/F3): class multipath, origin pick-2 writer,
  * sorcerer lineage, specialist school, familiar, duende/golem constructor.
  */
-import { getRaca, type AtributoEscolhaDef } from "./raca.js";
+import { getRaca, getRaceFixedModifiers, type AtributoEscolhaDef } from "./raca.js";
 
 export type AtributoId = "for" | "des" | "con" | "int" | "sab" | "car";
 const ATRS: readonly AtributoId[] = ["for", "des", "con", "int", "sab", "car"];
@@ -85,6 +85,27 @@ export function validateRaceModifiers(
     return { modificadores: {}, errors };
   }
   return { modificadores, errors };
+}
+
+/**
+ * Total racial attribute modifiers = fixed + validated choosable.
+ * Used to compute FINAL attributes (base + this) for downstream rules like
+ * the Int-based perícia bonus.
+ */
+export function getRaceAttributeTotals(
+  idOrName: string,
+  choices: string[][]
+): Partial<Record<AtributoId, number>> {
+  const out: Partial<Record<AtributoId, number>> = {};
+  const fixed = getRaceFixedModifiers(idOrName);
+  for (const [k, v] of Object.entries(fixed)) {
+    if (ATRS.includes(k as AtributoId)) out[k as AtributoId] = (out[k as AtributoId] ?? 0) + (v ?? 0);
+  }
+  const { modificadores } = validateRaceModifiers(idOrName, choices);
+  for (const k of ATRS) {
+    if (modificadores[k]) out[k] = (out[k] ?? 0) + (modificadores[k] ?? 0);
+  }
+  return out;
 }
 
 /**

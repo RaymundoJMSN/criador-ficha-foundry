@@ -25,6 +25,43 @@ describe("mapStateToActorData — perícias", () => {
   });
 });
 
+describe("mapStateToActorData — perícias from canonical picks", () => {
+  it("computes trained set from class spec + picks (not Foundry item)", () => {
+    const state = new WizardState({
+      nome: "Hero",
+      classeNome: "Guerreiro",
+      atributosBase: { for: 2, des: 1, con: 1, int: 0, sab: 0, car: 0 },
+      escolhasPorItem: {
+        pericias: {
+          obrigatorias: [["luta"]],
+          escolhas: ["atletismo", "guerra"],
+          extras_int: [],
+          raca: [],
+        },
+      },
+    });
+    const data = mapStateToActorData(state);
+    // fortitude (fixa) + luta (obrig) + atletismo/guerra (escolha) → codes
+    expect(data.system.pericias!["fort"]).toEqual({ treinado: true });
+    expect(data.system.pericias!["luta"]).toEqual({ treinado: true });
+    expect(data.system.pericias!["atle"]).toEqual({ treinado: true });
+    expect(data.system.pericias!["guer"]).toEqual({ treinado: true });
+  });
+
+  it("does NOT auto-train skills the player did not pick", () => {
+    const state = new WizardState({
+      nome: "Hero",
+      classeNome: "Guerreiro",
+      escolhasPorItem: {
+        pericias: { obrigatorias: [["luta"]], escolhas: ["atletismo", "guerra"], extras_int: [], raca: [] },
+      },
+    });
+    const data = mapStateToActorData(state);
+    expect(data.system.pericias!["mist"]).toBeUndefined();
+    expect(data.system.pericias!["cura"]).toBeUndefined();
+  });
+});
+
 describe("mapStateToActorData — race choosable modifiers", () => {
   it("adds humano +1 choices to atributos.base", () => {
     const state = new WizardState({

@@ -1,21 +1,31 @@
-import { countTreinaveis } from "../../rules/pericias.js";
-import { normalizePericias, getClasseProgressao } from "../../rules/progressao.js";
+import { buildPericiaPlan, computeTrained, type PericiaPicks } from "../../rules/pericias.js";
+import { getClasse } from "../../rules/classe.js";
 import type { WizardState } from "../state.js";
-import type { IndexedClasse } from "../../compendium/types.js";
 
-export interface PericiaEntry {
+export interface PericiaOpt {
   id: string;
   nome: string;
   checked: boolean;
-  locked: boolean;
-  inata: boolean;
-  escolhivel: boolean;
+}
+
+export interface ObrigGroup {
+  groupIndex: number;
+  quantidade: number;
+  opcoes: PericiaOpt[];
 }
 
 export interface PericiaContext {
   stepTitle: string;
-  choicesRemaining: number;
-  pericias: PericiaEntry[];
+  hasClasse: boolean;
+  fixas: { id: string; nome: string }[];
+  obrigatorias: ObrigGroup[];
+  escolhasQtd: number;
+  escolhasRestantes: number;
+  escolhasOpcoes: PericiaOpt[];
+  intBonus: number;
+  intOpcoes: PericiaOpt[];
+  racaBonus: number;
+  racaOpcoes: PericiaOpt[];
   errors: string[];
 }
 
@@ -51,58 +61,97 @@ const PERICIA_NOMES: Record<string, string> = {
   vontade: "Vontade",
 };
 
+const nome = (id: string): string => PERICIA_NOMES[id] ?? id;
+
+function emptyContext(errors: string[]): PericiaContext {
+  return {
+    stepTitle: "Perícias",
+    hasClasse: false,
+    fixas: [],
+    obrigatorias: [],
+    escolhasQtd: 0,
+    escolhasRestantes: 0,
+    escolhasOpcoes: [],
+    intBonus: 0,
+    intOpcoes: [],
+    racaBonus: 0,
+    racaOpcoes: [],
+    errors,
+  };
+}
+
+/**
+ * Builds the perícia step from the canonical class spec (T20-DB), never from
+ * the Foundry classe item.
+ * @param intFinal  final Int (base + racial), drives extra-skill picks.
+ * @param racaBonus "any skill" the race grants (humano Versátil +2).
+ */
 export function preparePericiaContext(
   state: WizardState,
-  classe: IndexedClasse | undefined,
-  intModifier: number,
-  errors: string[] = [],
-  racialBonus = 0
+  intFinal: number,
+  racaBonus: number,
+  errors: string[] = []
 ): PericiaContext {
-  if (!classe) {
-    return { stepTitle: "Perícias", choicesRemaining: 0, pericias: [], errors };
-  }
+  const classe = state.classeNome ? getClasse(state.classeNome) : null;
+  if (!classe) return emptyContext(errors);
 
-  // Parse inatas + escolhas from Foundry item — may be string or array
-  let inatas = normalizePericias(classe.system.pericias?.inatas);
-  let escolhas = normalizePericias(classe.system.pericias?.escolhas);
-  let numero = classe.system.pericias?.numero ?? 0;
+  const plan = buildPericiaPlan(classe, intFinal, racaBonus);
+  const picks = (state.escolhasPorItem["pericias"] as PericiaPicks | undefined) ?? {
+    obrigatorias: [],
+    escolhas: [],
+    extras_int: [],
+    raca: [],
+  };
 
-  // Fallback to T20-DB data when Foundry item has empty/corrupt pericias
-  if (inatas.length === 0 || escolhas.length === 0) {
-    const prog = getClasseProgressao(classe.name);
-    if (prog) {
-      if (inatas.length === 0) inatas = prog.pericias_inatas;
-      if (escolhas.length === 0) escolhas = prog.pericias_escolha;
-      if (numero === 0) numero = prog.pericias_numero;
-    }
-  }
-
-  // Total choices = class base + Int bonus (min 0) + racial free skills
-  const totalEscolhas = numero + Math.max(0, intModifier) + racialBonus;
-
-  // How many choices the user has already made (excluding inatas)
-  const escolhasFeitas = state.periciasTreinadas.filter((p) => !inatas.includes(p)).length;
-
-  // All pericias to display = inatas ∪ escolhas (sorted)
-  const allPericias = Array.from(new Set([...inatas, ...escolhas])).sort();
-
-  const pericias: PericiaEntry[] = allPericias.map((id) => {
-    const isInata = inatas.includes(id);
-    const isChosen = state.periciasTreinadas.includes(id);
-    return {
+  const obrigatorias: ObrigGroup[] = plan.obrigatorias.map((g, i) => ({
+    groupIndex: i,
+    quantidade: g.quantidade,
+    opcoes: g.opcoes.map((id) => ({
       id,
-      nome: PERICIA_NOMES[id] ?? id,
-      checked: isInata || isChosen,
-      locked: isInata,
-      inata: isInata,
-      escolhivel: escolhas.includes(id) && !isInata,
-    };
-  });
+      nome: nome(id),
+      checked: (picks.obrigatorias[i] ?? []).includes(id),
+    })),
+  }));
+
+  const escolhasOpcoes: PericiaOpt[] = plan.escolhas.opcoes.map((id) => ({
+    id,
+    nome: nome(id),
+    checked: (picks.escolhas ?? []).includes(id),
+  }));
+
+  const todasOpcoes = (selected: string[]): PericiaOpt[] =>
+    plan.todas.map((id) => ({ id, nome: nome(id), checked: selected.includes(id) }));
 
   return {
     stepTitle: "Perícias",
-    choicesRemaining: Math.max(0, totalEscolhas - escolhasFeitas),
-    pericias,
+    hasClasse: true,
+    fixas: plan.fixas.map((id) => ({ id, nome: nome(id) })),
+    obrigatorias,
+    escolhasQtd: plan.escolhas.quantidade,
+    escolhasRestantes: Math.max(0, plan.escolhas.quantidade - (picks.escolhas ?? []).length),
+    escolhasOpcoes,
+    intBonus: plan.intBonus,
+    intOpcoes: plan.intBonus > 0 ? todasOpcoes(picks.extras_int ?? []) : [],
+    racaBonus: plan.racaBonus,
+    racaOpcoes: plan.racaBonus > 0 ? todasOpcoes(picks.raca ?? []) : [],
     errors,
   };
+}
+
+/** Validates the current picks (used by the engine to block Next). */
+export function validatePericiaPicks(
+  state: WizardState,
+  intFinal: number,
+  racaBonus: number
+): string[] {
+  const classe = state.classeNome ? getClasse(state.classeNome) : null;
+  if (!classe) return [];
+  const plan = buildPericiaPlan(classe, intFinal, racaBonus);
+  const picks = (state.escolhasPorItem["pericias"] as PericiaPicks | undefined) ?? {
+    obrigatorias: [],
+    escolhas: [],
+    extras_int: [],
+    raca: [],
+  };
+  return computeTrained(plan, picks).errors;
 }
