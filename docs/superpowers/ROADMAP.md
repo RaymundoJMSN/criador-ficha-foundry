@@ -30,15 +30,16 @@
 
 ---
 
-## F1 — UI + bugfix 🔨 (Plan 5)
+## F1 — UI + bugfix ✅ (Plans 5 + 6A)
 
 Objetivo: todos os 11 passos navegáveis e usáveis. Tirar do scaffolding.
 
 - ⚠️ `pericias.inatas` string vs array — normalizar (parcialmente feito, commit `5c563c8`).
-- ❌ Raça/Origem/Classe/Divindade: trocar radio-grid de 100+ itens por **select + painel de detalhe**.
-- ❌ Poderes: lista com nome + texto de elegibilidade (hoje é grid só-imagem).
-- ❌ `_onRender` listeners para o padrão select+detail e interações de pick-2.
-- ❌ Raça free-attribute (modificador escolhível) + Origem pick-2 — UI mínima.
+- ✅ Raça/Origem/Classe/Divindade: select + painel de detalhe (em `wizard.hbs`).
+- ✅ Poderes: lista com nome + descrição + motivo específico de inelegibilidade + busca + filtro de categoria (Plan 6A).
+- ✅ Classe: descrição no painel de detalhe (Plan 6A).
+- ✅ `_onRender` listeners do padrão select+detail, pick-2 e filtro de poderes.
+- ✅ Raça free-attribute (modificador escolhível) + Origem pick-2 — UI mínima.
 
 **Saída:** wizard inteiro clicável de ponta a ponta, sem tela quebrada. Critério: criar um guerreiro nv1 sem erro.
 
@@ -129,3 +130,4 @@ auto-grants corretos. F3/F5/F6 expandem cobertura e polem.
 - **2026-05-30:** Criação. Estado base: Plans 1-4 ✅, Plan 5 🔨. Fases F1-F6 derivadas do gap T20-DB↔módulo.
 - **2026-05-30:** Plans escritos cobrindo F1-resto→F5: [`plan6`](plans/2026-05-30-plan6-descricoes-subescolhas-racas.md) (F1 descrições+poderes, F2 multipath+pick-2, F3 variações/construtor/linhagem) e [`plan7`](plans/2026-05-30-plan7-autogrant-prereqs.md) (F4 auto-grant por nível, F5 pré-requisitos).
 - **2026-05-30:** [`plan8`](plans/2026-05-30-plan8-dinheiro-loja.md) — F6 parcial: dinheiro inicial (rolagem nv1 + fixo nv2+) + loja de compra. **Carga fora de escopo** (sistema `tormenta20` calcula). Resta de F6 (resume/i18n/validação-final) sem Plan.
+- **2026-05-30:** [`plan6a`](plans/2026-05-30-plan6a-poderes-list-exec.md) **EXECUTADO** (6 tasks TDD, 126 testes verdes). Poderes step: descrição + motivo específico de pré-req (`formatPrereq`/`describeUnmet`) + filtro de categoria; descrição da classe no painel. F1 → ✅. **Desvio do plano:** T6 previa porte de `classe.descricao` do T20-DB, mas T20-DB **não tem** esse campo (classes só carregam regras). Descrição da classe vem do **item Foundry** (`IndexedClasse.system.descricao`, indexado), igual à descrição de poder (T2) — sem mexer em `port-t20db.mjs`/`classes.json`. Corrigida corrupção de working-tree em `index.ts` (typo `pivPorNivel`, `system.pericias` perdido) deixada por subagente interrompido. Pendência in-world: confirmar campo real (`system.descricao` vs `system.description.value`) dos itens poder/classe.

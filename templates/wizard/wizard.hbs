@@ -153,9 +153,10 @@
       {{#if selectedClasse}}
       <div style="margin-top:12px;padding:10px;background:rgba(255,255,255,0.05);border-radius:4px;">
         <h3 style="margin:0 0 6px;">{{selectedClasse.name}}</h3>
+        {{#if selectedClasse.system.descricao}}<p style="font-size:0.85em;opacity:0.8;margin:0 0 8px;">{{selectedClasse.system.descricao}}</p>{{/if}}
         <dl style="display:grid;grid-template-columns:max-content 1fr;gap:2px 12px;font-size:0.85em;margin:0;">
-          <dt>PV por nível</dt><dd>+{{selectedClasse.pvPorNivel}}</dd>
-          <dt>PM por nível</dt><dd>+{{selectedClasse.pmPorNivel}}</dd>
+          <dt>PV por nível</dt><dd>+{{selectedClasse.system.pvPorNivel}}</dd>
+          <dt>PM por nível</dt><dd>+{{selectedClasse.system.pmPorNivel}}</dd>
         </dl>
       </div>
       {{/if}}

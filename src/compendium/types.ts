@@ -20,6 +20,7 @@ export interface IndexedClasse extends IndexedBase {
   system: {
     pvPorNivel?: number;
     pmPorNivel?: number;
+    descricao?: string;
     niveis?: unknown;
     pericias?: {
       inatas?: string[];
