@@ -127,4 +127,5 @@ auto-grants corretos. F3/F5/F6 expandem cobertura e polem.
 ## Changelog
 
 - **2026-05-30:** Criação. Estado base: Plans 1-4 ✅, Plan 5 🔨. Fases F1-F6 derivadas do gap T20-DB↔módulo.
-- **2026-05-30:** Plans escritos cobrindo F1-resto→F5: [`plan6`](plans/2026-05-30-plan6-descricoes-subescolhas-racas.md) (F1 descrições+poderes, F2 multipath+pick-2, F3 variações/construtor/linhagem) e [`plan7`](plans/2026-05-30-plan7-autogrant-prereqs.md) (F4 auto-grant por nível, F5 pré-requisitos). F6 (loja/resume/i18n) ainda sem Plan.
+- **2026-05-30:** Plans escritos cobrindo F1-resto→F5: [`plan6`](plans/2026-05-30-plan6-descricoes-subescolhas-racas.md) (F1 descrições+poderes, F2 multipath+pick-2, F3 variações/construtor/linhagem) e [`plan7`](plans/2026-05-30-plan7-autogrant-prereqs.md) (F4 auto-grant por nível, F5 pré-requisitos).
+- **2026-05-30:** [`plan8`](plans/2026-05-30-plan8-dinheiro-loja.md) — F6 parcial: dinheiro inicial (rolagem nv1 + fixo nv2+) + loja de compra. **Carga fora de escopo** (sistema `tormenta20` calcula). Resta de F6 (resume/i18n/validação-final) sem Plan.
