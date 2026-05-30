@@ -70,3 +70,43 @@ export function isEligible(poderSlug: string, state: PartialWizardState): boolea
   if (!prereqs) return true;
   return checkPrereqs(prereqs, state).eligible;
 }
+
+const ATTR_LABEL: Record<string, string> = {
+  for: "Força",
+  des: "Destreza",
+  con: "Constituição",
+  int: "Inteligência",
+  sab: "Sabedoria",
+  car: "Carisma",
+};
+
+function titleCase(s: string): string {
+  return s.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+/** Human-readable PT label for one structured prerequisite. */
+export function formatPrereq(req: Prereq): string {
+  switch (req["tipo"]) {
+    case "atributo":
+      return `${ATTR_LABEL[req["atributo"] as string] ?? req["atributo"]} ${req["valor"]}`;
+    case "nivel":
+      return `Nível ${req["valor"]}`;
+    case "poder":
+      return `Poder: ${titleCase(String(req["poder"]))}`;
+    case "pericias":
+      return `Treinado em ${titleCase(String(req["pericia"]))}`;
+    case "classe":
+      return `Classe: ${titleCase(String(req["classe"]))}`;
+    case "raca":
+      return `Raça: ${titleCase(String(req["raca"]))}`;
+    default:
+      return "Pré-requisito especial";
+  }
+}
+
+/** List of unmet prerequisites for a power, as readable PT strings (empty if eligible). */
+export function describeUnmet(poderSlug: string, state: PartialWizardState): string[] {
+  const prereqs = prereqsData[poderSlug];
+  if (!prereqs) return [];
+  return checkPrereqs(prereqs, state).unmet.map(formatPrereq);
+}

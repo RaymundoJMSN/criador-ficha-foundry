@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { checkPrereqs, isEligible } from "../../src/rules/poderes.js";
+import { checkPrereqs, isEligible, formatPrereq, describeUnmet } from "../../src/rules/poderes.js";
 
 type Prereq = Record<string, unknown>;
 
@@ -83,5 +83,35 @@ describe("isEligible", () => {
   it("ambidestria requires Des 2 — NOT eligible when Des = 0", () => {
     const state = { ...baseState, atributosBase: { ...baseState.atributosBase, des: 0 } };
     expect(isEligible("ambidestria", state)).toBe(false);
+  });
+});
+
+describe("formatPrereq", () => {
+  it("atributo → 'Força 3'", () => {
+    expect(formatPrereq({ tipo: "atributo", atributo: "for", valor: 3 })).toBe("Força 3");
+  });
+  it("nivel → 'Nível 5'", () => {
+    expect(formatPrereq({ tipo: "nivel", valor: 5 })).toBe("Nível 5");
+  });
+  it("poder → 'Poder: Ataque Poderoso'", () => {
+    expect(formatPrereq({ tipo: "poder", poder: "ataque_poderoso" })).toBe("Poder: Ataque Poderoso");
+  });
+  it("pericias → 'Treinado em Luta'", () => {
+    expect(formatPrereq({ tipo: "pericias", pericia: "luta" })).toBe("Treinado em Luta");
+  });
+  it("classe → 'Classe: Guerreiro'", () => {
+    expect(formatPrereq({ tipo: "classe", classe: "guerreiro" })).toBe("Classe: Guerreiro");
+  });
+  it("raca → 'Raça: Anao'", () => {
+    expect(formatPrereq({ tipo: "raca", raca: "anao" })).toBe("Raça: Anao");
+  });
+  it("tipo desconhecido → genérico", () => {
+    expect(formatPrereq({ tipo: "qualquer_coisa" })).toBe("Pré-requisito especial");
+  });
+});
+
+describe("describeUnmet", () => {
+  it("slug sem pré-req → []", () => {
+    expect(describeUnmet("__inexistente__", baseState)).toEqual([]);
   });
 });
