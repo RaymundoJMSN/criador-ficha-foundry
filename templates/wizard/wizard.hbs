@@ -114,16 +114,16 @@
       {{#if selectedDetail}}
       <div style="margin-top:12px;padding:10px;background:rgba(255,255,255,0.05);border-radius:4px;">
         <h3 style="margin:0 0 6px;">{{selectedDetail.nome}}</h3>
-        {{#if selectedDetail.pericias.length}}<p style="font-size:0.85em;margin:0 0 4px;"><strong>Perícias:</strong> {{selectedDetail.pericias}}</p>{{/if}}
-        {{#if selectedDetail.itens_iniciais.length}}<p style="font-size:0.85em;margin:0 0 4px;"><strong>Itens iniciais:</strong> {{selectedDetail.itens_iniciais}}</p>{{/if}}
-        {{#if selectedDetail.poder_auto}}<p style="font-size:0.85em;margin:0 0 8px;"><strong>Poder automático:</strong> {{selectedDetail.poder_auto}}</p>{{/if}}
+        {{#if selectedDetail.pericias.length}}<p style="font-size:0.85em;margin:0 0 4px;"><strong>Perícias:</strong> {{#each selectedDetail.pericias}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</p>{{/if}}
+        {{#if selectedDetail.itens_iniciais.length}}<p style="font-size:0.85em;margin:0 0 4px;"><strong>Itens iniciais:</strong></p><ul style="font-size:0.82em;margin:0 0 6px;padding-left:18px;">{{#each selectedDetail.itens_iniciais}}<li>{{this}}</li>{{/each}}</ul>{{/if}}
+        {{#if selectedDetail.poder_auto}}<p style="font-size:0.85em;margin:0 0 8px;"><strong>Poder automático:</strong> {{selectedDetail.poder_auto_nome}}</p>{{/if}}
         {{#if selectedDetail.pick2_candidates.length}}
         <div style="margin-top:8px;">
           <strong style="font-size:0.85em;">Escolha 1 poder adicional:</strong>
           <div style="display:flex;flex-direction:column;gap:4px;margin-top:6px;">
             {{#each selectedDetail.pick2_candidates}}
             <label style="display:flex;align-items:center;gap:6px;font-size:0.9em;">
-              <input type="radio" name="origem_poder_escolha" value="{{this}}" />{{this}}
+              <input type="radio" name="origem_poder_escolha" value="{{this.id}}" {{#if this.selected}}checked{{/if}} />{{this.nome}}
             </label>
             {{/each}}
           </div>

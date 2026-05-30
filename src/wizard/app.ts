@@ -10,6 +10,7 @@ import { prepareOrigemContext } from "./steps/origem.js";
 import { prepareClasseContext } from "./steps/classe.js";
 import { preparePericiaContext } from "./steps/pericias.js";
 import { getRaceSkillBonus } from "../rules/raca.js";
+import { toSlug } from "../compendium/slug.js";
 import { prepareDivindadeContext } from "./steps/divindade.js";
 import { preparePoderesContext } from "./steps/poderes.js";
 import { prepareMagiasContext } from "./steps/magias.js";
@@ -180,9 +181,13 @@ export function defineWizardApp(): void {
           stepCtx = prepareRacaContext(state, racas, errors);
           break;
         }
-        case WizardStep.Origem:
-          stepCtx = prepareOrigemContext(state, errors);
+        case WizardStep.Origem: {
+          const poderes = CompendiumIndex.getAll("poder") as IndexedPoder[];
+          const resolvePoderNome = (slug: string): string | null =>
+            poderes.find((p) => toSlug(p.name) === slug)?.name ?? null;
+          stepCtx = prepareOrigemContext(state, errors, resolvePoderNome);
           break;
+        }
         case WizardStep.Classe: {
           const classes = CompendiumIndex.getAll("classe") as IndexedClasse[];
           stepCtx = prepareClasseContext(state, classes, errors);

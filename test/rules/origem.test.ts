@@ -1,5 +1,10 @@
 import { describe, it, expect } from "vitest";
-import { listOrigens, getOrigem, getPick2Candidates } from "../../src/rules/origem.js";
+import {
+  listOrigens,
+  getOrigem,
+  getPick2Candidates,
+  formatItensIniciais,
+} from "../../src/rules/origem.js";
 
 describe("listOrigens", () => {
   it("returns non-empty array", () => {
@@ -36,5 +41,23 @@ describe("getPick2Candidates", () => {
 
   it("returns empty for unknown origem", () => {
     expect(getPick2Candidates("xyzzy")).toHaveLength(0);
+  });
+});
+
+describe("formatItensIniciais", () => {
+  it("renders item objects as readable strings (not [object Object])", () => {
+    const lines = formatItensIniciais("amnesico");
+    expect(lines.length).toBeGreaterThan(0);
+    expect(lines[0]).toContain("um ou mais itens aprovados pelo mestre");
+    expect(lines.join(" ")).not.toContain("[object Object]");
+  });
+
+  it("appends valor_max when present", () => {
+    const lines = formatItensIniciais("amnesico");
+    expect(lines[0]).toContain("T$ 500");
+  });
+
+  it("returns empty array for unknown origem", () => {
+    expect(formatItensIniciais("xyzzy")).toEqual([]);
   });
 });
