@@ -56,6 +56,23 @@ Toda mudança de regra/UI → `npm run build` → reload do mundo (F5) para ver 
 
 ---
 
+## 🧠 PRINCÍPIO MESTRE — Foundry guarda ITENS, T20-DB guarda REGRAS
+
+**O sistema `tormenta20` no Foundry é só um repositório de _itens_** (poder, equipamento,
+classe, magia, race). Esses itens são **conteúdo** (nome, descrição, img, efeitos do item) —
+**NÃO carregam a lógica de criação de ficha.** Nada no Foundry diz "guerreiro treina Fortitude",
+"humano escolhe +1 em 3 atributos", "esta classe sobe X por nível". **Toda essa lógica vive no
+T20-DB e é portada para `src/data/` + `src/rules/`.** Nosso módulo é ~99% igual ao T20-DB; a única
+diferença é que pegamos os itens do compêndio do Foundry e montamos o actor direto no Foundry.
+
+➡️ **Consequência prática:** ao implementar qualquer regra (perícias, atributos, progressão,
+auto-grant, pré-requisitos), a fonte é **`src/data/*.json` (portado do T20-DB)**, NUNCA campos do
+item Foundry. Ler `classe.system.pericias`, `race.system.atributos` etc. como regra = bug (foi a
+causa de "todas perícias treinadas" e "humano sem escolher atributos"). O item Foundry só entra
+no `items[]` do actor + fornece descrição/efeitos próprios do item.
+
+---
+
 ## ⚠️ Fatos do sistema `tormenta20` (NÃO assumir — verificado em v1.5.015)
 
 Estes fatos invalidam premissas "óbvias" vindas de outros sistemas. Mudou? Re-verificar
@@ -84,10 +101,16 @@ em `system.json` + `templates/` + `tormenta20.mjs` do sistema instalado.
 
 - ⚠️ Dados portados (progressao/racas/origens) usam slug completo. **Traduzir slug→code via `src/rules/pericia-slug.ts` (`toPericiaCode`) antes de escrever no actor.** "Ofício" não tem code único (explode em alfa/alqu/...) → mapeia para `null` e é pulado.
 
-**Classe (campos reais):** `system.inicial`, `system.niveis`, `system.pmPorNivel`, `system.pvPorNivel`, `system.pericias.{inatas,escolhas,numero,value}`.
+**Classe = só ITEM (sem regra de criação).** O item `classe` tem campos (`system.pericias.*` etc.)
+mas eles **NÃO são confiáveis/completos** e **não devem ser lidos como regra**. A regra canônica de
+classe (perícias fixas/obrigatórias/escolhas, pv/pm, proficiências, habilidades/poderes por nível)
+vive em **`src/data/classes.json`** (portado de `T20-DB/data/classes/*.json` via `npm run port`),
+consumida por **`src/rules/classe.ts` (`getClasse`)**. O item Foundry entra só no `items[]` do actor.
 
-- ⚠️ `pericias.inatas` pode ser **string com vírgula/espaço**, não array — parsear, não fazer spread char-a-char.
-- ➡️ Reusar esses campos do item de classe em vez de re-tabelar (mas há fallback em `src/data/progressao_classes.json`).
+- **Perícia de classe (modelo canônico, `caracteristicas.pericias`):** `fixas` (auto-treinadas) +
+  `escolhas_obrigatorias[]` (`{quantidade,opcoes}`, ex. guerreiro Luta|Pontaria) +
+  `escolhas{quantidade,opcoes}` (N da lista da classe) + extras por **Int FINAL** (`max(0, base+racial)`,
+  qualquer perícia) + raça Versátil/etc (qualquer perícia). Ver `rules/pericias.ts`.
 
 **Magia:** `system.circulo` (Number 1–5), `system.tipo` (`arc`/`div`), `system.escola` (`abj/adv/con/enc/evo/ilu/nec/tra`).
 
@@ -117,17 +140,17 @@ em `system.json` + `templates/` + `tormenta20.mjs` do sistema instalado.
 
 **`src/data/`** — JSON portado do T20-DB (embutido no bundle)
 
-- `prereqs.json` (108KB) — `pre_requisitos[]` por slug de poder · `origens.json` · `divindades.json` · `atributos.json` (point buy + métodos) · `dinheiro.json` (por nível) · `racas.json` (atributos fixos/escolha — **parcial: falta variações/construtor**) · `poderes-por-nivel.json` (auto-grant) · `progressao_classes.json` · `slug-map.json` (overrides id↔nome Foundry).
+- `prereqs.json` (108KB) — `pre_requisitos[]` por slug de poder · `classes.json` — **spec canônico por classe** (perícias fixas/obrigatorias/escolhas, pv/pm, proficiências, habilidades/poderes ids; fonte `T20-DB/data/classes/*.json`) · `origens.json` · `divindades.json` (sem descrição — T20-DB não porta lore) · `atributos.json` · `dinheiro.json` · `racas.json` (atributos fixos/escolha — **parcial: falta variações/construtor**) · `poderes-por-nivel.json` (auto-grant) · `progressao_classes.json` (intermediário lossy — preferir `classes.json`) · `slug-map.json`.
 
 **`src/rules/`** — regras estruturais T20 (TS puro, testável)
 
 - `engine.ts` — orquestrador: `getOptions(step, state)`, `validate(step, choice, state)`. `steps.ts` — `WizardStep` enum + ordem + metadata (condicional/obrigatório).
-- `atributos.ts` — point buy + métodos rolagem · `pericias.ts` — `countTreinaveis(classe, Int, raça)` · `raca.ts` — `getRaca(id|nome)`, `getRaceSkillBonus` (soma `treinar_pericias`) · `pericia-slug.ts` — `toPericiaCode(slug)` (slug completo → code 4 letras do actor) · `poderes.ts` — `checkPrereqs`/`isEligible` (lê `prereqs.json`; **6 tipos hoje:** atributo/nivel/poder/classe/raca/pericias) · `magias.ts` — círculos/limites + filtro · `origem.ts` — pick-2 + `formatItensIniciais` · `divindade.ts` — filtro devotos (raça OR classe), druida fixo, obrigatória clérigo/paladino/druida.
+- `atributos.ts` — point buy + métodos rolagem · `classe.ts` — `getClasse(id|nome)` (spec canônico de `classes.json`: perícias/pv/pm/habilidades/poderes) · `pericias.ts` — `buildPericiaPlan(classe, IntFinal, raçaBonus)` + `computeTrained(plan, picks)` (modelo canônico fixas/obrigatorias/escolhas/Int/raça) · `raca.ts` — `getRaca(id|nome)`, `getRaceSkillBonus`, `getRaceFixedModifiers` · `pericia-slug.ts` — `toPericiaCode(slug)` + `PERICIA_SLUGS`/`PERICIA_CODES` · `subescolhas.ts` — modificadores de raça + `getRaceAttributeTotals` (fixed+chosen, p/ Int final) · `poderes.ts` — `checkPrereqs`/`isEligible` (lê `prereqs.json`; **6 tipos hoje:** atributo/nivel/poder/classe/raca/pericias) · `magias.ts` — círculos/limites + filtro · `origem.ts` — pick-2 + `formatItensIniciais` · `divindade.ts` — filtro devotos (raça OR classe), druida fixo, obrigatória clérigo/paladino/druida.
 - `subescolhas.ts` — ⚠️ **parcial.** ✅ **modificadores escolhíveis de raça** (`getRaceModifierGroups`/`validateRaceModifiers`, porta `_validar_modificadores`; choices em `escolhasPorItem.raca_modificadores: string[][]`, aplicados em `atributos.*.base` pelo mapper). Stub ainda: especialista escola, familiar, linhagem feiticeiro, construtor Duende/Golem, multipath classe, pick-2 origem. Ver ROADMAP F2/F3.
 
 **`src/wizard/`** — UI
 
-- `state.ts` — `WizardState` + `apply()/undo()/isComplete()/serialize()`. Campo-chave `escolhasPorItem: Record<string,unknown>` (todas as sub-escolhas; ex. `raca_modificadores`, `origem_poder`). `racaNome` (nome do item Foundry, p/ resolver slug de raça fora do compêndio). `detalhes` → `system.detalhes.*`.
+- `state.ts` — `WizardState` + `apply()/undo()/isComplete()/serialize()`. Campo-chave `escolhasPorItem: Record<string,unknown>` (todas as sub-escolhas; ex. `raca_modificadores`, `origem_poder`). `racaNome`/`classeNome` (nomes dos itens Foundry, p/ resolver slug de raça/classe → dados T20-DB fora do compêndio). `escolhasPorItem.pericias = {obrigatorias[][], escolhas[], extras_int[], raca[]}`. `detalhes` → `system.detalhes.*`.
 - `app.ts` — `WizardApp extends ApplicationV2` (HandlebarsApplicationMixin, PARTS). **Definida no hook `init`, não no top-level** (globals Foundry não existem antes). `_onRender` liga listeners.
 - `steps/` — um `prepare<Passo>Context()` por passo: `nivel, atributos, raca, origem, classe, pericias, divindade, poderes, magias, equipamento, revisao`.
 
@@ -167,7 +190,7 @@ ActorWriter      → resolve docs, mapper monta data, Actor.create("character")
 | -------------------------------------------------------- | --------------------------------------- | -------------------------------------------------- |
 | Point buy + 7 métodos atributo                           | ✅ `rules/atributos.ts`                 | `data/atributos.json`                              |
 | Pré-requisitos de poder                                  | ⚠️ parcial (6 de ~15 tipos)             | `data/prereqs.json`                                |
-| Perícias por classe (inatas/escolhas/Int/raça)           | ✅ count + escrita (slug→code 4 letras) | item `classe` + fallback `progressao_classes.json` |
+| Perícias por classe (fixas/obrigatorias/escolhas/Int/raça)| ✅ modelo canônico (`pericias.ts`), escrita slug→code | `data/classes.json` (NÃO o item Foundry)           |
 | Origem + pick-2 benefícios                               | ⚠️ UI/detalhe ok; materialização (itens/poder no actor) pendente | `data/origens.json`                                |
 | Divindade (devotos, druida, panteão)                     | ✅ `rules/divindade.ts`                 | `data/divindades.json`                             |
 | Magias (círculo/tipo/escola/limites)                     | ✅ filtro; limites a afinar             | packs `magias` + regra                             |
@@ -245,8 +268,8 @@ Mudou alguma destas áreas? Atualizar este `CLAUDE.md` **no mesmo commit**:
 
 ## Cuidados
 
-- **Não pré-aplicar modificadores raciais nos atributos.** Escrever só `.base`; o item `race` + o sistema fazem o resto. Aplicar duas vezes é o bug clássico.
-- **`pericias.inatas` pode ser string** — sempre normalizar (split por `,`/espaço) antes de iterar.
+- **Modificadores raciais FIXOS:** não aplicar — o item `race` + o sistema preenchem `.racial`. O wizard escreve só `.base`. Mas os **escolhíveis** (humano +1×3) não têm item que os carregue → mapper soma em `.base` (ROADMAP F2). Não confundir os dois.
+- **Perícia NUNCA vem do item Foundry.** Quais treinar/quantas = `data/classes.json` via `rules/pericias.ts`. Escrever no actor = `system.pericias.{code}.treinado` (code 4 letras, via `toPericiaCode`).
 - **`getIndex` sem `fields` só traz `_id/name/img`** — pedir os campos explicitamente ou a filtragem quebra silenciosa.
 - **WizardApp não pode estender globals Foundry no top-level** — ApplicationV2 não existe antes do hook `init`.
 - **Edições grandes de arquivo:** preferir `Write` (arquivo inteiro) a `Edit` parcial — evita truncar.
