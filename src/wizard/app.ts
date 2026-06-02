@@ -51,12 +51,12 @@ export function defineWizardApp(): void {
   if (_WizardAppClass) return; // idempotent
 
   // In Foundry v13 these live in foundry.applications.api, not as bare globals
-  // @ts-expect-error fvtt-types foundry.applications.api not fully typed for v13
-  const AppV2 = foundry.applications.api.ApplicationV2;
-  // @ts-expect-error fvtt-types foundry.applications.api not fully typed for v13
-  const HbsMixin = foundry.applications.api.HandlebarsApplicationMixin;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const AppV2 = (foundry as any).applications.api.ApplicationV2;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const HbsMixin = (foundry as any).applications.api.HandlebarsApplicationMixin;
 
-  // @ts-expect-error class expression with dynamic base
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   _WizardAppClass = class WizardApp extends HbsMixin(AppV2) {
     static DEFAULT_OPTIONS = {
       id: "t20w-wizard",
@@ -72,10 +72,6 @@ export function defineWizardApp(): void {
     _state = new WizardState();
     _currentStep: WizardStep = WizardStep.Nivel;
     _errors: string[] = [];
-
-    get state(): WizardState {
-      return this._state;
-    }
 
     goToStep(step: WizardStep): void {
       this._currentStep = step;
@@ -129,7 +125,8 @@ export function defineWizardApp(): void {
       const perInt: string[] = [];
       const perRaca: string[] = [];
       let sawPericia = false;
-      for (const [key, value] of formData.entries()) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      for (const [key, value] of (formData as any).entries()) {
         const k = key as string;
         const v = value as string;
         const mo = /^per_obrig-(\d+)$/.exec(k);
@@ -149,14 +146,16 @@ export function defineWizardApp(): void {
       }
 
       const poderes: string[] = [];
-      for (const [key] of formData.entries()) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      for (const [key] of (formData as any).entries()) {
         if ((key as string).startsWith("poder-")) {
           poderes.push((key as string).replace("poder-", ""));
         }
       }
 
       const magias: string[] = [];
-      for (const [key] of formData.entries()) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      for (const [key] of (formData as any).entries()) {
         if ((key as string).startsWith("magia-")) {
           magias.push((key as string).replace("magia-", ""));
         }
@@ -164,7 +163,8 @@ export function defineWizardApp(): void {
 
       // Race choosable modifiers: name="raca_mod-{group}-{slot}" → string[][]
       const racaMod: string[][] = [];
-      for (const [key, value] of formData.entries()) {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      for (const [key, value] of (formData as any).entries()) {
         const m = /^raca_mod-(\d+)-(\d+)$/.exec(key as string);
         if (!m) continue;
         const g = parseInt(m[1], 10);
@@ -324,9 +324,9 @@ export function defineWizardApp(): void {
       };
     }
 
-    _onRender(_context: unknown, _options: unknown): void {
-      // @ts-expect-error element not typed
-      const root = this.element as HTMLElement;
+    async _onRender(_context: unknown, _options: unknown): Promise<void> {
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const root = (this as any).element as HTMLElement;
 
       // ── Dynamic point buy ──────────────────────────────────────────────
       const COST: Record<number, number> = { [-1]: -1, 0: 0, 1: 1, 2: 2, 3: 4, 4: 7 };
@@ -367,7 +367,6 @@ export function defineWizardApp(): void {
             atributosBase: { for: 0, des: 0, con: 0, int: 0, sab: 0, car: 0 },
           });
           this.applyFormData(fd);
-          // @ts-expect-error render not typed
           this.render();
         });
       }
@@ -405,7 +404,6 @@ export function defineWizardApp(): void {
         if (dropdown) {
           dropdown.addEventListener("change", () => {
             this.applyFormData(this._gatherFormData());
-            // @ts-expect-error render not typed
             this.render();
           });
         }
@@ -418,7 +416,6 @@ export function defineWizardApp(): void {
             escolhasPorItem: { ...this._state.escolhasPorItem, divindade_poder: undefined },
           });
           this.applyFormData(this._gatherFormData());
-          // @ts-expect-error render not typed
           this.render();
         });
       }
@@ -471,8 +468,8 @@ export function defineWizardApp(): void {
 
     _gatherFormData(): FormData {
       const fd = new FormData();
-      // @ts-expect-error element not typed on untyped base
-      const root = this.element as HTMLElement;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      const root = (this as any).element as HTMLElement;
       root.querySelectorAll("input, select, textarea").forEach((el) => {
         const input = el as HTMLInputElement;
         if (!input.name) return;
@@ -514,7 +511,6 @@ export function defineWizardApp(): void {
           this._state.apply({
             atributosBase: { ...this._state.atributosBase, [attr]: current - 1 },
           });
-          // @ts-expect-error render not typed
           void this.render();
         }
       } else if (action === "attrInc") {
@@ -527,7 +523,6 @@ export function defineWizardApp(): void {
           this._state.apply({
             atributosBase: { ...this._state.atributosBase, [attr]: current + 1 },
           });
-          // @ts-expect-error render not typed
           void this.render();
         }
       } else if (action === "equipTab") {
@@ -536,7 +531,6 @@ export function defineWizardApp(): void {
           this._state.apply({
             escolhasPorItem: { ...this._state.escolhasPorItem, equip_categoria: categoria },
           });
-          // @ts-expect-error render not typed
           void this.render();
         }
       } else if (action === "equipAdd") {
@@ -545,7 +539,6 @@ export function defineWizardApp(): void {
           this._state.apply({
             equipamento: [...this._state.equipamento, { itemId: id, qty: 1 }],
           });
-          // @ts-expect-error render not typed
           void this.render();
         }
       } else if (action === "equipRemove") {
@@ -554,7 +547,6 @@ export function defineWizardApp(): void {
           this._state.apply({
             equipamento: this._state.equipamento.filter((e) => e.itemId !== id),
           });
-          // @ts-expect-error render not typed
           void this.render();
         }
       }
