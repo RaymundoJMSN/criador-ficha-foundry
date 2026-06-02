@@ -284,38 +284,57 @@
     <section class="t20w-step">
       <h2>{{stepTitle}}</h2>
 
-      <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap;">
-        <span style="font-size:0.9em;">Selecionados: <strong>{{selectedCount}}</strong></span>
-        <select id="t20w-poder-cat" style="padding:4px 8px;background:rgba(255,255,255,0.08);border:1px solid #555;color:inherit;border-radius:3px;">
-          <option value="">Todas as categorias</option>
-          {{#each categorias}}<option value="{{this}}">{{this}}</option>{{/each}}
-        </select>
-        <input type="text" id="t20w-poder-search" placeholder="Filtrar poderes..."
-               style="flex:1;min-width:120px;padding:4px 8px;background:rgba(255,255,255,0.08);border:1px solid #555;color:inherit;border-radius:3px;" />
+      {{#if habilidades.length}}
+      <div style="margin-bottom:16px;">
+        <h3 style="font-size:0.95em;margin:0 0 6px 0;opacity:0.8;">Habilidades de Classe</h3>
+        <p class="t20w-hint" style="margin:0 0 6px 0;">Você recebe estas habilidades automaticamente:</p>
+        <ul style="margin:0;padding-left:20px;">
+          {{#each habilidades}}<li style="font-size:0.85em;">{{this}}</li>{{/each}}
+        </ul>
       </div>
+      {{/if}}
 
-      <div class="t20w-poderes-list" style="display:flex;flex-direction:column;gap:3px;max-height:360px;overflow-y:auto;">
-        {{#each poderes}}
-        <label class="t20w-poder-row"
-               data-poder-name="{{this.name}}"
-               data-poder-cat="{{this.tipo}}"
-               style="display:flex;align-items:flex-start;gap:8px;padding:6px 8px;background:rgba(255,255,255,0.04);border-radius:3px;cursor:pointer;{{#unless this.eligible}}opacity:0.55;{{/unless}}">
-          <input type="checkbox" name="poder-{{this.id}}" value="{{this.id}}"
-                 {{#if this.selected}}checked{{/if}} />
-          <img src="{{this.img}}" style="width:24px;height:24px;object-fit:contain;flex-shrink:0;border-radius:2px;" onerror="this.style.display='none'" />
-          <div style="flex:1;">
-            <div style="display:flex;align-items:center;gap:8px;">
-              <span style="font-size:0.9em;font-weight:600;">{{this.name}}</span>
-              {{#if this.tipo}}<small style="opacity:0.55;font-size:0.72em;">{{this.tipo}}</small>{{/if}}
+      {{#if poderesParaPick}}
+      <div>
+        <h3 style="font-size:0.95em;margin:0 0 6px 0;opacity:0.8;">Escolha de Poderes</h3>
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap;">
+          <span style="font-size:0.9em;">Escolha <strong>{{poderesParaPick}}</strong> — Selecionados: <strong>{{selectedCount}}</strong></span>
+          <select id="t20w-poder-cat" style="padding:4px 8px;background:rgba(255,255,255,0.08);border:1px solid #555;color:inherit;border-radius:3px;">
+            <option value="">Todas as categorias</option>
+            {{#each categorias}}<option value="{{this}}">{{this}}</option>{{/each}}
+          </select>
+          <input type="text" id="t20w-poder-search" placeholder="Filtrar poderes..."
+                 style="flex:1;min-width:120px;padding:4px 8px;background:rgba(255,255,255,0.08);border:1px solid #555;color:inherit;border-radius:3px;" />
+        </div>
+
+        <div class="t20w-poderes-list" style="display:flex;flex-direction:column;gap:3px;max-height:340px;overflow-y:auto;">
+          {{#each poderes}}
+          <label class="t20w-poder-row"
+                 data-poder-name="{{this.name}}"
+                 data-poder-cat="{{this.tipo}}"
+                 style="display:flex;align-items:flex-start;gap:8px;padding:6px 8px;background:rgba(255,255,255,0.04);border-radius:3px;cursor:pointer;{{#unless this.eligible}}opacity:0.55;{{/unless}}">
+            <input type="checkbox" name="poder-{{this.id}}" value="{{this.id}}"
+                   {{#if this.selected}}checked{{/if}} />
+            <img src="{{this.img}}" style="width:24px;height:24px;object-fit:contain;flex-shrink:0;border-radius:2px;" onerror="this.style.display='none'" />
+            <div style="flex:1;">
+              <div style="display:flex;align-items:center;gap:8px;">
+                <span style="font-size:0.9em;font-weight:600;">{{this.name}}</span>
+                {{#if this.tipo}}<small style="opacity:0.55;font-size:0.72em;">{{this.tipo}}</small>{{/if}}
+              </div>
+              {{#if this.descricao}}<div style="font-size:0.78em;opacity:0.75;margin-top:2px;">{{this.descricao}}</div>{{/if}}
+              {{#unless this.eligible}}
+                <div style="color:#f77;font-size:0.72em;margin-top:2px;">Requer: {{#each this.unmet}}{{this}}{{#unless @last}}; {{/unless}}{{/each}}</div>
+              {{/unless}}
             </div>
-            {{#if this.descricao}}<div style="font-size:0.78em;opacity:0.75;margin-top:2px;">{{this.descricao}}</div>{{/if}}
-            {{#unless this.eligible}}
-              <div style="color:#f77;font-size:0.72em;margin-top:2px;">Requer: {{#each this.unmet}}{{this}}{{#unless @last}}; {{/unless}}{{/each}}</div>
-            {{/unless}}
-          </div>
-        </label>
-        {{/each}}
+          </label>
+          {{/each}}
+        </div>
       </div>
+      {{else}}
+      {{#unless habilidades.length}}
+      <p class="t20w-hint">Nenhuma habilidade ou poder disponível para esta classe/nível.</p>
+      {{/unless}}
+      {{/if}}
 
       {{#if errors.length}}<ul class="t20w-errors">{{#each errors}}<li>{{this}}</li>{{/each}}</ul>{{/if}}
     </section>
@@ -325,7 +344,7 @@
     <section class="t20w-step">
       <h2>{{stepTitle}}</h2>
       {{#if isConjurador}}
-      <p class="t20w-hint">Selecionadas: <strong>{{selectedCount}}</strong></p>
+      <p class="t20w-hint">Selecionadas: <strong>{{selectedCount}}</strong> / guia: ~{{magiaLimit}}</p>
       <div class="t20w-list">
         {{#each magias}}
         <label class="t20w-list-item {{#if this.selected}}selected{{/if}}">
@@ -336,7 +355,7 @@
         {{/each}}
       </div>
       {{else}}
-      <p class="t20w-hint">Sua classe não conjura magias. Clique em Próximo.</p>
+      <p class="t20w-hint">{{classeNome}} não conjura magias. Clique em Próximo.</p>
       {{/if}}
     </section>
     {{/if}}

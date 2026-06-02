@@ -1,6 +1,11 @@
+import { toNomeSlug } from "../../compendium/slug.js";
+import { getClasse } from "../../rules/classe.js";
 import { describeUnmet } from "../../rules/poderes.js";
-import type { WizardState } from "../state.js";
+import poderesporNivelRaw from "../../data/poderes-por-nivel.json";
 import type { IndexedPoder } from "../../compendium/types.js";
+import type { WizardState } from "../state.js";
+
+const poderesporNivel = poderesporNivelRaw as Record<string, Record<string, number>>;
 
 export interface PoderEntry {
   id: string;
@@ -16,6 +21,11 @@ export interface PoderEntry {
 
 export interface PoderesContext {
   stepTitle: string;
+  /** Auto-granted class ability IDs (always shown, level 1+) */
+  habilidades: string[];
+  /** How many free picks allowed at this level (0 = none) */
+  poderesParaPick: number;
+  /** Filtered power list for picking (empty when poderesParaPick === 0) */
   poderes: PoderEntry[];
   categorias: string[];
   selectedCount: number;
@@ -24,9 +34,34 @@ export interface PoderesContext {
 
 export function preparePoderesContext(
   state: WizardState,
-  poderes: IndexedPoder[],
+  allPoderes: IndexedPoder[],
   errors: string[] = []
 ): PoderesContext {
+  const classeSlug = toNomeSlug(state.classeNome ?? "");
+  const classeData = getClasse(classeSlug);
+
+  // Auto-granted class abilities (always shown)
+  const habilidades = classeData?.habilidades_classe_ids ?? [];
+
+  // How many free picks at this level (0 for level 1)
+  const nivelStr = String(state.nivel);
+  const poderesParaPick = poderesporNivel[classeSlug]?.[nivelStr] ?? 0;
+
+  if (!classeData || poderesParaPick === 0) {
+    return {
+      stepTitle: "Poderes",
+      habilidades,
+      poderesParaPick: 0,
+      poderes: [],
+      categorias: [],
+      selectedCount: state.poderes.length,
+      errors,
+    };
+  }
+
+  // Build pick list from poderes_classe_ids — match compendium items by slug
+  const classePoderSlugs = new Set(classeData.poderes_classe_ids ?? []);
+
   const stateForEligibility = {
     nivel: state.nivel,
     atributosBase: state.atributosBase,
@@ -36,26 +71,30 @@ export function preparePoderesContext(
     poderes: state.poderes,
   };
 
-  const entries: PoderEntry[] = poderes.map((p) => {
-    const slug = p.name.toLowerCase().replace(/\s+/g, "_");
-    const unmet = describeUnmet(slug, stateForEligibility);
-    return {
-      id: p.id,
-      name: p.name,
-      img: p.img,
-      eligible: unmet.length === 0,
-      unmet,
-      selected: state.poderes.includes(p.id),
-      tipo: p.system.tipo ?? "",
-      subtipo: p.system.subtipo ?? "",
-      descricao: p.system.descricao ?? "",
-    };
-  });
+  const entries: PoderEntry[] = allPoderes
+    .filter((p) => classePoderSlugs.has(toNomeSlug(p.name)))
+    .map((p) => {
+      const slug = toNomeSlug(p.name);
+      const unmet = describeUnmet(slug, stateForEligibility);
+      return {
+        id: p.id,
+        name: p.name,
+        img: p.img,
+        eligible: unmet.length === 0,
+        unmet,
+        selected: state.poderes.includes(p.id),
+        tipo: p.system.tipo ?? "",
+        subtipo: p.system.subtipo ?? "",
+        descricao: p.system.descricao ?? "",
+      };
+    });
 
   const categorias = [...new Set(entries.map((e) => e.tipo).filter(Boolean))].sort();
 
   return {
     stepTitle: "Poderes",
+    habilidades,
+    poderesParaPick,
     poderes: entries,
     categorias,
     selectedCount: state.poderes.length,
