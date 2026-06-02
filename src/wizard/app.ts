@@ -80,6 +80,21 @@ export function defineWizardApp(): void {
     }
 
     async nextStep(): Promise<void> {
+      // Equipamento: block if overspent
+      if (this._currentStep === WizardStep.Equipamento) {
+        const allEquip = [
+          ...CompendiumIndex.getAll("equipamento"),
+          ...CompendiumIndex.getAll("arma"),
+          ...CompendiumIndex.getAll("consumivel"),
+        ] as IndexedEquipamento[];
+        const equipCtx = prepareEquipamentoContext(this._state, allEquip, []);
+        if (!equipCtx.canProceed) {
+          this._errors = ["Você excedeu o orçamento disponível. Remova itens do carrinho."];
+          this.render();
+          return;
+        }
+      }
+
       const result = validate(this._currentStep, this._state as Parameters<typeof validate>[1]);
       if (!result.valid) {
         this._errors = result.errors;
@@ -465,6 +480,20 @@ export function defineWizardApp(): void {
       if (poderSearch) poderSearch.addEventListener("input", applyPoderFilter);
       if (poderCat) poderCat.addEventListener("change", applyPoderFilter);
 
+      // ── Equip search ───────────────────────────────────────────────────
+      const equipSearch = root.querySelector<HTMLInputElement>("#t20w-equip-search");
+      if (equipSearch) {
+        equipSearch.addEventListener("input", (e) => {
+          this._state.apply({
+            escolhasPorItem: {
+              ...this._state.escolhasPorItem,
+              equip_search: (e.target as HTMLInputElement).value,
+            },
+          });
+          void this.render();
+        });
+      }
+
       // ── Magia search ───────────────────────────────────────────────────
       const magiaSearch = root.querySelector<HTMLInputElement>("#t20w-magia-search");
       if (magiaSearch) {
@@ -496,7 +525,7 @@ export function defineWizardApp(): void {
       return fd;
     }
 
-    _onClickAction(event: MouseEvent, target: HTMLElement): void {
+    async _onClickAction(event: MouseEvent, target: HTMLElement): Promise<void> {
       event.preventDefault();
       const action = target.dataset["action"];
       if (action === "next") {
@@ -563,6 +592,58 @@ export function defineWizardApp(): void {
           });
           void this.render();
         }
+      } else if (action === "rollDinheiro") {
+        if (this._state.nivel === 1) {
+          // @ts-expect-error Roll is a Foundry global
+          const roll = await new Roll("4d6").roll({ async: true });
+          this._state.apply({
+            escolhasPorItem: {
+              ...this._state.escolhasPorItem,
+              dinheiro_rolado: (roll as { total: number }).total,
+            },
+          });
+          await this.render();
+        }
+      } else if (action === "rollAtributos") {
+        const method = this._state.metodoAtributos;
+        const attrs = ["for", "des", "con", "int", "sab", "car"] as const;
+
+        if (method === "valkaria") {
+          const vals = [4, 3, 2, 2, 1, 0];
+          const patch = { ...this._state.atributosBase };
+          attrs.forEach((a, i) => { patch[a] = vals[i]!; });
+          this._state.apply({ atributosBase: patch });
+        } else if (method === "khalmyr") {
+          const vals = [3, 3, 2, 2, 2, 1];
+          const patch = { ...this._state.atributosBase };
+          attrs.forEach((a, i) => { patch[a] = vals[i]!; });
+          this._state.apply({ atributosBase: patch });
+        } else if (method === "epica") {
+          const patch = { ...this._state.atributosBase };
+          attrs.forEach((a) => { patch[a] = 4; });
+          this._state.apply({ atributosBase: patch });
+        } else if (method === "nimb") {
+          const patch = { ...this._state.atributosBase };
+          attrs.forEach((a) => { patch[a] = 0; });
+          this._state.apply({ atributosBase: patch });
+        } else if (method === "rolagem_padrao") {
+          const patch = { ...this._state.atributosBase };
+          for (const a of attrs) {
+            // @ts-expect-error Roll is a Foundry global
+            const roll = await new Roll("4d6kh3").roll({ async: true });
+            patch[a] = (roll as { total: number }).total;
+          }
+          this._state.apply({ atributosBase: patch });
+        } else if (method === "classica") {
+          const patch = { ...this._state.atributosBase };
+          for (const a of attrs) {
+            // @ts-expect-error Roll is a Foundry global
+            const roll = await new Roll("3d6").roll({ async: true });
+            patch[a] = (roll as { total: number }).total;
+          }
+          this._state.apply({ atributosBase: patch });
+        }
+        await this.render();
       }
     }
   };

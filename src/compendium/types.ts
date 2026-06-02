@@ -55,6 +55,8 @@ export interface IndexedEquipamento extends IndexedBase {
     preco?: number;
     peso?: number;
     tipo?: string;
+    subtipo?: string;
+    [key: string]: unknown;
   };
 }
 

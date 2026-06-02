@@ -59,9 +59,12 @@
         Pontos restantes: <strong id="t20w-pontos-restantes" class="{{#if pontosNegativo}}t20w-over{{/if}}">{{pontosRestantes}}</strong> / {{pontosTotal}}
       </p>
       {{else}}
-      <p class="t20w-hint" style="margin-top:10px;">
-        <strong>{{metodoDescricao}}</strong> — insira os valores obtidos nos dados ou pela tabela do livro.
-      </p>
+      <div class="t20w-roll-bar" style="margin-top:10px;">
+        <p class="t20w-hint" style="margin:0 0 6px;">
+          <strong>{{metodoDescricao}}</strong> — insira os valores ou clique em Rolar.
+        </p>
+        <button type="button" data-action="rollAtributos" class="t20w-btn" style="padding:4px 12px;cursor:pointer;">🎲 Rolar Atributos</button>
+      </div>
       {{/if}}
     </section>
     {{/if}}
@@ -383,18 +386,28 @@
       <!-- Money display -->
       <div class="t20w-money-bar" style="display:flex;align-items:center;gap:10px;padding:6px 10px;background:rgba(255,255,255,0.06);border-radius:4px;margin-bottom:10px;flex-wrap:wrap;font-size:0.9em;">
         <span>Dinheiro inicial: <strong>{{dinheiroInicial}} T$</strong></span>
-        {{#if nivel1RollNote}}<span style="opacity:0.7;">({{nivel1RollNote}})</span>{{/if}}
+        {{#if isNivel1}}
+          <button type="button" data-action="rollDinheiro" class="t20w-btn-sm" style="padding:2px 8px;cursor:pointer;">🎲 4d6</button>
+        {{/if}}
         <span style="opacity:0.5;">|</span>
         <span>Gasto: {{dinheiroGasto}} T$</span>
         <span style="opacity:0.5;">|</span>
         <span class="{{#if dinheiroOk}}t20w-money-ok{{else}}t20w-neg{{/if}}" style="font-weight:600;">Restante: {{dinheiroRestante}} T$</span>
+        {{#unless dinheiroOk}}<span style="color:#f55;font-size:0.85em;">⚠ Excedeu o orçamento!</span>{{/unless}}
       </div>
+
+      <!-- Search -->
+      <input type="text" id="t20w-equip-search" placeholder="Buscar item..." value="{{equipSearch}}"
+        style="width:100%;box-sizing:border-box;padding:4px 8px;background:rgba(255,255,255,0.08);border:1px solid #555;color:inherit;border-radius:3px;margin-bottom:8px;" />
 
       <!-- Category tabs -->
       <div class="t20w-equip-tabs" style="display:flex;gap:4px;margin-bottom:8px;">
         <button type="button" class="t20w-tab{{#if (eq categoriaAtual 'arma')}} t20w-active{{/if}}"
           data-action="equipTab" data-categoria="arma"
           style="padding:4px 12px;border-radius:3px;cursor:pointer;{{#if (eq categoriaAtual 'arma')}}background:rgba(255,160,0,0.25);outline:1px solid #f90;{{else}}background:rgba(255,255,255,0.06);{{/if}}">Armas</button>
+        <button type="button" class="t20w-tab{{#if (eq categoriaAtual 'armadura')}} t20w-active{{/if}}"
+          data-action="equipTab" data-categoria="armadura"
+          style="padding:4px 12px;border-radius:3px;cursor:pointer;{{#if (eq categoriaAtual 'armadura')}}background:rgba(255,160,0,0.25);outline:1px solid #f90;{{else}}background:rgba(255,255,255,0.06);{{/if}}">Armaduras</button>
         <button type="button" class="t20w-tab{{#if (eq categoriaAtual 'geral')}} t20w-active{{/if}}"
           data-action="equipTab" data-categoria="geral"
           style="padding:4px 12px;border-radius:3px;cursor:pointer;{{#if (eq categoriaAtual 'geral')}}background:rgba(255,160,0,0.25);outline:1px solid #f90;{{else}}background:rgba(255,255,255,0.06);{{/if}}">Geral</button>
@@ -425,7 +438,7 @@
             {{/if}}
           </div>
           {{else}}
-          <p class="t20w-hint" style="opacity:0.6;font-size:0.85em;">Nenhum item nesta categoria.</p>
+          <p class="t20w-hint" style="opacity:0.6;font-size:0.85em;">Nenhum item nesta categoria{{#if equipSearch}} com esse filtro{{/if}}.</p>
           {{/each}}
         </div>
 
