@@ -282,9 +282,13 @@ export function defineWizardApp(): void {
           stepCtx = preparePericiaContext(state, intFinal, racaBonus, errors);
           break;
         }
-        case WizardStep.Divindade:
-          stepCtx = prepareDivindadeContext(state, errors);
+        case WizardStep.Divindade: {
+          const divPoderes = CompendiumIndex.getAll("poder") as IndexedPoder[];
+          const resolvePoderNome = (slug: string): string | null =>
+            divPoderes.find((p) => toSlug(p.name) === slug)?.name ?? null;
+          stepCtx = prepareDivindadeContext(state, errors, resolvePoderNome);
           break;
+        }
         case WizardStep.Poderes: {
           const poderes = CompendiumIndex.getAll("poder") as IndexedPoder[];
           stepCtx = preparePoderesContext(state, poderes, errors);
@@ -507,6 +511,56 @@ export function defineWizardApp(): void {
           void this.render();
         });
       }
+
+      // ── Perícias live dedup — save picks + re-render on any change ──────
+      const periciaInputs = root.querySelectorAll<HTMLInputElement>(
+        'input[name^="per_esc-"], input[name^="per_int-"], input[name^="per_raca-"], input[name^="per_obrig-"]'
+      );
+      if (periciaInputs.length > 0) {
+        periciaInputs.forEach((inp) => {
+          inp.addEventListener("change", () => {
+            this._savePericiasPicks(root);
+            void this.render();
+          });
+        });
+      }
+    }
+
+    /** Reads all pericias picks from current DOM and saves to state (for live dedup). */
+    _savePericiasPicks(html: HTMLElement): void {
+      const perObrig: string[][] = [];
+      const perEsc: string[] = [];
+      const perInt: string[] = [];
+      const perRaca: string[] = [];
+
+      html.querySelectorAll<HTMLInputElement>('input[type="radio"][name^="per_obrig-"]:checked').forEach((inp) => {
+        const m = /^per_obrig-(\d+)$/.exec(inp.name);
+        if (m) {
+          const idx = parseInt(m[1], 10);
+          (perObrig[idx] ??= []).push(inp.value);
+        }
+      });
+      html.querySelectorAll<HTMLInputElement>('input[type="checkbox"][name^="per_esc-"]:checked').forEach((inp) => {
+        perEsc.push(inp.value);
+      });
+      html.querySelectorAll<HTMLInputElement>('input[type="checkbox"][name^="per_int-"]:checked').forEach((inp) => {
+        perInt.push(inp.value);
+      });
+      html.querySelectorAll<HTMLInputElement>('input[type="checkbox"][name^="per_raca-"]:checked').forEach((inp) => {
+        perRaca.push(inp.value);
+      });
+
+      this._state.apply({
+        escolhasPorItem: {
+          ...this._state.escolhasPorItem,
+          pericias: {
+            obrigatorias: perObrig.map((g) => (g ?? []).filter(Boolean)),
+            escolhas: perEsc,
+            extras_int: perInt,
+            raca: perRaca,
+          },
+        },
+      });
     }
 
     _gatherFormData(): FormData {

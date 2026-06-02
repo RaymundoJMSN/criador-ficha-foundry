@@ -36,12 +36,15 @@ export function getOrigem(id: string): Origem | null {
 export function formatItensIniciais(origemId: string): string[] {
   const origem = getOrigem(origemId);
   if (!origem) return [];
-  return (origem.itens_iniciais ?? []).map((it) => {
-    let line = it.item;
-    if (it.valor_max) line += ` (até ${it.valor_max})`;
-    if (it.observacao) line += ` — ${it.observacao}`;
-    return line;
-  });
+  return (origem.itens_iniciais ?? [])
+    .map((it) => {
+      if (!it.item || !it.item.trim()) return null; // skip empty entries
+      let line = it.item.trim();
+      if (it.valor_max) line += ` (até ${it.valor_max})`;
+      if (it.observacao) line += ` — ${it.observacao}`;
+      return line;
+    })
+    .filter((l): l is string => l !== null);
 }
 
 export function getPick2Candidates(origemId: string): string[] {

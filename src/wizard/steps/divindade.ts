@@ -8,6 +8,14 @@ import type { WizardState } from "../state.js";
 
 const DIVINE_CLASSES = ["clerigo", "paladino", "druida"];
 
+function prettifySlug(slug: string): string {
+  return slug
+    .split("_")
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
+
 export interface DivindadeContext {
   stepTitle: string;
   obrigatoria: boolean;
@@ -20,7 +28,8 @@ export interface DivindadeContext {
 
 export function prepareDivindadeContext(
   state: WizardState,
-  errors: string[] = []
+  errors: string[] = [],
+  resolvePoderNome: (slug: string) => string | null = () => null
 ): DivindadeContext {
   const classeSlug = toNomeSlug(state.classeNome ?? "");
   const racaSlug = toNomeSlug(state.racaNome ?? "");
@@ -33,8 +42,11 @@ export function prepareDivindadeContext(
   }));
 
   const selected = divindades.find((d: Divindade) => d.id === state.divindadeId) ?? null;
+  const poderesConcedidosNomes = selected
+    ? selected.poderes_concedidos.map((slug) => resolvePoderNome(slug) ?? prettifySlug(slug))
+    : [];
   const selectedDivindade = selected
-    ? { id: selected.id, nome: selected.nome, poderesConcedidos: selected.poderes_concedidos }
+    ? { id: selected.id, nome: selected.nome, poderesConcedidos: poderesConcedidosNomes }
     : null;
 
   const todosPoderesAuto = DIVINE_CLASSES.includes(classeSlug);

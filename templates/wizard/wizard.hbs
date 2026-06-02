@@ -136,7 +136,7 @@
           <div style="display:flex;flex-direction:column;gap:4px;margin-top:6px;">
             {{#each selectedDetail.pick2_candidates}}
             <label style="display:flex;align-items:center;gap:6px;font-size:0.9em;">
-              <input type="radio" name="origem_poder_escolha" value="{{this.id}}" {{#if this.selected}}checked{{/if}} />{{this.nome}}
+              <input type="radio" name="origem_poder_escolha" value="{{this.id}}" {{#if this.selected}}checked{{/if}} style="accent-color:#f90;cursor:pointer;" />{{this.nome}}
             </label>
             {{/each}}
           </div>
@@ -271,7 +271,7 @@
           <div class="t20w-poder-radio-group" data-selected-poder="{{divindadePoder}}" style="display:flex;flex-direction:column;gap:4px;">
             {{#each selectedDivindade.poderesConcedidos}}
             <label style="display:flex;align-items:center;gap:6px;font-size:0.9em;">
-              <input type="radio" name="divindade_poder" value="{{this}}" />
+              <input type="radio" name="divindade_poder" value="{{this}}" style="accent-color:#f90;cursor:pointer;" />
               <span>{{this}}</span>
             </label>
             {{/each}}
