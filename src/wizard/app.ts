@@ -464,6 +464,20 @@ export function defineWizardApp(): void {
       };
       if (poderSearch) poderSearch.addEventListener("input", applyPoderFilter);
       if (poderCat) poderCat.addEventListener("change", applyPoderFilter);
+
+      // ── Magia search ───────────────────────────────────────────────────
+      const magiaSearch = root.querySelector<HTMLInputElement>("#t20w-magia-search");
+      if (magiaSearch) {
+        magiaSearch.addEventListener("input", (e) => {
+          this._state.apply({
+            escolhasPorItem: {
+              ...this._state.escolhasPorItem,
+              magia_search: (e.target as HTMLInputElement).value,
+            },
+          });
+          void this.render();
+        });
+      }
     }
 
     _gatherFormData(): FormData {

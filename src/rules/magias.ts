@@ -33,10 +33,12 @@ export function filterMagias(
   const circles = new Set(getCirculosDesbloqueados(classeId, nivel));
   const tipos = new Set<string>(CLASSE_TIPO_MAGIA[classeId] ?? []);
 
-  return magias.filter(
-    (m) =>
-      m.system.circulo !== undefined &&
-      circles.has(m.system.circulo) &&
-      (!m.system.tipo || tipos.has(m.system.tipo))
-  );
+  return magias.filter((m) => {
+    // Coerce circulo to number — getIndex may return string from Foundry
+    const circulo = Number(m.system.circulo);
+    if (!circulo || !circles.has(circulo)) return false;
+    // Only filter by tipo if class has restriction AND item has an explicit tipo set
+    if (tipos.size > 0 && m.system.tipo && !tipos.has(m.system.tipo)) return false;
+    return true;
+  });
 }
