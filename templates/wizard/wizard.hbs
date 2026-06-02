@@ -251,7 +251,22 @@
       {{#if selectedDivindade}}
       <div style="margin-top:12px;padding:10px;background:rgba(255,255,255,0.05);border-radius:4px;">
         <h3 style="margin:0 0 6px;">{{selectedDivindade.nome}}</h3>
-        <p style="font-size:0.85em;margin:0;">{{selectedDivindade.poderesCount}} poder(es) concedido(s)</p>
+        {{#if todosPoderesAuto}}
+          <p style="font-size:0.85em;opacity:0.75;margin:0 0 6px;">Como {{classeNome}}, você recebe todos os poderes concedidos automaticamente.</p>
+          <ul style="font-size:0.85em;margin:0;padding-left:18px;">
+            {{#each selectedDivindade.poderesConcedidos}}<li>{{this}}</li>{{/each}}
+          </ul>
+        {{else}}
+          <p style="font-size:0.85em;margin:0 0 6px;"><strong>Escolha 1 poder concedido:</strong></p>
+          <div class="t20w-poder-radio-group" data-selected-poder="{{divindadePoder}}" style="display:flex;flex-direction:column;gap:4px;">
+            {{#each selectedDivindade.poderesConcedidos}}
+            <label style="display:flex;align-items:center;gap:6px;font-size:0.9em;">
+              <input type="radio" name="divindade_poder" value="{{this}}" />
+              <span>{{this}}</span>
+            </label>
+            {{/each}}
+          </div>
+        {{/if}}
       </div>
       {{/if}}
       {{#if errors.length}}<ul class="t20w-errors">{{#each errors}}<li>{{this}}</li>{{/each}}</ul>{{/if}}

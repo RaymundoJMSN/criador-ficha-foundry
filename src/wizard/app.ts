@@ -208,6 +208,13 @@ export function defineWizardApp(): void {
         patch["classeNome"] = classeItem?.name ?? "";
       }
       if (formData.has("divindadeId")) patch["divindadeId"] = divindadeId;
+      const divindadePoder = formData.get("divindade_poder") as string | null;
+      if (divindadePoder !== null) {
+        patch["escolhasPorItem"] = {
+          ...(patch["escolhasPorItem"] as Record<string, unknown> ?? this._state.escolhasPorItem),
+          divindade_poder: divindadePoder,
+        };
+      }
       if (poderes.length > 0) patch["poderes"] = poderes;
       if (magias.length > 0) patch["magias"] = magias;
 
@@ -360,7 +367,7 @@ export function defineWizardApp(): void {
       }
 
       // ── Select dropdowns → re-render on change to show detail card ──────
-      for (const name of ["racaId", "origemId", "classeId", "divindadeId"]) {
+      for (const name of ["racaId", "origemId", "classeId"]) {
         const dropdown = root.querySelector<HTMLSelectElement>(`[name="${name}"]`);
         if (dropdown) {
           dropdown.addEventListener("change", () => {
@@ -370,6 +377,36 @@ export function defineWizardApp(): void {
           });
         }
       }
+      // Divindade select — also clears conceded power pick
+      const divDropdown = root.querySelector<HTMLSelectElement>(`[name="divindadeId"]`);
+      if (divDropdown) {
+        divDropdown.addEventListener("change", () => {
+          this._state.apply({
+            escolhasPorItem: { ...this._state.escolhasPorItem, divindade_poder: undefined },
+          });
+          this.applyFormData(this._gatherFormData());
+          // @ts-expect-error render not typed
+          this.render();
+        });
+      }
+
+      // ── Divindade conceded power radio ──────────────────────────────────
+      // Restore checked state from state (radios are rendered without checked attr)
+      const savedPoder = this._state.escolhasPorItem["divindade_poder"] as string | undefined;
+      if (savedPoder) {
+        const poderRadio = root.querySelector<HTMLInputElement>(
+          `input[name="divindade_poder"][value="${CSS.escape(savedPoder)}"]`
+        );
+        if (poderRadio) poderRadio.checked = true;
+      }
+      root.querySelectorAll<HTMLInputElement>("input[name='divindade_poder']").forEach((radio) => {
+        radio.addEventListener("change", (e) => {
+          const val = (e.target as HTMLInputElement).value;
+          this._state.apply({
+            escolhasPorItem: { ...this._state.escolhasPorItem, divindade_poder: val },
+          });
+        });
+      });
 
       // ── Origem pick-2 radio → save to escolhasPorItem ───────────────────
       root.querySelectorAll<HTMLInputElement>("[name='origem_poder_escolha']").forEach((radio) => {
