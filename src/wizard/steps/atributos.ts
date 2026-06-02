@@ -1,4 +1,4 @@
-import { listMetodos, validatePointBuy, pointBuyCost } from "../../rules/atributos.js";
+import { listMetodos, validatePointBuy, pointBuyCost, POINT_BUY_INITIAL_POINTS } from "../../rules/atributos.js";
 import type { WizardState } from "../state.js";
 
 const ATTR_LABELS: Record<string, string> = {
@@ -17,6 +17,7 @@ export interface AtributosContext {
   atributos: Array<{ id: string; label: string; value: number; custo: number }>;
   pontosRestantes: number;
   pontosNegativo: boolean;
+  pontosTotal: number;
   metodoDescricao: string;
   errors: string[];
 }
@@ -54,6 +55,7 @@ export function prepareAtributosContext(
     atributos,
     pontosRestantes: pbResult.remaining,
     pontosNegativo: pbResult.remaining < 0,
+    pontosTotal: POINT_BUY_INITIAL_POINTS,
     metodoDescricao: metodos.find((m) => m.selected)?.nome ?? "",
     errors,
   };

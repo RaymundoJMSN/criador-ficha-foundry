@@ -356,15 +356,47 @@ export function defineWizardApp(): void {
       });
       updatePointBuy();
 
-      // ── Method select → re-render ───────────────────────────────────────
+      // ── Method select → reset atributosBase + re-render ───────────────
       const sel = root.querySelector<HTMLSelectElement>("[name='metodoAtributos']");
       if (sel) {
         sel.addEventListener("change", () => {
-          this.applyFormData(this._gatherFormData());
+          const fd = this._gatherFormData();
+          // Reset all attribute values when switching method
+          this._state.apply({
+            atributosBase: { for: 0, des: 0, con: 0, int: 0, sab: 0, car: 0 },
+          });
+          this.applyFormData(fd);
           // @ts-expect-error render not typed
           this.render();
         });
       }
+
+      // ── Péricias checkbox limit enforcement ────────────────────────────
+      const enforceCheckboxGroup = (groupEl: HTMLElement, max: number) => {
+        const checkboxes = groupEl.querySelectorAll<HTMLInputElement>("input[type='checkbox']");
+        const enforce = () => {
+          const checked = Array.from(checkboxes).filter((c) => c.checked);
+          const atLimit = checked.length >= max;
+          checkboxes.forEach((cb) => {
+            if (!cb.checked) {
+              cb.disabled = atLimit;
+              const lbl = cb.closest("label");
+              if (lbl) lbl.style.opacity = atLimit ? "0.45" : "";
+            } else {
+              cb.disabled = false;
+              const lbl = cb.closest("label");
+              if (lbl) lbl.style.opacity = "";
+            }
+          });
+        };
+        enforce();
+        checkboxes.forEach((cb) => cb.addEventListener("change", enforce));
+      };
+
+      root.querySelectorAll<HTMLElement>(".t20w-pcheck-group").forEach((grp) => {
+        const max = parseInt(grp.dataset["max"] ?? "999", 10);
+        enforceCheckboxGroup(grp, max);
+      });
 
       // ── Select dropdowns → re-render on change to show detail card ──────
       for (const name of ["racaId", "origemId", "classeId"]) {
@@ -471,6 +503,32 @@ export function defineWizardApp(): void {
           return;
         }
         void ActorWriter.create(this._state).then(() => this.close());
+      } else if (action === "attrDec") {
+        const attr = target.dataset["attr"] as string;
+        if (!attr) return;
+        const isCompra = this._state.metodoAtributos === "compra_pontos";
+        const min = isCompra ? -1 : -5;
+        const current = this._state.atributosBase[attr as keyof typeof this._state.atributosBase] ?? 0;
+        if (current > min) {
+          this._state.apply({
+            atributosBase: { ...this._state.atributosBase, [attr]: current - 1 },
+          });
+          // @ts-expect-error render not typed
+          void this.render();
+        }
+      } else if (action === "attrInc") {
+        const attr = target.dataset["attr"] as string;
+        if (!attr) return;
+        const isCompra = this._state.metodoAtributos === "compra_pontos";
+        const max = isCompra ? 4 : 10;
+        const current = this._state.atributosBase[attr as keyof typeof this._state.atributosBase] ?? 0;
+        if (current < max) {
+          this._state.apply({
+            atributosBase: { ...this._state.atributosBase, [attr]: current + 1 },
+          });
+          // @ts-expect-error render not typed
+          void this.render();
+        }
       }
     }
   };

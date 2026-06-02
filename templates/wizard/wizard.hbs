@@ -39,22 +39,29 @@
           {{/each}}
         </select>
       </div>
+      <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px;">
+        {{#each atributos}}
+        <div class="t20w-attr-row" style="display:flex;align-items:center;gap:8px;">
+          <span style="width:110px;font-size:0.9em;">{{this.label}}</span>
+          <button type="button" class="t20w-btn-sm" data-action="attrDec" data-attr="{{this.id}}" style="width:26px;height:26px;padding:0;font-size:1em;line-height:1;cursor:pointer;">−</button>
+          <input type="number" name="attr-{{this.id}}" value="{{this.value}}"
+            class="t20w-attr-input"
+            data-attr="{{this.id}}"
+            style="width:52px;text-align:center;"
+            {{#if ../isCompra}}min="-1" max="4"{{/if}} />
+          <button type="button" class="t20w-btn-sm" data-action="attrInc" data-attr="{{this.id}}" style="width:26px;height:26px;padding:0;font-size:1em;line-height:1;cursor:pointer;">+</button>
+          {{#if ../isCompra}}<span style="font-size:0.8em;opacity:0.7;width:60px;">custo: {{this.custo}}</span>{{/if}}
+        </div>
+        {{/each}}
+      </div>
       {{#if isCompra}}
-      <table class="t20w-attrs">
-        <thead><tr><th>Atributo</th><th>Valor</th><th>Custo</th></tr></thead>
-        <tbody>
-          {{#each atributos}}
-          <tr>
-            <td>{{this.label}}</td>
-            <td><input type="number" name="attr-{{this.id}}" min="-1" max="4" value="{{this.value}}" /></td>
-            <td>{{this.custo}}</td>
-          </tr>
-          {{/each}}
-        </tbody>
-        <tfoot><tr><td colspan="2">Pontos restantes</td><td class="{{#if pontosNegativo}}t20w-over{{/if}}">{{pontosRestantes}}</td></tr></tfoot>
-      </table>
+      <p style="margin-top:10px;font-size:0.9em;">
+        Pontos restantes: <strong id="t20w-pontos-restantes" class="{{#if pontosNegativo}}t20w-over{{/if}}">{{pontosRestantes}}</strong> / {{pontosTotal}}
+      </p>
       {{else}}
-      <p class="t20w-hint">{{metodoDescricao}}</p>
+      <p class="t20w-hint" style="margin-top:10px;">
+        <strong>{{metodoDescricao}}</strong> — insira os valores obtidos nos dados ou pela tabela do livro.
+      </p>
       {{/if}}
     </section>
     {{/if}}
@@ -194,10 +201,10 @@
       {{#if escolhasQtd}}
       <div style="margin-bottom:10px;">
         <strong style="font-size:0.85em;">Perícias da classe — escolha {{escolhasQtd}} (restam {{escolhasRestantes}}):</strong>
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:2px 12px;margin-top:4px;max-height:200px;overflow-y:auto;">
+        <div class="t20w-pcheck-group" data-group="esc" data-max="{{escolhasQtd}}" style="display:grid;grid-template-columns:repeat(2,1fr);gap:2px 12px;margin-top:4px;max-height:200px;overflow-y:auto;">
           {{#each escolhasOpcoes}}
-          <label style="font-size:0.88em;display:flex;align-items:center;gap:6px;">
-            <input type="checkbox" name="per_esc-{{this.id}}" value="{{this.id}}" {{#if this.checked}}checked{{/if}} />{{this.nome}}
+          <label style="font-size:0.88em;display:flex;align-items:center;gap:6px;" class="{{#if this.disabled}}t20w-disabled{{/if}}">
+            <input type="checkbox" name="per_esc-{{this.id}}" value="{{this.id}}" {{#if this.checked}}checked{{/if}} {{#if this.disabled}}disabled{{/if}} />{{this.nome}}
           </label>
           {{/each}}
         </div>
@@ -207,10 +214,10 @@
       {{#if intBonus}}
       <div style="margin-bottom:10px;">
         <strong style="font-size:0.85em;">Perícias extras por Inteligência — até {{intBonus}} (qualquer):</strong>
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:2px 12px;margin-top:4px;max-height:160px;overflow-y:auto;">
+        <div class="t20w-pcheck-group" data-group="int" data-max="{{intBonus}}" style="display:grid;grid-template-columns:repeat(2,1fr);gap:2px 12px;margin-top:4px;max-height:160px;overflow-y:auto;">
           {{#each intOpcoes}}
-          <label style="font-size:0.88em;display:flex;align-items:center;gap:6px;">
-            <input type="checkbox" name="per_int-{{this.id}}" value="{{this.id}}" {{#if this.checked}}checked{{/if}} />{{this.nome}}
+          <label style="font-size:0.88em;display:flex;align-items:center;gap:6px;" class="{{#if this.disabled}}t20w-disabled{{/if}}">
+            <input type="checkbox" name="per_int-{{this.id}}" value="{{this.id}}" {{#if this.checked}}checked{{/if}} {{#if this.disabled}}disabled{{/if}} />{{this.nome}}
           </label>
           {{/each}}
         </div>
@@ -220,10 +227,10 @@
       {{#if racaBonus}}
       <div style="margin-bottom:10px;">
         <strong style="font-size:0.85em;">Perícias de raça — escolha {{racaBonus}} (qualquer):</strong>
-        <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:2px 12px;margin-top:4px;max-height:160px;overflow-y:auto;">
+        <div class="t20w-pcheck-group" data-group="raca" data-max="{{racaBonus}}" style="display:grid;grid-template-columns:repeat(2,1fr);gap:2px 12px;margin-top:4px;max-height:160px;overflow-y:auto;">
           {{#each racaOpcoes}}
-          <label style="font-size:0.88em;display:flex;align-items:center;gap:6px;">
-            <input type="checkbox" name="per_raca-{{this.id}}" value="{{this.id}}" {{#if this.checked}}checked{{/if}} />{{this.nome}}
+          <label style="font-size:0.88em;display:flex;align-items:center;gap:6px;" class="{{#if this.disabled}}t20w-disabled{{/if}}">
+            <input type="checkbox" name="per_raca-{{this.id}}" value="{{this.id}}" {{#if this.checked}}checked{{/if}} {{#if this.disabled}}disabled{{/if}} />{{this.nome}}
           </label>
           {{/each}}
         </div>
