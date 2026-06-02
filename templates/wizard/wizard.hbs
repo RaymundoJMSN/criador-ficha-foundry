@@ -363,27 +363,89 @@
     {{#if showEquipamento}}
     <section class="t20w-step">
       <h2>{{stepTitle}}</h2>
-      <p class="t20w-hint">Saldo: <strong>T$ {{saldo}}</strong></p>
-      <div class="t20w-equipment-layout">
-        <div class="t20w-shop">
+
+      <!-- Money display -->
+      <div class="t20w-money-bar" style="display:flex;align-items:center;gap:10px;padding:6px 10px;background:rgba(255,255,255,0.06);border-radius:4px;margin-bottom:10px;flex-wrap:wrap;font-size:0.9em;">
+        <span>Dinheiro inicial: <strong>{{dinheiroInicial}} T$</strong></span>
+        {{#if nivel1RollNote}}<span style="opacity:0.7;">({{nivel1RollNote}})</span>{{/if}}
+        <span style="opacity:0.5;">|</span>
+        <span>Gasto: {{dinheiroGasto}} T$</span>
+        <span style="opacity:0.5;">|</span>
+        <span class="{{#if dinheiroOk}}t20w-money-ok{{else}}t20w-neg{{/if}}" style="font-weight:600;">Restante: {{dinheiroRestante}} T$</span>
+      </div>
+
+      <!-- Category tabs -->
+      <div class="t20w-equip-tabs" style="display:flex;gap:4px;margin-bottom:8px;">
+        <button type="button" class="t20w-tab{{#if (eq categoriaAtual 'arma')}} t20w-active{{/if}}"
+          data-action="equipTab" data-categoria="arma"
+          style="padding:4px 12px;border-radius:3px;cursor:pointer;{{#if (eq categoriaAtual 'arma')}}background:rgba(255,160,0,0.25);outline:1px solid #f90;{{else}}background:rgba(255,255,255,0.06);{{/if}}">Armas</button>
+        <button type="button" class="t20w-tab{{#if (eq categoriaAtual 'geral')}} t20w-active{{/if}}"
+          data-action="equipTab" data-categoria="geral"
+          style="padding:4px 12px;border-radius:3px;cursor:pointer;{{#if (eq categoriaAtual 'geral')}}background:rgba(255,160,0,0.25);outline:1px solid #f90;{{else}}background:rgba(255,255,255,0.06);{{/if}}">Geral</button>
+        <button type="button" class="t20w-tab{{#if (eq categoriaAtual 'consumivel')}} t20w-active{{/if}}"
+          data-action="equipTab" data-categoria="consumivel"
+          style="padding:4px 12px;border-radius:3px;cursor:pointer;{{#if (eq categoriaAtual 'consumivel')}}background:rgba(255,160,0,0.25);outline:1px solid #f90;{{else}}background:rgba(255,255,255,0.06);{{/if}}">Consumíveis</button>
+      </div>
+
+      <div class="t20w-equip-layout" style="display:grid;grid-template-columns:1fr 220px;gap:10px;">
+        <!-- Item list -->
+        <div class="t20w-equip-list" style="display:flex;flex-direction:column;gap:3px;max-height:320px;overflow-y:auto;">
           {{#each itens}}
-          <label class="t20w-shop-item {{#unless this.affordable}}t20w-disabled{{/unless}}">
-            <input type="checkbox" name="equip-{{this.id}}" value="{{this.id}}"
-              {{#if this.inCart}}checked{{/if}} {{#unless this.affordable}}disabled{{/unless}} />
-            <img src="{{this.img}}" alt="{{this.name}}" />
-            <span>{{this.name}}</span>
-            <small>T$ {{this.preco}}</small>
-          </label>
+          <div class="t20w-equip-row{{#if selected}} t20w-selected{{/if}}{{#if isInitial}} t20w-initial{{/if}}"
+            style="display:flex;align-items:center;gap:8px;padding:4px 8px;background:{{#if selected}}rgba(255,160,0,0.12){{else}}rgba(255,255,255,0.04){{/if}};border-radius:3px;font-size:0.85em;">
+            <img src="{{img}}" width="24" height="24" alt="" style="object-fit:contain;flex-shrink:0;" onerror="this.style.display='none'" />
+            <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{name}}</span>
+            <span style="opacity:0.7;white-space:nowrap;">{{preco}} T$</span>
+            <span style="opacity:0.5;white-space:nowrap;font-size:0.8em;">{{peso}} kg</span>
+            {{#if isInitial}}
+            <span style="font-size:0.75em;padding:1px 6px;background:rgba(0,180,100,0.25);border-radius:3px;color:#6f6;white-space:nowrap;">Inicial</span>
+            {{else}}
+            <button type="button" class="t20w-btn-sm"
+              data-action="{{#if selected}}equipRemove{{else}}equipAdd{{/if}}"
+              data-id="{{id}}"
+              style="width:24px;height:24px;padding:0;font-size:1.1em;line-height:1;cursor:pointer;flex-shrink:0;">
+              {{#if selected}}−{{else}}+{{/if}}
+            </button>
+            {{/if}}
+          </div>
+          {{else}}
+          <p class="t20w-hint" style="opacity:0.6;font-size:0.85em;">Nenhum item nesta categoria.</p>
           {{/each}}
         </div>
-        {{#if carrinho.length}}
-        <aside class="t20w-cart">
-          <h3>Carrinho</h3>
-          <ul>{{#each carrinho}}<li>{{this.name}} ×{{this.qty}} — T$ {{this.subtotal}}</li>{{/each}}</ul>
-          <strong>Total: T$ {{totalCarrinho}}</strong>
-        </aside>
-        {{/if}}
+
+        <!-- Cart -->
+        <div class="t20w-cart" style="background:rgba(255,255,255,0.04);border-radius:4px;padding:8px;display:flex;flex-direction:column;gap:4px;max-height:320px;overflow-y:auto;">
+          <h4 style="margin:0 0 6px;font-size:0.9em;">Carrinho</h4>
+          {{#if itensIniciais.length}}
+          <div style="margin-bottom:6px;">
+            <strong style="font-size:0.8em;opacity:0.8;">Itens de Origem (gratuitos):</strong>
+            {{#each itensIniciais}}
+            <div style="font-size:0.8em;padding:2px 4px;opacity:0.75;">{{name}}</div>
+            {{/each}}
+          </div>
+          {{/if}}
+          {{#each carrinho}}
+          <div class="t20w-cart-row" style="display:flex;align-items:center;gap:4px;font-size:0.82em;">
+            <span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{name}}</span>
+            {{#if (gt qty 1)}}<span style="opacity:0.6;">×{{qty}}</span>{{/if}}
+            <span style="white-space:nowrap;opacity:0.8;">{{preco}} T$</span>
+            <button type="button" class="t20w-btn-sm" data-action="equipRemove" data-id="{{id}}"
+              style="width:18px;height:18px;padding:0;font-size:0.9em;line-height:1;cursor:pointer;flex-shrink:0;">×</button>
+          </div>
+          {{else}}
+          {{#unless itensIniciais.length}}
+          <p style="font-size:0.8em;opacity:0.5;margin:0;">Nenhum item selecionado.</p>
+          {{/unless}}
+          {{/each}}
+          {{#if carrinho.length}}
+          <div style="border-top:1px solid rgba(255,255,255,0.15);margin-top:4px;padding-top:4px;font-size:0.85em;font-weight:600;">
+            Total: {{dinheiroGasto}} T$
+          </div>
+          {{/if}}
+        </div>
       </div>
+
+      {{#if errors.length}}<ul class="t20w-errors">{{#each errors}}<li>{{this}}</li>{{/each}}</ul>{{/if}}
     </section>
     {{/if}}
 

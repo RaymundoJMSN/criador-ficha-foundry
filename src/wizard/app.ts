@@ -30,6 +30,7 @@ import type {
   IndexedRace,
   IndexedPoder,
   IndexedMagia,
+  IndexedEquipamento,
 } from "../compendium/types.js";
 
 const TPL = (name: string) => `modules/${MODULE_ID}/templates/wizard/${name}.hbs`;
@@ -284,7 +285,7 @@ export function defineWizardApp(): void {
             ...CompendiumIndex.getAll("equipamento"),
             ...CompendiumIndex.getAll("arma"),
             ...CompendiumIndex.getAll("consumivel"),
-          ];
+          ] as IndexedEquipamento[];
           stepCtx = prepareEquipamentoContext(state, allEquip, errors);
           break;
         }
@@ -525,6 +526,33 @@ export function defineWizardApp(): void {
         if (current < max) {
           this._state.apply({
             atributosBase: { ...this._state.atributosBase, [attr]: current + 1 },
+          });
+          // @ts-expect-error render not typed
+          void this.render();
+        }
+      } else if (action === "equipTab") {
+        const categoria = target.dataset["categoria"];
+        if (categoria) {
+          this._state.apply({
+            escolhasPorItem: { ...this._state.escolhasPorItem, equip_categoria: categoria },
+          });
+          // @ts-expect-error render not typed
+          void this.render();
+        }
+      } else if (action === "equipAdd") {
+        const id = target.dataset["id"];
+        if (id && !this._state.equipamento.some((e) => e.itemId === id)) {
+          this._state.apply({
+            equipamento: [...this._state.equipamento, { itemId: id, qty: 1 }],
+          });
+          // @ts-expect-error render not typed
+          void this.render();
+        }
+      } else if (action === "equipRemove") {
+        const id = target.dataset["id"];
+        if (id) {
+          this._state.apply({
+            equipamento: this._state.equipamento.filter((e) => e.itemId !== id),
           });
           // @ts-expect-error render not typed
           void this.render();
