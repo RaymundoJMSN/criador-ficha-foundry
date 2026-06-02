@@ -30,7 +30,7 @@
 
 ---
 
-## F1 — UI + bugfix ✅ (Plans 5 + 6A)
+## F1 — UI + bugfix ✅ (Plans 5 + 6A + Plan6-June02 + Plan7-June02)
 
 Objetivo: todos os 11 passos navegáveis e usáveis. Tirar do scaffolding.
 
@@ -71,7 +71,7 @@ Portar variações e construtores do T20-DB (`racas/*.variacoes`, `racas/*.const
 
 ---
 
-## F4 — Auto-grant por nível ❌
+## F4 — Auto-grant por nível ⚠️
 
 Poderes e habilidades automáticas que a classe/raça concede sem o jogador escolher.
 
@@ -79,6 +79,7 @@ Poderes e habilidades automáticas que a classe/raça concede sem o jogador esco
 - ❌ `mapper` adiciona os itens auto-grant ao `items[]` do actor, buscados por slug no pack.
 - ❌ Habilidades de classe automáticas do nível 1..N (a partir da `progressao_classes.json`).
 - ❌ UX: mostrar auto-grants como "recebidos" (read-only), distintos dos escolhíveis.
+- ✅ Race powers: `createEmbeddedDocuments` fix — race item adicionado separadamente para disparar hooks `onCreate` do sistema e auto-conceder poderes raciais.
 
 **Saída:** personagem nv5+ vem com todos os poderes/habilidades de nível corretos, sem o jogador ter que escolher os fixos.
 
@@ -131,3 +132,4 @@ auto-grants corretos. F3/F5/F6 expandem cobertura e polem.
 - **2026-05-30:** Plans escritos cobrindo F1-resto→F5: [`plan6`](plans/2026-05-30-plan6-descricoes-subescolhas-racas.md) (F1 descrições+poderes, F2 multipath+pick-2, F3 variações/construtor/linhagem) e [`plan7`](plans/2026-05-30-plan7-autogrant-prereqs.md) (F4 auto-grant por nível, F5 pré-requisitos).
 - **2026-05-30:** [`plan8`](plans/2026-05-30-plan8-dinheiro-loja.md) — F6 parcial: dinheiro inicial (rolagem nv1 + fixo nv2+) + loja de compra. **Carga fora de escopo** (sistema `tormenta20` calcula). Resta de F6 (resume/i18n/validação-final) sem Plan.
 - **2026-05-30:** [`plan6a`](plans/2026-05-30-plan6a-poderes-list-exec.md) **EXECUTADO** (6 tasks TDD, 126 testes verdes). Poderes step: descrição + motivo específico de pré-req (`formatPrereq`/`describeUnmet`) + filtro de categoria; descrição da classe no painel. F1 → ✅. **Desvio do plano:** T6 previa porte de `classe.descricao` do T20-DB, mas T20-DB **não tem** esse campo (classes só carregam regras). Descrição da classe vem do **item Foundry** (`IndexedClasse.system.descricao`, indexado), igual à descrição de poder (T2) — sem mexer em `port-t20db.mjs`/`classes.json`. Corrigida corrupção de working-tree em `index.ts` (typo `pivPorNivel`, `system.pericias` perdido) deixada por subagente interrompido. Pendência in-world: confirmar campo real (`system.descricao` vs `system.description.value`) dos itens poder/classe.
+- **2026-06-02:** Plan 6 (June02) executado: slug fix (UUID→slug para divindade/magias), botões +/- atributos, enforcement de perícias, redesign do passo poderes (auto-grant nv1, pick nv2+), fix magias (circulo coerce, tipo relaxado), equipamentos (4 abas, busca, carrinho, dinheiro, rolagem de dados), race powers (createEmbeddedDocuments). F1 totalmente ✅. F4 parcial ⚠️.

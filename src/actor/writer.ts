@@ -25,6 +25,9 @@ async function resolveItem(itemId: string): Promise<unknown | null> {
 /**
  * Creates a tormenta20 character actor from the given wizard state.
  * Resolves all item ids from compendium packs before calling Actor.create().
+ *
+ * Race item is added via createEmbeddedDocuments in a separate call so the
+ * tormenta20 system's onCreate hooks fire and auto-grant racial powers/features.
  */
 export class ActorWriter {
   static async create(state: WizardState): Promise<void> {
@@ -56,16 +59,40 @@ export class ActorWriter {
       );
     }
 
-    const data = mapStateToActorData(state, resolvedItems);
+    // Separate race item from the rest — it must be added via createEmbeddedDocuments
+    // so the tormenta20 system's onCreate hooks fire and auto-grant racial powers/features.
+    const raceItemData = resolvedItems.find(
+      (item) => (item as Record<string, unknown>)["type"] === "race"
+    );
+    const otherItems = resolvedItems.filter(
+      (item) => (item as Record<string, unknown>)["type"] !== "race"
+    );
+
+    const data = mapStateToActorData(state, otherItems);
 
     const actor = (await Actor.create(data as unknown as Parameters<typeof Actor.create>[0])) as
-      | { name: string; id: string; sheet?: { render(force: boolean): void } }
+      | {
+          name: string;
+          id: string;
+          sheet?: { render(force: boolean): void };
+          createEmbeddedDocuments(type: string, data: unknown[]): Promise<unknown>;
+        }
       | null
       | undefined;
 
-    if (actor) {
-      actor.sheet?.render(true);
-      console.log(`${MODULE_ID} | ActorWriter: created actor "${actor.name}" (${actor.id})`);
+    if (!actor) return;
+
+    // Add race item separately — fires tormenta20 onCreate hooks → auto-grants race powers
+    if (raceItemData) {
+      try {
+        await actor.createEmbeddedDocuments("Item", [raceItemData]);
+        console.log(`${MODULE_ID} | ActorWriter: race item added via createEmbeddedDocuments (hooks fired)`);
+      } catch (err) {
+        console.warn(`${MODULE_ID} | ActorWriter: failed to add race item separately:`, err);
+      }
     }
+
+    actor.sheet?.render(true);
+    console.log(`${MODULE_ID} | ActorWriter: created actor "${actor.name}" (${actor.id})`);
   }
 }
