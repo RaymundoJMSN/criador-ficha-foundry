@@ -1,31 +1,31 @@
 import { describe, it, expect } from "vitest";
-import { mapStateToActorData } from "../../src/actor/mapper.js";
+import { mapStateToActorData, getTrainedPericaCodes } from "../../src/actor/mapper.js";
 import { WizardState } from "../../src/wizard/state.js";
 
-describe("mapStateToActorData — perícias", () => {
-  it("writes trained perícias as Foundry codes with treinado:true", () => {
+describe("getTrainedPericaCodes — perícias", () => {
+  it("returns trained perícias as Foundry codes with value true", () => {
     const state = new WizardState({ nome: "Hero", periciasTreinadas: ["fortitude", "atletismo"] });
-    const data = mapStateToActorData(state);
-    expect(data.system.pericias).toBeDefined();
-    expect(data.system.pericias!["fort"]).toEqual({ treinado: true });
-    expect(data.system.pericias!["atle"]).toEqual({ treinado: true });
+    const pericias = getTrainedPericaCodes(state);
+    expect(pericias).toBeDefined();
+    expect(pericias["fort"]).toBe(true);
+    expect(pericias["atle"]).toBe(true);
   });
 
   it("skips unmappable perícia identifiers (e.g. oficio)", () => {
     const state = new WizardState({ nome: "Hero", periciasTreinadas: ["oficio", "luta"] });
-    const data = mapStateToActorData(state);
-    expect(data.system.pericias!["luta"]).toEqual({ treinado: true });
-    expect(Object.keys(data.system.pericias!)).not.toContain("oficio");
+    const pericias = getTrainedPericaCodes(state);
+    expect(pericias["luta"]).toBe(true);
+    expect(Object.keys(pericias)).not.toContain("oficio");
   });
 
-  it("emits no pericias key when none trained", () => {
+  it("returns empty object when none trained", () => {
     const state = new WizardState({ nome: "Hero" });
-    const data = mapStateToActorData(state);
-    expect(data.system.pericias).toEqual({});
+    const pericias = getTrainedPericaCodes(state);
+    expect(pericias).toEqual({});
   });
 });
 
-describe("mapStateToActorData — perícias from canonical picks", () => {
+describe("getTrainedPericaCodes — perícias from canonical picks", () => {
   it("computes trained set from class spec + picks (not Foundry item)", () => {
     const state = new WizardState({
       nome: "Hero",
@@ -40,12 +40,12 @@ describe("mapStateToActorData — perícias from canonical picks", () => {
         },
       },
     });
-    const data = mapStateToActorData(state);
+    const pericias = getTrainedPericaCodes(state);
     // fortitude (fixa) + luta (obrig) + atletismo/guerra (escolha) → codes
-    expect(data.system.pericias!["fort"]).toEqual({ treinado: true });
-    expect(data.system.pericias!["luta"]).toEqual({ treinado: true });
-    expect(data.system.pericias!["atle"]).toEqual({ treinado: true });
-    expect(data.system.pericias!["guer"]).toEqual({ treinado: true });
+    expect(pericias["fort"]).toBe(true);
+    expect(pericias["luta"]).toBe(true);
+    expect(pericias["atle"]).toBe(true);
+    expect(pericias["guer"]).toBe(true);
   });
 
   it("does NOT auto-train skills the player did not pick", () => {
@@ -56,9 +56,17 @@ describe("mapStateToActorData — perícias from canonical picks", () => {
         pericias: { obrigatorias: [["luta"]], escolhas: ["atletismo", "guerra"], extras_int: [], raca: [] },
       },
     });
+    const pericias = getTrainedPericaCodes(state);
+    expect(pericias["mist"]).toBeUndefined();
+    expect(pericias["cura"]).toBeUndefined();
+  });
+});
+
+describe("mapStateToActorData — pericias NOT included in Actor.create data", () => {
+  it("does not include pericias in system object (applied via update() instead)", () => {
+    const state = new WizardState({ nome: "Hero", periciasTreinadas: ["fortitude"] });
     const data = mapStateToActorData(state);
-    expect(data.system.pericias!["mist"]).toBeUndefined();
-    expect(data.system.pericias!["cura"]).toBeUndefined();
+    expect((data.system as Record<string, unknown>)["pericias"]).toBeUndefined();
   });
 });
 

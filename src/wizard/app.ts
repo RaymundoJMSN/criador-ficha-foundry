@@ -301,7 +301,9 @@ export function defineWizardApp(): void {
         }
         case WizardStep.Poderes: {
           const poderes = CompendiumIndex.getAll("poder") as IndexedPoder[];
-          stepCtx = preparePoderesContext(state, poderes, errors);
+          const resolvePoderNomePoderes = (slug: string): string | null =>
+            poderes.find((p) => toNomeSlug(p.name) === slug)?.name ?? null;
+          stepCtx = preparePoderesContext(state, poderes, errors, resolvePoderNomePoderes);
           break;
         }
         case WizardStep.Magias: {

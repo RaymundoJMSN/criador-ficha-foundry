@@ -23,8 +23,10 @@ export interface MagiasContext {
   stepTitle: string;
   classeNome: string;
   isConjurador: boolean;
-  /** Soft guide: how many magias to know at this level (not strictly enforced in UI yet) */
+  /** How many magias this character may know (enforced as warning) */
   magiaLimit: number;
+  /** Whether the character is at or over the magia limit */
+  atMaxLimit: boolean;
   magiaSearch: string;
   magiasByCirculo: MagiasByCirculo[];
   selectedCount: number;
@@ -44,10 +46,17 @@ export function prepareMagiasContext(
   const classeSlug = toNomeSlug(state.classeNome ?? "");
   const conjurador = isConjurador(classeSlug);
 
-  // Soft guide: Int modifier + 3 (T20 arcanista rule; used for display only)
-  const intBase = state.atributosBase?.int ?? 10;
-  const intMod = Math.floor((intBase - 10) / 2);
-  const magiaLimit = Math.max(1, intMod + 3);
+  // Magia limit: arcanista gets 3 base, +1 for Mago path; other casters use soft Int-based guide
+  const classeCaminho = (state.escolhasPorItem["classe_caminho"] as string | undefined) ?? "";
+  let magiaLimit: number;
+  if (classeSlug === "arcanista") {
+    magiaLimit = classeCaminho === "caminho_do_arcanista_mago" ? 4 : 3;
+  } else {
+    // Non-arcanista casters: Int modifier + 3 as soft guide
+    const intBase = state.atributosBase?.int ?? 10;
+    const intMod = Math.floor((intBase - 10) / 2);
+    magiaLimit = Math.max(1, intMod + 3);
+  }
 
   const magiaSearch = (state.escolhasPorItem["magia_search"] as string) ?? "";
 
@@ -89,6 +98,7 @@ export function prepareMagiasContext(
     classeNome: state.classeNome ?? "",
     isConjurador: conjurador,
     magiaLimit,
+    atMaxLimit: state.magias.length >= magiaLimit,
     magiaSearch,
     magiasByCirculo,
     selectedCount: state.magias.length,

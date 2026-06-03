@@ -1,9 +1,11 @@
 import { MODULE_ID } from "../constants.js";
-import { mapStateToActorData } from "./mapper.js";
+import { mapStateToActorData, getTrainedPericaCodes } from "./mapper.js";
 import type { WizardState } from "../wizard/state.js";
 import { CompendiumIndex } from "../compendium/index.js";
 import { toNomeSlug } from "../compendium/slug.js";
 import { getClasse } from "../rules/classe.js";
+import { getOrigem } from "../rules/origem.js";
+import { getDivindade } from "../rules/divindade.js";
 
 /**
  * Resolves a compendium item id to its full document object.
@@ -31,6 +33,8 @@ async function resolveItem(itemId: string): Promise<unknown | null> {
  *
  * Race and classe items are added via createEmbeddedDocuments in separate calls
  * so the tormenta20 system's onCreate hooks fire and auto-grant powers/features.
+ * Perícias are applied via actor.update() after all items are embedded so the
+ * system schema has set correct atributo values for each perícia.
  */
 export class ActorWriter {
   static async create(state: WizardState): Promise<void> {
@@ -76,6 +80,7 @@ export class ActorWriter {
       }
     );
 
+    // NOTE: pericias excluded from Actor.create data — applied via update() after init
     const data = mapStateToActorData(state, otherItems);
 
     const actor = (await Actor.create(data as unknown as Parameters<typeof Actor.create>[0])) as
@@ -84,6 +89,7 @@ export class ActorWriter {
           id: string;
           sheet?: { render(force: boolean): void };
           createEmbeddedDocuments(type: string, data: unknown[]): Promise<unknown>;
+          update(data: Record<string, unknown>): Promise<unknown>;
         }
       | null
       | undefined;
@@ -151,6 +157,115 @@ export class ActorWriter {
             console.warn(`${MODULE_ID} | ActorWriter: failed to add caminho:`, err);
           }
         }
+      }
+    }
+
+    // Add origem powers + physical initial items
+    const origem = state.origemId ? getOrigem(state.origemId) : null;
+    if (origem) {
+      const allPoderes = CompendiumIndex.getAll("poder");
+      const allEquip = [
+        ...CompendiumIndex.getAll("equipamento"),
+        ...CompendiumIndex.getAll("arma"),
+        ...CompendiumIndex.getAll("consumivel"),
+      ];
+      const origemItems: unknown[] = [];
+
+      // Auto-granted poder from origem (e.g. "Sangue Azul" for Aristocrata)
+      if (origem.beneficios.poder_unico_id) {
+        const slug = origem.beneficios.poder_unico_id;
+        const match = allPoderes.find(p => toNomeSlug(p.name) === slug);
+        if (match) {
+          const doc = await resolveItem(match.id);
+          if (doc) origemItems.push(doc);
+          else console.warn(`${MODULE_ID} | ActorWriter: origem poder "${slug}" resolved null`);
+        } else {
+          console.warn(`${MODULE_ID} | ActorWriter: origem poder "${slug}" not found`);
+        }
+      }
+
+      // Chosen pick-2 poder
+      const pick2Slug = state.escolhasPorItem["origem_poder"] as string | undefined;
+      if (pick2Slug) {
+        const match = allPoderes.find(p => toNomeSlug(p.name) === pick2Slug);
+        if (match) {
+          const doc = await resolveItem(match.id);
+          if (doc) origemItems.push(doc);
+        } else {
+          console.warn(`${MODULE_ID} | ActorWriter: pick2 poder "${pick2Slug}" not found`);
+        }
+      }
+
+      // Physical initial items from origem (look up by name in compendium)
+      for (const it of origem.itens_iniciais ?? []) {
+        if (!it.item?.trim()) continue;
+        const itemName = it.item.trim();
+        const match = allEquip.find(e => e.name.toLowerCase() === itemName.toLowerCase());
+        if (match) {
+          const doc = await resolveItem(match.id);
+          if (doc) origemItems.push(doc);
+        } else {
+          console.warn(`${MODULE_ID} | ActorWriter: origem item "${itemName}" not found in compendium`);
+        }
+      }
+
+      if (origemItems.length > 0) {
+        try {
+          await actor.createEmbeddedDocuments("Item", origemItems);
+          console.log(`${MODULE_ID} | ActorWriter: added ${origemItems.length} origem items`);
+        } catch (err) {
+          console.warn(`${MODULE_ID} | ActorWriter: failed to add origem items:`, err);
+        }
+      }
+    }
+
+    // Add divindade conceded powers
+    const DIVINE_CLASSES_LOCAL = new Set(["clerigo", "paladino", "druida"]);
+    const divindade = state.divindadeId ? getDivindade(state.divindadeId) : null;
+    if (divindade) {
+      const allPoderes = CompendiumIndex.getAll("poder");
+      const isDivineClass = DIVINE_CLASSES_LOCAL.has(toNomeSlug(state.classeNome ?? ""));
+
+      // Divine classes get all conceded powers; others get only the chosen one
+      const poderesParaAdd: string[] = isDivineClass
+        ? divindade.poderes_concedidos
+        : [(state.escolhasPorItem["divindade_poder"] as string | undefined)].filter(
+            (s): s is string => !!s
+          );
+
+      const divItems: unknown[] = [];
+      for (const slug of poderesParaAdd) {
+        const match = allPoderes.find(p => toNomeSlug(p.name) === slug);
+        if (match) {
+          const doc = await resolveItem(match.id);
+          if (doc) divItems.push(doc);
+        } else {
+          console.warn(`${MODULE_ID} | ActorWriter: divindade poder "${slug}" not found`);
+        }
+      }
+
+      if (divItems.length > 0) {
+        try {
+          await actor.createEmbeddedDocuments("Item", divItems);
+          console.log(`${MODULE_ID} | ActorWriter: added ${divItems.length} divindade powers`);
+        } catch (err) {
+          console.warn(`${MODULE_ID} | ActorWriter: failed to add divindade powers:`, err);
+        }
+      }
+    }
+
+    // Set trained perícias after full actor initialization (system schema = correct attributes)
+    const trainedCodes = getTrainedPericaCodes(state);
+    if (Object.keys(trainedCodes).length > 0) {
+      const pericasUpdate: Record<string, unknown> = {};
+      for (const code of Object.keys(trainedCodes)) {
+        pericasUpdate[`system.pericias.${code}.treinado`] = true;
+      }
+      try {
+        await actor.update(pericasUpdate);
+        console.log(`${MODULE_ID} | ActorWriter: trained ${Object.keys(trainedCodes).length} perícias`);
+      } catch (err) {
+        console.warn(`${MODULE_ID} | ActorWriter: failed to update pericias:`, err);
       }
     }
 

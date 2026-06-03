@@ -21,8 +21,15 @@ describe("isDivindadeAcessa", () => {
     expect(isDivindadeAcessa("allihanna", "humano", "guerreiro")).toBe(false);
   });
 
-  it("allihanna aceita druida", () => {
-    expect(isDivindadeAcessa("allihanna", "humano", "druida")).toBe(true);
+  it("allihanna aceita elfo druida (raca e classe ambos OK)", () => {
+    // allihanna: racas_aceitas=[...elfo...], classes_aceitas=[...druida...]
+    // Both restrictions must be satisfied (AND logic).
+    expect(isDivindadeAcessa("allihanna", "elfo", "druida")).toBe(true);
+  });
+
+  it("allihanna NÃO aceita humano druida (raca não está na lista)", () => {
+    // humano não está em racas_aceitas → fails even though druida is in classes_aceitas
+    expect(isDivindadeAcessa("allihanna", "humano", "druida")).toBe(false);
   });
 
   it("returns false for unknown divindade", () => {
@@ -54,9 +61,14 @@ describe("listDivindadesParaPersonagem", () => {
     expect(list.some((d) => d.id === "aharadak")).toBe(true);
   });
 
-  it("druida vê allihanna", () => {
-    const list = listDivindadesParaPersonagem("humano", "druida");
+  it("elfo druida vê allihanna (ambas restrições satisfeitas)", () => {
+    const list = listDivindadesParaPersonagem("elfo", "druida");
     expect(list.some((d) => d.id === "allihanna")).toBe(true);
+  });
+
+  it("humano druida NÃO vê allihanna (raca não na lista)", () => {
+    const list = listDivindadesParaPersonagem("humano", "druida");
+    expect(list.some((d) => d.id === "allihanna")).toBe(false);
   });
 
   it("guerreiro NÃO vê allihanna", () => {

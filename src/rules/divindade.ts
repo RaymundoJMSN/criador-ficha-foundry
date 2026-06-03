@@ -40,7 +40,7 @@ export function isDivindadeAcessa(divindadeId: string, racaId: string, classeId:
   const classeOk =
     !classes || classes === "todas" || (Array.isArray(classes) && classes.includes(classeId));
 
-  return racaOk || classeOk;
+  return racaOk && classeOk;
 }
 
 export function listDivindadesParaPersonagem(racaId: string, classeId: string): Divindade[] {

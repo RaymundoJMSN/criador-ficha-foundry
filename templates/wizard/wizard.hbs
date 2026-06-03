@@ -135,8 +135,8 @@
           <strong style="font-size:0.85em;">Escolha 1 poder adicional:</strong>
           <div style="display:flex;flex-direction:column;gap:4px;margin-top:6px;">
             {{#each selectedDetail.pick2_candidates}}
-            <label style="display:flex;align-items:center;gap:6px;font-size:0.9em;">
-              <input type="radio" name="origem_poder_escolha" value="{{this.id}}" {{#if this.selected}}checked{{/if}} style="accent-color:#f90;cursor:pointer;" />{{this.nome}}
+            <label for="origem-poder-{{this.id}}" style="display:flex;align-items:center;gap:6px;font-size:0.9em;cursor:pointer;">
+              <input type="radio" id="origem-poder-{{this.id}}" name="origem_poder_escolha" value="{{this.id}}" {{#if this.selected}}checked{{/if}} style="accent-color:#f90;cursor:pointer;flex-shrink:0;" /><span style="cursor:pointer;">{{this.nome}}</span>
             </label>
             {{/each}}
           </div>
@@ -175,11 +175,11 @@
         <strong style="font-size:0.9em;">Escolha seu Caminho:</strong>
         <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px;">
           {{#each caminhos}}
-          <label style="display:flex;align-items:center;gap:8px;font-size:0.9em;cursor:pointer;">
-            <input type="radio" name="classe_caminho" value="{{this.slug}}"
+          <label for="caminho-{{this.slug}}" style="display:flex;align-items:center;gap:8px;font-size:0.9em;cursor:pointer;width:100%;">
+            <input type="radio" id="caminho-{{this.slug}}" name="classe_caminho" value="{{this.slug}}"
               {{#if this.selected}}checked{{/if}}
-              style="accent-color:#f90;cursor:pointer;">
-            <span>{{this.nome}}</span>
+              style="accent-color:#f90;cursor:pointer;flex-shrink:0;">
+            <span style="cursor:pointer;">{{this.nome}}</span>
           </label>
           {{/each}}
         </div>
@@ -285,9 +285,9 @@
           <p style="font-size:0.85em;margin:0 0 6px;"><strong>Escolha 1 poder concedido:</strong></p>
           <div class="t20w-poder-radio-group" data-selected-poder="{{divindadePoder}}" style="display:flex;flex-direction:column;gap:4px;">
             {{#each selectedDivindade.poderesConcedidos}}
-            <label style="display:flex;align-items:center;gap:6px;font-size:0.9em;">
-              <input type="radio" name="divindade_poder" value="{{this}}" style="accent-color:#f90;cursor:pointer;" />
-              <span>{{this}}</span>
+            <label for="div-poder-{{@index}}" style="display:flex;align-items:center;gap:6px;font-size:0.9em;cursor:pointer;">
+              <input type="radio" id="div-poder-{{@index}}" name="divindade_poder" value="{{this}}" style="accent-color:#f90;cursor:pointer;flex-shrink:0;" />
+              <span style="cursor:pointer;">{{this}}</span>
             </label>
             {{/each}}
           </div>
@@ -307,7 +307,7 @@
         <h3 style="font-size:0.95em;margin:0 0 6px 0;opacity:0.8;">Habilidades de Classe</h3>
         <p class="t20w-hint" style="margin:0 0 6px 0;">Você recebe estas habilidades automaticamente:</p>
         <ul style="margin:0;padding-left:20px;">
-          {{#each habilidades}}<li style="font-size:0.85em;">{{this}}</li>{{/each}}
+          {{#each habilidades}}<li style="font-size:0.85em;">{{this.nome}}</li>{{/each}}
         </ul>
       </div>
       {{/if}}
@@ -363,7 +363,8 @@
       <h2>{{stepTitle}}</h2>
       {{#if isConjurador}}
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap;">
-        <span style="font-size:0.9em;">Selecionadas: <strong>{{selectedCount}}</strong> / guia: ~{{magiaLimit}}</span>
+        <span style="font-size:0.9em;" class="{{#if atMaxLimit}}t20w-neg{{/if}}">Selecionadas: <strong>{{selectedCount}}</strong> / {{magiaLimit}}</span>
+        {{#if atMaxLimit}}<span style="color:#f90;font-size:0.85em;">⚠ Limite atingido ({{magiaLimit}} magias)</span>{{/if}}
         <input type="text" id="t20w-magia-search" placeholder="Buscar magia..."
                value="{{magiaSearch}}"
                style="flex:1;min-width:120px;padding:4px 8px;background:rgba(255,255,255,0.08);border:1px solid #555;color:inherit;border-radius:3px;" />

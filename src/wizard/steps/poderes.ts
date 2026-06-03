@@ -21,8 +21,8 @@ export interface PoderEntry {
 
 export interface PoderesContext {
   stepTitle: string;
-  /** Auto-granted class ability IDs (always shown, level 1+) */
-  habilidades: string[];
+  /** Auto-granted class ability slugs with display names */
+  habilidades: Array<{ slug: string; nome: string }>;
   /** How many free picks allowed at this level (0 = none) */
   poderesParaPick: number;
   /** Filtered power list for picking (empty when poderesParaPick === 0) */
@@ -32,16 +32,29 @@ export interface PoderesContext {
   errors: string[];
 }
 
+function prettifySlug(slug: string): string {
+  return slug
+    .split("_")
+    .filter(Boolean)
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
+
 export function preparePoderesContext(
   state: WizardState,
   allPoderes: IndexedPoder[],
-  errors: string[] = []
+  errors: string[] = [],
+  resolvePoderNome: (slug: string) => string | null = () => null
 ): PoderesContext {
   const classeSlug = toNomeSlug(state.classeNome ?? "");
   const classeData = getClasse(classeSlug);
 
-  // Auto-granted class abilities (always shown)
-  const habilidades = classeData?.habilidades_classe_ids ?? [];
+  // Auto-granted class abilities (always shown) — resolve slugs to display names
+  const habilidadeSlugs = classeData?.habilidades_classe_ids ?? [];
+  const habilidades = habilidadeSlugs.map((slug) => ({
+    slug,
+    nome: resolvePoderNome(slug) ?? prettifySlug(slug),
+  }));
 
   // How many free picks at this level (0 for level 1)
   const nivelStr = String(state.nivel);
