@@ -97,6 +97,11 @@
       "tinta_do_mago",
       "trama_celere",
       "transliteracao_impossivel"
+    ],
+    "caminhos": [
+      "caminho_do_arcanista_feiticeiro",
+      "caminho_do_arcanista_mago",
+      "caminho_do_arcanista_bruxo"
     ]
   },
   "barbaro": {

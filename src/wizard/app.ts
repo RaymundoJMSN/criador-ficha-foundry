@@ -11,7 +11,7 @@ import { prepareClasseContext } from "./steps/classe.js";
 import { preparePericiaContext } from "./steps/pericias.js";
 import { getRaceSkillBonus } from "../rules/raca.js";
 import { getRaceAttributeTotals } from "../rules/subescolhas.js";
-import { toSlug } from "../compendium/slug.js";
+import { toSlug, toNomeSlug } from "../compendium/slug.js";
 
 /** Final Int = base + racial (fixed + chosen). Drives the perícia Int bonus. */
 function finalInt(state: WizardState): number {
@@ -231,6 +231,13 @@ export function defineWizardApp(): void {
           divindade_poder: divindadePoder,
         };
       }
+      const classeCaminho = formData.get("classe_caminho") as string | null;
+      if (classeCaminho) {
+        patch["escolhasPorItem"] = {
+          ...(patch["escolhasPorItem"] as Record<string, unknown> ?? this._state.escolhasPorItem),
+          classe_caminho: classeCaminho,
+        };
+      }
       if (poderes.length > 0) patch["poderes"] = poderes;
       if (magias.length > 0) patch["magias"] = magias;
 
@@ -273,7 +280,10 @@ export function defineWizardApp(): void {
         }
         case WizardStep.Classe: {
           const classes = CompendiumIndex.getAll("classe") as IndexedClasse[];
-          stepCtx = prepareClasseContext(state, classes, errors);
+          const allPoderesClasse = CompendiumIndex.getAll("poder");
+          const resolvePoderNomeClasse = (slug: string): string | null =>
+            allPoderesClasse.find((p) => toNomeSlug(p.name) === slug)?.name ?? null;
+          stepCtx = prepareClasseContext(state, classes, errors, resolvePoderNomeClasse);
           break;
         }
         case WizardStep.Pericias: {
@@ -464,6 +474,20 @@ export function defineWizardApp(): void {
           this._state.apply({
             escolhasPorItem: { ...this._state.escolhasPorItem, origem_poder: val },
           });
+        });
+      });
+
+      // ── Caminho radios → save + re-render ────────────────────────────────
+      const caminhoInputs = root.querySelectorAll<HTMLInputElement>('input[name="classe_caminho"]');
+      caminhoInputs.forEach((inp) => {
+        inp.addEventListener("change", () => {
+          this._state.apply({
+            escolhasPorItem: {
+              ...this._state.escolhasPorItem,
+              classe_caminho: inp.value,
+            },
+          });
+          void this.render();
         });
       });
 

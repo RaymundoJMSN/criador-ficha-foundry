@@ -170,6 +170,21 @@
         </dl>
       </div>
       {{/if}}
+      {{#if requiresCaminho}}
+      <div class="t20w-caminho-section" style="margin-top:12px;padding:10px;background:rgba(255,255,255,0.05);border-radius:4px;">
+        <strong style="font-size:0.9em;">Escolha seu Caminho:</strong>
+        <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px;">
+          {{#each caminhos}}
+          <label style="display:flex;align-items:center;gap:8px;font-size:0.9em;cursor:pointer;">
+            <input type="radio" name="classe_caminho" value="{{this.slug}}"
+              {{#if this.selected}}checked{{/if}}
+              style="accent-color:#f90;cursor:pointer;">
+            <span>{{this.nome}}</span>
+          </label>
+          {{/each}}
+        </div>
+      </div>
+      {{/if}}
       {{#if errors.length}}<ul class="t20w-errors">{{#each errors}}<li>{{this}}</li>{{/each}}</ul>{{/if}}
     </section>
     {{/if}}

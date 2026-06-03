@@ -24,6 +24,7 @@ export interface ClasseData {
   proficiencias: string[];
   habilidades_classe_ids: string[];
   poderes_classe_ids: string[];
+  caminhos?: string[]; // slugs of multipath choices (e.g. arcanista: feiticeiro/mago/bruxo)
 }
 
 const classesData = classesDataRaw as unknown as Record<string, ClasseData>;
