@@ -136,7 +136,7 @@
           <div style="display:flex;flex-direction:column;gap:4px;margin-top:6px;">
             {{#each selectedDetail.pick2_candidates}}
             <label for="origem-poder-{{this.id}}" style="display:flex;align-items:center;gap:6px;font-size:0.9em;cursor:pointer;">
-              <input type="radio" id="origem-poder-{{this.id}}" name="origem_poder_escolha" value="{{this.id}}" {{#if this.selected}}checked{{/if}} style="accent-color:#f90;cursor:pointer;flex-shrink:0;" /><span style="cursor:pointer;">{{this.nome}}</span>
+              <input type="radio" id="origem-poder-{{this.id}}" name="origem_poder_escolha" value="{{this.id}}" {{#if this.selected}}checked{{/if}} style="flex-shrink:0;" /><span style="cursor:pointer;">{{this.nome}}</span>
             </label>
             {{/each}}
           </div>
@@ -178,7 +178,7 @@
           <label for="caminho-{{this.slug}}" style="display:flex;align-items:center;gap:8px;font-size:0.9em;cursor:pointer;width:100%;">
             <input type="radio" id="caminho-{{this.slug}}" name="classe_caminho" value="{{this.slug}}"
               {{#if this.selected}}checked{{/if}}
-              style="accent-color:#f90;cursor:pointer;flex-shrink:0;">
+              style="flex-shrink:0;">
             <span style="cursor:pointer;">{{this.nome}}</span>
           </label>
           {{/each}}
@@ -286,7 +286,7 @@
           <div class="t20w-poder-radio-group" data-selected-poder="{{divindadePoder}}" style="display:flex;flex-direction:column;gap:4px;">
             {{#each selectedDivindade.poderesConcedidos}}
             <label for="div-poder-{{@index}}" style="display:flex;align-items:center;gap:6px;font-size:0.9em;cursor:pointer;">
-              <input type="radio" id="div-poder-{{@index}}" name="divindade_poder" value="{{this}}" style="accent-color:#f90;cursor:pointer;flex-shrink:0;" />
+              <input type="radio" id="div-poder-{{@index}}" name="divindade_poder" value="{{this}}" style="flex-shrink:0;" />
               <span style="cursor:pointer;">{{this}}</span>
             </label>
             {{/each}}
