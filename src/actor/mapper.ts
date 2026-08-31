@@ -14,9 +14,6 @@ export interface ActorCreateData {
   type: "character";
   system: {
     atributos: Record<"for" | "des" | "con" | "int" | "sab" | "car", { base: number }>;
-    attributes: {
-      nivel: { value: number };
-    };
     detalhes: {
       raca: string;
       origem: string;
@@ -35,9 +32,16 @@ export interface ActorCreateData {
 /**
  * Converts WizardState into the data shape expected by tormenta20 Actor.create().
  * Items array is injected separately by writer.ts after resolving from packs.
+ *
  * NOTE: pericias are NOT included here — they must be applied via actor.update()
  * after the actor is fully initialized so that the system schema sets correct
  * atributo values (not all "for").
+ *
+ * NOTE: `nivel` is NOT included here either. The system derives it from
+ * sum(classe items .system.niveis) (`tormenta20.mjs:7711` — `get nivel()`) and
+ * rewrites `system.attributes.nivel.value` on every classe item update. Writing it
+ * straight would show the right number until the first update and compute PV/PM
+ * from niveis=1 the whole time. writer.ts sets `niveis` on the classe item instead.
  */
 export function mapStateToActorData(state: WizardState, items: unknown[] = []): ActorCreateData {
   // Choosable racial modifiers (e.g. humano +1×3) are added to .base — the
@@ -65,9 +69,6 @@ export function mapStateToActorData(state: WizardState, items: unknown[] = []): 
     type: CHARACTER_TYPE,
     system: {
       atributos,
-      attributes: {
-        nivel: { value: state.nivel },
-      },
       detalhes: {
         raca: state.racaNome || state.racaId,
         origem: origemNome,

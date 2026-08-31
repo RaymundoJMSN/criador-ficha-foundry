@@ -126,3 +126,11 @@ describe("mapStateToActorData — detalhes use names not ids", () => {
     expect(data.system.detalhes.raca).toBe("Humano");
   });
 });
+
+describe("mapStateToActorData — nível é derivado, não gravado", () => {
+  it("não grava attributes.nivel.value (o sistema soma classe.system.niveis)", () => {
+    const state = new WizardState({ nome: "Teste", nivel: 7 });
+    const data = mapStateToActorData(state, []);
+    expect((data.system as Record<string, unknown>)["attributes"]).toBeUndefined();
+  });
+});

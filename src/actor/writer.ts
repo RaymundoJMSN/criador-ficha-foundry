@@ -80,6 +80,18 @@ export class ActorWriter {
       }
     );
 
+    // Level lives on the classe item: the system derives actor.nivel from
+    // sum(classe items .system.niveis) and rewrites attributes.nivel.value from it.
+    // Set it on the item DATA (before embedding) so PV/PM are computed once, correctly.
+    if (classeItemData) {
+      const sys = (((classeItemData as Record<string, unknown>)["system"] ??= {}) as Record<
+        string,
+        unknown
+      >);
+      sys["niveis"] = state.nivel;
+      sys["inicial"] = true;
+    }
+
     // NOTE: pericias excluded from Actor.create data — applied via update() after init
     const data = mapStateToActorData(state, otherItems);
 
