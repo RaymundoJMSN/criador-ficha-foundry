@@ -66,11 +66,18 @@ function walkDir(dir) {
       return {
         id: o.id,
         nome: o.nome,
-        itens_iniciais: o.itens_iniciais ?? [],
+        // Alguns itens vêm como string solta ("traje da corte") e outros como
+        // objeto; normalizar aqui evita que a UI descarte os primeiros.
+        itens_iniciais: (o.itens_iniciais ?? []).map((it) =>
+          typeof it === "string" ? { item: it } : it
+        ),
         beneficios: {
           pericias: o.beneficios?.pericias ?? [],
           poderes: o.beneficios?.poderes ?? [],
           poder_unico_id: o.beneficios?.poder_unico_id ?? null,
+          // "um poder de combate a sua escolha" (Capanga, Gladiador, Guarda,
+          // Soldado) e "um poder da Tormenta" (Assistente de Laboratório).
+          poderes_categoria_livre: o.beneficios?.poderes_categoria_livre ?? [],
         },
       };
     })

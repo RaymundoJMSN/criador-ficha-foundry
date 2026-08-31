@@ -3,8 +3,12 @@
     "id": "acolito",
     "nome": "Acólito",
     "itens_iniciais": [
-      "símbolo sagrado",
-      "traje de sacerdote"
+      {
+        "item": "símbolo sagrado"
+      },
+      {
+        "item": "traje de sacerdote"
+      }
     ],
     "beneficios": {
       "pericias": [
@@ -17,7 +21,8 @@
         "membro_da_igreja",
         "vontade_de_ferro"
       ],
-      "poder_unico_id": "membro_da_igreja"
+      "poder_unico_id": "membro_da_igreja",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -39,7 +44,8 @@
         "Sobrevivência"
       ],
       "poderes": [],
-      "poder_unico_id": "agricultor_sambur_bonus"
+      "poder_unico_id": "agricultor_sambur_bonus",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -53,14 +59,17 @@
         ],
         "quantidade": 1
       },
-      "cavalo de guerra"
+      {
+        "item": "cavalo de guerra"
+      }
     ],
     "beneficios": {
       "pericias": [
         "Cavalgar"
       ],
       "poderes": [],
-      "poder_unico_id": "amazona_pm_carisma"
+      "poder_unico_id": "amazona_pm_carisma",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -85,7 +94,8 @@
       "poderes": [
         "amigo_especial"
       ],
-      "poder_unico_id": "amigo_especial"
+      "poder_unico_id": "amigo_especial",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -103,50 +113,66 @@
       "poderes": [
         "lembrancas_graduais"
       ],
-      "poder_unico_id": "lembrancas_graduais"
+      "poder_unico_id": "lembrancas_graduais",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "amoque_purpura",
     "nome": "Amoque Púrpura",
     "itens_iniciais": [
-      "arma simples",
-      "estandarte da sua tribo"
+      {
+        "item": "arma simples"
+      },
+      {
+        "item": "estandarte da sua tribo"
+      }
     ],
     "beneficios": {
       "pericias": [
         "Intimidação"
       ],
       "poderes": [],
-      "poder_unico_id": "amoque_furia_dano"
+      "poder_unico_id": "amoque_furia_dano",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "anao_de_armas",
     "nome": "Anão de Armas",
     "itens_iniciais": [
-      "arma marcial tradicional anã",
-      "instrumentos de Ofício (armeiro)"
+      {
+        "item": "arma marcial tradicional anã"
+      },
+      {
+        "item": "instrumentos de Ofício (armeiro)"
+      }
     ],
     "beneficios": {
       "pericias": [
         "Ofício (armeiro)"
       ],
       "poderes": [],
-      "poder_unico_id": "anao_armas_dano"
+      "poder_unico_id": "anao_armas_dano",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "andarilho_ubaneri",
     "nome": "Andarilho Ubaneri",
     "itens_iniciais": [
-      "escudo pesado",
-      "lança"
+      {
+        "item": "escudo pesado"
+      },
+      {
+        "item": "lança"
+      }
     ],
     "beneficios": {
       "pericias": [],
       "poderes": [],
-      "poder_unico_id": "andarilho_alikunha"
+      "poder_unico_id": "andarilho_alikunha",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -160,13 +186,18 @@
         ],
         "quantidade": 1
       },
-      "troféu de caça",
-      "treckod"
+      {
+        "item": "troféu de caça"
+      },
+      {
+        "item": "treckod"
+      }
     ],
     "beneficios": {
       "pericias": [],
       "poderes": [],
-      "poder_unico_id": "aprendiz_dragoeiro_reacao"
+      "poder_unico_id": "aprendiz_dragoeiro_reacao",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -181,7 +212,9 @@
         "item": "poção de curar ferimentos",
         "quantidade": 2
       },
-      "maleta de medicamentos"
+      {
+        "item": "maleta de medicamentos"
+      }
     ],
     "beneficios": {
       "pericias": [
@@ -189,7 +222,8 @@
         "Ofício (alquimista)"
       ],
       "poderes": [],
-      "poder_unico_id": "drogadora_desconto"
+      "poder_unico_id": "drogadora_desconto",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -200,7 +234,9 @@
         "item": "joia de família",
         "valor_max": "T$ 300"
       },
-      "traje da corte"
+      {
+        "item": "traje da corte"
+      }
     ],
     "beneficios": {
       "pericias": [
@@ -212,14 +248,17 @@
         "comandar",
         "sangue_azul"
       ],
-      "poder_unico_id": "sangue_azul"
+      "poder_unico_id": "sangue_azul",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "aristocrata_daizenshi",
     "nome": "Aristocrata Dai'zenshi",
     "itens_iniciais": [
-      "traje da corte",
+      {
+        "item": "traje da corte"
+      },
       {
         "item": "katana superior com uma melhoria",
         "observacao": "exceto material especial"
@@ -230,22 +269,28 @@
         "Nobreza"
       ],
       "poderes": [],
-      "poder_unico_id": "daizenshi_pm_temp"
+      "poder_unico_id": "daizenshi_pm_temp",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "armeiro_armado",
     "nome": "Armeiro Armado",
     "itens_iniciais": [
-      "arma marcial",
-      "instrumentos de Ofício (armeiro)"
+      {
+        "item": "arma marcial"
+      },
+      {
+        "item": "instrumentos de Ofício (armeiro)"
+      }
     ],
     "beneficios": {
       "pericias": [
         "Ofício (armeiro)"
       ],
       "poderes": [],
-      "poder_unico_id": "armeiro_armado_fabricar"
+      "poder_unico_id": "armeiro_armado_fabricar",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -269,7 +314,8 @@
         "frutos_do_trabalho",
         "sortudo"
       ],
-      "poder_unico_id": "frutos_do_trabalho"
+      "poder_unico_id": "frutos_do_trabalho",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -295,27 +341,35 @@
         "sortudo",
         "torcida"
       ],
-      "poder_unico_id": "dom_artistico"
+      "poder_unico_id": "dom_artistico",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "aspirante_a_heroi",
     "nome": "Aspirante a Herói",
     "itens_iniciais": [
-      "essência de mana",
-      "mochila de aventureiro"
+      {
+        "item": "essência de mana"
+      },
+      {
+        "item": "mochila de aventureiro"
+      }
     ],
     "beneficios": {
       "pericias": [],
       "poderes": [],
-      "poder_unico_id": "aspirante_atributo"
+      "poder_unico_id": "aspirante_atributo",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "assistente_de_laboratorio",
     "nome": "Assistente de Laboratório",
     "itens_iniciais": [
-      "instrumentos de Ofício (alquimista)"
+      {
+        "item": "instrumentos de Ofício (alquimista)"
+      }
     ],
     "beneficios": {
       "pericias": [
@@ -326,7 +380,10 @@
         "esse_cheiro",
         "venefico"
       ],
-      "poder_unico_id": "esse_cheiro"
+      "poder_unico_id": "esse_cheiro",
+      "poderes_categoria_livre": [
+        "tormenta"
+      ]
     }
   },
   {
@@ -343,15 +400,20 @@
         "Investigação"
       ],
       "poderes": [],
-      "poder_unico_id": "forense_identificar"
+      "poder_unico_id": "forense_identificar",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "bacharel",
     "nome": "Bacharel",
     "itens_iniciais": [
-      "tabardo com símbolo de Khalmyr",
-      "uma coleção de livros a sua escolha"
+      {
+        "item": "tabardo com símbolo de Khalmyr"
+      },
+      {
+        "item": "uma coleção de livros a sua escolha"
+      }
     ],
     "beneficios": {
       "pericias": [
@@ -360,15 +422,20 @@
         "Nobreza"
       ],
       "poderes": [],
-      "poder_unico_id": "bacharel_atitude_livre"
+      "poder_unico_id": "bacharel_atitude_livre",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "bandoleiro_da_fortaleza",
     "nome": "Bandoleiro da Fortaleza",
     "itens_iniciais": [
-      "adaga",
-      "gazua",
+      {
+        "item": "adaga"
+      },
+      {
+        "item": "gazua"
+      },
       {
         "item": "manto camuflado (urbano)"
       }
@@ -379,7 +446,8 @@
         "Intimidação"
       ],
       "poderes": [],
-      "poder_unico_id": "bandoleiro_resist_medo"
+      "poder_unico_id": "bandoleiro_resist_medo",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -394,22 +462,29 @@
         "item": "títulos de terras expirados",
         "observacao": "+2 Diplomacia com nobres e burocratas"
       },
-      "traje da corte"
+      {
+        "item": "traje da corte"
+      }
     ],
     "beneficios": {
       "pericias": [
         "Nobreza"
       ],
       "poderes": [],
-      "poder_unico_id": "barao_resiliencia"
+      "poder_unico_id": "barao_resiliencia",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "batedor",
     "nome": "Batedor",
     "itens_iniciais": [
-      "barraca",
-      "equipamento de viagem",
+      {
+        "item": "barraca"
+      },
+      {
+        "item": "equipamento de viagem"
+      },
       {
         "escolha": [
           "arma simples de ataque à distância",
@@ -429,16 +504,23 @@
         "estilo_de_disparo",
         "sentidos_agucados"
       ],
-      "poder_unico_id": "a_prova_de_tudo"
+      "poder_unico_id": "a_prova_de_tudo",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "boticario",
     "nome": "Boticário",
     "itens_iniciais": [
-      "bálsamo restaurador",
-      "instrumentos de Ofício (alquimista)",
-      "maleta de medicamentos"
+      {
+        "item": "bálsamo restaurador"
+      },
+      {
+        "item": "instrumentos de Ofício (alquimista)"
+      },
+      {
+        "item": "maleta de medicamentos"
+      }
     ],
     "beneficios": {
       "pericias": [
@@ -446,14 +528,17 @@
         "Ofício (alquimista)"
       ],
       "poderes": [],
-      "poder_unico_id": "boticario_alquimista_iniciado"
+      "poder_unico_id": "boticario_alquimista_iniciado",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "cacador_de_ratos",
     "nome": "Caçador de Ratos",
     "itens_iniciais": [
-      "clava",
+      {
+        "item": "clava"
+      },
       {
         "item": "um gato",
         "observacao": "parceiro perseguidor iniciante"
@@ -470,7 +555,8 @@
         "Sobrevivência"
       ],
       "poderes": [],
-      "poder_unico_id": "cacador_de_ratos_bonus"
+      "poder_unico_id": "cacador_de_ratos_bonus",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -488,7 +574,8 @@
     "beneficios": {
       "pericias": [],
       "poderes": [],
-      "poder_unico_id": "cao_de_briga_ataque_extra"
+      "poder_unico_id": "cao_de_briga_ataque_extra",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -499,7 +586,9 @@
         "item": "tatuagem ou outro adereço de gangue",
         "observacao": "+1 em Intimidação"
       },
-      "uma arma simples corpo a corpo"
+      {
+        "item": "uma arma simples corpo a corpo"
+      }
     ],
     "beneficios": {
       "pericias": [
@@ -509,15 +598,22 @@
       "poderes": [
         "confissao"
       ],
-      "poder_unico_id": "confissao"
+      "poder_unico_id": "confissao",
+      "poderes_categoria_livre": [
+        "combate"
+      ]
     }
   },
   {
     "id": "carcereiro",
     "nome": "Carcereiro",
     "itens_iniciais": [
-      "algemas",
-      "lampião",
+      {
+        "item": "algemas"
+      },
+      {
+        "item": "lampião"
+      },
       {
         "item": "uma arma a sua escolha",
         "valor_max": "T$ 500"
@@ -526,14 +622,17 @@
     "beneficios": {
       "pericias": [],
       "poderes": [],
-      "poder_unico_id": "carcereiro_resistencias"
+      "poder_unico_id": "carcereiro_resistencias",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "carpinteiro_de_guilda",
     "nome": "Carpinteiro de Guilda",
     "itens_iniciais": [
-      "instrumentos de Ofício (carpinteiro)",
+      {
+        "item": "instrumentos de Ofício (carpinteiro)"
+      },
       {
         "item": "uma arma de corte a sua escolha"
       }
@@ -543,7 +642,8 @@
         "Ofício (artesão)"
       ],
       "poderes": [],
-      "poder_unico_id": "carpinteiro_corte"
+      "poder_unico_id": "carpinteiro_corte",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -561,15 +661,20 @@
         "Percepção"
       ],
       "poderes": [],
-      "poder_unico_id": "catador_tesouro"
+      "poder_unico_id": "catador_tesouro",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "catador_da_cidade_velha",
     "nome": "Catador da Cidade Velha",
     "itens_iniciais": [
-      "luneta",
-      "luvas de pelica",
+      {
+        "item": "luneta"
+      },
+      {
+        "item": "luvas de pelica"
+      },
       {
         "item": "tranqueiras resgatadas do mar",
         "observacao": "2 espaços, T$ 100"
@@ -581,31 +686,39 @@
         "Percepção"
       ],
       "poderes": [],
-      "poder_unico_id": "catador_natacao"
+      "poder_unico_id": "catador_natacao",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "cativo_das_fadas",
     "nome": "Cativo das Fadas",
     "itens_iniciais": [
-      "corda",
+      {
+        "item": "corda"
+      },
       {
         "item": "ração de viagem",
         "quantidade": 10
       },
-      "essência de mana"
+      {
+        "item": "essência de mana"
+      }
     ],
     "beneficios": {
       "pericias": [],
       "poderes": [],
-      "poder_unico_id": "cativo_fadas_resist"
+      "poder_unico_id": "cativo_fadas_resist",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "charlatao",
     "nome": "Charlatão",
     "itens_iniciais": [
-      "estojo de disfarces",
+      {
+        "item": "estojo de disfarces"
+      },
       {
         "item": "joia falsificada",
         "observacao": "valor aparente T$ 100, sem valor real"
@@ -621,7 +734,8 @@
         "aparencia_inofensiva",
         "sortudo"
       ],
-      "poder_unico_id": "alpinista_social"
+      "poder_unico_id": "alpinista_social",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -632,14 +746,17 @@
         "item": "cutelo",
         "observacao": "mesmas estatísticas de uma foice"
       },
-      "instrumentos de cozinheiro aprimorados"
+      {
+        "item": "instrumentos de cozinheiro aprimorados"
+      }
     ],
     "beneficios": {
       "pericias": [
         "Ofício (cozinheiro)"
       ],
       "poderes": [],
-      "poder_unico_id": "chef_hynne_prato"
+      "poder_unico_id": "chef_hynne_prato",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -662,16 +779,23 @@
         "torcida",
         "truque_de_magica"
       ],
-      "poder_unico_id": "truque_de_magica"
+      "poder_unico_id": "truque_de_magica",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "cirurgiao_barbeiro",
     "nome": "Cirurgião-Barbeiro",
     "itens_iniciais": [
-      "dente falso",
-      "instrumentos de barbeiro",
-      "maleta de medicamentos"
+      {
+        "item": "dente falso"
+      },
+      {
+        "item": "instrumentos de barbeiro"
+      },
+      {
+        "item": "maleta de medicamentos"
+      }
     ],
     "beneficios": {
       "pericias": [
@@ -679,7 +803,8 @@
         "Ofício (barbeiro)"
       ],
       "poderes": [],
-      "poder_unico_id": "cirurgiao_remove_condicao"
+      "poder_unico_id": "cirurgiao_remove_condicao",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -696,7 +821,8 @@
         "Nobreza"
       ],
       "poderes": [],
-      "poder_unico_id": "citadino_aprender_poder"
+      "poder_unico_id": "citadino_aprender_poder",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -710,7 +836,9 @@
         ],
         "quantidade": 1
       },
-      "carroça"
+      {
+        "item": "carroça"
+      }
     ],
     "beneficios": {
       "pericias": [
@@ -718,14 +846,17 @@
         "Pilotagem"
       ],
       "poderes": [],
-      "poder_unico_id": "cocheiro_defesa_veiculo"
+      "poder_unico_id": "cocheiro_defesa_veiculo",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "competidor_do_circuito",
     "nome": "Competidor do Circuito",
     "itens_iniciais": [
-      "arma marcial",
+      {
+        "item": "arma marcial"
+      },
       {
         "item": "T$ 100",
         "observacao": "economias para equipamento de torneio"
@@ -736,7 +867,8 @@
       "poderes": [
         "torcida"
       ],
-      "poder_unico_id": "competidor_pm_kill"
+      "poder_unico_id": "competidor_pm_kill",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -757,7 +889,8 @@
         "Ofício (pedreiro)"
       ],
       "poderes": [],
-      "poder_unico_id": "construtor_ponto_fraco"
+      "poder_unico_id": "construtor_ponto_fraco",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -778,15 +911,20 @@
         "Ladinagem"
       ],
       "poderes": [],
-      "poder_unico_id": "contrabandista_ocultar"
+      "poder_unico_id": "contrabandista_ocultar",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "cosmopolita",
     "nome": "Cosmopolita",
     "itens_iniciais": [
-      "equipamento de viagem",
-      "traje de viajante",
+      {
+        "item": "equipamento de viagem"
+      },
+      {
+        "item": "traje de viajante"
+      },
       {
         "item": "item artístico de origem cultural indefinida",
         "observacao": "½ espaço, T$ 100"
@@ -795,7 +933,8 @@
     "beneficios": {
       "pericias": [],
       "poderes": [],
-      "poder_unico_id": "cosmopolita_poder_flexivel"
+      "poder_unico_id": "cosmopolita_poder_flexivel",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -806,7 +945,9 @@
         "item": "faca de corte",
         "observacao": "como adaga, mas com dano de corte"
       },
-      "instrumentos de coureiro",
+      {
+        "item": "instrumentos de coureiro"
+      },
       {
         "item": "T$ 100 em itens alquímicos"
       }
@@ -817,35 +958,50 @@
         "Ofício (coureiro)"
       ],
       "poderes": [],
-      "poder_unico_id": "coureiro_armadura_temporaria"
+      "poder_unico_id": "coureiro_armadura_temporaria",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "cria_da_favela",
     "nome": "Cria da Favela",
     "itens_iniciais": [
-      "andrajos de aldeão",
-      "corda",
-      "vara de madeira"
+      {
+        "item": "andrajos de aldeão"
+      },
+      {
+        "item": "corda"
+      },
+      {
+        "item": "vara de madeira"
+      }
     ],
     "beneficios": {
       "pericias": [],
       "poderes": [],
-      "poder_unico_id": "cria_favela_descanso"
+      "poder_unico_id": "cria_favela_descanso",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "criado_pelas_voracis",
     "nome": "Criado pelas Voracis",
     "itens_iniciais": [
-      "arma simples",
-      "armadura leve",
-      "lança"
+      {
+        "item": "arma simples"
+      },
+      {
+        "item": "armadura leve"
+      },
+      {
+        "item": "lança"
+      }
     ],
     "beneficios": {
       "pericias": [],
       "poderes": [],
-      "poder_unico_id": "voracis_def_sobre"
+      "poder_unico_id": "voracis_def_sobre",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -870,7 +1026,8 @@
         "punguista",
         "venefico"
       ],
-      "poder_unico_id": "punguista"
+      "poder_unico_id": "punguista",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -881,7 +1038,9 @@
         "item": "bálsamo restaurador",
         "quantidade": 2
       },
-      "maleta de medicamentos"
+      {
+        "item": "maleta de medicamentos"
+      }
     ],
     "beneficios": {
       "pericias": [
@@ -893,14 +1052,17 @@
         "medico_de_campo",
         "venefico"
       ],
-      "poder_unico_id": "medico_de_campo"
+      "poder_unico_id": "medico_de_campo",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "de_outro_mundo",
     "nome": "De Outro Mundo",
     "itens_iniciais": [
-      "trajes exóticos",
+      {
+        "item": "trajes exóticos"
+      },
       {
         "item": "item do mundo natal",
         "valor_max": "T$ 100"
@@ -909,15 +1071,20 @@
     "beneficios": {
       "pericias": [],
       "poderes": [],
-      "poder_unico_id": "outro_mundo_magia"
+      "poder_unico_id": "outro_mundo_magia",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "descendente_colleniano",
     "nome": "Descendente Colleniano",
     "itens_iniciais": [
-      "arma simples",
-      "estojo de disfarces",
+      {
+        "item": "arma simples"
+      },
+      {
+        "item": "estojo de disfarces"
+      },
       {
         "item": "ração de viagem",
         "quantidade": 5
@@ -928,7 +1095,8 @@
         "Percepção"
       ],
       "poderes": [],
-      "poder_unico_id": "colleniano_visao"
+      "poder_unico_id": "colleniano_visao",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -938,8 +1106,12 @@
       {
         "item": "brunea com símbolo purista raspado"
       },
-      "escudo pesado",
-      "espada bastarda",
+      {
+        "item": "escudo pesado"
+      },
+      {
+        "item": "espada bastarda"
+      },
       {
         "item": "ração de viagem",
         "quantidade": 10
@@ -950,14 +1122,17 @@
         "Guerra"
       ],
       "poderes": [],
-      "poder_unico_id": "desertor_combo"
+      "poder_unico_id": "desertor_combo",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "duplo_feerico",
     "nome": "Duplo Feérico",
     "itens_iniciais": [
-      "essência de mana",
+      {
+        "item": "essência de mana"
+      },
       {
         "item": "marca corporal não possuída pelo original"
       }
@@ -965,14 +1140,17 @@
     "beneficios": {
       "pericias": [],
       "poderes": [],
-      "poder_unico_id": "duplo_classe_externa"
+      "poder_unico_id": "duplo_classe_externa",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "duyshidakk_infiltrado",
     "nome": "Duyshidakk Infiltrado",
     "itens_iniciais": [
-      "arma marcial",
+      {
+        "item": "arma marcial"
+      },
       {
         "item": "peças sobressalentes",
         "observacao": "T$ 100"
@@ -984,28 +1162,38 @@
         "Vontade"
       ],
       "poderes": [],
-      "poder_unico_id": "infiltrado_sab_enganacao"
+      "poder_unico_id": "infiltrado_sab_enganacao",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "emissario_ubaneri",
     "nome": "Emissário Ubaneri",
     "itens_iniciais": [
-      "essência de mana",
-      "mochila de aventureiro"
+      {
+        "item": "essência de mana"
+      },
+      {
+        "item": "mochila de aventureiro"
+      }
     ],
     "beneficios": {
       "pericias": [],
       "poderes": [],
-      "poder_unico_id": "emissario_alikunha_misticismo"
+      "poder_unico_id": "emissario_alikunha_misticismo",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "eremita",
     "nome": "Eremita",
     "itens_iniciais": [
-      "barraca",
-      "equipamento de viagem"
+      {
+        "item": "barraca"
+      },
+      {
+        "item": "equipamento de viagem"
+      }
     ],
     "beneficios": {
       "pericias": [
@@ -1017,14 +1205,17 @@
         "busca_interior",
         "lobo_solitario"
       ],
-      "poder_unico_id": "busca_interior"
+      "poder_unico_id": "busca_interior",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "escravo",
     "nome": "Escravo",
     "itens_iniciais": [
-      "algemas",
+      {
+        "item": "algemas"
+      },
       {
         "item": "ferramenta pesada",
         "observacao": "mesmas estatísticas de uma maça"
@@ -1040,16 +1231,23 @@
         "desejo_de_liberdade",
         "vitalidade"
       ],
-      "poder_unico_id": "desejo_de_liberdade"
+      "poder_unico_id": "desejo_de_liberdade",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "escriba",
     "nome": "Escriba",
     "itens_iniciais": [
-      "instrumentos de escriba",
-      "organizador de pergaminhos",
-      "uma coleção de livros a sua escolha"
+      {
+        "item": "instrumentos de escriba"
+      },
+      {
+        "item": "organizador de pergaminhos"
+      },
+      {
+        "item": "uma coleção de livros a sua escolha"
+      }
     ],
     "beneficios": {
       "pericias": [
@@ -1059,7 +1257,8 @@
       "poderes": [
         "lendas_e_historias"
       ],
-      "poder_unico_id": "escriba_lendas"
+      "poder_unico_id": "escriba_lendas",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -1073,23 +1272,32 @@
         ],
         "quantidade": 1
       },
-      "enfeite de elmo com símbolo da Ordem da Luz"
+      {
+        "item": "enfeite de elmo com símbolo da Ordem da Luz"
+      }
     ],
     "beneficios": {
       "pericias": [
         "Nobreza"
       ],
       "poderes": [],
-      "poder_unico_id": "escudeiro_luz_def"
+      "poder_unico_id": "escudeiro_luz_def",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "escudeiro_solitario",
     "nome": "Escudeiro Solitário",
     "itens_iniciais": [
-      "cota de malha",
-      "escudo pesado",
-      "enfeite de elmo"
+      {
+        "item": "cota de malha"
+      },
+      {
+        "item": "escudo pesado"
+      },
+      {
+        "item": "enfeite de elmo"
+      }
     ],
     "beneficios": {
       "pericias": [
@@ -1097,16 +1305,23 @@
         "Ladinagem"
       ],
       "poderes": [],
-      "poder_unico_id": "solitario_disfarce"
+      "poder_unico_id": "solitario_disfarce",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "espiao",
     "nome": "Espião",
     "itens_iniciais": [
-      "estojo de disfarces",
-      "gazua",
-      "luneta",
+      {
+        "item": "estojo de disfarces"
+      },
+      {
+        "item": "gazua"
+      },
+      {
+        "item": "luneta"
+      },
       {
         "item": "três doses de cosmético"
       }
@@ -1117,7 +1332,8 @@
         "Ladinagem"
       ],
       "poderes": [],
-      "poder_unico_id": "espiao_atributo_alterado"
+      "poder_unico_id": "espiao_atributo_alterado",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -1131,7 +1347,9 @@
         ],
         "quantidade": 1
       },
-      "gibão de peles",
+      {
+        "item": "gibão de peles"
+      },
       {
         "item": "fragmento do estandarte do seu povo",
         "observacao": "se vestido, +1 Vontade"
@@ -1142,7 +1360,8 @@
         "Sobrevivência"
       ],
       "poderes": [],
-      "poder_unico_id": "estandarte_poder"
+      "poder_unico_id": "estandarte_poder",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -1153,21 +1372,26 @@
         "item": "bálsamo restaurador",
         "quantidade": 3
       },
-      "maleta de medicamentos"
+      {
+        "item": "maleta de medicamentos"
+      }
     ],
     "beneficios": {
       "pericias": [
         "Cura"
       ],
       "poderes": [],
-      "poder_unico_id": "colegio_real_cura"
+      "poder_unico_id": "colegio_real_cura",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "estudante_da_academia",
     "nome": "Estudante da Academia",
     "itens_iniciais": [
-      "coleção de livros",
+      {
+        "item": "coleção de livros"
+      },
       {
         "item": "essência de mana",
         "quantidade": 2
@@ -1176,7 +1400,8 @@
     "beneficios": {
       "pericias": [],
       "poderes": [],
-      "poder_unico_id": "academia_magia"
+      "poder_unico_id": "academia_magia",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -1198,15 +1423,20 @@
         "aparencia_inofensiva",
         "palpite_fundamentado"
       ],
-      "poder_unico_id": "palpite_fundamentado"
+      "poder_unico_id": "palpite_fundamentado",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "explorador_de_ruinas",
     "nome": "Explorador de Ruínas",
     "itens_iniciais": [
-      "mochila de aventureiro",
-      "tocha",
+      {
+        "item": "mochila de aventureiro"
+      },
+      {
+        "item": "tocha"
+      },
       {
         "item": "vara de madeira",
         "observacao": "3m"
@@ -1215,15 +1445,20 @@
     "beneficios": {
       "pericias": [],
       "poderes": [],
-      "poder_unico_id": "explorador_ruinas_bonus"
+      "poder_unico_id": "explorador_ruinas_bonus",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "fazendeiro",
     "nome": "Fazendeiro",
     "itens_iniciais": [
-      "carroça",
-      "trobo",
+      {
+        "item": "carroça"
+      },
+      {
+        "item": "trobo"
+      },
       {
         "item": "ferramenta agrícola",
         "observacao": "mesmas estatísticas de uma lança"
@@ -1248,29 +1483,37 @@
         "agua_no_feijao",
         "ginete"
       ],
-      "poder_unico_id": "agua_no_feijao"
+      "poder_unico_id": "agua_no_feijao",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "ferreiro_militar",
     "nome": "Ferreiro Militar",
     "itens_iniciais": [
-      "instrumentos de armeiro",
-      "martelo leve"
+      {
+        "item": "instrumentos de armeiro"
+      },
+      {
+        "item": "martelo leve"
+      }
     ],
     "beneficios": {
       "pericias": [
         "Ofício (armeiro)"
       ],
       "poderes": [],
-      "poder_unico_id": "ferreiro_militar_dano"
+      "poder_unico_id": "ferreiro_militar_dano",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "filhote_da_revoada",
     "nome": "Filhote da Revoada",
     "itens_iniciais": [
-      "instrumentos de Ofício (artesão)",
+      {
+        "item": "instrumentos de Ofício (artesão)"
+      },
       {
         "item": "T$ 100",
         "observacao": "juntando para fabricar veículo aéreo"
@@ -1282,19 +1525,24 @@
         "Pilotagem"
       ],
       "poderes": [],
-      "poder_unico_id": "revoada_reroll"
+      "poder_unico_id": "revoada_reroll",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "forasteiro",
     "nome": "Forasteiro",
     "itens_iniciais": [
-      "equipamento de viagem",
+      {
+        "item": "equipamento de viagem"
+      },
       {
         "item": "instrumento musical exótico",
         "observacao": "+1 em uma perícia de Carisma aprovada pelo mestre"
       },
-      "traje estrangeiro"
+      {
+        "item": "traje estrangeiro"
+      }
     ],
     "beneficios": {
       "pericias": [
@@ -1306,23 +1554,31 @@
         "cultura_exotica",
         "lobo_solitario"
       ],
-      "poder_unico_id": "cultura_exotica"
+      "poder_unico_id": "cultura_exotica",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "freira",
     "nome": "Freira",
     "itens_iniciais": [
-      "maleta de medicamentos",
-      "manto eclesiástico",
-      "símbolo sagrado"
+      {
+        "item": "maleta de medicamentos"
+      },
+      {
+        "item": "manto eclesiástico"
+      },
+      {
+        "item": "símbolo sagrado"
+      }
     ],
     "beneficios": {
       "pericias": [
         "Cura"
       ],
       "poderes": [],
-      "poder_unico_id": "freira_ajuda_cura"
+      "poder_unico_id": "freira_ajuda_cura",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -1341,22 +1597,28 @@
     "beneficios": {
       "pericias": [],
       "poderes": [],
-      "poder_unico_id": "futura_lenda_poder"
+      "poder_unico_id": "futura_lenda_poder",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "ginete_de_tumarkhan",
     "nome": "Ginete de Tumarkhân",
     "itens_iniciais": [
-      "bálsamo restaurador",
-      "sela"
+      {
+        "item": "bálsamo restaurador"
+      },
+      {
+        "item": "sela"
+      }
     ],
     "beneficios": {
       "pericias": [
         "Cavalgar"
       ],
       "poderes": [],
-      "poder_unico_id": "ginete_tumarkhan"
+      "poder_unico_id": "ginete_tumarkhan",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -1384,14 +1646,19 @@
         "pao_e_circo",
         "torcida"
       ],
-      "poder_unico_id": "pao_e_circo"
+      "poder_unico_id": "pao_e_circo",
+      "poderes_categoria_livre": [
+        "combate"
+      ]
     }
   },
   {
     "id": "goradista",
     "nome": "Goradista",
     "itens_iniciais": [
-      "instrumentos de cozinheiro",
+      {
+        "item": "instrumentos de cozinheiro"
+      },
       {
         "item": "T$ 36 em ingredientes para produzir gorad quente"
       }
@@ -1401,15 +1668,20 @@
         "Ofício (cozinheiro)"
       ],
       "poderes": [],
-      "poder_unico_id": "goradista_pm_temporario"
+      "poder_unico_id": "goradista_pm_temporario",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "grumete_pirata",
     "nome": "Grumete Pirata",
     "itens_iniciais": [
-      "adaga",
-      "corda",
+      {
+        "item": "adaga"
+      },
+      {
+        "item": "corda"
+      },
       {
         "item": "tatuagem da antiga tripulação",
         "observacao": "+1 Intimidação"
@@ -1422,16 +1694,23 @@
         "Reflexos"
       ],
       "poderes": [],
-      "poder_unico_id": "grumete_falha"
+      "poder_unico_id": "grumete_falha",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "guarda",
     "nome": "Guarda",
     "itens_iniciais": [
-      "apito",
-      "insígnia da milícia",
-      "uma arma marcial"
+      {
+        "item": "apito"
+      },
+      {
+        "item": "insígnia da milícia"
+      },
+      {
+        "item": "uma arma marcial"
+      }
     ],
     "beneficios": {
       "pericias": [
@@ -1443,20 +1722,28 @@
         "detetive",
         "investigador"
       ],
-      "poder_unico_id": "detetive"
+      "poder_unico_id": "detetive",
+      "poderes_categoria_livre": [
+        "combate"
+      ]
     }
   },
   {
     "id": "guardiao_glacial",
     "nome": "Guardião Glacial",
     "itens_iniciais": [
-      "casaco longo",
-      "cavalo glacial"
+      {
+        "item": "casaco longo"
+      },
+      {
+        "item": "cavalo glacial"
+      }
     ],
     "beneficios": {
       "pericias": [],
       "poderes": [],
-      "poder_unico_id": "guardiao_frio"
+      "poder_unico_id": "guardiao_frio",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -1478,7 +1765,8 @@
         "comandar",
         "heranca"
       ],
-      "poder_unico_id": "heranca"
+      "poder_unico_id": "heranca",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -1492,7 +1780,9 @@
         ],
         "quantidade": 1
       },
-      "traje de plebeu"
+      {
+        "item": "traje de plebeu"
+      }
     ],
     "beneficios": {
       "pericias": [
@@ -1505,7 +1795,8 @@
         "surto_heroico",
         "torcida"
       ],
-      "poder_unico_id": "coracao_heroico"
+      "poder_unico_id": "coracao_heroico",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -1519,12 +1810,15 @@
         ],
         "quantidade": 1
       },
-      "gibão de peles"
+      {
+        "item": "gibão de peles"
+      }
     ],
     "beneficios": {
       "pericias": [],
       "poderes": [],
-      "poder_unico_id": "caca_monstros_dano"
+      "poder_unico_id": "caca_monstros_dano",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -1541,7 +1835,8 @@
         "Sobrevivência"
       ],
       "poderes": [],
-      "poder_unico_id": "insciente_resistencia_magia"
+      "poder_unico_id": "insciente_resistencia_magia",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -1551,12 +1846,15 @@
       {
         "item": "amuleto da resistência"
       },
-      "arma simples"
+      {
+        "item": "arma simples"
+      }
     ],
     "beneficios": {
       "pericias": [],
       "poderes": [],
-      "poder_unico_id": "tapistano_resist"
+      "poder_unico_id": "tapistano_resist",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -1574,20 +1872,26 @@
         "Investigação"
       ],
       "poderes": [],
-      "poder_unico_id": "interrogador_critico"
+      "poder_unico_id": "interrogador_critico",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "irmao_sem_esporas",
     "nome": "Irmão sem Esporas",
     "itens_iniciais": [
-      "bálsamo restaurador",
-      "sela"
+      {
+        "item": "bálsamo restaurador"
+      },
+      {
+        "item": "sela"
+      }
     ],
     "beneficios": {
       "pericias": [],
       "poderes": [],
-      "poder_unico_id": "irmao_cavalo"
+      "poder_unico_id": "irmao_cavalo",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -1598,7 +1902,9 @@
         "item": "pá",
         "observacao": "mesmas estatísticas de uma lança"
       },
-      "pé de cabra"
+      {
+        "item": "pé de cabra"
+      }
     ],
     "beneficios": {
       "pericias": [
@@ -1606,7 +1912,8 @@
         "Sobrevivência"
       ],
       "poderes": [],
-      "poder_unico_id": "ladrao_tumulos_vs_mv"
+      "poder_unico_id": "ladrao_tumulos_vs_mv",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -1616,8 +1923,12 @@
       {
         "item": "brunea com símbolo da legião"
       },
-      "escudo pesado",
-      "gládio",
+      {
+        "item": "escudo pesado"
+      },
+      {
+        "item": "gládio"
+      },
       {
         "item": "ração de viagem",
         "quantidade": 10
@@ -1628,28 +1939,34 @@
         "Guerra"
       ],
       "poderes": [],
-      "poder_unico_id": "legionario_combo"
+      "poder_unico_id": "legionario_combo",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "lenhador_de_tollon",
     "nome": "Lenhador de Tollon",
     "itens_iniciais": [
-      "item superior de madeira Tollon"
+      {
+        "item": "item superior de madeira Tollon"
+      }
     ],
     "beneficios": {
       "pericias": [
         "Ofício (artesão)"
       ],
       "poderes": [],
-      "poder_unico_id": "lenhador_madeira"
+      "poder_unico_id": "lenhador_madeira",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "liricista_de_lenorienn",
     "nome": "Liricista de Lenórienn",
     "itens_iniciais": [
-      "alaúde élfico",
+      {
+        "item": "alaúde élfico"
+      },
       {
         "item": "réplica de peça artística élfica",
         "observacao": "1 espaço, T$ 50"
@@ -1660,7 +1977,8 @@
         "Atuação"
       ],
       "poderes": [],
-      "poder_unico_id": "liricista_misticismo"
+      "poder_unico_id": "liricista_misticismo",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -1671,7 +1989,9 @@
         "item": "T$ 2d6",
         "observacao": "último salário"
       },
-      "corda"
+      {
+        "item": "corda"
+      }
     ],
     "beneficios": {
       "pericias": [
@@ -1683,16 +2003,23 @@
         "acrobatico",
         "passagem_de_navio"
       ],
-      "poder_unico_id": "passagem_de_navio"
+      "poder_unico_id": "passagem_de_navio",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "mateiro",
     "nome": "Mateiro",
     "itens_iniciais": [
-      "arco curto",
-      "barraca",
-      "equipamento de viagem",
+      {
+        "item": "arco curto"
+      },
+      {
+        "item": "barraca"
+      },
+      {
+        "item": "equipamento de viagem"
+      },
       {
         "item": "flechas",
         "quantidade": 20
@@ -1709,7 +2036,8 @@
         "sentidos_agucados",
         "vendedor_de_carcacas"
       ],
-      "poder_unico_id": "vendedor_de_carcacas"
+      "poder_unico_id": "vendedor_de_carcacas",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -1735,14 +2063,17 @@
         "foco_em_pericia",
         "rede_de_contatos"
       ],
-      "poder_unico_id": "rede_de_contatos"
+      "poder_unico_id": "rede_de_contatos",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "membro_do_principado",
     "nome": "Membro do Principado",
     "itens_iniciais": [
-      "carroça",
+      {
+        "item": "carroça"
+      },
       {
         "item": "mercadorias sortidas",
         "observacao": "8 espaços, T$ 400"
@@ -1754,7 +2085,8 @@
         "Intuição"
       ],
       "poderes": [],
-      "poder_unico_id": "principado_desconto"
+      "poder_unico_id": "principado_desconto",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -1771,29 +2103,41 @@
         "Atuação"
       ],
       "poderes": [],
-      "poder_unico_id": "menestrel_musica"
+      "poder_unico_id": "menestrel_musica",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "mensageiro",
     "nome": "Mensageiro",
     "itens_iniciais": [
-      "cavalo com sela",
-      "mochila de aventureiro",
-      "traje de viajante"
+      {
+        "item": "cavalo com sela"
+      },
+      {
+        "item": "mochila de aventureiro"
+      },
+      {
+        "item": "traje de viajante"
+      }
     ],
     "beneficios": {
       "pericias": [],
       "poderes": [],
-      "poder_unico_id": "mensageiro_velocidade"
+      "poder_unico_id": "mensageiro_velocidade",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "mercador",
     "nome": "Mercador",
     "itens_iniciais": [
-      "carroça",
-      "trobo",
+      {
+        "item": "carroça"
+      },
+      {
+        "item": "trobo"
+      },
       {
         "item": "mercadorias para vender",
         "valor_max": "T$ 100"
@@ -1810,7 +2154,8 @@
         "proficiencia",
         "sortudo"
       ],
-      "poder_unico_id": "negociacao"
+      "poder_unico_id": "negociacao",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -1821,7 +2166,9 @@
         "item": "gemas preciosas",
         "valor_max": "T$ 100"
       },
-      "picareta"
+      {
+        "item": "picareta"
+      }
     ],
     "beneficios": {
       "pericias": [
@@ -1834,14 +2181,17 @@
         "escavador",
         "sentidos_agucados"
       ],
-      "poder_unico_id": "escavador"
+      "poder_unico_id": "escavador",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "naufrago",
     "nome": "Náufrago",
     "itens_iniciais": [
-      "arco curto",
+      {
+        "item": "arco curto"
+      },
       {
         "item": "flechas",
         "quantidade": 20
@@ -1853,7 +2203,8 @@
     "beneficios": {
       "pericias": [],
       "poderes": [],
-      "poder_unico_id": "naufrago_versatilidade"
+      "poder_unico_id": "naufrago_versatilidade",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -1878,29 +2229,37 @@
     "beneficios": {
       "pericias": [],
       "poderes": [],
-      "poder_unico_id": "nitamuraniano_refazer"
+      "poder_unico_id": "nitamuraniano_refazer",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "nobre_zakharoviano",
     "nome": "Nobre Zakharoviano",
     "itens_iniciais": [
-      "traje da corte"
+      {
+        "item": "traje da corte"
+      }
     ],
     "beneficios": {
       "pericias": [
         "Ofício (armeiro)"
       ],
       "poderes": [],
-      "poder_unico_id": "zakharoviano_pm"
+      "poder_unico_id": "zakharoviano_pm",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "nomade",
     "nome": "Nômade",
     "itens_iniciais": [
-      "bordão",
-      "equipamento de viagem"
+      {
+        "item": "bordão"
+      },
+      {
+        "item": "equipamento de viagem"
+      }
     ],
     "beneficios": {
       "pericias": [
@@ -1913,7 +2272,8 @@
         "mochileiro",
         "sentidos_agucados"
       ],
-      "poder_unico_id": "mochileiro"
+      "poder_unico_id": "mochileiro",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -1944,14 +2304,17 @@
         "Sobrevivência"
       ],
       "poderes": [],
-      "poder_unico_id": "sar_allan_dano"
+      "poder_unico_id": "sar_allan_dano",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "padeiro",
     "nome": "Padeiro",
     "itens_iniciais": [
-      "instrumentos de Ofício (cozinheiro)",
+      {
+        "item": "instrumentos de Ofício (cozinheiro)"
+      },
       {
         "item": "rolo de massa",
         "observacao": "mesmas estatísticas de uma clava"
@@ -1962,14 +2325,17 @@
         "Ofício (cozinheiro)"
       ],
       "poderes": [],
-      "poder_unico_id": "padeiro_braco"
+      "poder_unico_id": "padeiro_braco",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "pedinte",
     "nome": "Pedinte",
     "itens_iniciais": [
-      "andrajos",
+      {
+        "item": "andrajos"
+      },
       {
         "item": "esmolas guardadas",
         "observacao": "1 bálsamo restaurador e 1 essência de mana"
@@ -1978,15 +2344,20 @@
     "beneficios": {
       "pericias": [],
       "poderes": [],
-      "poder_unico_id": "pedinte_compartilhar"
+      "poder_unico_id": "pedinte_compartilhar",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "pescador",
     "nome": "Pescador",
     "itens_iniciais": [
-      "bolsa cheia de minhocas",
-      "instrumentos de pescador"
+      {
+        "item": "bolsa cheia de minhocas"
+      },
+      {
+        "item": "instrumentos de pescador"
+      }
     ],
     "beneficios": {
       "pericias": [
@@ -1994,7 +2365,8 @@
         "Sobrevivência"
       ],
       "poderes": [],
-      "poder_unico_id": "pescador_paciencia"
+      "poder_unico_id": "pescador_paciencia",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -2017,15 +2389,20 @@
         "Sobrevivência"
       ],
       "poderes": [],
-      "poder_unico_id": "pescador_parrudo_natacao"
+      "poder_unico_id": "pescador_parrudo_natacao",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "pivete",
     "nome": "Pivete",
     "itens_iniciais": [
-      "gazua",
-      "traje de plebeu",
+      {
+        "item": "gazua"
+      },
+      {
+        "item": "traje de plebeu"
+      },
       {
         "item": "animal urbano",
         "observacao": "cão, gato, rato ou pombo"
@@ -2042,21 +2419,29 @@
         "aparencia_inofensiva",
         "quebra_galho"
       ],
-      "poder_unico_id": "quebra_galho"
+      "poder_unico_id": "quebra_galho",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "plebeu_arcano",
     "nome": "Plebeu Arcano",
     "itens_iniciais": [
-      "bandoleira de poções",
-      "gorro de ervas",
-      "poção arcana de 1º círculo"
+      {
+        "item": "bandoleira de poções"
+      },
+      {
+        "item": "gorro de ervas"
+      },
+      {
+        "item": "poção arcana de 1º círculo"
+      }
     ],
     "beneficios": {
       "pericias": [],
       "poderes": [],
-      "poder_unico_id": "plebeu_reroll"
+      "poder_unico_id": "plebeu_reroll",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -2073,14 +2458,17 @@
         "Reflexos"
       ],
       "poderes": [],
-      "poder_unico_id": "prisioneiro_armadilhas"
+      "poder_unico_id": "prisioneiro_armadilhas",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "procurado_vivo_ou_morto",
     "nome": "Procurado: Vivo ou Morto",
     "itens_iniciais": [
-      "pistola",
+      {
+        "item": "pistola"
+      },
       {
         "item": "balas cruéis",
         "quantidade": 20
@@ -2089,7 +2477,8 @@
     "beneficios": {
       "pericias": [],
       "poderes": [],
-      "poder_unico_id": "procurado_pistoleiro"
+      "poder_unico_id": "procurado_pistoleiro",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -2103,7 +2492,9 @@
         ],
         "quantidade": 1
       },
-      "bordão",
+      {
+        "item": "bordão"
+      },
       {
         "item": "pergaminho com diagrama do Akzath"
       }
@@ -2113,14 +2504,17 @@
         "Religião"
       ],
       "poderes": [],
-      "poder_unico_id": "profeta_furia_divina"
+      "poder_unico_id": "profeta_furia_divina",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "querido_filho",
     "nome": "Querido Filho",
     "itens_iniciais": [
-      "essência de sombra",
+      {
+        "item": "essência de sombra"
+      },
       {
         "item": "manto camuflado (urbano)"
       }
@@ -2128,7 +2522,8 @@
     "beneficios": {
       "pericias": [],
       "poderes": [],
-      "poder_unico_id": "querido_filho_trevas"
+      "poder_unico_id": "querido_filho_trevas",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -2142,7 +2537,9 @@
         ],
         "quantidade": 1
       },
-      "panfleto revolucionário",
+      {
+        "item": "panfleto revolucionário"
+      },
       {
         "item": "T$ 6d12",
         "observacao": "impostos não pagos"
@@ -2153,7 +2550,8 @@
         "Iniciativa"
       ],
       "poderes": [],
-      "poder_unico_id": "rebelde_aliados"
+      "poder_unico_id": "rebelde_aliados",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -2168,7 +2566,8 @@
     "beneficios": {
       "pericias": [],
       "poderes": [],
-      "poder_unico_id": "receptador_aparato"
+      "poder_unico_id": "receptador_aparato",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -2179,28 +2578,38 @@
         "item": "essência de mana",
         "quantidade": 2
       },
-      "varinha arcana"
+      {
+        "item": "varinha arcana"
+      }
     ],
     "beneficios": {
       "pericias": [],
       "poderes": [],
-      "poder_unico_id": "recruta_arcano_buff"
+      "poder_unico_id": "recruta_arcano_buff",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "recruta_da_fenix",
     "nome": "Recruta da Fênix",
     "itens_iniciais": [
-      "arma marcial",
-      "brunea",
-      "grifo iniciante"
+      {
+        "item": "arma marcial"
+      },
+      {
+        "item": "brunea"
+      },
+      {
+        "item": "grifo iniciante"
+      }
     ],
     "beneficios": {
       "pericias": [
         "Cavalgar"
       ],
       "poderes": [],
-      "poder_unico_id": "recruta_fenix_fogo"
+      "poder_unico_id": "recruta_fenix_fogo",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -2222,22 +2631,28 @@
         "estoico",
         "vontade_de_ferro"
       ],
-      "poder_unico_id": "estoico"
+      "poder_unico_id": "estoico",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "sabio_matematico",
     "nome": "Sábio Matemático",
     "itens_iniciais": [
-      "coleção de livros",
-      "luneta"
+      {
+        "item": "coleção de livros"
+      },
+      {
+        "item": "luneta"
+      }
     ],
     "beneficios": {
       "pericias": [
         "Conhecimento"
       ],
       "poderes": [],
-      "poder_unico_id": "matematico_efeitos"
+      "poder_unico_id": "matematico_efeitos",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -2259,14 +2674,17 @@
         "proficiencia",
         "surto_heroico"
       ],
-      "poder_unico_id": "antigo_mestre"
+      "poder_unico_id": "antigo_mestre",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "selvagem",
     "nome": "Selvagem",
     "itens_iniciais": [
-      "uma arma simples",
+      {
+        "item": "uma arma simples"
+      },
       {
         "item": "pequeno animal de estimação",
         "observacao": "pássaro ou esquilo"
@@ -2283,22 +2701,28 @@
         "vida_rustica",
         "vitalidade"
       ],
-      "poder_unico_id": "vida_rustica"
+      "poder_unico_id": "vida_rustica",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "selvagem_sanguinario",
     "nome": "Selvagem Sanguinário",
     "itens_iniciais": [
-      "arma marcial",
-      "gibão de peles"
+      {
+        "item": "arma marcial"
+      },
+      {
+        "item": "gibão de peles"
+      }
     ],
     "beneficios": {
       "pericias": [
         "Sobrevivência"
       ],
       "poderes": [],
-      "poder_unico_id": "sanguinario_buff"
+      "poder_unico_id": "sanguinario_buff",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -2309,7 +2733,9 @@
         "item": "balde e vassoura",
         "observacao": "mesmas estatísticas de um bordão"
       },
-      "tabardo de seu patrono"
+      {
+        "item": "tabardo de seu patrono"
+      }
     ],
     "beneficios": {
       "pericias": [
@@ -2317,16 +2743,23 @@
         "Ofício (serviçal)"
       ],
       "poderes": [],
-      "poder_unico_id": "servo_status"
+      "poder_unico_id": "servo_status",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "soldado",
     "nome": "Soldado",
     "itens_iniciais": [
-      "uma arma marcial",
-      "uniforme militar",
-      "insígnia de seu exército"
+      {
+        "item": "uma arma marcial"
+      },
+      {
+        "item": "uniforme militar"
+      },
+      {
+        "item": "insígnia de seu exército"
+      }
     ],
     "beneficios": {
       "pericias": [
@@ -2338,7 +2771,10 @@
       "poderes": [
         "influencia_militar"
       ],
-      "poder_unico_id": "influencia_militar"
+      "poder_unico_id": "influencia_militar",
+      "poderes_categoria_livre": [
+        "combate"
+      ]
     }
   },
   {
@@ -2352,7 +2788,9 @@
         ],
         "quantidade": 1
       },
-      "bálsamo restaurador",
+      {
+        "item": "bálsamo restaurador"
+      },
       {
         "escolha": [
           "escudo leve",
@@ -2360,7 +2798,9 @@
         ],
         "quantidade": 1
       },
-      "essência de mana",
+      {
+        "item": "essência de mana"
+      },
       {
         "item": "ração de viagem",
         "quantidade": 5
@@ -2375,28 +2815,38 @@
         "Investigação"
       ],
       "poderes": [],
-      "poder_unico_id": "sucateiro_reroll"
+      "poder_unico_id": "sucateiro_reroll",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "suporte_de_tropas",
     "nome": "Suporte de Tropas",
     "itens_iniciais": [
-      "equipamento de viagem",
-      "instrumentos de ofício",
-      "maleta de medicamentos"
+      {
+        "item": "equipamento de viagem"
+      },
+      {
+        "item": "instrumentos de ofício"
+      },
+      {
+        "item": "maleta de medicamentos"
+      }
     ],
     "beneficios": {
       "pericias": [],
       "poderes": [],
-      "poder_unico_id": "suporte_tropas_ajuda"
+      "poder_unico_id": "suporte_tropas_ajuda",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "tamalu",
     "nome": "Tamalu",
     "itens_iniciais": [
-      "traje da corte"
+      {
+        "item": "traje da corte"
+      }
     ],
     "beneficios": {
       "pericias": [
@@ -2404,7 +2854,8 @@
         "Nobreza"
       ],
       "poderes": [],
-      "poder_unico_id": "tamalu_tatuagem"
+      "poder_unico_id": "tamalu_tatuagem",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -2415,10 +2866,18 @@
         "item": "rolo de macarrão ou martelo de carne",
         "observacao": "mesmas estatísticas de uma clava"
       },
-      "panela",
-      "avental",
-      "caneca",
-      "pano sujo"
+      {
+        "item": "panela"
+      },
+      {
+        "item": "avental"
+      },
+      {
+        "item": "caneca"
+      },
+      {
+        "item": "pano sujo"
+      }
     ],
     "beneficios": {
       "pericias": [
@@ -2431,14 +2890,17 @@
         "proficiencia",
         "vitalidade"
       ],
-      "poder_unico_id": "gororoba"
+      "poder_unico_id": "gororoba",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "tocado_pela_dama_altiva",
     "nome": "Tocado pela Dama Altiva",
     "itens_iniciais": [
-      "bordão",
+      {
+        "item": "bordão"
+      },
       {
         "item": "ração de viagem",
         "quantidade": 5
@@ -2449,14 +2911,17 @@
         "Adestramento"
       ],
       "poderes": [],
-      "poder_unico_id": "dama_altiva_invocar"
+      "poder_unico_id": "dama_altiva_invocar",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "tocado_pelo_indomavel",
     "nome": "Tocado pelo Indomável",
     "itens_iniciais": [
-      "trapos surrados",
+      {
+        "item": "trapos surrados"
+      },
       {
         "item": "carcaça de couro de animal caçado",
         "observacao": "como gibão de peles"
@@ -2467,7 +2932,8 @@
         "Atletismo"
       ],
       "poderes": [],
-      "poder_unico_id": "indomavel_dano"
+      "poder_unico_id": "indomavel_dano",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -2488,7 +2954,8 @@
         "atletico",
         "esforcado"
       ],
-      "poder_unico_id": "esforcado"
+      "poder_unico_id": "esforcado",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -2502,8 +2969,12 @@
         ],
         "quantidade": 1
       },
-      "corda",
-      "mochila de aventureiro",
+      {
+        "item": "corda"
+      },
+      {
+        "item": "mochila de aventureiro"
+      },
       {
         "item": "vara de madeira",
         "observacao": "3m"
@@ -2512,21 +2983,29 @@
     "beneficios": {
       "pericias": [],
       "poderes": [],
-      "poder_unico_id": "svalano_oral"
+      "poder_unico_id": "svalano_oral",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "trapaceiro_ahleniense",
     "nome": "Trapaceiro Ahleniense",
     "itens_iniciais": [
-      "essência de sombra",
-      "gazua",
-      "estojo de disfarces"
+      {
+        "item": "essência de sombra"
+      },
+      {
+        "item": "gazua"
+      },
+      {
+        "item": "estojo de disfarces"
+      }
     ],
     "beneficios": {
       "pericias": [],
       "poderes": [],
-      "poder_unico_id": "ahleniense_ladinagem"
+      "poder_unico_id": "ahleniense_ladinagem",
+      "poderes_categoria_livre": []
     }
   },
   {
@@ -2540,20 +3019,26 @@
     "beneficios": {
       "pericias": [],
       "poderes": [],
-      "poder_unico_id": "turista_resistencia"
+      "poder_unico_id": "turista_resistencia",
+      "poderes_categoria_livre": []
     }
   },
   {
     "id": "um_com_os_kami",
     "nome": "Um com os Kami",
     "itens_iniciais": [
-      "bálsamo restaurador",
-      "essência de mana"
+      {
+        "item": "bálsamo restaurador"
+      },
+      {
+        "item": "essência de mana"
+      }
     ],
     "beneficios": {
       "pericias": [],
       "poderes": [],
-      "poder_unico_id": "kami_companheiro"
+      "poder_unico_id": "kami_companheiro",
+      "poderes_categoria_livre": []
     }
   }
 ]

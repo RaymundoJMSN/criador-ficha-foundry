@@ -218,7 +218,17 @@ export class ActorWriter {
       // Benefícios escolhidos: DOIS da lista (perícia e/ou poder). O poder
       // exclusivo é uma das opções, não um brinde automático (LB cap. 2).
       const escolhidos = (state.escolhasPorItem["origem_beneficios"] as string[]) ?? [];
-      for (const slug of validarBeneficios(origem.id, escolhidos).poderes) {
+      const beneficios = validarBeneficios(origem.id, escolhidos);
+      for (const categoria of beneficios.livres) {
+        const itemId = state.escolhasPorItem[`origem_poder_livre_${categoria}`] as
+          | string
+          | undefined;
+        if (!itemId) continue;
+        const doc = await resolveItem(itemId);
+        if (doc) origemItems.push(doc);
+        else console.warn(`${MODULE_ID} | ActorWriter: poder livre "${itemId}" não resolveu`);
+      }
+      for (const slug of beneficios.poderes) {
         const match = resolverPoder(slug, classeSlug, allPoderes)?.item;
         if (match) {
           const doc = await resolveItem(match.id);

@@ -325,7 +325,7 @@ export function defineWizardApp(): void {
           const poderes = CompendiumIndex.getAll("poder") as IndexedPoder[];
           const resolvePoderNome = (slug: string): string | null =>
             poderes.find((p) => toSlug(p.name) === slug)?.name ?? null;
-          stepCtx = prepareOrigemContext(state, errors, resolvePoderNome);
+          stepCtx = prepareOrigemContext(state, errors, resolvePoderNome, poderes);
           break;
         }
         case WizardStep.Classe: {
@@ -539,6 +539,21 @@ export function defineWizardApp(): void {
             .map((c) => c.value);
           this._state.apply({
             escolhasPorItem: { ...this._state.escolhasPorItem, origem_beneficios: marcados },
+          });
+          void this.render(false);
+        });
+      });
+
+      // ── Poder livre da origem ───────────────────────────────────────────
+      root.querySelectorAll<HTMLSelectElement>("select[name='origem_poder_livre']").forEach((sel) => {
+        sel.addEventListener("change", () => {
+          const categoria = sel.dataset["categoria"];
+          if (!categoria) return;
+          this._state.apply({
+            escolhasPorItem: {
+              ...this._state.escolhasPorItem,
+              [`origem_poder_livre_${categoria}`]: sel.value,
+            },
           });
           void this.render(false);
         });

@@ -156,7 +156,13 @@ export function pendencias(state: EngineState): string[] {
 
   if (state.origemId) {
     const escolhidos = (state.escolhasPorItem["origem_beneficios"] as string[]) ?? [];
-    faltando.push(...validarBeneficios(state.origemId, escolhidos).errors);
+    const beneficios = validarBeneficios(state.origemId, escolhidos);
+    faltando.push(...beneficios.errors);
+    for (const categoria of beneficios.livres) {
+      if (!state.escolhasPorItem[`origem_poder_livre_${categoria}`]) {
+        faltando.push(`Escolha o poder de ${categoria} da origem.`);
+      }
+    }
   }
 
   const classe = getClasse(classeRef);

@@ -152,6 +152,18 @@
           </div>
         </div>
         {{/if}}
+        {{#each selectedDetail.poderesLivres}}
+        <div class="form-group" style="margin-top:10px;">
+          <label for="origem-livre-{{this.categoria}}">{{this.label}}</label>
+          <select id="origem-livre-{{this.categoria}}" name="origem_poder_livre"
+                  data-categoria="{{this.categoria}}" style="width:100%;padding:6px;">
+            <option value="">— escolha um poder —</option>
+            {{#each this.opcoes}}
+            <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.nome}}</option>
+            {{/each}}
+          </select>
+        </div>
+        {{/each}}
       </div>
       {{/if}}
       {{#if errors.length}}<ul class="t20w-errors">{{#each errors}}<li>{{this}}</li>{{/each}}</ul>{{/if}}

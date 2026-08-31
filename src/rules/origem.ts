@@ -5,6 +5,8 @@ export interface OrigensBeneficio {
   pericias: string[];
   poderes: string[];
   poder_unico_id: string | null;
+  /** Categorias de poder livre: "combate" (Gladiador) ou "tormenta". */
+  poderes_categoria_livre: string[];
 }
 
 export interface ItemInicial {
@@ -59,13 +61,19 @@ export function formatItensIniciais(origemId: string): string[] {
 export const BENEFICIOS_POR_ORIGEM = 2;
 
 export interface BeneficioOpcao {
-  /** Token guardado no estado: `pericia:cura` ou `poder:sangue_azul`. */
+  /** Token guardado no estado: `pericia:cura`, `poder:sangue_azul`, `livre:combate`. */
   token: string;
-  tipo: "pericia" | "poder";
+  tipo: "pericia" | "poder" | "livre";
   id: string;
   nome: string;
   exclusivo: boolean;
 }
+
+const CATEGORIA_LIVRE_LABEL: Record<string, string> = {
+  combate: "Um poder de combate à sua escolha",
+  tormenta: "Um poder da Tormenta à sua escolha",
+  geral: "Um poder geral à sua escolha",
+};
 
 export interface BeneficiosPlano {
   opcoes: BeneficioOpcao[];
@@ -115,6 +123,13 @@ export function getBeneficiosPlano(
       nome: nomeDoPoder(id) ?? titulo(id),
       exclusivo: id === exclusivo,
     })),
+    ...(origem.beneficios.poderes_categoria_livre ?? []).map((cat) => ({
+      token: `livre:${cat}`,
+      tipo: "livre" as const,
+      id: cat,
+      nome: CATEGORIA_LIVRE_LABEL[cat] ?? `Um poder de ${titulo(cat)} à sua escolha`,
+      exclusivo: false,
+    })),
   ];
 
   return {
@@ -127,6 +142,8 @@ export function getBeneficiosPlano(
 export interface BeneficiosEscolhidos {
   pericias: string[];
   poderes: string[];
+  /** Categorias em que o jogador ainda precisa escolher um poder qualquer. */
+  livres: string[];
   errors: string[];
 }
 
@@ -149,6 +166,7 @@ export function validarBeneficios(origemId: string, escolhas: string[]): Benefic
   return {
     pericias: dentro.filter((t) => t.startsWith("pericia:")).map((t) => t.slice(8)),
     poderes: dentro.filter((t) => t.startsWith("poder:")).map((t) => t.slice(6)),
+    livres: dentro.filter((t) => t.startsWith("livre:")).map((t) => t.slice(6)),
     errors,
   };
 }

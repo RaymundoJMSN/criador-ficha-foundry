@@ -1,5 +1,9 @@
 import { describe, it, expect } from "vitest";
-import { getBeneficiosPlano, validarBeneficios } from "../../src/rules/origem.js";
+import {
+  getBeneficiosPlano,
+  validarBeneficios,
+  formatItensIniciais,
+} from "../../src/rules/origem.js";
 
 describe("benefícios de origem — escolha dois (LB cap. 2)", () => {
   it("pool junta perícias e poderes, com o exclusivo marcado", () => {
@@ -49,5 +53,34 @@ describe("benefícios de origem — escolha dois (LB cap. 2)", () => {
   it("origem inexistente não explode", () => {
     expect(getBeneficiosPlano("__nada__").opcoes).toEqual([]);
     expect(validarBeneficios("__nada__", []).errors).toEqual([]);
+  });
+});
+
+describe("poder de categoria livre", () => {
+  it("Gladiador oferece 'um poder de combate à sua escolha' no pool", () => {
+    const plano = getBeneficiosPlano("gladiador");
+    const livre = plano.opcoes.find((o) => o.tipo === "livre");
+    expect(livre?.token).toBe("livre:combate");
+    expect(livre?.nome).toBe("Um poder de combate à sua escolha");
+  });
+
+  it("escolher o livre marca a categoria pendente", () => {
+    const r = validarBeneficios("gladiador", ["pericia:atuacao", "livre:combate"]);
+    expect(r.livres).toEqual(["combate"]);
+    expect(r.pericias).toEqual(["atuacao"]);
+    expect(r.errors).toEqual([]);
+  });
+
+  it("Assistente de Laboratório oferece poder da Tormenta", () => {
+    const plano = getBeneficiosPlano("assistente_de_laboratorio");
+    expect(plano.opcoes.some((o) => o.token === "livre:tormenta")).toBe(true);
+  });
+
+  it("origem sem categoria livre não cria a opção", () => {
+    expect(getBeneficiosPlano("aristocrata").opcoes.some((o) => o.tipo === "livre")).toBe(false);
+  });
+
+  it("item de origem que vem como texto solto não some mais", () => {
+    expect(formatItensIniciais("aristocrata")).toContain("traje da corte");
   });
 });
