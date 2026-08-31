@@ -318,7 +318,13 @@ export function defineWizardApp(): void {
         case WizardStep.Raca: {
           const racas = CompendiumIndex.getAll("race") as IndexedRace[];
           const poderesRaca = CompendiumIndex.getAll("poder") as IndexedPoder[];
-          stepCtx = prepareRacaContext(state, racas, errors, poderesRaca);
+          stepCtx = prepareRacaContext(
+            state,
+            racas,
+            errors,
+            poderesRaca,
+            CompendiumIndex.getAll("magia")
+          );
           break;
         }
         case WizardStep.Origem: {
@@ -543,6 +549,25 @@ export function defineWizardApp(): void {
           void this.render(false);
         });
       });
+
+      // ── Escolhas de habilidade racial (Memória Póstuma, Deformidade…) ────
+      root
+        .querySelectorAll<HTMLSelectElement>("select[name^='raca_esc-']")
+        .forEach((sel) => {
+          sel.addEventListener("change", () => {
+            const chave = sel.name.replace("raca_esc-", "");
+            const novas = { ...this._state.escolhasPorItem, [chave]: sel.value };
+            // Trocar de ramo invalida as respostas do ramo anterior.
+            if (chave.endsWith("_ramo")) {
+              const prefixo = chave.replace(/_ramo$/, "");
+              for (const k of Object.keys(novas)) {
+                if (k.startsWith(`${prefixo}_`) && k !== chave) delete novas[k];
+              }
+            }
+            this._state.apply({ escolhasPorItem: novas });
+            void this.render(false);
+          });
+        });
 
       // ── Poder livre da origem ───────────────────────────────────────────
       root.querySelectorAll<HTMLSelectElement>("select[name='origem_poder_livre']").forEach((sel) => {

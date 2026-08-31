@@ -1,7 +1,18 @@
 import type { WizardState } from "../state.js";
 import type { IndexedPoder, IndexedRace } from "../../compendium/types.js";
 import { getRaceModifierGroups } from "../../rules/subescolhas.js";
-import { getRaca, type RacaData } from "../../rules/raca.js";
+import {
+  getRaca,
+  escolhasDaRaca,
+  pedidoAtivo,
+  partesDoPedido,
+  type PedidoRacial,
+  type RacaData,
+} from "../../rules/raca.js";
+import { PERICIA_SLUGS } from "../../rules/pericia-slug.js";
+import { describeUnmet, type PartialWizardState } from "../../rules/poderes.js";
+import { toNomeSlug } from "../../compendium/slug.js";
+import type { IndexedMagia } from "../../compendium/types.js";
 
 export interface RacaOption {
   id: string;
@@ -61,6 +72,25 @@ export interface PoderRacial {
   descricao: string;
 }
 
+export interface PickerOpcao {
+  id: string;
+  nome: string;
+  selected: boolean;
+}
+
+export interface PickerRacial {
+  name: string;
+  label: string;
+  opcoes: PickerOpcao[];
+}
+
+export interface EscolhaRacialView {
+  chave: string;
+  habilidade: string;
+  ramos: Array<{ id: string; rotulo: string; selected: boolean }>;
+  pickers: PickerRacial[];
+}
+
 export interface RacaDetail {
   id: string;
   name: string;
@@ -71,6 +101,8 @@ export interface RacaDetail {
   periciasBonus: string[];
   tamanho: string;
   deslocamento: string;
+  /** Memória Póstuma, Deformidade, Fonte Elemental… */
+  escolhasRaciais: EscolhaRacialView[];
 }
 
 export interface RacaContext {
@@ -173,7 +205,8 @@ export function prepareRacaContext(
   state: WizardState,
   racas: IndexedRace[],
   errors: string[] = [],
-  todosPoderes: IndexedPoder[] = []
+  todosPoderes: IndexedPoder[] = [],
+  todasMagias: IndexedMagia[] = []
 ): RacaContext {
   const racaOptions: RacaOption[] = racas.map((r) => ({
     id: r.id,
@@ -206,6 +239,20 @@ export function prepareRacaContext(
       ),
       tamanho: TAMANHO_LABEL[tamanhoBruto.toLowerCase()] ?? tamanhoBruto,
       deslocamento: `${deslocamento} ${unidade}`,
+      escolhasRaciais: montarEscolhasRaciais(
+        selecionada.name,
+        state.escolhasPorItem,
+        todosPoderes,
+        todasMagias,
+        {
+          nivel: state.nivel,
+          atributos: state.atributosBase,
+          classeSlug: toNomeSlug(state.classeNome ?? ""),
+          racaSlug: toNomeSlug(selecionada.name),
+          periciasTreinadas: state.periciasTreinadas,
+          poderes: [],
+        }
+      ),
     };
   }
 
@@ -215,4 +262,140 @@ export function prepareRacaContext(
     selectedDetail,
     errors,
   };
+}
+
+const PERICIA_NOME: Record<string, string> = Object.fromEntries(
+  PERICIA_SLUGS.map((slug) => [
+    slug,
+    slug
+      .split("_")
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(" "),
+  ])
+);
+
+/** Opções de um pedido, já filtradas pelo que o personagem alcança. */
+function opcoesDoPedido(
+  pedido: PedidoRacial,
+  ctx: {
+    escolhido: string;
+    poderes: IndexedPoder[];
+    magias: IndexedMagia[];
+    racaAtual: string;
+    elegibilidade: PartialWizardState;
+  }
+): PickerOpcao[] {
+  const marcar = (id: string, nome: string): PickerOpcao => ({
+    id,
+    nome,
+    selected: id === ctx.escolhido,
+  });
+
+  switch (pedido.tipo) {
+    case "lista":
+      return (pedido.opcoes ?? []).map((o) => marcar(o.id, o.rotulo));
+
+    case "pericia": {
+      const slugs = pedido.filtro === "oficio" ? ["oficio"] : PERICIA_SLUGS;
+      return slugs.map((slug) => marcar(slug, PERICIA_NOME[slug] ?? slug));
+    }
+
+    case "poder":
+      return ctx.poderes
+        .filter((p) =>
+          pedido.categoria === "geral"
+            ? p.system.tipo === "geral"
+            : p.system.subtipo === pedido.categoria
+        )
+        .filter((p) => describeUnmet(toNomeSlug(p.name), ctx.elegibilidade).length === 0)
+        .map((p) => marcar(p.id, p.name))
+        .sort((a, b) => a.nome.localeCompare(b.nome));
+
+    case "magia":
+      return ctx.magias
+        .filter((m) => Number(m.system.circulo) === (pedido.circulo ?? 1))
+        .map((m) => marcar(m.id, m.name))
+        .sort((a, b) => a.nome.localeCompare(b.nome));
+
+    case "habilidade_outra_raca": {
+      // Uma lista só, "Raça — Habilidade", em vez de dois seletores encadeados.
+      const excluir = new Set([...(pedido.excluir ?? []), ctx.racaAtual]);
+      return ctx.poderes
+        .filter((p) => p.system.tipo === "racial")
+        .map((p) => marcar(p.id, p.name))
+        .filter((o) => ![...excluir].some((e) => toNomeSlug(o.nome).includes(e)))
+        .sort((a, b) => a.nome.localeCompare(b.nome));
+    }
+
+    default:
+      return [];
+  }
+}
+
+function rotuloDoPedido(pedido: PedidoRacial): string {
+  switch (pedido.tipo) {
+    case "pericia":
+      return pedido.bonus ? `Perícia (+${pedido.bonus})` : "Perícia treinada";
+    case "poder":
+      return `Poder de ${pedido.categoria ?? "geral"}`;
+    case "magia":
+      return `Magia de ${pedido.circulo ?? 1}º círculo`;
+    case "habilidade_outra_raca":
+      return "Habilidade de outra raça";
+    default:
+      return "Escolha";
+  }
+}
+
+function montarEscolhasRaciais(
+  racaRef: string,
+  respostas: Record<string, unknown>,
+  poderes: IndexedPoder[],
+  magias: IndexedMagia[],
+  elegibilidade: PartialWizardState
+): EscolhaRacialView[] {
+  const racaAtual = toNomeSlug(racaRef);
+  return escolhasDaRaca(racaRef).map((escolha) => {
+    const ramoEscolhido = respostas[`${escolha.chave}_ramo`] as string | undefined;
+    const pedido = pedidoAtivo(escolha, respostas);
+
+    const pickers: PickerRacial[] = [];
+    partesDoPedido(pedido).forEach((parte, pi) => {
+      for (let i = 0; i < parte.quantidade; i++) {
+        const name = `${escolha.chave}_${pi}_${i}`;
+        const escolhido = (respostas[name] as string | undefined) ?? "";
+        // Em pedido de N perícias, o que já foi pego some das outras caixas.
+        const usados = new Set(
+          Array.from({ length: parte.quantidade }, (_, j) => respostas[`${escolha.chave}_${pi}_${j}`])
+            .filter((v, j) => j !== i && typeof v === "string" && v)
+            .map(String)
+        );
+        pickers.push({
+          name,
+          label:
+            parte.quantidade > 1
+              ? `${rotuloDoPedido(parte)} ${i + 1}`
+              : rotuloDoPedido(parte),
+          opcoes: opcoesDoPedido(parte, {
+            escolhido,
+            poderes,
+            magias,
+            racaAtual,
+            elegibilidade,
+          }).filter((o) => !usados.has(o.id)),
+        });
+      }
+    });
+
+    return {
+      chave: escolha.chave,
+      habilidade: escolha.habilidade,
+      ramos: escolha.ramos.map((r) => ({
+        id: r.id,
+        rotulo: r.rotulo,
+        selected: r.id === ramoEscolhido,
+      })),
+      pickers,
+    };
+  });
 }

@@ -98,6 +98,30 @@
           </ul>
         </div>
         {{/if}}
+        {{#each selectedDetail.escolhasRaciais}}
+        <div style="margin-top:10px;padding:8px;background:rgba(255,255,255,0.04);border-radius:3px;">
+          <strong style="font-size:0.85em;">{{this.habilidade}}</strong>
+          {{#if this.ramos.length}}
+          <select name="raca_esc-{{this.chave}}_ramo" style="width:100%;padding:5px;margin-top:5px;">
+            <option value="">— escolha uma opção —</option>
+            {{#each this.ramos}}
+            <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.rotulo}}</option>
+            {{/each}}
+          </select>
+          {{/if}}
+          {{#each this.pickers}}
+          <div class="form-group" style="margin-top:6px;">
+            <label for="raca-pick-{{this.name}}" style="font-size:0.8em;">{{this.label}}</label>
+            <select id="raca-pick-{{this.name}}" name="raca_esc-{{this.name}}" style="width:100%;padding:5px;">
+              <option value="">—</option>
+              {{#each this.opcoes}}
+              <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.nome}}</option>
+              {{/each}}
+            </select>
+          </div>
+          {{/each}}
+        </div>
+        {{/each}}
         {{#each selectedDetail.modGroups}}
         <div style="margin-top:10px;">
           <strong style="font-size:0.85em;">{{this.titulo}}:</strong>

@@ -136,6 +136,12 @@ function walkDir(dir) {
 // 8. racas.json — all raças consolidated
 {
   const racasDir = join(T20DB, "racas");
+  const titulo = (t) =>
+    String(t)
+      .split("_")
+      .filter(Boolean)
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(" ");
 
   // `modificadores_atributo` tem quatro formas. Ler só "fixo" e "escolha" deixava
   // Osteon e Lefou (ambos "misto") sem nenhum atributo racial na ficha.
@@ -156,6 +162,133 @@ function walkDir(dir) {
       atributos_disponiveis: e.atributos_disponiveis ?? null,
       observacao: e.observacao ?? null,
     }));
+  }
+
+  /**
+   * Escolhas que uma habilidade racial impõe. Três formas no T20-DB:
+   *   - `efeitos[].escolha`            → escolha direta (perícia, tipo de dano, magia)
+   *   - `efeitos[].escolha_de_efeitos` → ramos ("treine 1 perícia OU ganhe 1 poder")
+   *   - `habilidade.alternativa`       → mais um ramo ("ser osteon de outra raça")
+   * Aqui viram uma forma só: uma escolha com ramos, cada ramo dizendo o que pedir.
+   */
+  function pedidoDoEfeito(efeito, escolha) {
+    const tipo = escolha?.tipo ?? "";
+    if (Array.isArray(escolha?.opcoes) && escolha.opcoes.length > 0) {
+      return {
+        tipo: "lista",
+        quantidade: escolha.quantidade ?? 1,
+        opcoes: escolha.opcoes.map((o) => ({
+          id: typeof o === "string" ? o : o.id,
+          rotulo:
+            typeof o === "string"
+              ? titulo(o)
+              : `${titulo(o.id)}${o.tipo_dano ? ` (${o.tipo_dano})` : ""}`,
+        })),
+      };
+    }
+    if (tipo === "magia") {
+      return { tipo: "magia", quantidade: escolha.quantidade ?? 1, circulo: escolha.filtro?.circulo ?? 1 };
+    }
+    if (tipo.includes("pericia")) {
+      // bonus_pericia dá +N na perícia; treinar_pericia deixa treinado.
+      const bonus = efeito?.tipo === "bonus_pericia" ? (efeito.valor ?? 0) : 0;
+      return {
+        tipo: "pericia",
+        quantidade: escolha.quantidade ?? 1,
+        bonus,
+        filtro: tipo === "pericia_oficio_especifico" ? "oficio" : null,
+      };
+    }
+    return null;
+  }
+
+  function pedidoDaOpcao(o) {
+    if (o.tipo === "treinar_pericia") return { tipo: "pericia", quantidade: o.quantidade ?? 1, bonus: 0 };
+    if (o.tipo === "ganhar_poder")
+      return { tipo: "poder", quantidade: o.quantidade ?? 1, categoria: o.categoria ?? "geral" };
+    if (o.tipo === "bonus_pericia")
+      return { tipo: "pericia", quantidade: o.quantidade ?? 1, bonus: o.valor ?? 2 };
+    if (o.tipo === "misto") {
+      const partes = (o.componentes ?? []).map(pedidoDaOpcao).filter(Boolean);
+      return partes.length > 0 ? { tipo: "misto", partes } : null;
+    }
+    if (o.tipo === "herdar_habilidade_outra_raca")
+      return { tipo: "habilidade_outra_raca", quantidade: 1, excluir: o.restricoes?.raca_excluida ?? [] };
+    return null;
+  }
+
+  function rotuloDoPedido(pedido) {
+    if (!pedido) return "Escolha";
+    if (pedido.tipo === "pericia")
+      return pedido.bonus
+        ? `+${pedido.bonus} em ${pedido.quantidade} perícia(s)`
+        : `Treinar ${pedido.quantidade} perícia(s)`;
+    if (pedido.tipo === "poder") return `Ganhar 1 poder de ${pedido.categoria}`;
+    if (pedido.tipo === "habilidade_outra_raca") return "Herdar 1 habilidade de outra raça";
+    if (pedido.tipo === "magia") return `Aprender 1 magia de ${pedido.circulo}º círculo`;
+    if (pedido.tipo === "misto") return pedido.partes.map(rotuloDoPedido).join(" + ");
+    return "Escolha";
+  }
+
+  function escolhasDeHabilidades(r) {
+    const escolhas = [];
+    for (const hab of r.habilidades_raca ?? []) {
+      // Versátil (humano) e Híbrido (kliren) entram como `treinar_pericia` e já
+      // viram cota de perícia no passo Perícias. Repetir aqui daria o dobro.
+      // ponytail: a alternativa do humano (trocar 1 perícia por 1 poder geral)
+      // fica de fora enquanto as duas contagens não forem unificadas.
+      if ((hab.efeitos ?? []).some((e) => e.tipo === "treinar_pericia")) continue;
+
+      const ramos = [];
+      let direto = null;
+
+      for (const ef of hab.efeitos ?? []) {
+        if (ef.tipo === "escolha_de_efeitos") {
+          for (const o of ef.opcoes ?? []) {
+            const pedido = pedidoDaOpcao(o);
+            if (pedido) ramos.push({ id: o.id ?? o.tipo, rotulo: o.rotulo ?? rotuloDoPedido(pedido), pedido });
+          }
+        } else if (ef.escolha) {
+          direto = pedidoDoEfeito(ef, ef.escolha) ?? direto;
+        }
+      }
+
+      const alt = hab.alternativa;
+      if (alt) {
+        if (Array.isArray(alt.opcoes)) {
+          for (const o of alt.opcoes) {
+            const pedido = pedidoDaOpcao(o);
+            if (pedido) ramos.push({ id: o.id ?? o.tipo, rotulo: o.rotulo ?? rotuloDoPedido(pedido), pedido });
+          }
+        } else {
+          for (const ef of alt.efeitos ?? []) {
+            const pedido = pedidoDaOpcao(ef);
+            if (pedido) ramos.push({ id: "alternativa", rotulo: alt.descricao ?? "Alternativa", pedido });
+          }
+        }
+      }
+
+      // Com ramos, o "direto" é sempre o primeiro ramo repetido — descartar.
+      if (ramos.length > 0) direto = null;
+      if (ramos.length === 0 && !direto) continue;
+
+      // Perícia treinada sem bônus já é resolvida no passo Perícias
+      // (getRaceSkillBonus + picks.raca). Repetir aqui contaria duas vezes.
+      const soTreinoDePericia =
+        !direto || (direto.tipo === "pericia" && !direto.bonus);
+      const ramosSoTreino =
+        ramos.length > 0 && ramos.every((x) => x.pedido.tipo === "pericia" && !x.pedido.bonus);
+      if ((ramos.length === 0 && soTreinoDePericia && direto) || ramosSoTreino) continue;
+
+      escolhas.push({
+        chave: `raca_${hab.id ?? escolhas.length}`,
+        habilidade: hab.nome ?? titulo(hab.id ?? ""),
+        label: hab.descricao_curta ?? hab.nome ?? "Escolha",
+        ramos,
+        direto,
+      });
+    }
+    return escolhas;
   }
 
   function beneficiosDeHabilidades(r) {
@@ -183,6 +316,7 @@ function walkDir(dir) {
     const r = readJson(join(racasDir, f));
     const mod = r.modificadores_atributo ?? {};
     const comum = {
+      escolhas: escolhasDeHabilidades(r),
       descricao: r.descricao ?? null,
       tamanho: r.tamanho ?? null,
       deslocamento: r.deslocamento?.terrestre ?? null,

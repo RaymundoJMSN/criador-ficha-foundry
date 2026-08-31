@@ -4,6 +4,8 @@ import type { WizardState } from "../wizard/state.js";
 import { CompendiumIndex } from "../compendium/index.js";
 import { toNomeSlug } from "../compendium/slug.js";
 import { getClasse, respostaSubEscolha } from "../rules/classe.js";
+import { itensDeEscolhasRaciais, periciasDeEscolhasRaciais } from "../rules/raca.js";
+import { toPericiaCode } from "../rules/pericia-slug.js";
 import { habilidadesAte } from "../rules/progressao.js";
 import { resolverPoder } from "../compendium/resolver.js";
 import { getOrigem, validarBeneficios } from "../rules/origem.js";
@@ -293,6 +295,43 @@ export class ActorWriter {
           console.log(`${MODULE_ID} | ActorWriter: added ${divItems.length} divindade powers`);
         } catch (err) {
           console.warn(`${MODULE_ID} | ActorWriter: failed to add divindade powers:`, err);
+        }
+      }
+    }
+
+    // Escolhas de habilidade racial: itens (poder geral, magia, habilidade de
+    // outra raça) e bônus de perícia (+2 da Deformidade do lefou).
+    {
+      const racaRef = state.racaNome || state.racaId;
+      const ids = itensDeEscolhasRaciais(racaRef, state.escolhasPorItem);
+      const docs: unknown[] = [];
+      for (const id of ids) {
+        const doc = await resolveItem(id);
+        if (doc) docs.push(doc);
+        else console.warn(`${MODULE_ID} | ActorWriter: escolha racial "${id}" não resolveu`);
+      }
+      if (docs.length > 0) {
+        try {
+          await actor.createEmbeddedDocuments("Item", docs);
+          console.log(`${MODULE_ID} | ActorWriter: ${docs.length} escolha(s) racial(is)`);
+        } catch (err) {
+          console.warn(`${MODULE_ID} | ActorWriter: falha nas escolhas raciais:`, err);
+        }
+      }
+
+      const bonus = periciasDeEscolhasRaciais(racaRef, state.escolhasPorItem).bonus;
+      if (bonus.length > 0) {
+        const update: Record<string, unknown> = {};
+        for (const b of bonus) {
+          const code = toPericiaCode(b.pericia);
+          if (code) update[`system.pericias.${code}.outros`] = b.valor;
+        }
+        if (Object.keys(update).length > 0) {
+          try {
+            await actor.update(update);
+          } catch (err) {
+            console.warn(`${MODULE_ID} | ActorWriter: falha no bônus de perícia racial:`, err);
+          }
         }
       }
     }

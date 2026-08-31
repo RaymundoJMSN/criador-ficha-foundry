@@ -16,7 +16,7 @@ import {
 import { getClasse, cadeiaSubEscolhas } from "./classe.js";
 
 import { slotsDePoder, magiasConhecidas } from "./progressao.js";
-import { getRaceSkillBonus } from "./raca.js";
+import { getRaceSkillBonus, pendenciasDeEscolhasRaciais } from "./raca.js";
 import { buildPericiaPlan, computeTrained, type PericiaPicks } from "./pericias.js";
 import type { IndexedMagia, AnyIndexed } from "../compendium/types.js";
 
@@ -152,6 +152,10 @@ export function pendencias(state: EngineState): string[] {
     if (validateRaceModifiers(racaRef, choices).errors.length > 0) {
       faltando.push("Complete as escolhas de atributo da raça.");
     }
+  }
+
+  if (state.racaId) {
+    faltando.push(...pendenciasDeEscolhasRaciais(racaRef, state.escolhasPorItem));
   }
 
   if (state.origemId) {

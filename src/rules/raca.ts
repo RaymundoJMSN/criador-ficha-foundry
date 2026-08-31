@@ -67,3 +67,116 @@ export function getRaceFixedModifiers(idOrName: string): Partial<Record<string, 
   }
   return out;
 }
+
+/* ------------------------------------------------------------------ */
+/*  Escolhas de habilidade racial                                      */
+/* ------------------------------------------------------------------ */
+
+export interface PedidoRacial {
+  tipo: "pericia" | "poder" | "lista" | "magia" | "habilidade_outra_raca" | "misto";
+  quantidade: number;
+  /** Perícia: 0 = treinar, N = +N de bônus. */
+  bonus?: number;
+  filtro?: string | null;
+  categoria?: string;
+  circulo?: number;
+  excluir?: string[];
+  opcoes?: Array<{ id: string; rotulo: string }>;
+  partes?: PedidoRacial[];
+}
+
+export interface EscolhaRacial {
+  chave: string;
+  habilidade: string;
+  label: string;
+  ramos: Array<{ id: string; rotulo: string; pedido: PedidoRacial }>;
+  direto: PedidoRacial | null;
+}
+
+/** Escolhas que as habilidades da raça impõem (Memória Póstuma, Deformidade…). */
+export function escolhasDaRaca(idOrName: string): EscolhaRacial[] {
+  return ((getRaca(idOrName) as unknown as { escolhas?: EscolhaRacial[] })?.escolhas ?? []);
+}
+
+/** O pedido em vigor: o do ramo escolhido, ou o direto quando não há ramos. */
+export function pedidoAtivo(
+  escolha: EscolhaRacial,
+  respostas: Record<string, unknown>
+): PedidoRacial | null {
+  if (escolha.ramos.length === 0) return escolha.direto;
+  const ramoId = respostas[`${escolha.chave}_ramo`] as string | undefined;
+  return escolha.ramos.find((r) => r.id === ramoId)?.pedido ?? null;
+}
+
+/** Achata `misto` para tratar cada parte como um pedido próprio. */
+export function partesDoPedido(pedido: PedidoRacial | null): PedidoRacial[] {
+  if (!pedido) return [];
+  return pedido.tipo === "misto" ? (pedido.partes ?? []) : [pedido];
+}
+
+/**
+ * Perícias treinadas e bônus vindos das escolhas raciais.
+ * Chave da resposta: `<chave>_<indice do pedido>_<slot>`.
+ */
+export function periciasDeEscolhasRaciais(
+  idOrName: string,
+  respostas: Record<string, unknown>
+): { treinadas: string[]; bonus: Array<{ pericia: string; valor: number }> } {
+  const treinadas: string[] = [];
+  const bonus: Array<{ pericia: string; valor: number }> = [];
+
+  for (const escolha of escolhasDaRaca(idOrName)) {
+    partesDoPedido(pedidoAtivo(escolha, respostas)).forEach((pedido, pi) => {
+      if (pedido.tipo !== "pericia") return;
+      for (let i = 0; i < pedido.quantidade; i++) {
+        const valor = respostas[`${escolha.chave}_${pi}_${i}`] as string | undefined;
+        if (!valor) continue;
+        if (pedido.bonus) bonus.push({ pericia: valor, valor: pedido.bonus });
+        else treinadas.push(valor);
+      }
+    });
+  }
+  return { treinadas, bonus };
+}
+
+/** Ids de item escolhidos nas habilidades raciais (poder, magia, habilidade de outra raça). */
+export function itensDeEscolhasRaciais(
+  idOrName: string,
+  respostas: Record<string, unknown>
+): string[] {
+  const ids: string[] = [];
+  for (const escolha of escolhasDaRaca(idOrName)) {
+    partesDoPedido(pedidoAtivo(escolha, respostas)).forEach((pedido, pi) => {
+      if (!["poder", "magia", "habilidade_outra_raca"].includes(pedido.tipo)) return;
+      for (let i = 0; i < pedido.quantidade; i++) {
+        const valor = respostas[`${escolha.chave}_${pi}_${i}`] as string | undefined;
+        if (valor) ids.push(valor);
+      }
+    });
+  }
+  return ids;
+}
+
+/** O que ainda falta responder nas habilidades raciais. */
+export function pendenciasDeEscolhasRaciais(
+  idOrName: string,
+  respostas: Record<string, unknown>
+): string[] {
+  const faltando: string[] = [];
+  for (const escolha of escolhasDaRaca(idOrName)) {
+    const pedido = pedidoAtivo(escolha, respostas);
+    if (!pedido) {
+      faltando.push(`${escolha.habilidade}: escolha uma opção.`);
+      continue;
+    }
+    partesDoPedido(pedido).forEach((parte, pi) => {
+      for (let i = 0; i < parte.quantidade; i++) {
+        if (!respostas[`${escolha.chave}_${pi}_${i}`]) {
+          faltando.push(`${escolha.habilidade}: complete a escolha.`);
+          return;
+        }
+      }
+    });
+  }
+  return [...new Set(faltando)];
+}

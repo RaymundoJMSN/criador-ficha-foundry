@@ -5,7 +5,11 @@ import { getOrigem, validarBeneficios } from "../rules/origem.js";
 import { getDivindade } from "../rules/divindade.js";
 import { validateRaceModifiers } from "../rules/subescolhas.js";
 import { getClasse } from "../rules/classe.js";
-import { getRaceSkillBonus, getRaceFixedModifiers } from "../rules/raca.js";
+import {
+  getRaceSkillBonus,
+  getRaceFixedModifiers,
+  periciasDeEscolhasRaciais,
+} from "../rules/raca.js";
 import { buildPericiaPlan, computeTrained, type PericiaPicks } from "../rules/pericias.js";
 
 /** Output shape consumed by Actor.create() for tormenta20 system. */
@@ -114,8 +118,10 @@ export function getTrainedPericaCodes(state: WizardState): Record<string, true> 
       ).pericias
     : [];
 
+  const daRaca = periciasDeEscolhasRaciais(racaRef, state.escolhasPorItem).treinadas;
+
   const result: Record<string, true> = {};
-  for (const slug of [...trainedSlugs, ...beneficiosOrigem]) {
+  for (const slug of [...trainedSlugs, ...beneficiosOrigem, ...daRaca]) {
     const code = toPericiaCode(slug);
     if (code) result[code] = true;
   }
