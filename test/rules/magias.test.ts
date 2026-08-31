@@ -66,3 +66,24 @@ describe("filterMagias", () => {
     expect(filterMagias(magias, "guerreiro", 10)).toHaveLength(0);
   });
 });
+
+describe("getCirculosDesbloqueados — tabela por classe", () => {
+  it("bardo abre o 2º círculo no nv6, não no nv5", () => {
+    expect(getCirculosDesbloqueados("bardo", 5)).toEqual([1]);
+    expect(getCirculosDesbloqueados("bardo", 6)).toEqual([1, 2]);
+  });
+
+  it("clérigo sobe de círculo a cada quatro níveis (LB cap. 4)", () => {
+    expect(getCirculosDesbloqueados("clerigo", 4)).toEqual([1]);
+    expect(getCirculosDesbloqueados("clerigo", 5)).toEqual([1, 2]);
+    expect(getCirculosDesbloqueados("clerigo", 17)).toEqual([1, 2, 3, 4, 5]);
+  });
+
+  it("paladino só alcança o 1º círculo (magia vem de poder, não da classe)", () => {
+    expect(getCirculosDesbloqueados("paladino", 20)).toEqual([1]);
+  });
+
+  it("guerreiro não conjura", () => {
+    expect(getCirculosDesbloqueados("guerreiro", 20)).toEqual([]);
+  });
+});
