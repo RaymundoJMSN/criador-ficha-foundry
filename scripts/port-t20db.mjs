@@ -293,6 +293,29 @@ function walkDir(dir) {
   // Multipath choices (Arcanista → Bruxo/Mago/Feiticeiro) live in the class's
   // "Caminho do X" poder file, as opcoes[]. The slug we emit is what
   // toNomeSlug() produces for the Foundry item name ("Caminho do Arcanista: Mago").
+  const titulo = (s) =>
+    String(s)
+      .split("_")
+      .filter(Boolean)
+      .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(" ");
+
+  // Uma opção pode abrir outra escolha: Feiticeiro → linhagem → (Dracônica) tipo de dano.
+  function subEscolha(def, chave) {
+    if (!def) return null;
+    return {
+      chave,
+      label: def.label ?? titulo(def.tipo ?? "Escolha"),
+      opcoes: (def.opcoes ?? []).map((o) => {
+        const id = typeof o === "string" ? o : o.id;
+        const nome = typeof o === "string" ? titulo(o) : (o.nome ?? titulo(o.id));
+        const aninhada =
+          typeof o === "string" ? null : subEscolha(o.exige_sub_escolha, `${chave}_${id}`);
+        return { id, nome, sub: aninhada };
+      }),
+    };
+  }
+
   function caminhosDaClasse(classeId) {
     const dir = join(T20DB, "poderes", "classe", classeId);
     let files;
@@ -305,7 +328,15 @@ function walkDir(dir) {
       if (!f.startsWith("caminho")) continue;
       const p = readJson(join(dir, f));
       const opcoes = p.opcoes ?? [];
-      if (opcoes.length > 0) return opcoes.map((o) => `${p.id}_${o.id}`);
+      if (opcoes.length === 0) continue;
+      return opcoes.map((o) => ({
+        // slug = o que toNomeSlug() produz para "Caminho do Arcanista: Mago"
+        slug: `${p.id}_${o.id}`,
+        id: o.id,
+        nome: o.nome ?? titulo(o.id),
+        atributoChave: o.atributo_chave_magia ?? null,
+        sub: subEscolha(o.sub_escolha_obrigatoria, `classe_${o.sub_escolha_obrigatoria?.tipo ?? "sub"}`),
+      }));
     }
     return [];
   }

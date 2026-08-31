@@ -11,6 +11,25 @@ export interface ClassePericiaSpec {
   escolhas: { quantidade: number; opcoes: string[] };
 }
 
+/** Uma escolha dependente: linhagem do feiticeiro, tipo de dano da linhagem dracônica. */
+export interface SubEscolhaDef {
+  /** Chave em `escolhasPorItem` onde a resposta é guardada. */
+  chave: string;
+  label: string;
+  opcoes: Array<{ id: string; nome: string; sub: SubEscolhaDef | null }>;
+}
+
+/** Caminho/trilha de classe (Arcanista → Bruxo/Mago/Feiticeiro). */
+export interface CaminhoDef {
+  /** Slug do item no compêndio ("Caminho do Arcanista: Mago"). */
+  slug: string;
+  id: string;
+  nome: string;
+  /** Atributo-chave de magia que o caminho define, quando define. */
+  atributoChave: string | null;
+  sub: SubEscolhaDef | null;
+}
+
 export interface ClasseData {
   nome: string;
   pericias: ClassePericiaSpec;
@@ -24,7 +43,7 @@ export interface ClasseData {
   proficiencias: string[];
   habilidades_classe_ids: string[];
   poderes_classe_ids: string[];
-  caminhos?: string[]; // slugs of multipath choices (e.g. arcanista: feiticeiro/mago/bruxo)
+  caminhos?: CaminhoDef[];
 }
 
 const classesData = classesDataRaw as unknown as Record<string, ClasseData>;
@@ -50,4 +69,46 @@ export function getClasse(idOrName: string): ClasseData | null {
     if (slug(data.nome) === s || s.startsWith(id) || id.startsWith(s)) return data;
   }
   return null;
+}
+
+/**
+ * Percorre a cadeia de sub-escolhas do caminho escolhido, na ordem, parando na
+ * primeira ainda sem resposta. Devolve as perguntas em aberto e as respondidas.
+ */
+export function cadeiaSubEscolhas(
+  classeNome: string,
+  caminhoSlug: string,
+  escolhas: Record<string, unknown>
+): { respondidas: Record<string, string>; pendente: SubEscolhaDef | null } {
+  const respondidas: Record<string, string> = {};
+  let sub = getClasse(classeNome)?.caminhos?.find((c) => c.slug === caminhoSlug)?.sub ?? null;
+
+  while (sub) {
+    const resposta = escolhas[sub.chave] as string | undefined;
+    if (!resposta) return { respondidas, pendente: sub };
+    respondidas[sub.chave] = resposta;
+    sub = sub.opcoes.find((o) => o.id === resposta)?.sub ?? null;
+  }
+  return { respondidas, pendente: null };
+}
+
+/**
+ * Resposta da sub-escolha cuja chave começa com `classe_<prefixo>`.
+ * Usado para ler a linhagem do feiticeiro sem depender do nome exato da chave.
+ */
+export function respostaSubEscolha(
+  classeNome: string,
+  caminhoSlug: string,
+  escolhas: Record<string, unknown>,
+  prefixo: string
+): string {
+  const { respondidas } = cadeiaSubEscolhas(classeNome, caminhoSlug, escolhas);
+  const alvo = `classe_${prefixo}`;
+  for (const [chave, valor] of Object.entries(respondidas)) {
+    if (chave === alvo || chave.startsWith(`${alvo}_`)) {
+      // a mais rasa vence: `classe_linhagem_feiticeiro` antes de `..._draconica`
+      if (chave.split("_").length <= alvo.split("_").length + 1) return valor;
+    }
+  }
+  return "";
 }

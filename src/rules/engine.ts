@@ -13,7 +13,7 @@ import {
   validateRaceModifiers,
   getRaceAttributeTotals,
 } from "./subescolhas.js";
-import { getClasse } from "./classe.js";
+import { getClasse, cadeiaSubEscolhas } from "./classe.js";
 
 import { slotsDePoder, magiasConhecidas } from "./progressao.js";
 import { getRaceSkillBonus } from "./raca.js";
@@ -162,8 +162,12 @@ export function pendencias(state: EngineState): string[] {
   const classe = getClasse(classeRef);
   if (classe) {
     const caminhos = classe.caminhos ?? [];
-    if (caminhos.length > 0 && !state.escolhasPorItem["classe_caminho"]) {
+    const caminhoEscolhido = (state.escolhasPorItem["classe_caminho"] as string) ?? "";
+    if (caminhos.length > 0 && !caminhoEscolhido) {
       faltando.push("Escolha o caminho da classe.");
+    } else if (caminhoEscolhido) {
+      const { pendente } = cadeiaSubEscolhas(classeRef, caminhoEscolhido, state.escolhasPorItem);
+      if (pendente) faltando.push(`${pendente.label}.`);
     }
 
     const choices = (state.escolhasPorItem["raca_modificadores"] as string[][]) ?? [];

@@ -3,7 +3,7 @@ import { mapStateToActorData, getTrainedPericaCodes } from "./mapper.js";
 import type { WizardState } from "../wizard/state.js";
 import { CompendiumIndex } from "../compendium/index.js";
 import { toNomeSlug } from "../compendium/slug.js";
-import { getClasse } from "../rules/classe.js";
+import { getClasse, respostaSubEscolha } from "../rules/classe.js";
 import { habilidadesAte } from "../rules/progressao.js";
 import { resolverPoder } from "../compendium/resolver.js";
 import { getOrigem, validarBeneficios } from "../rules/origem.js";
@@ -160,7 +160,7 @@ export class ActorWriter {
 
     // Add chosen caminho (if class has caminhos)
     const classeCaminhoSlug = state.escolhasPorItem["classe_caminho"] as string | undefined;
-    if (classeCaminhoSlug && classeData?.caminhos?.includes(classeCaminhoSlug)) {
+    if (classeCaminhoSlug && classeData?.caminhos?.some((c) => c.slug === classeCaminhoSlug)) {
       const allPoderes = CompendiumIndex.getAll("poder");
       const caminhoItem = resolverPoder(classeCaminhoSlug, classeSlug, allPoderes)?.item;
       if (caminhoItem) {
@@ -172,6 +172,34 @@ export class ActorWriter {
           } catch (err) {
             console.warn(`${MODULE_ID} | ActorWriter: failed to add caminho:`, err);
           }
+        }
+      }
+    }
+
+    // Linhagem do feiticeiro: no 1º nível ele recebe a herança BÁSICA
+    // ("Linhagem Dracônica Básica" no compêndio) — LB cap. 4, Arcanista.
+    if (classeCaminhoSlug) {
+      const linhagem = respostaSubEscolha(
+        classeSlug,
+        classeCaminhoSlug,
+        state.escolhasPorItem,
+        "linhagem"
+      );
+      if (linhagem) {
+        const allPoderes = CompendiumIndex.getAll("poder");
+        const item = resolverPoder(`linhagem_basica_${linhagem}`, classeSlug, allPoderes)?.item;
+        if (item) {
+          const doc = await resolveItem(item.id);
+          if (doc) {
+            try {
+              await actor.createEmbeddedDocuments("Item", [doc]);
+              console.log(`${MODULE_ID} | ActorWriter: linhagem "${linhagem}" adicionada`);
+            } catch (err) {
+              console.warn(`${MODULE_ID} | ActorWriter: falha ao adicionar linhagem:`, err);
+            }
+          }
+        } else {
+          console.warn(`${MODULE_ID} | ActorWriter: linhagem "${linhagem}" não achada no compêndio`);
         }
       }
     }

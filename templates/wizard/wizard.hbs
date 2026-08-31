@@ -187,6 +187,17 @@
         </div>
       </div>
       {{/if}}
+      {{#each subEscolhas}}
+      <div class="form-group" style="margin-top:10px;">
+        <label for="sub-{{this.chave}}">{{this.label}}</label>
+        <select id="sub-{{this.chave}}" name="subescolha" data-chave="{{this.chave}}" style="width:100%;padding:6px;">
+          <option value="">— escolha —</option>
+          {{#each this.opcoes}}
+          <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.nome}}</option>
+          {{/each}}
+        </select>
+      </div>
+      {{/each}}
       {{#if errors.length}}<ul class="t20w-errors">{{#each errors}}<li>{{this}}</li>{{/each}}</ul>{{/if}}
     </section>
     {{/if}}

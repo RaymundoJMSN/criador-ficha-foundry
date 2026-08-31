@@ -490,6 +490,18 @@ export function defineWizardApp(): void {
         });
       });
 
+      // ── Sub-escolhas dependentes do caminho (linhagem, tipo de dano) ─────
+      root.querySelectorAll<HTMLSelectElement>("select[name='subescolha']").forEach((sel) => {
+        sel.addEventListener("change", () => {
+          const chave = sel.dataset["chave"];
+          if (!chave) return;
+          this._state.apply({
+            escolhasPorItem: { ...this._state.escolhasPorItem, [chave]: sel.value },
+          });
+          void this.render(false);
+        });
+      });
+
       // ── Caminho radios → save + re-render ────────────────────────────────
       const caminhoInputs = root.querySelectorAll<HTMLInputElement>('input[name="classe_caminho"]');
       caminhoInputs.forEach((inp) => {

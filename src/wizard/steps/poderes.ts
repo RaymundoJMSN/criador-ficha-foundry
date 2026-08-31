@@ -1,5 +1,5 @@
 import { toNomeSlug } from "../../compendium/slug.js";
-import { getClasse } from "../../rules/classe.js";
+import { getClasse, respostaSubEscolha } from "../../rules/classe.js";
 import { describeUnmet, type PartialWizardState } from "../../rules/poderes.js";
 import { getRaceAttributeTotals } from "../../rules/subescolhas.js";
 import { habilidadesAte, slotsDePoder } from "../../rules/progressao.js";
@@ -123,7 +123,12 @@ export function preparePoderesContext(
       .map((id) => allMagias.find((m) => m.id === id)?.name)
       .filter((n): n is string => Boolean(n))
       .map(toNomeSlug),
-    linhagem: (state.escolhasPorItem["classe_linhagem"] as string) ?? "",
+    linhagem: respostaSubEscolha(
+      classeSlug,
+      (state.escolhasPorItem["classe_caminho"] as string) ?? "",
+      state.escolhasPorItem,
+      "linhagem"
+    ),
     escolaMagia: (state.escolhasPorItem["classe_escola"] as string) ?? "",
     caminho: (state.escolhasPorItem["classe_caminho"] as string) ?? "",
   };

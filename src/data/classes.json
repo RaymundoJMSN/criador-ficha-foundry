@@ -99,9 +99,77 @@
       "transliteracao_impossivel"
     ],
     "caminhos": [
-      "caminho_do_arcanista_bruxo",
-      "caminho_do_arcanista_feiticeiro",
-      "caminho_do_arcanista_mago"
+      {
+        "slug": "caminho_do_arcanista_bruxo",
+        "id": "bruxo",
+        "nome": "Bruxo",
+        "atributoChave": "int",
+        "sub": null
+      },
+      {
+        "slug": "caminho_do_arcanista_feiticeiro",
+        "id": "feiticeiro",
+        "nome": "Feiticeiro",
+        "atributoChave": "car",
+        "sub": {
+          "chave": "classe_linhagem_feiticeiro",
+          "label": "Escolha sua linhagem sobrenatural",
+          "opcoes": [
+            {
+              "id": "draconica",
+              "nome": "Dracônica",
+              "sub": {
+                "chave": "classe_linhagem_feiticeiro_draconica",
+                "label": "Tipo De Dano",
+                "opcoes": [
+                  {
+                    "id": "acido",
+                    "nome": "Acido",
+                    "sub": null
+                  },
+                  {
+                    "id": "eletricidade",
+                    "nome": "Eletricidade",
+                    "sub": null
+                  },
+                  {
+                    "id": "fogo",
+                    "nome": "Fogo",
+                    "sub": null
+                  },
+                  {
+                    "id": "frio",
+                    "nome": "Frio",
+                    "sub": null
+                  }
+                ]
+              }
+            },
+            {
+              "id": "feerica",
+              "nome": "Feérica",
+              "sub": null
+            },
+            {
+              "id": "rubra",
+              "nome": "Rubra",
+              "sub": null
+            },
+            {
+              "id": "abencoada",
+              "nome": "Abençoada",
+              "sub": null
+            }
+          ]
+        }
+      },
+      {
+        "slug": "caminho_do_arcanista_mago",
+        "id": "mago",
+        "nome": "Mago",
+        "atributoChave": "int",
+        "sub": null
+      }
     ]
   },
   "barbaro": {
@@ -549,8 +617,20 @@
       "torre_armada"
     ],
     "caminhos": [
-      "caminho_do_cavaleiro_bastiao",
-      "caminho_do_cavaleiro_montaria"
+      {
+        "slug": "caminho_do_cavaleiro_bastiao",
+        "id": "bastiao",
+        "nome": "Bastião",
+        "atributoChave": null,
+        "sub": null
+      },
+      {
+        "slug": "caminho_do_cavaleiro_montaria",
+        "id": "montaria",
+        "nome": "Montaria",
+        "atributoChave": null,
+        "sub": null
+      }
     ]
   },
   "clerigo": {

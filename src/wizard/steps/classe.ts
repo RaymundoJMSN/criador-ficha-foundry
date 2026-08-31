@@ -19,6 +19,15 @@ export interface ClasseContext {
   caminhos: Array<{ slug: string; nome: string; selected: boolean }>;
   classeCaminho: string | null;
   requiresCaminho: boolean;
+  /** Escolhas dependentes do caminho, na ordem em que devem ser respondidas. */
+  subEscolhas: SubEscolhaView[];
+}
+
+export interface SubEscolhaView {
+  chave: string;
+  label: string;
+  escolhido: string | null;
+  opcoes: Array<{ id: string; nome: string; selected: boolean }>;
 }
 
 export function prepareClasseContext(
@@ -32,18 +41,30 @@ export function prepareClasseContext(
   // Resolve T20-DB data for caminho sub-choice
   const classeSlug = toNomeSlug(state.classeNome ?? selectedClasse?.name ?? "");
   const classeData = classeSlug ? getClasse(classeSlug) : null;
-  const caminhoSlugs = classeData?.caminhos ?? [];
+  const caminhoDefs = classeData?.caminhos ?? [];
   const classeCaminho = (state.escolhasPorItem["classe_caminho"] as string | undefined) ?? null;
 
-  function prettifySlug(slug: string): string {
-    return slug.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase());
-  }
-
-  const caminhos = caminhoSlugs.map((slug) => ({
-    slug,
-    nome: resolvePoderNome(slug) ?? prettifySlug(slug),
-    selected: slug === classeCaminho,
+  const caminhos = caminhoDefs.map((c) => ({
+    slug: c.slug,
+    nome: resolvePoderNome(c.slug) ?? c.nome,
+    selected: c.slug === classeCaminho,
   }));
+
+  // Caminho escolhido pode abrir uma escolha, que pode abrir outra
+  // (Feiticeiro -> linhagem -> Draconica -> tipo de dano). So mostra o proximo
+  // nivel depois que o anterior foi respondido.
+  const subEscolhas: SubEscolhaView[] = [];
+  let sub = caminhoDefs.find((c) => c.slug === classeCaminho)?.sub ?? null;
+  while (sub) {
+    const escolhido = (state.escolhasPorItem[sub.chave] as string | undefined) ?? null;
+    subEscolhas.push({
+      chave: sub.chave,
+      label: sub.label,
+      escolhido,
+      opcoes: sub.opcoes.map((o) => ({ id: o.id, nome: o.nome, selected: o.id === escolhido })),
+    });
+    sub = sub.opcoes.find((o) => o.id === escolhido)?.sub ?? null;
+  }
 
   return {
     stepTitle: "Classe",
@@ -59,6 +80,7 @@ export function prepareClasseContext(
     errors,
     caminhos,
     classeCaminho,
-    requiresCaminho: caminhoSlugs.length > 0,
+    requiresCaminho: caminhoDefs.length > 0,
+    subEscolhas,
   };
 }
