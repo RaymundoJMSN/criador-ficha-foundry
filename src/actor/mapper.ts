@@ -1,7 +1,7 @@
 import { CHARACTER_TYPE } from "../constants.js";
 import type { WizardState } from "../wizard/state.js";
 import { toPericiaCode } from "../rules/pericia-slug.js";
-import { getOrigem } from "../rules/origem.js";
+import { getOrigem, validarBeneficios } from "../rules/origem.js";
 import { getDivindade } from "../rules/divindade.js";
 import { validateRaceModifiers } from "../rules/subescolhas.js";
 import { getClasse } from "../rules/classe.js";
@@ -106,8 +106,16 @@ export function getTrainedPericaCodes(state: WizardState): Record<string, true> 
   } else {
     trainedSlugs = state.periciasTreinadas;
   }
+  // Perícias vindas dos benefícios de origem (nunca chegavam na ficha antes).
+  const beneficiosOrigem = state.origemId
+    ? validarBeneficios(
+        state.origemId,
+        (state.escolhasPorItem["origem_beneficios"] as string[]) ?? []
+      ).pericias
+    : [];
+
   const result: Record<string, true> = {};
-  for (const slug of trainedSlugs) {
+  for (const slug of [...trainedSlugs, ...beneficiosOrigem]) {
     const code = toPericiaCode(slug);
     if (code) result[code] = true;
   }

@@ -2,7 +2,7 @@ import { WizardStep } from "./steps.js";
 import { validatePointBuy, listMetodos } from "./atributos.js";
 import type { AtributosBase } from "./atributos.js";
 import { filterMagias } from "./magias.js";
-import { listOrigens } from "./origem.js";
+import { listOrigens, validarBeneficios } from "./origem.js";
 import {
   listDivindadesParaPersonagem,
   isDivindadeObrigatoria,
@@ -76,9 +76,15 @@ export function validate(step: WizardStep, state: EngineState): ValidationResult
       break;
     }
 
-    case WizardStep.Origem:
-      if (!state.origemId) errors.push("Origem é obrigatória.");
+    case WizardStep.Origem: {
+      if (!state.origemId) {
+        errors.push("Origem é obrigatória.");
+        break;
+      }
+      const escolhidos = (state.escolhasPorItem["origem_beneficios"] as string[]) ?? [];
+      errors.push(...validarBeneficios(state.origemId, escolhidos).errors);
       break;
+    }
 
     case WizardStep.Classe:
       if (!state.classeId) errors.push("Classe é obrigatória.");

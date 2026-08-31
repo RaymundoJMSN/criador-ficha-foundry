@@ -475,13 +475,17 @@ export function defineWizardApp(): void {
         });
       });
 
-      // ── Origem pick-2 radio → save to escolhasPorItem ───────────────────
-      root.querySelectorAll<HTMLInputElement>("[name='origem_poder_escolha']").forEach((radio) => {
-        radio.addEventListener("change", (e) => {
-          const val = (e.target as HTMLInputElement).value;
+      // ── Origem: marcar 2 benefícios (perícia e/ou poder) ────────────────
+      const beneficios = root.querySelectorAll<HTMLInputElement>("[name='origem_beneficio']");
+      beneficios.forEach((chk) => {
+        chk.addEventListener("change", () => {
+          const marcados = Array.from(beneficios)
+            .filter((c) => c.checked)
+            .map((c) => c.value);
           this._state.apply({
-            escolhasPorItem: { ...this._state.escolhasPorItem, origem_poder: val },
+            escolhasPorItem: { ...this._state.escolhasPorItem, origem_beneficios: marcados },
           });
+          void this.render(false);
         });
       });
 

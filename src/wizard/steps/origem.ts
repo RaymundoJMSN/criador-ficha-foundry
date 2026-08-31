@@ -1,8 +1,10 @@
 import {
   listOrigens,
   getOrigem,
-  getPick2Candidates,
+  getBeneficiosPlano,
+  validarBeneficios,
   formatItensIniciais,
+  type BeneficioOpcao,
 } from "../../rules/origem.js";
 import type { WizardState } from "../state.js";
 
@@ -12,9 +14,7 @@ export interface OrigemOption {
   selected: boolean;
 }
 
-export interface PoderRef {
-  id: string;
-  nome: string;
+export interface BeneficioRef extends BeneficioOpcao {
   selected: boolean;
 }
 
@@ -23,10 +23,12 @@ export interface OrigemDetail {
   nome: string;
   pericias: string[];
   itens_iniciais: string[];
-  poder_auto: string | null;
-  poder_auto_nome: string | null;
-  pick2_candidates: PoderRef[];
-  pick2_escolhido: string | null;
+  /** Pool de benefícios: o jogador marca dois (perícia e/ou poder). */
+  beneficios: BeneficioRef[];
+  beneficiosQtd: number;
+  beneficiosMarcados: number;
+  /** Pool pequeno: tudo entra sem escolha. */
+  beneficiosAuto: boolean;
 }
 
 export interface OrigemContext {
@@ -34,15 +36,6 @@ export interface OrigemContext {
   origemOptions: OrigemOption[];
   selectedDetail: OrigemDetail | null;
   errors: string[];
-}
-
-/** Fallback: turn a power slug into a human-ish label when no pack name resolves. */
-function prettifySlug(slug: string): string {
-  return slug
-    .split("_")
-    .filter(Boolean)
-    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
-    .join(" ");
 }
 
 /**
@@ -54,8 +47,6 @@ export function prepareOrigemContext(
   errors: string[] = [],
   resolvePoderNome: (slug: string) => string | null = () => null
 ): OrigemContext {
-  const nomeOf = (slug: string): string => resolvePoderNome(slug) ?? prettifySlug(slug);
-
   const origens = listOrigens();
   const origemOptions: OrigemOption[] = origens.map((o) => ({
     id: o.id,
@@ -67,24 +58,25 @@ export function prepareOrigemContext(
   let selectedDetail: OrigemDetail | null = null;
 
   if (selected) {
-    const pick2Escolhido = (state.escolhasPorItem["origem_poder"] as string | undefined) ?? null;
-    const candidates: PoderRef[] = getPick2Candidates(selected.id).map((slug) => ({
-      id: slug,
-      nome: nomeOf(slug),
-      selected: slug === pick2Escolhido,
+    const escolhidos = new Set(
+      (state.escolhasPorItem["origem_beneficios"] as string[] | undefined) ?? []
+    );
+    const plano = getBeneficiosPlano(selected.id, resolvePoderNome);
+    const beneficios: BeneficioRef[] = plano.opcoes.map((o) => ({
+      ...o,
+      selected: plano.autoAplicar || escolhidos.has(o.token),
     }));
     selectedDetail = {
       id: selected.id,
       nome: selected.nome,
       pericias: selected.beneficios.pericias,
       itens_iniciais: formatItensIniciais(selected.id),
-      poder_auto: selected.beneficios.poder_unico_id,
-      poder_auto_nome: selected.beneficios.poder_unico_id
-        ? nomeOf(selected.beneficios.poder_unico_id)
-        : null,
-      pick2_candidates: candidates,
-      pick2_escolhido: pick2Escolhido,
+      beneficios,
+      beneficiosQtd: plano.quantidade,
+      beneficiosMarcados: beneficios.filter((b) => b.selected).length,
+      beneficiosAuto: plano.autoAplicar,
     };
+    errors = [...errors, ...validarBeneficios(selected.id, [...escolhidos]).errors];
   }
 
   return {

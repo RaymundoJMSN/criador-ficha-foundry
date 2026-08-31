@@ -134,3 +134,23 @@ describe("mapStateToActorData — nível é derivado, não gravado", () => {
     expect((data.system as Record<string, unknown>)["attributes"]).toBeUndefined();
   });
 });
+
+describe("getTrainedPericaCodes — perícias de origem", () => {
+  it("treina a perícia escolhida como benefício de origem", () => {
+    const state = new WizardState({
+      nome: "Nobre",
+      origemId: "aristocrata",
+      escolhasPorItem: { origem_beneficios: ["pericia:nobreza", "poder:sangue_azul"] },
+    });
+    expect(getTrainedPericaCodes(state)["nobr"]).toBe(true);
+  });
+
+  it("não treina perícia que não foi escolhida", () => {
+    const state = new WizardState({
+      nome: "Nobre",
+      origemId: "aristocrata",
+      escolhasPorItem: { origem_beneficios: ["poder:comandar", "poder:sangue_azul"] },
+    });
+    expect(getTrainedPericaCodes(state)["nobr"]).toBeUndefined();
+  });
+});

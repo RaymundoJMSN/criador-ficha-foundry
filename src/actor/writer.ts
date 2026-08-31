@@ -6,7 +6,7 @@ import { toNomeSlug } from "../compendium/slug.js";
 import { getClasse } from "../rules/classe.js";
 import { habilidadesAte } from "../rules/progressao.js";
 import { resolverPoder } from "../compendium/resolver.js";
-import { getOrigem } from "../rules/origem.js";
+import { getOrigem, validarBeneficios } from "../rules/origem.js";
 import { getDivindade } from "../rules/divindade.js";
 
 /**
@@ -187,9 +187,10 @@ export class ActorWriter {
       ];
       const origemItems: unknown[] = [];
 
-      // Auto-granted poder from origem (e.g. "Sangue Azul" for Aristocrata)
-      if (origem.beneficios.poder_unico_id) {
-        const slug = origem.beneficios.poder_unico_id;
+      // Benefícios escolhidos: DOIS da lista (perícia e/ou poder). O poder
+      // exclusivo é uma das opções, não um brinde automático (LB cap. 2).
+      const escolhidos = (state.escolhasPorItem["origem_beneficios"] as string[]) ?? [];
+      for (const slug of validarBeneficios(origem.id, escolhidos).poderes) {
         const match = resolverPoder(slug, classeSlug, allPoderes)?.item;
         if (match) {
           const doc = await resolveItem(match.id);
@@ -197,18 +198,6 @@ export class ActorWriter {
           else console.warn(`${MODULE_ID} | ActorWriter: origem poder "${slug}" resolved null`);
         } else {
           console.warn(`${MODULE_ID} | ActorWriter: origem poder "${slug}" not found`);
-        }
-      }
-
-      // Chosen pick-2 poder
-      const pick2Slug = state.escolhasPorItem["origem_poder"] as string | undefined;
-      if (pick2Slug) {
-        const match = resolverPoder(pick2Slug, classeSlug, allPoderes)?.item;
-        if (match) {
-          const doc = await resolveItem(match.id);
-          if (doc) origemItems.push(doc);
-        } else {
-          console.warn(`${MODULE_ID} | ActorWriter: pick2 poder "${pick2Slug}" not found`);
         }
       }
 
