@@ -111,6 +111,19 @@ function walkDir(dir) {
     }
   }
   writeJson(join(OUT, "prereqs.json"), prereqs);
+
+  // 5b. poder-subcategoria.json — slug → subcategoria. Só os pré-requisitos
+  // `poder_subcategoria`/`poder_tipo` precisam disso (contar poderes de um grupo).
+  const subcats = {};
+  for (const f of poderFiles) {
+    try {
+      const p = readJson(f);
+      if (p.id && p.subcategoria) subcats[p.id] = p.subcategoria;
+    } catch {
+      // skip malformed
+    }
+  }
+  writeJson(join(OUT, "poder-subcategoria.json"), subcats);
 }
 
 // 8. racas.json — all raças consolidated

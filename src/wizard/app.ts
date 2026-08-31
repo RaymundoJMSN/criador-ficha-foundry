@@ -303,7 +303,13 @@ export function defineWizardApp(): void {
           const poderes = CompendiumIndex.getAll("poder") as IndexedPoder[];
           const resolvePoderNomePoderes = (slug: string): string | null =>
             poderes.find((p) => toNomeSlug(p.name) === slug)?.name ?? null;
-          stepCtx = preparePoderesContext(state, poderes, errors, resolvePoderNomePoderes);
+          stepCtx = preparePoderesContext(
+            state,
+            poderes,
+            errors,
+            resolvePoderNomePoderes,
+            CompendiumIndex.getAll("magia")
+          );
           break;
         }
         case WizardStep.Magias: {

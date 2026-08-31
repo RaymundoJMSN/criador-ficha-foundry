@@ -1,9 +1,10 @@
 import { toNomeSlug } from "../../compendium/slug.js";
 import { getClasse } from "../../rules/classe.js";
-import { describeUnmet } from "../../rules/poderes.js";
+import { describeUnmet, type PartialWizardState } from "../../rules/poderes.js";
+import { getRaceAttributeTotals } from "../../rules/subescolhas.js";
 import { habilidadesAte, slotsDePoder } from "../../rules/progressao.js";
 import { resolverPoder } from "../../compendium/resolver.js";
-import type { IndexedPoder } from "../../compendium/types.js";
+import type { IndexedMagia, IndexedPoder } from "../../compendium/types.js";
 import type { WizardState } from "../state.js";
 
 export interface PoderEntry {
@@ -45,7 +46,8 @@ export function preparePoderesContext(
   state: WizardState,
   allPoderes: IndexedPoder[],
   errors: string[] = [],
-  resolvePoderNome: (slug: string) => string | null = () => null
+  resolvePoderNome: (slug: string) => string | null = () => null,
+  allMagias: IndexedMagia[] = []
 ): PoderesContext {
   const classeSlug = toNomeSlug(state.classeNome ?? "");
   const classeData = getClasse(classeSlug);
@@ -80,18 +82,50 @@ export function preparePoderesContext(
   // ("Ambidestria (Guerreiro)"), então resolve slug → item e guarda o id resolvido.
   // Slug sem item = conteúdo não instalado (Heróis de Arton) — some da lista, sem erro.
   const idsDaClasse = new Set<string>();
+  const idParaSlug = new Map<string, string>();
   for (const slug of classeData.poderes_classe_ids ?? []) {
     const achado = resolverPoder(slug, classeSlug, allPoderes);
-    if (achado) idsDaClasse.add(achado.item.id);
+    if (!achado) continue;
+    idsDaClasse.add(achado.item.id);
+    idParaSlug.set(achado.item.id, slug);
   }
 
-  const stateForEligibility = {
+  // Pré-requisito compara slug do T20-DB, não id de compêndio nem nome de item:
+  // "Ambidestria (Guerreiro)" precisa virar `ambidestria` para casar com {tipo:"poder"}.
+  const slugDoItem = (p: IndexedPoder) => idParaSlug.get(p.id) ?? toNomeSlug(p.name);
+  const poderesEscolhidos = state.poderes
+    .map((id) => allPoderes.find((p) => p.id === id))
+    .filter((p): p is IndexedPoder => Boolean(p))
+    .map(slugDoItem);
+
+  const racaRef = state.racaNome || state.racaId;
+  const escolhasRaca = (state.escolhasPorItem["raca_modificadores"] as string[][]) ?? [];
+  const totaisRaca = getRaceAttributeTotals(racaRef, escolhasRaca);
+  const atributos = Object.fromEntries(
+    (["for", "des", "con", "int", "sab", "car"] as const).map((a) => [
+      a,
+      (state.atributosBase[a] ?? 0) + (totaisRaca[a] ?? 0),
+    ])
+  );
+
+  const stateForEligibility: PartialWizardState = {
     nivel: state.nivel,
-    atributosBase: state.atributosBase,
-    classeId: state.classeId,
-    racaId: state.racaId,
+    atributos,
+    classeSlug,
+    racaSlug: toNomeSlug(state.racaNome || ""),
     periciasTreinadas: state.periciasTreinadas,
-    poderes: state.poderes,
+    poderes: poderesEscolhidos,
+    habilidadesClasse: habilidadeSlugs,
+    divindadeSlug: state.divindadeId,
+    proficiencias: classeData.proficiencias ?? [],
+    // state.magias guarda id de compêndio; o pré-req {tipo:"magia"} compara slug.
+    magias: state.magias
+      .map((id) => allMagias.find((m) => m.id === id)?.name)
+      .filter((n): n is string => Boolean(n))
+      .map(toNomeSlug),
+    linhagem: (state.escolhasPorItem["classe_linhagem"] as string) ?? "",
+    escolaMagia: (state.escolhasPorItem["classe_escola"] as string) ?? "",
+    caminho: (state.escolhasPorItem["classe_caminho"] as string) ?? "",
   };
 
   // "Sempre que você recebe um poder de classe, pode trocá-lo por um poder geral"
@@ -99,8 +133,7 @@ export function preparePoderesContext(
   const entries: PoderEntry[] = allPoderes
     .filter((p) => idsDaClasse.has(p.id) || p.system.tipo === "geral")
     .map((p) => {
-      const slug = toNomeSlug(p.name);
-      const unmet = describeUnmet(slug, stateForEligibility);
+      const unmet = describeUnmet(slugDoItem(p), stateForEligibility);
       return {
         id: p.id,
         name: p.name,
