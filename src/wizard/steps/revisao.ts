@@ -1,4 +1,5 @@
 import { getOrigem } from "../../rules/origem.js";
+import { pendencias, type EngineState } from "../../rules/engine.js";
 import { getDivindade } from "../../rules/divindade.js";
 import type { WizardState } from "../state.js";
 
@@ -16,6 +17,8 @@ export interface RevisaoContext {
   equipamentoSelecionado: number;
   dinheiroRestante: number;
   isComplete: boolean;
+  /** O que ainda falta; vazio = pode criar. */
+  pendencias: string[];
   errors: string[];
 }
 
@@ -37,6 +40,8 @@ export function prepareRevisaoContext(
   const origem = getOrigem(state.origemId);
   const divindade = state.divindadeId ? getDivindade(state.divindadeId) : null;
 
+  const faltando = pendencias(state as unknown as EngineState);
+
   const atributos = (["for", "des", "con", "int", "sab", "car"] as const).map((id) => ({
     label: ATTR_LABELS[id],
     value: state.atributosBase[id] ?? 0,
@@ -55,7 +60,8 @@ export function prepareRevisaoContext(
     magiasSelecionadas: state.magias.length,
     equipamentoSelecionado: state.equipamento.length,
     dinheiroRestante: state.dinheiroRestante,
-    isComplete: state.isComplete(),
+    isComplete: faltando.length === 0,
+    pendencias: faltando,
     errors,
   };
 }

@@ -14,6 +14,8 @@ import {
   getRaceAttributeTotals,
 } from "./subescolhas.js";
 import { getClasse } from "./classe.js";
+
+import { slotsDePoder, magiasConhecidas } from "./progressao.js";
 import { getRaceSkillBonus } from "./raca.js";
 import { buildPericiaPlan, computeTrained, type PericiaPicks } from "./pericias.js";
 import type { IndexedMagia, AnyIndexed } from "../compendium/types.js";
@@ -123,13 +125,79 @@ export function validate(step: WizardStep, state: EngineState): ValidationResult
       break;
 
     case WizardStep.Revisao:
-      if (!state.nome.trim()) errors.push("Nome é obrigatório.");
-      if (!state.classeId) errors.push("Classe é obrigatória.");
-      if (!state.racaId) errors.push("Raça é obrigatória.");
+      errors.push(...pendencias(state));
       break;
   }
 
   return { valid: errors.length === 0, errors };
+}
+
+/**
+ * Tudo que ainda falta para a ficha estar completa. Cada linha é uma pendência
+ * legível — é o que a Revisão mostra e o que bloqueia o botão Criar.
+ */
+export function pendencias(state: EngineState): string[] {
+  const faltando: string[] = [];
+
+  if (!state.nome.trim()) faltando.push("Dê um nome ao personagem.");
+  if (!state.racaId) faltando.push("Escolha uma raça.");
+  if (!state.origemId) faltando.push("Escolha uma origem.");
+  if (!state.classeId) faltando.push("Escolha uma classe.");
+
+  const classeRef = state.classeNome || state.classeId;
+  const racaRef = state.racaNome || state.racaId;
+
+  if (state.racaId && getRaceModifierGroups(racaRef).length > 0) {
+    const choices = (state.escolhasPorItem["raca_modificadores"] as string[][]) ?? [];
+    if (validateRaceModifiers(racaRef, choices).errors.length > 0) {
+      faltando.push("Complete as escolhas de atributo da raça.");
+    }
+  }
+
+  if (state.origemId) {
+    const escolhidos = (state.escolhasPorItem["origem_beneficios"] as string[]) ?? [];
+    faltando.push(...validarBeneficios(state.origemId, escolhidos).errors);
+  }
+
+  const classe = getClasse(classeRef);
+  if (classe) {
+    const caminhos = classe.caminhos ?? [];
+    if (caminhos.length > 0 && !state.escolhasPorItem["classe_caminho"]) {
+      faltando.push("Escolha o caminho da classe.");
+    }
+
+    const choices = (state.escolhasPorItem["raca_modificadores"] as string[][]) ?? [];
+    const intFinal =
+      (state.atributosBase.int ?? 0) + (getRaceAttributeTotals(racaRef, choices).int ?? 0);
+    const plan = buildPericiaPlan(classe, intFinal, getRaceSkillBonus(racaRef));
+    const picks = (state.escolhasPorItem["pericias"] as PericiaPicks) ?? {
+      obrigatorias: [],
+      escolhas: [],
+      extras_int: [],
+      raca: [],
+    };
+    faltando.push(...computeTrained(plan, picks).errors);
+  }
+
+  const slots = slotsDePoder(classeRef, state.nivel);
+  if (state.poderes.length < slots) {
+    faltando.push(`Escolha ${slots} poder(es) — ${state.poderes.length} escolhido(s).`);
+  }
+
+  const cotaMagias = magiasConhecidas(
+    classeRef,
+    state.nivel,
+    (state.escolhasPorItem["classe_caminho"] as string) ?? ""
+  );
+  if (state.magias.length < cotaMagias) {
+    faltando.push(`Escolha ${cotaMagias} magia(s) — ${state.magias.length} escolhida(s).`);
+  }
+
+  if (isDivindadeObrigatoria(state.classeId) && !state.divindadeId) {
+    faltando.push("Esta classe exige uma divindade.");
+  }
+
+  return faltando;
 }
 
 export function getOptions(

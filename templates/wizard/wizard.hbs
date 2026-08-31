@@ -516,6 +516,14 @@
         <li>Equipamento: {{equipamentoSelecionado}} item(s)</li>
         <li>Dinheiro restante: T$ {{dinheiroRestante}}</li>
       </ul>
+      {{#if pendencias.length}}
+      <div class="t20w-pendencias" style="margin-top:10px;padding:10px;border-radius:4px;background:rgba(200,60,60,0.15);">
+        <strong style="font-size:0.9em;">Falta para poder criar:</strong>
+        <ul style="margin:6px 0 0;padding-left:18px;font-size:0.85em;">
+          {{#each pendencias}}<li>{{this}}</li>{{/each}}
+        </ul>
+      </div>
+      {{/if}}
     </section>
     {{/if}}
 
@@ -528,6 +536,6 @@
   <footer class="t20w-footer" style="flex-shrink:0;padding:8px 12px;border-top:1px solid #555;display:flex;gap:8px;">
     {{#if showBack}}<button type="button" data-action="back">← Voltar</button>{{/if}}
     {{#if showNext}}<button type="button" data-action="next">Próximo →</button>{{/if}}
-    {{#if showCreate}}<button type="button" data-action="create">✦ Criar Personagem</button>{{/if}}
+    {{#if showCreate}}<button type="button" data-action="create" {{#unless isComplete}}disabled title="Resolva as pendências acima"{{/unless}}>✦ Criar Personagem</button>{{/if}}
   </footer>
 </div>

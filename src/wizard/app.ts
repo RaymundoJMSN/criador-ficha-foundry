@@ -25,6 +25,7 @@ import { prepareMagiasContext } from "./steps/magias.js";
 import { prepareEquipamentoContext } from "./steps/equipamento.js";
 import { prepareRevisaoContext } from "./steps/revisao.js";
 import { ActorWriter } from "../actor/writer.js";
+import { pendencias, type EngineState } from "../rules/engine.js";
 import type {
   IndexedClasse,
   IndexedRace,
@@ -628,8 +629,9 @@ export function defineWizardApp(): void {
         const s = target.dataset["step"] as WizardStep;
         if (s) this.goToStep(s);
       } else if (action === "create") {
-        if (!this._state.isComplete()) {
-          this._errors = ["Preencha todos os campos obrigatórios antes de criar o personagem."];
+        const faltando = pendencias(this._state as unknown as EngineState);
+        if (faltando.length > 0) {
+          this._errors = faltando;
           this.render();
           return;
         }
