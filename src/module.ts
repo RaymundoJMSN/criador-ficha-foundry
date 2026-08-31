@@ -10,32 +10,34 @@ Hooks.once("init", () => {
     const style = document.createElement("style");
     style.id = "t20w-wizard-styles";
     style.textContent = `
-  .t20w-radio-group input[type="radio"],
-  .t20w-step input[type="radio"] {
-    appearance: none;
-    -webkit-appearance: none;
-    width: 16px;
-    height: 16px;
-    min-width: 16px;
-    border: 2px solid rgba(255,255,255,0.45);
-    border-radius: 50%;
-    cursor: pointer;
-    background: transparent;
-    vertical-align: middle;
-  }
-  .t20w-radio-group input[type="radio"]:checked,
-  .t20w-step input[type="radio"]:checked {
-    border-color: #f90;
-    background: #f90;
-    box-shadow: inset 0 0 0 4px rgba(10,10,20,0.85);
-  }
-  .t20w-radio-group input[type="radio"]:hover:not(:checked),
-  .t20w-step input[type="radio"]:hover:not(:checked) {
-    border-color: rgba(255,255,255,0.75);
-  }
+  /* Radios desenhados à mão viravam rosquinha (o inset comia o miolo) e ficavam
+     de tamanhos diferentes dos checkboxes. accent-color faz o nativo, certo. */
+  .t20w-step input[type="radio"],
   .t20w-step input[type="checkbox"] {
     accent-color: #f90;
+    width: 15px;
+    height: 15px;
+    min-width: 15px;
+    margin: 0;
     cursor: pointer;
+    flex-shrink: 0;
+  }
+  .t20w-step input:disabled,
+  .t20w-step input:disabled + span,
+  .t20w-step label:has(input:disabled) {
+    cursor: not-allowed;
+  }
+  .t20w-step label:has(input:disabled) {
+    opacity: 0.45;
+  }
+  .t20w-busca-select {
+    width: 100%;
+    padding: 4px 8px;
+    margin-bottom: 4px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid #555;
+    color: inherit;
+    border-radius: 3px;
   }
   .t20w-disabled {
     opacity: 0.4;

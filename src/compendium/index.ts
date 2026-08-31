@@ -17,6 +17,12 @@ const INDEX_FIELDS = [
   "system.niveis",
   "system.preco",
   "system.peso",
+  // Raça: texto, tamanho, deslocamento e os poderes que o item concede.
+  "system.description",
+  "system.tamanho",
+  "system.movement",
+  "system.grants",
+  "system.atributosDinamicos",
 ];
 
 class CompendiumIndexClass {

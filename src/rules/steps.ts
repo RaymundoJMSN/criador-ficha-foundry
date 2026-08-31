@@ -1,3 +1,4 @@
+import { isConjurador } from "./magias.js";
 /** Wizard step identifiers — order matches STEP_ORDER array. */
 export enum WizardStep {
   Nivel = "nivel",
@@ -75,3 +76,13 @@ export const STEP_META: Record<WizardStep, StepMeta> = {
     labelKey: "T20W.Wizard.Step.Revisao",
   },
 };
+
+/**
+ * Passos que fazem sentido para este personagem.
+ *
+ * Magias só aparece para quem conjura — um lutador não deve ver, nem no topo
+ * nem ao avançar. O resto vale para todos.
+ */
+export function passosAplicaveis(classeSlug: string): WizardStep[] {
+  return STEP_ORDER.filter((s) => s !== WizardStep.Magias || isConjurador(classeSlug));
+}

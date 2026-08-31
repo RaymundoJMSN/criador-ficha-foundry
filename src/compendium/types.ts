@@ -12,6 +12,12 @@ export interface IndexedRace extends IndexedBase {
   type: "race";
   system: {
     atributos?: Record<string, unknown>;
+    description?: { value?: string };
+    tamanho?: string[];
+    movement?: { walk?: number; unit?: string };
+    atributosDinamicos?: { description?: string };
+    /** Poderes que o sistema concede junto da raça. */
+    grants?: Array<{ type?: string; title?: string; choices?: Array<{ uuid?: string }> }>;
   };
 }
 

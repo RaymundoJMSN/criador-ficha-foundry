@@ -1,15 +1,9 @@
 <div class="t20w-wizard" style="display:flex;flex-direction:column;height:100%;overflow:hidden;">
-  <nav class="t20w-steps" style="display:flex;flex-wrap:wrap;gap:4px;padding:6px 4px;border-bottom:1px solid #444;">
-    {{#each steps}}
-      <button
-        type="button"
-        class="t20w-step-btn {{#if this.active}}active{{/if}} {{#if this.done}}done{{/if}}"
-        data-action="goStep"
-        data-step="{{this.id}}"
-        {{#unless this.reachable}}disabled{{/unless}}
-        style="padding:2px 6px;font-size:0.75em;{{#if this.active}}outline:1px solid #f90;{{/if}}"
-      >{{localize this.label}}</button>
-    {{/each}}
+  <nav class="t20w-steps" style="display:flex;align-items:baseline;gap:8px;padding:8px 10px;border-bottom:1px solid #444;">
+    {{#each steps}}{{#if this.active}}
+      <strong style="font-size:1em;">{{localize this.label}}</strong>
+    {{/if}}{{/each}}
+    <span style="font-size:0.78em;opacity:0.6;">passo {{passoNumero}} de {{passoTotal}}</span>
   </nav>
 
   <div class="t20w-content" style="flex:1;overflow-y:auto;padding:8px 12px;">
@@ -88,12 +82,26 @@
         <dl style="display:grid;grid-template-columns:max-content 1fr;gap:2px 12px;font-size:0.85em;margin:0;">
           {{#if selectedDetail.atributosTexto}}<dt>Atributos</dt><dd>{{selectedDetail.atributosTexto}}</dd>{{/if}}
           <dt>Tamanho</dt><dd>{{selectedDetail.tamanho}}</dd>
-          <dt>Deslocamento</dt><dd>{{selectedDetail.deslocamento}}m</dd>
-          {{#if selectedDetail.pericias_bonus.length}}<dt>Perícias bônus</dt><dd>{{selectedDetail.pericias_bonus}}</dd>{{/if}}
+          <dt>Deslocamento</dt><dd>{{selectedDetail.deslocamento}}</dd>
+          {{#if selectedDetail.periciasBonus.length}}<dt>Perícias bônus</dt><dd>{{#each selectedDetail.periciasBonus}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</dd>{{/if}}
         </dl>
+        {{#if selectedDetail.poderesRaciais.length}}
+        <div style="margin-top:10px;">
+          <strong style="font-size:0.85em;">Habilidades de {{selectedDetail.name}}:</strong>
+          <ul style="margin:6px 0 0;padding-left:0;list-style:none;display:flex;flex-direction:column;gap:4px;">
+            {{#each selectedDetail.poderesRaciais}}
+            <li style="font-size:0.85em;background:rgba(255,255,255,0.04);border-radius:3px;padding:5px 8px;">
+              <strong>{{this.nome}}</strong>
+              {{#if this.descricao}}<div style="opacity:0.75;margin-top:2px;">{{this.descricao}}</div>{{/if}}
+            </li>
+            {{/each}}
+          </ul>
+        </div>
+        {{/if}}
         {{#each selectedDetail.modGroups}}
         <div style="margin-top:10px;">
-          <strong style="font-size:0.85em;">+{{this.valor}} em {{this.quantidade}} atributo(s){{#if this.diferentes}} diferentes{{/if}}:</strong>
+          <strong style="font-size:0.85em;">{{this.titulo}}:</strong>
+          {{#if this.observacao}}<div style="font-size:0.8em;opacity:0.7;">{{this.observacao}}</div>{{/if}}
           <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;">
             {{#each this.slots}}
             <select name="raca_mod-{{this.groupIndex}}-{{this.slotIndex}}" style="padding:4px;">

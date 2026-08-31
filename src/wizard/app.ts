@@ -24,7 +24,7 @@ const rascunho = {
   },
 };
 import { WizardState } from "./state.js";
-import { WizardStep, STEP_ORDER, STEP_META } from "../rules/steps.js";
+import { WizardStep, STEP_ORDER, STEP_META, passosAplicaveis } from "../rules/steps.js";
 import { CompendiumIndex } from "../compendium/index.js";
 import { validate } from "../rules/engine.js";
 import { especRolagem, valoresFixos, precisaRerolar } from "../rules/atributos.js";
@@ -111,6 +111,11 @@ export function defineWizardApp(): void {
       }
     }
 
+    /** Passos válidos para a classe escolhida (lutador não vê Magias). */
+    _passos(): WizardStep[] {
+      return passosAplicaveis(toNomeSlug(this._state.classeNome ?? ""));
+    }
+
     goToStep(step: WizardStep): void {
       this._currentStep = step;
       this._errors = [];
@@ -139,18 +144,20 @@ export function defineWizardApp(): void {
         this.render();
         return;
       }
-      const idx = STEP_ORDER.indexOf(this._currentStep);
-      if (idx < STEP_ORDER.length - 1) {
-        this._currentStep = STEP_ORDER[idx + 1];
+      const passos = this._passos();
+      const idx = passos.indexOf(this._currentStep);
+      if (idx < passos.length - 1) {
+        this._currentStep = passos[idx + 1]!;
         this._errors = [];
         this.render();
       }
     }
 
     prevStep(): void {
-      const idx = STEP_ORDER.indexOf(this._currentStep);
+      const passos = this._passos();
+      const idx = passos.indexOf(this._currentStep);
       if (idx > 0) {
-        this._currentStep = STEP_ORDER[idx - 1];
+        this._currentStep = passos[idx - 1]!;
         this._errors = [];
         this.render();
       }
@@ -290,8 +297,9 @@ export function defineWizardApp(): void {
       const state = this._state;
       const errors = this._errors;
 
-      const stepIdx = STEP_ORDER.indexOf(step);
-      const steps = STEP_ORDER.map((s, i) => ({
+      const passos = this._passos();
+      const stepIdx = passos.indexOf(step);
+      const steps = passos.map((s, i) => ({
         id: s,
         label: STEP_META[s].labelKey,
         active: s === step,
@@ -309,7 +317,8 @@ export function defineWizardApp(): void {
           break;
         case WizardStep.Raca: {
           const racas = CompendiumIndex.getAll("race") as IndexedRace[];
-          stepCtx = prepareRacaContext(state, racas, errors);
+          const poderesRaca = CompendiumIndex.getAll("poder") as IndexedPoder[];
+          stepCtx = prepareRacaContext(state, racas, errors, poderesRaca);
           break;
         }
         case WizardStep.Origem: {
@@ -384,8 +393,10 @@ export function defineWizardApp(): void {
         currentStep: step,
         steps,
         showBack: stepIdx > 0,
-        showNext: stepIdx < STEP_ORDER.length - 1,
-        showCreate: stepIdx === STEP_ORDER.length - 1,
+        showNext: stepIdx < passos.length - 1,
+        showCreate: stepIdx === passos.length - 1,
+        passoNumero: stepIdx + 1,
+        passoTotal: passos.length,
         // Boolean switches for wizard.hbs single-template approach
         showNivel: step === WizardStep.Nivel,
         showAtributos: step === WizardStep.Atributos,
@@ -529,6 +540,58 @@ export function defineWizardApp(): void {
           this._state.apply({
             escolhasPorItem: { ...this._state.escolhasPorItem, origem_beneficios: marcados },
           });
+          void this.render(false);
+        });
+      });
+
+      // ── Campo de busca em cima de cada dropdown longo ───────────────────
+      root.querySelectorAll<HTMLSelectElement>("select").forEach((sel) => {
+        if (sel.options.length < 8 || sel.dataset["busca"] === "pronto") return;
+        sel.dataset["busca"] = "pronto";
+
+        const todas = Array.from(sel.options).map((o) => ({
+          value: o.value,
+          text: o.text,
+          selected: o.selected,
+        }));
+
+        const busca = document.createElement("input");
+        busca.type = "text";
+        busca.placeholder = "Filtrar…";
+        busca.className = "t20w-busca-select";
+        sel.parentElement?.insertBefore(busca, sel);
+
+        busca.addEventListener("input", () => {
+          const termo = busca.value
+            .toLowerCase()
+            .normalize("NFD")
+            .replace(/[̀-ͯ]/g, "");
+          const atual = sel.value;
+          sel.replaceChildren();
+          for (const o of todas) {
+            const limpo = o.text
+              .toLowerCase()
+              .normalize("NFD")
+              .replace(/[̀-ͯ]/g, "");
+            // A opção vazia e a escolhida ficam sempre, senão o select perde o valor.
+            if (termo && o.value && o.value !== atual && !limpo.includes(termo)) continue;
+            const opt = document.createElement("option");
+            opt.value = o.value;
+            opt.text = o.text;
+            opt.selected = o.value === atual;
+            sel.appendChild(opt);
+          }
+        });
+        // Enter no filtro não deve submeter o formulário do wizard.
+        busca.addEventListener("keydown", (e) => {
+          if (e.key === "Enter") e.preventDefault();
+        });
+      });
+
+      // ── Atributos escolhíveis da raça: re-render tira o já usado das outras ──
+      root.querySelectorAll<HTMLSelectElement>("select[name^='raca_mod-']").forEach((sel) => {
+        sel.addEventListener("change", () => {
+          this.applyFormData(this._gatherFormData());
           void this.render(false);
         });
       });
