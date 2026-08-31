@@ -148,3 +148,44 @@ describe("preparePoderesContext — poder de classe com nome qualificado", () =>
     expect(nomes).toContain("Fúria");
   });
 });
+
+describe("preparePoderesContext — bloqueio de escolha", () => {
+  const item = (id: string, name: string, tipo = "geral"): IndexedPoder => ({
+    id,
+    name,
+    img: "",
+    packId: "p",
+    type: "poder",
+    system: { tipo },
+  });
+
+  it("poder com pré-requisito não cumprido fica bloqueado", () => {
+    const s = new WizardState();
+    s.classeNome = "Guerreiro";
+    s.nivel = 2;
+    s.atributosBase = { for: 0, des: 0, con: 0, int: 0, sab: 0, car: 0 };
+    const ctx = preparePoderesContext(s, [item("amb", "Ambidestria")]);
+    const amb = ctx.poderes.find((p) => p.name === "Ambidestria");
+    expect(amb?.eligible).toBe(false);
+    expect(amb?.bloqueado).toBe(true);
+  });
+
+  it("cumprir o pré-requisito libera na hora", () => {
+    const s = new WizardState();
+    s.classeNome = "Guerreiro";
+    s.nivel = 2;
+    s.atributosBase = { for: 0, des: 2, con: 0, int: 0, sab: 0, car: 0 };
+    const ctx = preparePoderesContext(s, [item("amb", "Ambidestria")]);
+    expect(ctx.poderes.find((p) => p.name === "Ambidestria")?.bloqueado).toBe(false);
+  });
+
+  it("cota cheia bloqueia as não escolhidas, mas não as já marcadas", () => {
+    const s = new WizardState();
+    s.classeNome = "Guerreiro";
+    s.nivel = 2; // 1 escolha
+    s.poderes = ["a"];
+    const ctx = preparePoderesContext(s, [item("a", "Atlético"), item("b", "Esquiva")]);
+    expect(ctx.poderes.find((p) => p.id === "a")?.bloqueado).toBe(false);
+    expect(ctx.poderes.find((p) => p.id === "b")?.bloqueado).toBe(true);
+  });
+});

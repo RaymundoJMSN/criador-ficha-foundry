@@ -71,3 +71,71 @@ export interface MetodoInfo {
 export function listMetodos(): MetodoInfo[] {
   return atributosData.metodos as MetodoInfo[];
 }
+
+/* ------------------------------------------------------------------ */
+/*  Rolagem → valor de atributo                                        */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Em T20 o atributo JÁ é o modificador: rola-se o dado e converte pela tabela
+ * (LB p.17). Guardar o total cru — 10, 12, 14 — deixava a ficha com Força 14.
+ */
+export function converterRolagem(total: number): number {
+  if (total <= 7) return -2;
+  if (total <= 9) return -1;
+  if (total <= 11) return 0;
+  if (total <= 13) return 1;
+  if (total <= 15) return 2;
+  if (total <= 17) return 3;
+  return 4;
+}
+
+/** Nimb usa d20 e estende a tabela nas pontas (LB p.281). */
+export function converterNimb(d20: number): number {
+  if (d20 <= 3) return -3;
+  if (d20 >= 20) return 5;
+  if (d20 >= 18) return 4;
+  return converterRolagem(d20);
+}
+
+export interface EspecRolagem {
+  /** Fórmula por atributo. */
+  formula: string;
+  converter: (total: number) => number;
+  /** Teto do valor convertido, quando o método impõe um. */
+  maximo?: number;
+}
+
+/** Como cada método oficial gera um atributo. `null` = método sem rolagem. */
+export function especRolagem(metodo: string): EspecRolagem | null {
+  switch (metodo) {
+    case "rolagem_padrao":
+      return { formula: "4d6kh3", converter: converterRolagem };
+    case "classica":
+      return { formula: "3d6", converter: converterRolagem };
+    case "epica":
+      // "Descarte o menor dos 3d6 e some os dois restantes + 6"
+      return { formula: "3d6kh2 + 6", converter: converterRolagem };
+    case "nimb":
+      return { formula: "1d20", converter: converterNimb };
+    case "valkaria":
+      // 7d6 distribuídos sobre base 8; aqui um dado por atributo, teto +4.
+      return { formula: "1d6 + 8", converter: converterRolagem, maximo: 4 };
+    default:
+      return null;
+  }
+}
+
+/** Valores fixos que o método distribui, quando houver (Khalmyr). */
+export function valoresFixos(metodo: string): number[] | null {
+  // LB p.281: "Distribua os 6 valores entre os 6 atributos como quiser."
+  if (metodo === "khalmyr") return [3, 3, 2, 1, 0, -1];
+  return null;
+}
+
+/** Soma mínima 6: abaixo disso o método manda rolar de novo (LB p.17). */
+export const SOMA_MINIMA = 6;
+
+export function precisaRerolar(valores: number[]): boolean {
+  return valores.reduce((a, b) => a + b, 0) < SOMA_MINIMA;
+}

@@ -12,6 +12,8 @@ export interface MagiaEntry {
   escola: string;
   tipo: string;
   selected: boolean;
+  /** No limite, as não escolhidas ficam travadas em vez de aceitar mais uma. */
+  bloqueado: boolean;
 }
 
 export interface MagiasByCirculo {
@@ -63,6 +65,8 @@ export function prepareMagiasContext(
     filtered = filtered.filter((m) => m.name.toLowerCase().includes(q));
   }
 
+  const noLimite = state.magias.length >= magiaLimit;
+
   // Group by círculo
   const byCirculo = new Map<number, MagiaEntry[]>();
   for (const m of filtered) {
@@ -76,6 +80,7 @@ export function prepareMagiasContext(
       escola: m.system.escola ?? "",
       tipo: m.system.tipo ?? "",
       selected: state.magias.includes(m.id),
+      bloqueado: noLimite && !state.magias.includes(m.id),
     });
   }
 
@@ -93,7 +98,7 @@ export function prepareMagiasContext(
     classeNome: state.classeNome ?? "",
     isConjurador: conjurador,
     magiaLimit,
-    atMaxLimit: state.magias.length >= magiaLimit,
+    atMaxLimit: noLimite,
     magiaSearch,
     magiasByCirculo,
     selectedCount: state.magias.length,

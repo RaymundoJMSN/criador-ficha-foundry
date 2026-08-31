@@ -314,6 +314,7 @@
     {{#if showPoderes}}
     <section class="t20w-step">
       <h2>{{stepTitle}}</h2>
+      <input type="hidden" name="passo_poderes" value="1" />
 
       {{#if habilidades.length}}
       <div style="margin-bottom:16px;">
@@ -345,7 +346,7 @@
                  data-poder-cat="{{this.tipo}}"
                  style="display:flex;align-items:flex-start;gap:8px;padding:6px 8px;background:rgba(255,255,255,0.04);border-radius:3px;cursor:pointer;{{#unless this.eligible}}opacity:0.55;{{/unless}}">
             <input type="checkbox" name="poder-{{this.id}}" value="{{this.id}}"
-                   {{#if this.selected}}checked{{/if}} />
+                   {{#if this.selected}}checked{{/if}} {{#if this.bloqueado}}disabled{{/if}} />
             <img src="{{this.img}}" style="width:24px;height:24px;object-fit:contain;flex-shrink:0;border-radius:2px;" onerror="this.style.display='none'" />
             <div style="flex:1;">
               <div style="display:flex;align-items:center;gap:8px;">
@@ -374,6 +375,7 @@
     {{#if showMagias}}
     <section class="t20w-step">
       <h2>{{stepTitle}}</h2>
+      <input type="hidden" name="passo_magias" value="1" />
       {{#if isConjurador}}
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap;">
         <span style="font-size:0.9em;" class="{{#if atMaxLimit}}t20w-neg{{/if}}">Selecionadas: <strong>{{selectedCount}}</strong> / {{magiaLimit}}</span>
@@ -388,7 +390,7 @@
         <div style="display:flex;flex-direction:column;gap:3px;max-height:260px;overflow-y:auto;">
           {{#each magias}}
           <label style="display:flex;align-items:center;gap:8px;padding:5px 8px;background:rgba(255,255,255,0.04);border-radius:3px;cursor:pointer;{{#if this.selected}}outline:1px solid rgba(255,160,0,0.5);{{/if}}">
-            <input type="checkbox" name="magia-{{this.id}}" value="{{this.id}}" {{#if this.selected}}checked{{/if}} />
+            <input type="checkbox" name="magia-{{this.id}}" value="{{this.id}}" {{#if this.selected}}checked{{/if}} {{#if this.bloqueado}}disabled{{/if}} />
             <img src="{{this.img}}" width="28" height="28" style="object-fit:contain;flex-shrink:0;border-radius:2px;" onerror="this.style.display='none'" />
             <div style="flex:1;">
               <span style="font-size:0.9em;font-weight:600;">{{this.name}}</span>
@@ -416,7 +418,11 @@
       <div class="t20w-money-bar" style="display:flex;align-items:center;gap:10px;padding:6px 10px;background:rgba(255,255,255,0.06);border-radius:4px;margin-bottom:10px;flex-wrap:wrap;font-size:0.9em;">
         <span>Dinheiro inicial: <strong>{{dinheiroInicial}} T$</strong></span>
         {{#if isNivel1}}
-          <button type="button" data-action="rollDinheiro" class="t20w-btn-sm" style="padding:2px 8px;cursor:pointer;">🎲 4d6</button>
+          {{#if dinheiroJaRolado}}
+            <span style="opacity:0.6;font-size:0.85em;">(rolado)</span>
+          {{else}}
+            <button type="button" data-action="rollDinheiro" class="t20w-btn-sm" style="padding:2px 8px;cursor:pointer;">🎲 4d6</button>
+          {{/if}}
         {{/if}}
         <span style="opacity:0.5;">|</span>
         <span>Gasto: {{dinheiroGasto}} T$</span>

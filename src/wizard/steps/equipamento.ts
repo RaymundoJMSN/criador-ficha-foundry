@@ -45,6 +45,8 @@ export interface EquipamentoContext {
   stepTitle: string;
   // Money
   dinheiroInicial: number;
+  /** Nível 1 rola 4d6 uma vez só; depois de rolado o botão some. */
+  dinheiroJaRolado: boolean;
   dinheiroGasto: number;
   dinheiroRestante: number;
   dinheiroOk: boolean;
@@ -145,6 +147,7 @@ export function prepareEquipamentoContext(
   return {
     stepTitle: "Equipamentos",
     dinheiroInicial,
+    dinheiroJaRolado: rolado !== undefined,
     dinheiroGasto,
     dinheiroRestante,
     dinheiroOk,

@@ -19,6 +19,8 @@ export interface PoderEntry {
   descricao: string;
   /** Whether this entry is a class power or a general power taken in its place. */
   origem: "classe" | "geral";
+  /** Não pode ser marcado agora: pré-requisito não cumprido ou cota cheia. */
+  bloqueado: boolean;
 }
 
 export interface PoderesContext {
@@ -133,6 +135,8 @@ export function preparePoderesContext(
     caminho: (state.escolhasPorItem["classe_caminho"] as string) ?? "",
   };
 
+  const noLimite = state.poderes.length >= poderesParaPick;
+
   // "Sempre que você recebe um poder de classe, pode trocá-lo por um poder geral"
   // (LB cap. 5) — so every class-power slot may also be spent on a general power.
   const entries: PoderEntry[] = allPoderes
@@ -150,6 +154,9 @@ export function preparePoderesContext(
         subtipo: p.system.subtipo ?? "",
         descricao: p.system.descricao ?? "",
         origem: p.system.tipo === "geral" ? ("geral" as const) : ("classe" as const),
+        // Elegibilidade é recalculada a cada render: escolher o Poder A libera
+        // na hora o Poder B que exigia A.
+        bloqueado: !state.poderes.includes(p.id) && (unmet.length > 0 || noLimite),
       };
     });
 

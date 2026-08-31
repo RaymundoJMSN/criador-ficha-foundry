@@ -27,6 +27,7 @@ import { WizardState } from "./state.js";
 import { WizardStep, STEP_ORDER, STEP_META } from "../rules/steps.js";
 import { CompendiumIndex } from "../compendium/index.js";
 import { validate } from "../rules/engine.js";
+import { especRolagem, valoresFixos, precisaRerolar } from "../rules/atributos.js";
 import { prepareNivelContext } from "./steps/nivel.js";
 import { prepareAtributosContext } from "./steps/atributos.js";
 import { prepareRacaContext } from "./steps/raca.js";
@@ -275,8 +276,11 @@ export function defineWizardApp(): void {
           classe_caminho: classeCaminho,
         };
       }
-      if (poderes.length > 0) patch["poderes"] = poderes;
-      if (magias.length > 0) patch["magias"] = magias;
+      // Checkbox desmarcada não aparece no FormData, então "lista vazia" e "passo
+      // não estava na tela" ficavam iguais — desmarcar tudo nunca limpava o estado.
+      // O input escondido do passo distingue os dois casos.
+      if (formData.has("passo_poderes")) patch["poderes"] = poderes;
+      if (formData.has("passo_magias")) patch["magias"] = magias;
 
       this._state.apply(patch as Parameters<typeof this._state.apply>[0]);
     }
@@ -438,12 +442,12 @@ export function defineWizardApp(): void {
       const sel = root.querySelector<HTMLSelectElement>("[name='metodoAtributos']");
       if (sel) {
         sel.addEventListener("change", () => {
-          const fd = this._gatherFormData();
-          // Reset all attribute values when switching method
+          // NÃO reaproveitar o formulário aqui: ele ainda tem os valores do método
+          // anterior, e reaplicá-los deixava um 14 rolado dentro da compra de pontos.
           this._state.apply({
+            metodoAtributos: sel.value,
             atributosBase: { for: 0, des: 0, con: 0, int: 0, sab: 0, car: 0 },
           });
-          this.applyFormData(fd);
           this.render();
         });
       }
@@ -528,6 +532,24 @@ export function defineWizardApp(): void {
           void this.render(false);
         });
       });
+
+      // ── Poderes e magias: marcar já reflete no contador e na elegibilidade ──
+      // Sem isto o estado só era lido ao trocar de passo: o contador ficava em
+      // 0/3 com três marcadas, e o Poder B não liberava ao escolher o Poder A.
+      const sincronizarEscolhas = (prefixo: "poder-" | "magia-", campo: "poderes" | "magias") => {
+        const caixas = root.querySelectorAll<HTMLInputElement>(`input[name^="${prefixo}"]`);
+        caixas.forEach((caixa) => {
+          caixa.addEventListener("change", () => {
+            const marcados = Array.from(caixas)
+              .filter((c) => c.checked)
+              .map((c) => c.value);
+            this._state.apply({ [campo]: marcados } as Parameters<typeof this._state.apply>[0]);
+            void this.render(false);
+          });
+        });
+      };
+      sincronizarEscolhas("poder-", "poderes");
+      sincronizarEscolhas("magia-", "magias");
 
       // ── Sub-escolhas dependentes do caminho (linhagem, tipo de dano) ─────
       root.querySelectorAll<HTMLSelectElement>("select[name='subescolha']").forEach((sel) => {
@@ -739,7 +761,8 @@ export function defineWizardApp(): void {
           void this.render();
         }
       } else if (action === "rollDinheiro") {
-        if (this._state.nivel === 1) {
+        // Uma rolagem só: reclicar era rerrolar até vir 24.
+        if (this._state.nivel === 1 && this._state.escolhasPorItem["dinheiro_rolado"] === undefined) {
           // @ts-expect-error Roll is a Foundry global
           const roll = await new Roll("4d6").roll({ async: true });
           this._state.apply({
@@ -751,44 +774,40 @@ export function defineWizardApp(): void {
           await this.render();
         }
       } else if (action === "rollAtributos") {
-        const method = this._state.metodoAtributos;
         const attrs = ["for", "des", "con", "int", "sab", "car"] as const;
+        const metodo = this._state.metodoAtributos;
 
-        if (method === "valkaria") {
-          const vals = [4, 3, 2, 2, 1, 0];
+        const fixos = valoresFixos(metodo);
+        if (fixos) {
           const patch = { ...this._state.atributosBase };
-          attrs.forEach((a, i) => { patch[a] = vals[i]!; });
+          attrs.forEach((a, i) => { patch[a] = fixos[i] ?? 0; });
           this._state.apply({ atributosBase: patch });
-        } else if (method === "khalmyr") {
-          const vals = [3, 3, 2, 2, 2, 1];
-          const patch = { ...this._state.atributosBase };
-          attrs.forEach((a, i) => { patch[a] = vals[i]!; });
-          this._state.apply({ atributosBase: patch });
-        } else if (method === "epica") {
-          const patch = { ...this._state.atributosBase };
-          attrs.forEach((a) => { patch[a] = 4; });
-          this._state.apply({ atributosBase: patch });
-        } else if (method === "nimb") {
-          const patch = { ...this._state.atributosBase };
-          attrs.forEach((a) => { patch[a] = 0; });
-          this._state.apply({ atributosBase: patch });
-        } else if (method === "rolagem_padrao") {
-          const patch = { ...this._state.atributosBase };
-          for (const a of attrs) {
-            // @ts-expect-error Roll is a Foundry global
-            const roll = await new Roll("4d6kh3").roll({ async: true });
-            patch[a] = (roll as { total: number }).total;
-          }
-          this._state.apply({ atributosBase: patch });
-        } else if (method === "classica") {
-          const patch = { ...this._state.atributosBase };
-          for (const a of attrs) {
-            // @ts-expect-error Roll is a Foundry global
-            const roll = await new Roll("3d6").roll({ async: true });
-            patch[a] = (roll as { total: number }).total;
-          }
-          this._state.apply({ atributosBase: patch });
+          await this.render();
+          return;
         }
+
+        const espec = especRolagem(metodo);
+        if (!espec) return;
+
+        const rolarUm = async (): Promise<number> => {
+          // @ts-expect-error Roll is a Foundry global
+          const roll = await new Roll(espec.formula).roll({ async: true });
+          const bruto = espec.converter((roll as { total: number }).total);
+          return espec.maximo === undefined ? bruto : Math.min(bruto, espec.maximo);
+        };
+
+        const patch = { ...this._state.atributosBase };
+        for (const a of attrs) patch[a] = await rolarUm();
+
+        // "Caso seus atributos não somem pelo menos 6, role novamente o menor
+        // valor. Repita até somarem 6 ou mais." (LB p.17)
+        let guarda = 0;
+        while (precisaRerolar(attrs.map((a) => patch[a])) && guarda++ < 50) {
+          const menor = attrs.reduce((m, a) => (patch[a] < patch[m] ? a : m), attrs[0]);
+          patch[menor] = await rolarUm();
+        }
+
+        this._state.apply({ atributosBase: patch });
         await this.render();
       }
     }
