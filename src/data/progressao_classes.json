@@ -120,6 +120,12 @@
       "9": 3,
       "13": 4,
       "17": 5
+    },
+    "magias": {
+      "inicio": 3,
+      "por_nivel": 1,
+      "por_nivel_par": 0,
+      "por_nivel_impar": 0
     }
   },
   "barbaro": {
@@ -249,7 +255,8 @@
         "escolhas": 1
       }
     },
-    "circulos": {}
+    "circulos": {},
+    "magias": null
   },
   "bardo": {
     "pericias_inatas": [
@@ -386,6 +393,12 @@
       "6": 2,
       "10": 3,
       "14": 4
+    },
+    "magias": {
+      "inicio": 2,
+      "por_nivel": 0,
+      "por_nivel_par": 1,
+      "por_nivel_impar": 0
     }
   },
   "bucaneiro": {
@@ -514,7 +527,8 @@
         "escolhas": 1
       }
     },
-    "circulos": {}
+    "circulos": {},
+    "magias": null
   },
   "cacador": {
     "pericias_inatas": [
@@ -644,7 +658,8 @@
         "escolhas": 1
       }
     },
-    "circulos": {}
+    "circulos": {},
+    "magias": null
   },
   "cavaleiro": {
     "pericias_inatas": [
@@ -773,7 +788,8 @@
         "escolhas": 1
       }
     },
-    "circulos": {}
+    "circulos": {},
+    "magias": null
   },
   "clerigo": {
     "pericias_inatas": [
@@ -892,10 +908,17 @@
       }
     },
     "circulos": {
+      "1": 1,
       "5": 2,
       "9": 3,
       "13": 4,
       "17": 5
+    },
+    "magias": {
+      "inicio": 3,
+      "por_nivel": 1,
+      "por_nivel_par": 0,
+      "por_nivel_impar": 0
     }
   },
   "druida": {
@@ -1018,9 +1041,16 @@
       }
     },
     "circulos": {
+      "1": 1,
       "6": 2,
       "10": 3,
       "14": 4
+    },
+    "magias": {
+      "inicio": 2,
+      "por_nivel": 0,
+      "por_nivel_par": 1,
+      "por_nivel_impar": 0
     }
   },
   "guerreiro": {
@@ -1141,7 +1171,8 @@
         "escolhas": 1
       }
     },
-    "circulos": {}
+    "circulos": {},
+    "magias": null
   },
   "inventor": {
     "pericias_inatas": [
@@ -1272,7 +1303,8 @@
         "escolhas": 1
       }
     },
-    "circulos": {}
+    "circulos": {},
+    "magias": null
   },
   "ladino": {
     "pericias_inatas": [
@@ -1415,7 +1447,8 @@
         "escolhas": 1
       }
     },
-    "circulos": {}
+    "circulos": {},
+    "magias": null
   },
   "lutador": {
     "pericias_inatas": [
@@ -1545,7 +1578,8 @@
         "escolhas": 1
       }
     },
-    "circulos": {}
+    "circulos": {},
+    "magias": null
   },
   "nobre": {
     "pericias_inatas": [
@@ -1678,7 +1712,8 @@
         "escolhas": 1
       }
     },
-    "circulos": {}
+    "circulos": {},
+    "magias": null
   },
   "paladino": {
     "pericias_inatas": [
@@ -1811,6 +1846,7 @@
         "escolhas": 1
       }
     },
-    "circulos": {}
+    "circulos": {},
+    "magias": null
   }
 }

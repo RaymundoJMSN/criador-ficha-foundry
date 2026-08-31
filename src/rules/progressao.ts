@@ -11,6 +11,8 @@ const progressaoData = progressaoDataRaw as unknown as Record<
     tabela?: Record<string, { automaticos: string[]; escolhas: number }>;
     /** Level → highest spell circle unlocked at that level. */
     circulos?: Record<string, number>;
+    /** Quantas magias a classe conhece: inicial + ganho por nível. */
+    magias?: MagiasProgressao | null;
   }
 >;
 
@@ -39,6 +41,13 @@ export function normalizePericias(value: unknown): string[] {
   return [];
 }
 
+export interface MagiasProgressao {
+  inicio: number;
+  por_nivel: number;
+  por_nivel_par: number;
+  por_nivel_impar: number;
+}
+
 export interface ClasseProgressao {
   pericias_inatas: string[];
   pericias_escolha: string[];
@@ -47,6 +56,7 @@ export interface ClasseProgressao {
   pm_por_nivel: number;
   tabela?: Record<string, { automaticos: string[]; escolhas: number }>;
   circulos?: Record<string, number>;
+  magias?: MagiasProgressao | null;
 }
 
 /**
@@ -133,4 +143,32 @@ export function circuloMaximo(classeNome: string, nivel: number): number {
     if (Number(nvStr) <= nivel && circulo > max) max = circulo;
   }
   return max;
+}
+
+/**
+ * Quantas magias o personagem conhece no nível dado.
+ *
+ * Fonte: poder "Magias (<classe>)" do T20-DB. O caminho do arcanista muda os dois
+ * termos (LB cap. 4, Arcanista → "Aprendendo Magias" / "Magias Iniciais"):
+ * mago começa com 4 em vez de 3; feiticeiro aprende a cada nível ÍMPAR (3º, 5º…).
+ */
+export function magiasConhecidas(classeNome: string, nivel: number, caminho = ""): number {
+  const prog = getClasseProgressao(classeNome);
+  const m = prog?.magias;
+  if (!m) return 0;
+
+  const ehMago = caminho.endsWith("_mago");
+  const ehFeiticeiro = caminho.endsWith("_feiticeiro");
+
+  let total = m.inicio + (ehMago ? 1 : 0);
+  for (let nv = 2; nv <= nivel; nv++) {
+    if (ehFeiticeiro) {
+      if (nv % 2 === 1) total += 1;
+    } else {
+      total += m.por_nivel;
+      if (nv % 2 === 0) total += m.por_nivel_par;
+      if (nv % 2 === 1) total += m.por_nivel_impar;
+    }
+  }
+  return total;
 }

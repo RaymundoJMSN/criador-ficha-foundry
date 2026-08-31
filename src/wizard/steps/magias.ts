@@ -1,5 +1,6 @@
 import { filterMagias, isConjurador } from "../../rules/magias.js";
 import { toNomeSlug } from "../../compendium/slug.js";
+import { magiasConhecidas } from "../../rules/progressao.js";
 import type { WizardState } from "../state.js";
 import type { IndexedMagia } from "../../compendium/types.js";
 
@@ -46,17 +47,11 @@ export function prepareMagiasContext(
   const classeSlug = toNomeSlug(state.classeNome ?? "");
   const conjurador = isConjurador(classeSlug);
 
-  // Magia limit: arcanista gets 3 base, +1 for Mago path; other casters use soft Int-based guide
+  // Quantas magias o personagem conhece no nível — regra da classe, não chute.
+  // O cálculo antigo usava `(Int - 10) / 2`, que é modificador de D&D: em T20 o
+  // atributo JÁ é o modificador (vai de -1 a 4), então dava 1 para todo mundo.
   const classeCaminho = (state.escolhasPorItem["classe_caminho"] as string | undefined) ?? "";
-  let magiaLimit: number;
-  if (classeSlug === "arcanista") {
-    magiaLimit = classeCaminho === "caminho_do_arcanista_mago" ? 4 : 3;
-  } else {
-    // Non-arcanista casters: Int modifier + 3 as soft guide
-    const intBase = state.atributosBase?.int ?? 10;
-    const intMod = Math.floor((intBase - 10) / 2);
-    magiaLimit = Math.max(1, intMod + 3);
-  }
+  const magiaLimit = magiasConhecidas(state.classeNome || "", state.nivel, classeCaminho);
 
   const magiaSearch = (state.escolhasPorItem["magia_search"] as string) ?? "";
 

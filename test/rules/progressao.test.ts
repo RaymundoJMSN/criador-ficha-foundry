@@ -4,6 +4,7 @@ import {
   habilidadesAte,
   slotsDePoder,
   circuloMaximo,
+  magiasConhecidas,
 } from "../../src/rules/progressao.js";
 
 describe("baseSlug", () => {
@@ -81,5 +82,40 @@ describe("circuloMaximo", () => {
 
   it("guerreiro nunca conjura", () => {
     expect(circuloMaximo("Guerreiro", 20)).toBe(0);
+  });
+});
+
+describe("magiasConhecidas", () => {
+  it("arcanista bruxo: 3 iniciais + 1 por nível", () => {
+    expect(magiasConhecidas("Arcanista", 1, "caminho_do_arcanista_bruxo")).toBe(3);
+    expect(magiasConhecidas("Arcanista", 5, "caminho_do_arcanista_bruxo")).toBe(7);
+  });
+
+  it("mago começa com 4", () => {
+    expect(magiasConhecidas("Arcanista", 1, "caminho_do_arcanista_mago")).toBe(4);
+    expect(magiasConhecidas("Arcanista", 5, "caminho_do_arcanista_mago")).toBe(8);
+  });
+
+  it("feiticeiro aprende só em nível ímpar (3º, 5º…)", () => {
+    expect(magiasConhecidas("Arcanista", 1, "caminho_do_arcanista_feiticeiro")).toBe(3);
+    expect(magiasConhecidas("Arcanista", 2, "caminho_do_arcanista_feiticeiro")).toBe(3);
+    expect(magiasConhecidas("Arcanista", 3, "caminho_do_arcanista_feiticeiro")).toBe(4);
+    expect(magiasConhecidas("Arcanista", 5, "caminho_do_arcanista_feiticeiro")).toBe(5);
+  });
+
+  it("clérigo: 3 iniciais + 1 por nível (LB cap. 4)", () => {
+    expect(magiasConhecidas("Clérigo", 1)).toBe(3);
+    expect(magiasConhecidas("Clérigo", 4)).toBe(6);
+  });
+
+  it("bardo: 2 iniciais + 1 a cada nível par", () => {
+    expect(magiasConhecidas("Bardo", 1)).toBe(2);
+    expect(magiasConhecidas("Bardo", 2)).toBe(3);
+    expect(magiasConhecidas("Bardo", 3)).toBe(3);
+    expect(magiasConhecidas("Bardo", 6)).toBe(5);
+  });
+
+  it("guerreiro não conhece magia", () => {
+    expect(magiasConhecidas("Guerreiro", 20)).toBe(0);
   });
 });

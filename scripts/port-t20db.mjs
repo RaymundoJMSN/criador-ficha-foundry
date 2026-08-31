@@ -218,18 +218,50 @@ function walkDir(dir) {
       if (automaticos.length > 0 || escolhas > 0) tabela[nivel] = { automaticos, escolhas };
     }
 
-    // Spell circle unlocks live in the per-class file, not in regras/.
+    // Progressão de magia: o poder "Magias (<classe>)" carrega círculo por nível
+    // e quantas magias o personagem conhece. É a fonte melhor — inclui o 1º
+    // círculo do nv1, que a tabela de `classes/*.json` omite para clérigo/druida.
     const circulos = {};
+    let magias = null;
     try {
-      const rich = readJson(join(T20DB, "classes", `${classeId}.json`));
-      for (const row of rich.tabela_progressao ?? []) {
-        for (const h of row.habilidades ?? []) {
-          const m = /^magias_(\d+)_circulo$/.exec(h);
-          if (m) circulos[String(row.nivel)] = Number(m[1]);
+      const magiasPoder = readJson(join(T20DB, "poderes/classe", classeId, `magias_${classeId}.json`));
+      for (const ef of magiasPoder.efeitos ?? []) {
+        if (ef.subtipo === "circulo_por_nivel") {
+          for (const row of ef.valor ?? []) circulos[String(row.nivel)] = row.circulo;
+        }
+        if (ef.subtipo === "magias_conhecidas") {
+          magias = {
+            inicio: ef.valor?.inicio ?? 0,
+            por_nivel: ef.valor?.por_nivel ?? 0,
+            por_nivel_par: ef.valor?.por_nivel_par ?? 0,
+            por_nivel_impar: ef.valor?.por_nivel_impar ?? 0,
+          };
         }
       }
     } catch {
-      // class without a rich file — no spell progression
+      // classe não conjuradora
+    }
+
+    // Fallback: tabela do arquivo da classe (só marca upgrades de círculo).
+    if (Object.keys(circulos).length === 0) {
+      try {
+        const rich = readJson(join(T20DB, "classes", `${classeId}.json`));
+        for (const row of rich.tabela_progressao ?? []) {
+          for (const h of row.habilidades ?? []) {
+            const m = /^magias_(\d+)_circulo$/.exec(h);
+            if (m) circulos[String(row.nivel)] = Number(m[1]);
+          }
+        }
+      } catch {
+        // class without a rich file — no spell progression
+      }
+    }
+
+    // Correção contra o Livro Básico. O T20-DB copiou o padrão do bardo/druida
+    // para o clérigo, mas LB cap. 4 (Clérigo, "Magias") diz: "Você começa com
+    // três magias de 1º círculo" e "A cada nível, aprende uma magia".
+    if (classeId === "clerigo" && magias) {
+      magias = { inicio: 3, por_nivel: 1, por_nivel_par: 0, por_nivel_impar: 0 };
     }
 
     result[classeId] = {
@@ -240,6 +272,7 @@ function walkDir(dir) {
       pm_por_nivel: classeData.pm_por_nivel ?? null,
       tabela,
       circulos,
+      magias,
     };
   }
   writeJson(join(OUT, "progressao_classes.json"), result);
