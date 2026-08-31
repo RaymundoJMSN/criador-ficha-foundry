@@ -2,6 +2,7 @@ import { MODULE_ID } from "./constants.js";
 import { CompendiumIndex } from "./compendium/index.js";
 import { registerLauncher } from "./ui/launcher.js";
 import { defineWizardApp } from "./wizard/app.js";
+import { registrarClassesDoCompendio, classesRegistradas } from "./rules/classe.js";
 
 Hooks.once("init", () => {
   console.log(`${MODULE_ID} | init`);
@@ -30,6 +31,31 @@ Hooks.once("init", () => {
   .t20w-step label:has(input:disabled) {
     opacity: 0.45;
   }
+  /* Opção de escolha: o texto quebra linha em vez de estourar a caixa.
+     <option> de <select> não quebra — por isso opção longa (a alternativa da
+     Memória Póstuma tem 130 caracteres) vazava para fora do quadro. */
+  .t20w-opcao {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    padding: 6px 8px;
+    background: rgba(255,255,255,0.04);
+    border-radius: 3px;
+    font-size: 0.88em;
+    line-height: 1.35;
+    cursor: pointer;
+  }
+  .t20w-opcao span {
+    flex: 1;
+    min-width: 0;
+    overflow-wrap: anywhere;
+  }
+  .t20w-opcao input {
+    margin-top: 2px;
+  }
+  .t20w-opcao:hover {
+    background: rgba(255,255,255,0.08);
+  }
   .t20w-busca-select {
     width: 100%;
     padding: 4px 8px;
@@ -57,4 +83,9 @@ Hooks.once("ready", async () => {
   console.log(`${MODULE_ID} | ready — building compendium index`);
   await CompendiumIndex.build();
   console.log(`${MODULE_ID} | index built — ${CompendiumIndex.totalCount} items across all packs`);
+
+  // Classes fora do Livro Básico (Samurai, Heróis de Arton…) tiram a regra de
+  // perícia do próprio item do compêndio.
+  registrarClassesDoCompendio(CompendiumIndex.getAll("classe"));
+  console.log(`${MODULE_ID} | ${classesRegistradas()} classe(s) do compêndio registradas`);
 });

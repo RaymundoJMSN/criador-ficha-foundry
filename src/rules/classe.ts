@@ -1,4 +1,6 @@
 import classesDataRaw from "../data/classes.json";
+import type { IndexedClasse } from "../compendium/types.js";
+import { classeDoCompendio } from "./classe-do-compendio.js";
 
 export interface EscolhaObrigatoria {
   quantidade: number;
@@ -68,7 +70,8 @@ export function getClasse(idOrName: string): ClasseData | null {
   for (const [id, data] of Object.entries(classesData)) {
     if (slug(data.nome) === s || s.startsWith(id) || id.startsWith(s)) return data;
   }
-  return null;
+  // Classe que só existe no compêndio (ver registrarClassesDoCompendio).
+  return doCompendio.get(s) ?? null;
 }
 
 /**
@@ -111,4 +114,31 @@ export function respostaSubEscolha(
     }
   }
   return "";
+}
+
+/* ------------------------------------------------------------------ */
+/*  Classes que só existem no compêndio                                */
+/* ------------------------------------------------------------------ */
+
+/**
+ * O T20-DB tem só as 14 classes do Livro Básico. Samurai, Místico e as de
+ * Heróis de Arton chegavam ao passo Perícias sem nada para escolher.
+ *
+ * O módulo registra aqui as classes do compêndio no boot; `getClasse` cai
+ * nelas quando o T20-DB não conhece o nome. `rules/` continua sem importar
+ * nada do Foundry — quem chama é o `module.ts`.
+ */
+const doCompendio = new Map<string, ClasseData>();
+
+export function registrarClassesDoCompendio(itens: IndexedClasse[]): void {
+  doCompendio.clear();
+  for (const item of itens) {
+    const dados = classeDoCompendio(item);
+    if (dados.pericias.fixas.length === 0 && dados.pericias.escolhas.opcoes.length === 0) continue;
+    doCompendio.set(slug(item.name), dados);
+  }
+}
+
+export function classesRegistradas(): number {
+  return doCompendio.size;
 }

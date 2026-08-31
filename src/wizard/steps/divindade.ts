@@ -1,12 +1,11 @@
 import {
   listDivindadesParaPersonagem,
   isDivindadeObrigatoria,
+  poderesConcedidosParaEscolher,
   type Divindade,
 } from "../../rules/divindade.js";
 import { toNomeSlug } from "../../compendium/slug.js";
 import type { WizardState } from "../state.js";
-
-const DIVINE_CLASSES = ["clerigo", "paladino", "druida"];
 
 function prettifySlug(slug: string): string {
   return slug
@@ -20,9 +19,15 @@ export interface DivindadeContext {
   stepTitle: string;
   obrigatoria: boolean;
   divindades: Array<{ id: string; nome: string; selected: boolean }>;
-  selectedDivindade: { id: string; nome: string; poderesConcedidos: string[] } | null;
-  divindadePoder: string | null;
-  todosPoderesAuto: boolean;
+  selectedDivindade: {
+    id: string;
+    nome: string;
+    /** Lista do deus, para o jogador escolher entre eles. */
+    poderes: Array<{ slug: string; nome: string; selected: boolean }>;
+  } | null;
+  /** Quantos escolher: 1 para devoto comum, 2 para clérigo/druida/paladino. */
+  quantosPoderes: number;
+  poderesEscolhidos: string[];
   errors: string[];
 }
 
@@ -42,23 +47,35 @@ export function prepareDivindadeContext(
   }));
 
   const selected = divindades.find((d: Divindade) => d.id === state.divindadeId) ?? null;
-  const poderesConcedidosNomes = selected
-    ? selected.poderes_concedidos.map((slug) => resolvePoderNome(slug) ?? prettifySlug(slug))
-    : [];
+  const quantosPoderes = poderesConcedidosParaEscolher(classeSlug, Boolean(selected));
+  const escolhidos = (state.escolhasPorItem["divindade_poderes"] as string[] | undefined) ?? [];
+
   const selectedDivindade = selected
-    ? { id: selected.id, nome: selected.nome, poderesConcedidos: poderesConcedidosNomes }
+    ? {
+        id: selected.id,
+        nome: selected.nome,
+        poderes: selected.poderes_concedidos.map((slug) => ({
+          slug,
+          nome: resolvePoderNome(slug) ?? prettifySlug(slug),
+          selected: escolhidos.includes(slug),
+        })),
+      }
     : null;
 
-  const todosPoderesAuto = DIVINE_CLASSES.includes(classeSlug);
-  const divindadePoder = (state.escolhasPorItem["divindade_poder"] as string | undefined) ?? null;
+  if (selected && escolhidos.length !== quantosPoderes) {
+    errors = [
+      ...errors,
+      `Escolha ${quantosPoderes} poder(es) concedido(s) de ${selected.nome} — ${escolhidos.length} marcado(s).`,
+    ];
+  }
 
   return {
     stepTitle: "Divindade",
     obrigatoria: isDivindadeObrigatoria(classeSlug),
     divindades: mappedDivindades,
     selectedDivindade,
-    divindadePoder,
-    todosPoderesAuto,
+    quantosPoderes,
+    poderesEscolhidos: escolhidos,
     errors,
   };
 }

@@ -7,7 +7,9 @@ import {
   listDivindadesParaPersonagem,
   isDivindadeObrigatoria,
   isDivindadeAcessa,
+  poderesConcedidosParaEscolher,
 } from "./divindade.js";
+import { toNomeSlug } from "../compendium/slug.js";
 import {
   getRaceModifierGroups,
   validateRaceModifiers,
@@ -112,17 +114,23 @@ export function validate(step: WizardStep, state: EngineState): ValidationResult
       break;
     }
 
-    case WizardStep.Divindade:
-      if (isDivindadeObrigatoria(state.classeId) && !state.divindadeId) {
+    case WizardStep.Divindade: {
+      // classeId/racaId são ids de compêndio; a regra compara slug.
+      const classeSlug = toNomeSlug(state.classeNome || "");
+      const racaSlug = toNomeSlug(state.racaNome || "");
+      if (isDivindadeObrigatoria(classeSlug) && !state.divindadeId) {
         errors.push("Divindade é obrigatória para esta classe.");
       }
-      if (
-        state.divindadeId &&
-        !isDivindadeAcessa(state.divindadeId, state.racaId, state.classeId)
-      ) {
+      if (state.divindadeId && !isDivindadeAcessa(state.divindadeId, racaSlug, classeSlug)) {
         errors.push("Esta divindade não aceita personagens com esta raça/classe.");
       }
+      const quantos = poderesConcedidosParaEscolher(classeSlug, Boolean(state.divindadeId));
+      const marcados = (state.escolhasPorItem["divindade_poderes"] as string[]) ?? [];
+      if (marcados.length !== quantos) {
+        errors.push(`Escolha ${quantos} poder(es) concedido(s) da divindade.`);
+      }
       break;
+    }
 
     case WizardStep.Revisao:
       errors.push(...pendencias(state));
@@ -207,8 +215,16 @@ export function pendencias(state: EngineState): string[] {
     faltando.push(`Escolha ${cotaMagias} magia(s) — ${state.magias.length} escolhida(s).`);
   }
 
-  if (isDivindadeObrigatoria(state.classeId) && !state.divindadeId) {
+  const classeSlugPend = toNomeSlug(classeRef);
+  if (isDivindadeObrigatoria(classeSlugPend) && !state.divindadeId) {
     faltando.push("Esta classe exige uma divindade.");
+  }
+  const quantosConcedidos = poderesConcedidosParaEscolher(classeSlugPend, Boolean(state.divindadeId));
+  const concedidosEscolhidos = (state.escolhasPorItem["divindade_poderes"] as string[]) ?? [];
+  if (concedidosEscolhidos.length !== quantosConcedidos) {
+    faltando.push(
+      `Escolha ${quantosConcedidos} poder(es) concedido(s) da divindade — ${concedidosEscolhidos.length} marcado(s).`
+    );
   }
 
   return faltando;
@@ -227,7 +243,10 @@ export function getOptions(
       return listOrigens();
 
     case WizardStep.Divindade:
-      return listDivindadesParaPersonagem(state.racaId, state.classeId);
+      return listDivindadesParaPersonagem(
+        toNomeSlug(state.racaNome || ""),
+        toNomeSlug(state.classeNome || "")
+      );
 
     case WizardStep.Magias: {
       const magias = (compendiumItems ?? []).filter((i): i is IndexedMagia => i.type === "magia");

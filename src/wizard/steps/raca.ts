@@ -10,6 +10,7 @@ import {
   type RacaData,
 } from "../../rules/raca.js";
 import { PERICIA_SLUGS } from "../../rules/pericia-slug.js";
+import textosRaw from "../../data/textos.json";
 import { describeUnmet, type PartialWizardState } from "../../rules/poderes.js";
 import { toNomeSlug } from "../../compendium/slug.js";
 import type { IndexedMagia } from "../../compendium/types.js";
@@ -221,8 +222,10 @@ export function prepareRacaContext(
     const dbRaca = getRaca(selecionada.name);
     const choices = (state.escolhasPorItem["raca_modificadores"] as string[][] | undefined) ?? [];
 
-    // O texto bom é o do item do compêndio; o T20-DB portado não traz descrição.
-    const descricaoFoundry = selecionada.system.descricao ?? "";
+    // O item de raça do compêndio vem com description vazia, então o texto sai
+    // do textos.json (gerado dos livros; gitignorado).
+    const descricaoFoundry =
+      selecionada.system.descricao || (dbRaca ? (textos.racas?.[dbRaca.id] ?? "") : "");
     const tamanhoBruto = (selecionada.system.tamanho?.[0] ?? dbRaca?.tamanho ?? "med").toString();
     const deslocamento = selecionada.system.movement?.walk ?? dbRaca?.deslocamento ?? 9;
     const unidade = selecionada.system.movement?.unit ?? "m";
@@ -251,7 +254,8 @@ export function prepareRacaContext(
           racaSlug: toNomeSlug(selecionada.name),
           periciasTreinadas: state.periciasTreinadas,
           poderes: [],
-        }
+        },
+        racas
       ),
     };
   }
@@ -263,6 +267,8 @@ export function prepareRacaContext(
     errors,
   };
 }
+
+const textos = textosRaw as { racas?: Record<string, string> };
 
 const PERICIA_NOME: Record<string, string> = Object.fromEntries(
   PERICIA_SLUGS.map((slug) => [
@@ -317,15 +323,9 @@ function opcoesDoPedido(
         .map((m) => marcar(m.id, m.name))
         .sort((a, b) => a.nome.localeCompare(b.nome));
 
-    case "habilidade_outra_raca": {
-      // Uma lista só, "Raça — Habilidade", em vez de dois seletores encadeados.
-      const excluir = new Set([...(pedido.excluir ?? []), ctx.racaAtual]);
-      return ctx.poderes
-        .filter((p) => p.system.tipo === "racial")
-        .map((p) => marcar(p.id, p.name))
-        .filter((o) => ![...excluir].some((e) => toNomeSlug(o.nome).includes(e)))
-        .sort((a, b) => a.nome.localeCompare(b.nome));
-    }
+    case "habilidade_outra_raca":
+      // Tratado fora daqui: precisa de dois seletores encadeados (raça → habilidade).
+      return [];
 
     default:
       return [];
@@ -347,12 +347,70 @@ function rotuloDoPedido(pedido: PedidoRacial): string {
   }
 }
 
+/**
+ * "Ser osteon de outra raça humanoide e herdar 1 habilidade dessa raça."
+ * Duas perguntas, nesta ordem: qual raça, e só então qual das habilidades DELA.
+ * Uma lista só com todas as habilidades raciais do jogo é intratável.
+ */
+function pickersDeOutraRaca(
+  chaveBase: string,
+  pedido: PedidoRacial,
+  respostas: Record<string, unknown>,
+  racas: IndexedRace[],
+  poderes: IndexedPoder[],
+  racaAtual: string
+): PickerRacial[] {
+  const excluir = new Set([...(pedido.excluir ?? []).map(toNomeSlug), racaAtual]);
+  const nomeRaca = `${chaveBase}_raca`;
+  const escolhida = (respostas[nomeRaca] as string | undefined) ?? "";
+
+  const pickers: PickerRacial[] = [
+    {
+      name: nomeRaca,
+      label: "Raça de origem",
+      opcoes: racas
+        .filter((r) => !excluir.has(toNomeSlug(r.name)))
+        .map((r) => ({ id: r.id, nome: r.name, selected: r.id === escolhida }))
+        .sort((a, b) => a.nome.localeCompare(b.nome)),
+    },
+  ];
+
+  if (!escolhida) return pickers;
+
+  // As habilidades da raça escolhida são as que o item dela concede.
+  const raca = racas.find((r) => r.id === escolhida);
+  const porId = new Map(poderes.map((p) => [p.id, p]));
+  const daRaca: PickerOpcao[] = [];
+  for (const grant of raca?.system.grants ?? []) {
+    for (const escolha of grant.choices ?? []) {
+      const id = String(escolha.uuid ?? "").split(".").pop();
+      const poder = id ? porId.get(id) : undefined;
+      // Modificador de atributo não é habilidade — não entra na lista.
+      if (poder && poder.system.tipo === "racial") {
+        daRaca.push({
+          id: poder.id,
+          nome: poder.name,
+          selected: poder.id === respostas[`${chaveBase}_0_0`],
+        });
+      }
+    }
+  }
+
+  pickers.push({
+    name: `${chaveBase}_0_0`,
+    label: `Habilidade de ${raca?.name ?? "outra raça"}`,
+    opcoes: daRaca.sort((a, b) => a.nome.localeCompare(b.nome)),
+  });
+  return pickers;
+}
+
 function montarEscolhasRaciais(
   racaRef: string,
   respostas: Record<string, unknown>,
   poderes: IndexedPoder[],
   magias: IndexedMagia[],
-  elegibilidade: PartialWizardState
+  elegibilidade: PartialWizardState,
+  racas: IndexedRace[]
 ): EscolhaRacialView[] {
   const racaAtual = toNomeSlug(racaRef);
   return escolhasDaRaca(racaRef).map((escolha) => {
@@ -361,6 +419,12 @@ function montarEscolhasRaciais(
 
     const pickers: PickerRacial[] = [];
     partesDoPedido(pedido).forEach((parte, pi) => {
+      if (parte.tipo === "habilidade_outra_raca") {
+        pickers.push(
+          ...pickersDeOutraRaca(escolha.chave, parte, respostas, racas, poderes, racaAtual)
+        );
+        return;
+      }
       for (let i = 0; i < parte.quantidade; i++) {
         const name = `${escolha.chave}_${pi}_${i}`;
         const escolhido = (respostas[name] as string | undefined) ?? "";

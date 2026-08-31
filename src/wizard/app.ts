@@ -269,13 +269,6 @@ export function defineWizardApp(): void {
         patch["classeNome"] = classeItem?.name ?? "";
       }
       if (formData.has("divindadeId")) patch["divindadeId"] = divindadeId;
-      const divindadePoder = formData.get("divindade_poder") as string | null;
-      if (divindadePoder !== null) {
-        patch["escolhasPorItem"] = {
-          ...(patch["escolhasPorItem"] as Record<string, unknown> ?? this._state.escolhasPorItem),
-          divindade_poder: divindadePoder,
-        };
-      }
       const classeCaminho = formData.get("classe_caminho") as string | null;
       if (classeCaminho) {
         patch["escolhasPorItem"] = {
@@ -511,40 +504,24 @@ export function defineWizardApp(): void {
       if (divDropdown) {
         divDropdown.addEventListener("change", () => {
           this._state.apply({
-            escolhasPorItem: { ...this._state.escolhasPorItem, divindade_poder: undefined },
+            escolhasPorItem: { ...this._state.escolhasPorItem, divindade_poderes: [] },
           });
           this.applyFormData(this._gatherFormData());
           this.render();
         });
       }
 
-      // ── Divindade conceded power radio ──────────────────────────────────
-      // Restore checked state from state (radios are rendered without checked attr)
-      const savedPoder = this._state.escolhasPorItem["divindade_poder"] as string | undefined;
-      if (savedPoder) {
-        const poderRadio = root.querySelector<HTMLInputElement>(
-          `input[name="divindade_poder"][value="${CSS.escape(savedPoder)}"]`
-        );
-        if (poderRadio) poderRadio.checked = true;
-      }
-      root.querySelectorAll<HTMLInputElement>("input[name='divindade_poder']").forEach((radio) => {
-        radio.addEventListener("change", (e) => {
-          const val = (e.target as HTMLInputElement).value;
-          this._state.apply({
-            escolhasPorItem: { ...this._state.escolhasPorItem, divindade_poder: val },
-          });
-        });
-      });
-
-      // ── Origem: marcar 2 benefícios (perícia e/ou poder) ────────────────
-      const beneficios = root.querySelectorAll<HTMLInputElement>("[name='origem_beneficio']");
-      beneficios.forEach((chk) => {
-        chk.addEventListener("change", () => {
-          const marcados = Array.from(beneficios)
+      // ── Divindade: marcar os poderes concedidos ─────────────────────────
+      const poderesDiv = root.querySelectorAll<HTMLInputElement>(
+        "input[name='divindade_poder']"
+      );
+      poderesDiv.forEach((caixa) => {
+        caixa.addEventListener("change", () => {
+          const marcados = Array.from(poderesDiv)
             .filter((c) => c.checked)
             .map((c) => c.value);
           this._state.apply({
-            escolhasPorItem: { ...this._state.escolhasPorItem, origem_beneficios: marcados },
+            escolhasPorItem: { ...this._state.escolhasPorItem, divindade_poderes: marcados },
           });
           void this.render(false);
         });
@@ -552,7 +529,9 @@ export function defineWizardApp(): void {
 
       // ── Escolhas de habilidade racial (Memória Póstuma, Deformidade…) ────
       root
-        .querySelectorAll<HTMLSelectElement>("select[name^='raca_esc-']")
+        .querySelectorAll<HTMLSelectElement | HTMLInputElement>(
+          "select[name^='raca_esc-'], input[name^='raca_esc-']"
+        )
         .forEach((sel) => {
           sel.addEventListener("change", () => {
             const chave = sel.name.replace("raca_esc-", "");

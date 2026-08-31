@@ -18,7 +18,9 @@ export function livrosDisponiveis() {
 }
 
 function ler(caminho) {
-  return readFileSync(caminho, "utf-8");
+  // Tira o frontmatter YAML: senão ele vaza para dentro da descrição.
+  const FRONTMATTER = new RegExp("^---\r?\n[\s\S]*?\r?\n---\r?\n");
+  return readFileSync(caminho, "utf-8").replace(FRONTMATTER, "");
 }
 
 /** Tira negrito, links e imagens — sobra o texto corrido. */
@@ -277,7 +279,8 @@ export function classesDosLivros() {
   ]) {
     for (const arq of arquivosDe(livro, pasta)) {
       const titulo = /^#\s+(.+)$/m.exec(arq.texto)?.[1]?.trim();
-      if (!titulo) continue;
+      // "Guerreiro - Poderes de Classe" é lista de poder, não o verbete da classe.
+      if (!titulo || /poderes de classe/i.test(titulo)) continue;
 
       const pv = /\*\*Inicial\*\*:\s*(\d+)\s*PV/i.exec(arq.texto);
       const pvNivel = /\*\*Por n[íi]vel\*\*:\s*\+?(\d+)\s*PV/i.exec(arq.texto);
@@ -297,8 +300,8 @@ export function classesDosLivros() {
 
       out.push({
         livro,
-        nome: titulo,
-        id: slug(titulo),
+        nome: titulo.replace(/\s*[-–]\s*.*$/, "").trim(),
+        id: slug(titulo.replace(/\s*[-–]\s*.*$/, "")),
         pv_inicial: pv ? Number(pv[1]) : null,
         pv_por_nivel: pvNivel ? Number(pvNivel[1]) : null,
         pm_por_nivel: pmNivel ? Number(pmNivel[1]) : null,

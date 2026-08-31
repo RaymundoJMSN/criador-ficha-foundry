@@ -65,3 +65,16 @@ export function listDivindadesParaPersonagem(racaId: string, classeId: string): 
 export function isDivindadeObrigatoria(classeId: string): boolean {
   return CLASSES_OBRIGATORIAS.has(classeId);
 }
+
+/**
+ * Quantos poderes concedidos o devoto escolhe.
+ *
+ * "Ao se tornar devoto, você recebe UM poder concedido a sua escolha da lista do
+ * deus" (LB p.96). Clérigo, druida e paladino: "Ao contrário de devotos normais,
+ * você recebe DOIS poderes concedidos, em vez de apenas um" (Devoto Fiel /
+ * Abençoado). Em nenhum caso são todos — o wizard concedia a lista inteira.
+ */
+export function poderesConcedidosParaEscolher(classeSlug: string, temDivindade: boolean): number {
+  if (!temDivindade) return 0;
+  return CLASSES_OBRIGATORIAS.has(classeSlug) ? 2 : 1;
+}

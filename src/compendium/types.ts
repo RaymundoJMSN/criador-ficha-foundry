@@ -30,9 +30,10 @@ export interface IndexedClasse extends IndexedBase {
     descricao?: string;
     niveis?: unknown;
     pericias?: {
-      inatas?: string[];
+      /** Frase inteira: "Luta (For) ou Pontaria (Des), … mais 2 a sua escolha entre …". */
+      inatas?: string | string[];
       escolhas?: string[];
-      numero?: number;
+      numero?: number | string;
       value?: string[];
     };
   };

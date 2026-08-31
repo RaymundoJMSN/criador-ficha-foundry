@@ -265,18 +265,12 @@ export class ActorWriter {
     }
 
     // Add divindade conceded powers
-    const DIVINE_CLASSES_LOCAL = new Set(["clerigo", "paladino", "druida"]);
     const divindade = state.divindadeId ? getDivindade(state.divindadeId) : null;
     if (divindade) {
       const allPoderes = CompendiumIndex.getAll("poder");
-      const isDivineClass = DIVINE_CLASSES_LOCAL.has(toNomeSlug(state.classeNome ?? ""));
-
-      // Divine classes get all conceded powers; others get only the chosen one
-      const poderesParaAdd: string[] = isDivineClass
-        ? divindade.poderes_concedidos
-        : [(state.escolhasPorItem["divindade_poder"] as string | undefined)].filter(
-            (s): s is string => !!s
-          );
+      // O devoto ESCOLHE (1, ou 2 se clérigo/druida/paladino) — não recebe todos.
+      const escolhidos = (state.escolhasPorItem["divindade_poderes"] as string[]) ?? [];
+      const poderesParaAdd = escolhidos.filter((s) => divindade.poderes_concedidos.includes(s));
 
       const divItems: unknown[] = [];
       for (const slug of poderesParaAdd) {

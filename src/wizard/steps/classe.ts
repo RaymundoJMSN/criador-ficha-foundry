@@ -2,6 +2,9 @@ import type { WizardState } from "../state.js";
 import type { IndexedClasse } from "../../compendium/types.js";
 import { getClasse } from "../../rules/classe.js";
 import { toNomeSlug } from "../../compendium/slug.js";
+import textosRaw from "../../data/textos.json";
+
+const textos = textosRaw as { classes?: Record<string, string> };
 
 export interface ClasseContext {
   stepTitle: string;
@@ -14,6 +17,8 @@ export interface ClasseContext {
     selected: boolean;
   }>;
   selectedClasse: IndexedClasse | null;
+  /** Descrição do livro; vazia quando textos.json não foi gerado. */
+  descricao: string;
   errors: string[];
   // Caminho sub-choice
   caminhos: Array<{ slug: string; nome: string; selected: boolean }>;
@@ -77,6 +82,8 @@ export function prepareClasseContext(
       selected: c.id === state.classeId,
     })),
     selectedClasse,
+    descricao:
+      (selectedClasse?.system.descricao ?? "") || (classeSlug ? (textos.classes?.[classeSlug] ?? "") : ""),
     errors,
     caminhos,
     classeCaminho,

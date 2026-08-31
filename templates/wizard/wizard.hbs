@@ -102,12 +102,16 @@
         <div style="margin-top:10px;padding:8px;background:rgba(255,255,255,0.04);border-radius:3px;">
           <strong style="font-size:0.85em;">{{this.habilidade}}</strong>
           {{#if this.ramos.length}}
-          <select name="raca_esc-{{this.chave}}_ramo" style="width:100%;padding:5px;margin-top:5px;">
-            <option value="">— escolha uma opção —</option>
+          <div style="display:flex;flex-direction:column;gap:4px;margin-top:6px;">
             {{#each this.ramos}}
-            <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.rotulo}}</option>
+            <label for="ramo-{{../this.chave}}-{{this.id}}" class="t20w-opcao">
+              <input type="radio" id="ramo-{{../this.chave}}-{{this.id}}"
+                     name="raca_esc-{{../this.chave}}_ramo" value="{{this.id}}"
+                     {{#if this.selected}}checked{{/if}} />
+              <span>{{this.rotulo}}</span>
+            </label>
             {{/each}}
-          </select>
+          </div>
           {{/if}}
           {{#each this.pickers}}
           <div class="form-group" style="margin-top:6px;">
@@ -210,6 +214,7 @@
       {{#if selectedClasse}}
       <div style="margin-top:12px;padding:10px;background:rgba(255,255,255,0.05);border-radius:4px;">
         <h3 style="margin:0 0 6px;">{{selectedClasse.name}}</h3>
+        {{#if descricao}}<p style="font-size:0.85em;opacity:0.8;margin:0 0 8px;">{{descricao}}</p>{{/if}}
         {{#if selectedClasse.system.descricao}}<p style="font-size:0.85em;opacity:0.8;margin:0 0 8px;">{{selectedClasse.system.descricao}}</p>{{/if}}
         <dl style="display:grid;grid-template-columns:max-content 1fr;gap:2px 12px;font-size:0.85em;margin:0;">
           <dt>PV por nível</dt><dd>+{{selectedClasse.system.pvPorNivel}}</dd>
@@ -334,22 +339,18 @@
       {{#if selectedDivindade}}
       <div style="margin-top:12px;padding:10px;background:rgba(255,255,255,0.05);border-radius:4px;">
         <h3 style="margin:0 0 6px;">{{selectedDivindade.nome}}</h3>
-        {{#if todosPoderesAuto}}
-          <p style="font-size:0.85em;opacity:0.75;margin:0 0 6px;">Como {{classeNome}}, você recebe todos os poderes concedidos automaticamente.</p>
-          <ul style="font-size:0.85em;margin:0;padding-left:18px;">
-            {{#each selectedDivindade.poderesConcedidos}}<li>{{this}}</li>{{/each}}
-          </ul>
-        {{else}}
-          <p style="font-size:0.85em;margin:0 0 6px;"><strong>Escolha 1 poder concedido:</strong></p>
-          <div class="t20w-poder-radio-group" data-selected-poder="{{divindadePoder}}" style="display:flex;flex-direction:column;gap:4px;">
-            {{#each selectedDivindade.poderesConcedidos}}
-            <label for="div-poder-{{@index}}" style="display:flex;align-items:center;gap:6px;font-size:0.9em;cursor:pointer;">
-              <input type="radio" id="div-poder-{{@index}}" name="divindade_poder" value="{{this}}" style="flex-shrink:0;" />
-              <span style="cursor:pointer;">{{this}}</span>
-            </label>
-            {{/each}}
-          </div>
-        {{/if}}
+        <p style="font-size:0.85em;margin:0 0 6px;">
+          <strong>Escolha {{quantosPoderes}} poder(es) concedido(s):</strong>
+        </p>
+        <div style="display:flex;flex-direction:column;gap:4px;">
+          {{#each selectedDivindade.poderes}}
+          <label for="div-poder-{{@index}}" class="t20w-opcao">
+            <input type="checkbox" id="div-poder-{{@index}}" name="divindade_poder"
+                   value="{{this.slug}}" {{#if this.selected}}checked{{/if}} />
+            <span>{{this.nome}}</span>
+          </label>
+          {{/each}}
+        </div>
       </div>
       {{/if}}
       {{#if errors.length}}<ul class="t20w-errors">{{#each errors}}<li>{{this}}</li>{{/each}}</ul>{{/if}}
