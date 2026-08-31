@@ -1,11 +1,9 @@
 import { toNomeSlug } from "../../compendium/slug.js";
 import { getClasse } from "../../rules/classe.js";
 import { describeUnmet } from "../../rules/poderes.js";
-import poderesporNivelRaw from "../../data/poderes-por-nivel.json";
+import { habilidadesAte, slotsDePoder } from "../../rules/progressao.js";
 import type { IndexedPoder } from "../../compendium/types.js";
 import type { WizardState } from "../state.js";
-
-const poderesporNivel = poderesporNivelRaw as Record<string, Record<string, number>>;
 
 export interface PoderEntry {
   id: string;
@@ -17,6 +15,8 @@ export interface PoderEntry {
   tipo: string;
   subtipo: string;
   descricao: string;
+  /** Whether this entry is a class power or a general power taken in its place. */
+  origem: "classe" | "geral";
 }
 
 export interface PoderesContext {
@@ -49,16 +49,16 @@ export function preparePoderesContext(
   const classeSlug = toNomeSlug(state.classeNome ?? "");
   const classeData = getClasse(classeSlug);
 
-  // Auto-granted class abilities (always shown) — resolve slugs to display names
-  const habilidadeSlugs = classeData?.habilidades_classe_ids ?? [];
+  // Auto-granted class abilities up to this level (same source the writer uses)
+  const habilidadeSlugs = habilidadesAte(state.classeNome || state.classeId, state.nivel);
   const habilidades = habilidadeSlugs.map((slug) => ({
     slug,
     nome: resolvePoderNome(slug) ?? prettifySlug(slug),
   }));
 
-  // How many free picks at this level (0 for level 1)
-  const nivelStr = String(state.nivel);
-  const poderesParaPick = poderesporNivel[classeSlug]?.[nivelStr] ?? 0;
+  // Free picks a character of this level has ACCUMULATED (levels 1..N), not the
+  // single pick this level grants — a nv5 guerreiro picks 4 powers, not 1.
+  const poderesParaPick = slotsDePoder(state.classeNome || state.classeId, state.nivel);
 
   if (!classeData || poderesParaPick === 0) {
     return {
@@ -84,8 +84,10 @@ export function preparePoderesContext(
     poderes: state.poderes,
   };
 
+  // "Sempre que você recebe um poder de classe, pode trocá-lo por um poder geral"
+  // (LB cap. 5) — so every class-power slot may also be spent on a general power.
   const entries: PoderEntry[] = allPoderes
-    .filter((p) => classePoderSlugs.has(toNomeSlug(p.name)))
+    .filter((p) => classePoderSlugs.has(toNomeSlug(p.name)) || p.system.tipo === "geral")
     .map((p) => {
       const slug = toNomeSlug(p.name);
       const unmet = describeUnmet(slug, stateForEligibility);
@@ -99,6 +101,7 @@ export function preparePoderesContext(
         tipo: p.system.tipo ?? "",
         subtipo: p.system.subtipo ?? "",
         descricao: p.system.descricao ?? "",
+        origem: p.system.tipo === "geral" ? ("geral" as const) : ("classe" as const),
       };
     });
 

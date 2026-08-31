@@ -65,3 +65,46 @@ describe("preparePoderesContext", () => {
     expect(ctx.poderesParaPick).toBe(0);
   });
 });
+
+describe("preparePoderesContext — cota acumulada e poderes gerais", () => {
+  it("guerreiro nv5 abre 4 escolhas (níveis 2..5), não 1", () => {
+    const s = new WizardState();
+    s.classeNome = "Guerreiro";
+    s.nivel = 5;
+    expect(preparePoderesContext(s, []).poderesParaPick).toBe(4);
+  });
+
+  it("guerreiro nv1 não abre escolha de poder", () => {
+    const s = new WizardState();
+    s.classeNome = "Guerreiro";
+    s.nivel = 1;
+    expect(preparePoderesContext(s, []).poderesParaPick).toBe(0);
+  });
+
+  it("mostra só habilidades de classe até o nível (sem Campeão no nv7)", () => {
+    const s = new WizardState();
+    s.classeNome = "Guerreiro";
+    s.nivel = 7;
+    const slugs = preparePoderesContext(s, []).habilidades.map((h) => h.slug);
+    expect(slugs).toContain("ataque_extra");
+    expect(slugs).not.toContain("campeao");
+  });
+
+  it("inclui poderes gerais junto dos poderes de classe", () => {
+    const s = new WizardState();
+    s.classeNome = "Guerreiro";
+    s.nivel = 2;
+    const geral: IndexedPoder = {
+      id: "foco_em_pericia",
+      name: "Foco em Perícia",
+      img: "",
+      packId: "test.poderes",
+      type: "poder",
+      system: { tipo: "geral", descricao: "" },
+    };
+    const ctx = preparePoderesContext(s, [poder("Ambidestria"), geral]);
+    const nomes = ctx.poderes.map((p) => p.name);
+    expect(nomes).toContain("Foco em Perícia");
+    expect(ctx.poderes.find((p) => p.name === "Foco em Perícia")?.origem).toBe("geral");
+  });
+});

@@ -113,25 +113,6 @@ function walkDir(dir) {
   writeJson(join(OUT, "prereqs.json"), prereqs);
 }
 
-// 6. poderes-por-nivel.json — poder count per class per level
-{
-  const src = readJson(join(T20DB, "regras/progressao_classes.json"));
-  const result = {};
-  for (const [classeId, classeData] of Object.entries(src.classes ?? {})) {
-    const porNivel = {};
-    const tabela = classeData.tabela_progressao ?? {};
-    for (const [nivel, dados] of Object.entries(tabela)) {
-      const escolhas = dados.escolhas ?? [];
-      const poderesDaClasse = escolhas.filter(
-        (e) => e.tipo === "poder_classe" || e.tipo === "poder_geral"
-      ).length;
-      if (poderesDaClasse > 0) porNivel[nivel] = poderesDaClasse;
-    }
-    result[classeId] = porNivel;
-  }
-  writeJson(join(OUT, "poderes-por-nivel.json"), result);
-}
-
 // 7. slug-map.json — empty override map
 {
   writeJson(join(OUT, "slug-map.json"), {});

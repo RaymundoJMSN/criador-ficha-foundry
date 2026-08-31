@@ -4,6 +4,7 @@ import type { WizardState } from "../wizard/state.js";
 import { CompendiumIndex } from "../compendium/index.js";
 import { toNomeSlug } from "../compendium/slug.js";
 import { getClasse } from "../rules/classe.js";
+import { habilidadesAte, baseSlug } from "../rules/progressao.js";
 import { getOrigem } from "../rules/origem.js";
 import { getDivindade } from "../rules/divindade.js";
 
@@ -128,14 +129,18 @@ export class ActorWriter {
       }
     }
 
-    // Auto-grant class habilidades (level 1 automatic features)
+    // Auto-grant class habilidades up to the character's level. An upgrade entry
+    // (ataque_especial_8) has no item of its own — fall back to the family's base slug.
     const classeSlug = toNomeSlug(state.classeNome ?? "");
     const classeData = getClasse(classeSlug);
-    if (classeData && classeData.habilidades_classe_ids.length > 0) {
+    const habilidadeSlugs = habilidadesAte(state.classeNome || state.classeId, state.nivel);
+    if (classeData && habilidadeSlugs.length > 0) {
       const allPoderes = CompendiumIndex.getAll("poder");
       const habItems: unknown[] = [];
-      for (const slug of classeData.habilidades_classe_ids) {
-        const match = allPoderes.find(p => toNomeSlug(p.name) === slug);
+      for (const slug of habilidadeSlugs) {
+        const match =
+          allPoderes.find(p => toNomeSlug(p.name) === slug) ??
+          allPoderes.find(p => toNomeSlug(p.name) === baseSlug(slug));
         if (match) {
           const doc = await resolveItem(match.id);
           if (doc) habItems.push(doc);
