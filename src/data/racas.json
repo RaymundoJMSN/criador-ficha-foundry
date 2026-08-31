@@ -1,10 +1,74 @@
 [
   {
+    "id": "aggelus",
+    "nome": "Aggelus",
+    "raca_base": "suraggel",
+    "descricao": "Aggelus: descendentes celestes",
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "bonus_pericias": [],
+    "treinar_pericias": [],
+    "atributos_fixos": [
+      {
+        "atributo": "sab",
+        "valor": 2
+      },
+      {
+        "atributo": "car",
+        "valor": 1
+      }
+    ],
+    "atributos_escolha": []
+  },
+  {
+    "id": "alt_dois_atributos",
+    "nome": "Alt_dois_atributos",
+    "raca_base": "kallyanach",
+    "descricao": "+1 em dois atributos a sua escolha",
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "bonus_pericias": [],
+    "treinar_pericias": [],
+    "atributos_fixos": [],
+    "atributos_escolha": [
+      {
+        "valor": 1,
+        "quantidade": 2,
+        "atributos_diferentes": true,
+        "atributos_disponiveis": null,
+        "observacao": null
+      }
+    ]
+  },
+  {
+    "id": "alt_um_atributo",
+    "nome": "Alt_um_atributo",
+    "raca_base": "kallyanach",
+    "descricao": "+2 em um atributo a sua escolha",
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "bonus_pericias": [],
+    "treinar_pericias": [],
+    "atributos_fixos": [],
+    "atributos_escolha": [
+      {
+        "valor": 2,
+        "quantidade": 1,
+        "atributos_diferentes": false,
+        "atributos_disponiveis": null,
+        "observacao": null
+      }
+    ]
+  },
+  {
     "id": "anao",
     "nome": "Anão",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 6,
+    "bonus_pericias": [],
+    "treinar_pericias": [],
     "atributos_fixos": [
       {
         "atributo": "con",
@@ -19,16 +83,17 @@
         "valor": -1
       }
     ],
-    "atributos_escolha": [],
-    "bonus_pericias": [],
-    "treinar_pericias": []
+    "atributos_escolha": []
   },
   {
     "id": "bugbear",
     "nome": "Bugbear",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 9,
+    "bonus_pericias": [],
+    "treinar_pericias": [],
     "atributos_fixos": [
       {
         "atributo": "for",
@@ -43,16 +108,17 @@
         "valor": -1
       }
     ],
-    "atributos_escolha": [],
-    "bonus_pericias": [],
-    "treinar_pericias": []
+    "atributos_escolha": []
   },
   {
     "id": "centauro",
     "nome": "Centauro",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "grande",
     "deslocamento": 12,
+    "bonus_pericias": [],
+    "treinar_pericias": [],
     "atributos_fixos": [
       {
         "atributo": "sab",
@@ -67,49 +133,51 @@
         "valor": -1
       }
     ],
-    "atributos_escolha": [],
-    "bonus_pericias": [],
-    "treinar_pericias": []
+    "atributos_escolha": []
   },
   {
     "id": "ceratops",
     "nome": "Ceratops",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "grande",
     "deslocamento": 9,
-    "atributos_fixos": [
-      {
-        "atributo": "con",
-        "valor": 2
-      },
-      {
-        "atributo": "for",
-        "valor": 1
-      },
-      {
-        "atributo": "des",
-        "valor": -1
-      },
-      {
-        "atributo": "int",
-        "valor": -1
-      }
-    ],
-    "atributos_escolha": [],
     "bonus_pericias": [],
     "treinar_pericias": [
       {
         "tipo": "treinar_pericia",
         "quantidade": 1
       }
-    ]
+    ],
+    "atributos_fixos": [
+      {
+        "atributo": "con",
+        "valor": 2
+      },
+      {
+        "atributo": "for",
+        "valor": 1
+      },
+      {
+        "atributo": "des",
+        "valor": -1
+      },
+      {
+        "atributo": "int",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": []
   },
   {
     "id": "dahllan",
     "nome": "Dahllan",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 9,
+    "bonus_pericias": [],
+    "treinar_pericias": [],
     "atributos_fixos": [
       {
         "atributo": "sab",
@@ -124,27 +192,17 @@
         "valor": -1
       }
     ],
-    "atributos_escolha": [],
-    "bonus_pericias": [],
-    "treinar_pericias": []
-  },
-  {
-    "id": "duende",
-    "nome": "Duende",
-    "descricao": null,
-    "tamanho": "variavel",
-    "deslocamento": 9,
-    "atributos_fixos": [],
-    "atributos_escolha": [],
-    "bonus_pericias": [],
-    "treinar_pericias": []
+    "atributos_escolha": []
   },
   {
     "id": "eiradaan",
     "nome": "Eiradaan",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 9,
+    "bonus_pericias": [],
+    "treinar_pericias": [],
     "atributos_fixos": [
       {
         "atributo": "sab",
@@ -159,31 +217,15 @@
         "valor": -1
       }
     ],
-    "atributos_escolha": [],
-    "bonus_pericias": [],
-    "treinar_pericias": []
+    "atributos_escolha": []
   },
   {
     "id": "elfo",
     "nome": "Elfo",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 12,
-    "atributos_fixos": [
-      {
-        "atributo": "int",
-        "valor": 2
-      },
-      {
-        "atributo": "des",
-        "valor": 1
-      },
-      {
-        "atributo": "con",
-        "valor": -1
-      }
-    ],
-    "atributos_escolha": [],
     "bonus_pericias": [
       {
         "pericia": "Misticismo",
@@ -194,14 +236,32 @@
         "valor": 2
       }
     ],
-    "treinar_pericias": []
+    "treinar_pericias": [],
+    "atributos_fixos": [
+      {
+        "atributo": "int",
+        "valor": 2
+      },
+      {
+        "atributo": "des",
+        "valor": 1
+      },
+      {
+        "atributo": "con",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": []
   },
   {
     "id": "elfo_do_mar",
     "nome": "Elfo-do-Mar",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 9,
+    "bonus_pericias": [],
+    "treinar_pericias": [],
     "atributos_fixos": [
       {
         "atributo": "des",
@@ -216,16 +276,22 @@
         "valor": -1
       }
     ],
-    "atributos_escolha": [],
-    "bonus_pericias": [],
-    "treinar_pericias": []
+    "atributos_escolha": []
   },
   {
     "id": "finntroll",
     "nome": "Finntroll",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 9,
+    "bonus_pericias": [
+      {
+        "pericia": "Misticismo",
+        "valor": 2
+      }
+    ],
+    "treinar_pericias": [],
     "atributos_fixos": [
       {
         "atributo": "int",
@@ -240,37 +306,55 @@
         "valor": -1
       }
     ],
-    "atributos_escolha": [],
-    "bonus_pericias": [
-      {
-        "pericia": "Misticismo",
-        "valor": 2
-      }
-    ],
-    "treinar_pericias": []
+    "atributos_escolha": []
   },
   {
     "id": "galokk",
     "nome": "Galokk",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "grande",
     "deslocamento": 9,
-    "atributos_fixos": [],
-    "atributos_escolha": [],
     "bonus_pericias": [],
     "treinar_pericias": [
       {
         "tipo": "qualquer_pericia",
         "quantidade": 1
       }
+    ],
+    "atributos_fixos": [
+      {
+        "atributo": "for",
+        "valor": 1
+      },
+      {
+        "atributo": "con",
+        "valor": 1
+      },
+      {
+        "atributo": "car",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": [
+      {
+        "valor": 1,
+        "quantidade": 1,
+        "atributos_diferentes": false,
+        "atributos_disponiveis": null,
+        "observacao": "+1 em um atributo a sua escolha"
+      }
     ]
   },
   {
     "id": "gnoll",
     "nome": "Gnoll",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 9,
+    "bonus_pericias": [],
+    "treinar_pericias": [],
     "atributos_fixos": [
       {
         "atributo": "con",
@@ -285,16 +369,17 @@
         "valor": -1
       }
     ],
-    "atributos_escolha": [],
-    "bonus_pericias": [],
-    "treinar_pericias": []
+    "atributos_escolha": []
   },
   {
     "id": "goblin",
     "nome": "Goblin",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "pequeno",
     "deslocamento": 9,
+    "bonus_pericias": [],
+    "treinar_pericias": [],
     "atributos_fixos": [
       {
         "atributo": "des",
@@ -309,16 +394,17 @@
         "valor": -1
       }
     ],
-    "atributos_escolha": [],
-    "bonus_pericias": [],
-    "treinar_pericias": []
+    "atributos_escolha": []
   },
   {
     "id": "golem",
     "nome": "Golem",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 6,
+    "bonus_pericias": [],
+    "treinar_pericias": [],
     "atributos_fixos": [
       {
         "atributo": "for",
@@ -333,16 +419,17 @@
         "valor": -1
       }
     ],
-    "atributos_escolha": [],
-    "bonus_pericias": [],
-    "treinar_pericias": []
+    "atributos_escolha": []
   },
   {
     "id": "golem_desperto",
     "nome": "Golem Desperto",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "variavel",
     "deslocamento": 9,
+    "bonus_pericias": [],
+    "treinar_pericias": [],
     "atributos_fixos": [
       {
         "atributo": "for",
@@ -353,31 +440,15 @@
         "valor": -1
       }
     ],
-    "atributos_escolha": [],
-    "bonus_pericias": [],
-    "treinar_pericias": []
+    "atributos_escolha": []
   },
   {
     "id": "harpia",
     "nome": "Harpia",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 9,
-    "atributos_fixos": [
-      {
-        "atributo": "des",
-        "valor": 2
-      },
-      {
-        "atributo": "car",
-        "valor": 1
-      },
-      {
-        "atributo": "int",
-        "valor": -1
-      }
-    ],
-    "atributos_escolha": [],
     "bonus_pericias": [
       {
         "pericia": "Intimidação",
@@ -388,29 +459,30 @@
         "valor": 2
       }
     ],
-    "treinar_pericias": []
+    "treinar_pericias": [],
+    "atributos_fixos": [
+      {
+        "atributo": "des",
+        "valor": 2
+      },
+      {
+        "atributo": "car",
+        "valor": 1
+      },
+      {
+        "atributo": "int",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": []
   },
   {
     "id": "hobgoblin",
     "nome": "Hobgoblin",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 9,
-    "atributos_fixos": [
-      {
-        "atributo": "con",
-        "valor": 2
-      },
-      {
-        "atributo": "des",
-        "valor": 1
-      },
-      {
-        "atributo": "car",
-        "valor": -1
-      }
-    ],
-    "atributos_escolha": [],
     "bonus_pericias": [
       {
         "pericia": "Ofício (armeiro)",
@@ -426,37 +498,62 @@
         "tipo": "especificada",
         "quantidade": 1
       }
-    ]
+    ],
+    "atributos_fixos": [
+      {
+        "atributo": "con",
+        "valor": 2
+      },
+      {
+        "atributo": "des",
+        "valor": 1
+      },
+      {
+        "atributo": "car",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": []
   },
   {
     "id": "humano",
     "nome": "Humano",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 9,
-    "atributos_fixos": [],
-    "atributos_escolha": [
-      {
-        "valor": 1,
-        "quantidade": 3,
-        "atributos_diferentes": true,
-        "observacao": "+1 em três atributos diferentes"
-      }
-    ],
     "bonus_pericias": [],
     "treinar_pericias": [
       {
         "tipo": "qualquer_pericia",
         "quantidade": 2
       }
+    ],
+    "atributos_fixos": [],
+    "atributos_escolha": [
+      {
+        "valor": 1,
+        "quantidade": 3,
+        "atributos_diferentes": true,
+        "atributos_disponiveis": null,
+        "observacao": "+1 em três atributos diferentes"
+      }
     ]
   },
   {
     "id": "hynne",
     "nome": "Hynne",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "pequeno",
     "deslocamento": 6,
+    "bonus_pericias": [
+      {
+        "pericia": "Enganação",
+        "valor": 2
+      }
+    ],
+    "treinar_pericias": [],
     "atributos_fixos": [
       {
         "atributo": "des",
@@ -471,21 +568,17 @@
         "valor": -1
       }
     ],
-    "atributos_escolha": [],
-    "bonus_pericias": [
-      {
-        "pericia": "Enganação",
-        "valor": 2
-      }
-    ],
-    "treinar_pericias": []
+    "atributos_escolha": []
   },
   {
     "id": "kaijin",
     "nome": "Kaijin",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 9,
+    "bonus_pericias": [],
+    "treinar_pericias": [],
     "atributos_fixos": [
       {
         "atributo": "for",
@@ -500,27 +593,17 @@
         "valor": -2
       }
     ],
-    "atributos_escolha": [],
-    "bonus_pericias": [],
-    "treinar_pericias": []
-  },
-  {
-    "id": "kallyanach",
-    "nome": "Kallyanach",
-    "descricao": null,
-    "tamanho": "medio",
-    "deslocamento": 9,
-    "atributos_fixos": [],
-    "atributos_escolha": [],
-    "bonus_pericias": [],
-    "treinar_pericias": []
+    "atributos_escolha": []
   },
   {
     "id": "kappa",
     "nome": "Kappa",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 9,
+    "bonus_pericias": [],
+    "treinar_pericias": [],
     "atributos_fixos": [
       {
         "atributo": "des",
@@ -535,16 +618,22 @@
         "valor": -1
       }
     ],
-    "atributos_escolha": [],
-    "bonus_pericias": [],
-    "treinar_pericias": []
+    "atributos_escolha": []
   },
   {
     "id": "kliren",
     "nome": "Kliren",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 9,
+    "bonus_pericias": [],
+    "treinar_pericias": [
+      {
+        "tipo": "qualquer_pericia",
+        "quantidade": 1
+      }
+    ],
     "atributos_fixos": [
       {
         "atributo": "int",
@@ -559,21 +648,22 @@
         "valor": -1
       }
     ],
-    "atributos_escolha": [],
-    "bonus_pericias": [],
-    "treinar_pericias": [
-      {
-        "tipo": "qualquer_pericia",
-        "quantidade": 1
-      }
-    ]
+    "atributos_escolha": []
   },
   {
     "id": "kobold",
     "nome": "Kobolds",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 9,
+    "bonus_pericias": [
+      {
+        "pericia": "Sobrevivência",
+        "valor": 2
+      }
+    ],
+    "treinar_pericias": [],
     "atributos_fixos": [
       {
         "atributo": "des",
@@ -584,55 +674,73 @@
         "valor": -1
       }
     ],
-    "atributos_escolha": [],
-    "bonus_pericias": [
-      {
-        "pericia": "Sobrevivência",
-        "valor": 2
-      }
-    ],
-    "treinar_pericias": []
+    "atributos_escolha": []
   },
   {
     "id": "lefou",
     "nome": "Lefou",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 9,
-    "atributos_fixos": [],
-    "atributos_escolha": [],
     "bonus_pericias": [],
-    "treinar_pericias": []
+    "treinar_pericias": [],
+    "atributos_fixos": [
+      {
+        "atributo": "car",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": [
+      {
+        "valor": 1,
+        "quantidade": 3,
+        "atributos_diferentes": true,
+        "atributos_disponiveis": [
+          "for",
+          "des",
+          "con",
+          "int",
+          "sab"
+        ],
+        "observacao": "+1 em três atributos diferentes, exceto Carisma"
+      }
+    ]
   },
   {
     "id": "mashin",
     "nome": "Mashin",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 6,
-    "atributos_fixos": [],
-    "atributos_escolha": [
-      {
-        "valor": 1,
-        "quantidade": 2,
-        "atributos_diferentes": true,
-        "observacao": "+1 em dois atributos a sua escolha"
-      }
-    ],
     "bonus_pericias": [],
     "treinar_pericias": [
       {
         "tipo": "qualquer_pericia",
         "quantidade": 2
       }
+    ],
+    "atributos_fixos": [],
+    "atributos_escolha": [
+      {
+        "valor": 1,
+        "quantidade": 2,
+        "atributos_diferentes": true,
+        "atributos_disponiveis": null,
+        "observacao": "+1 em dois atributos a sua escolha"
+      }
     ]
   },
   {
     "id": "medusa",
     "nome": "Medusa",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 9,
+    "bonus_pericias": [],
+    "treinar_pericias": [],
     "atributos_fixos": [
       {
         "atributo": "des",
@@ -643,29 +751,46 @@
         "valor": 1
       }
     ],
-    "atributos_escolha": [],
-    "bonus_pericias": [],
-    "treinar_pericias": []
+    "atributos_escolha": []
   },
   {
     "id": "meio_elfo",
     "nome": "Meio-Elfo",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 9,
-    "atributos_fixos": [],
-    "atributos_escolha": [],
     "bonus_pericias": [],
-    "treinar_pericias": []
+    "treinar_pericias": [],
+    "atributos_fixos": [
+      {
+        "atributo": "int",
+        "valor": 1
+      }
+    ],
+    "atributos_escolha": [
+      {
+        "valor": 1,
+        "quantidade": 2,
+        "atributos_diferentes": true,
+        "atributos_disponiveis": [
+          "for",
+          "des",
+          "int",
+          "sab",
+          "car"
+        ],
+        "observacao": "+1 em dois atributos, exceto Constituição"
+      }
+    ]
   },
   {
     "id": "meio_orc",
     "nome": "Meio-Orc",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 9,
-    "atributos_fixos": [],
-    "atributos_escolha": [],
     "bonus_pericias": [
       {
         "pericia": "Intimidação",
@@ -677,16 +802,35 @@
         "tipo": "qualquer_pericia",
         "quantidade": 1
       }
+    ],
+    "atributos_fixos": [
+      {
+        "atributo": "for",
+        "valor": 2
+      }
+    ],
+    "atributos_escolha": [
+      {
+        "valor": 1,
+        "quantidade": 1,
+        "atributos_diferentes": false,
+        "atributos_disponiveis": [
+          "des",
+          "con",
+          "int",
+          "sab"
+        ],
+        "observacao": "+1 em outro atributo a sua escolha (exceto Carisma; For já é fixo +2)"
+      }
     ]
   },
   {
     "id": "minauro",
     "nome": "Minauro",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 9,
-    "atributos_fixos": [],
-    "atributos_escolha": [],
     "bonus_pericias": [
       {
         "pericia": "Diplomacia",
@@ -697,14 +841,32 @@
         "valor": 2
       }
     ],
-    "treinar_pericias": []
+    "treinar_pericias": [],
+    "atributos_fixos": [
+      {
+        "atributo": "for",
+        "valor": 1
+      }
+    ],
+    "atributos_escolha": [
+      {
+        "valor": 1,
+        "quantidade": 2,
+        "atributos_diferentes": true,
+        "atributos_disponiveis": null,
+        "observacao": "+1 em dois atributos a sua escolha (slots devem ser diferentes entre si; podem coincidir com Força)"
+      }
+    ]
   },
   {
     "id": "minotauro",
     "nome": "Minotauro",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 9,
+    "bonus_pericias": [],
+    "treinar_pericias": [],
     "atributos_fixos": [
       {
         "atributo": "for",
@@ -719,43 +881,82 @@
         "valor": -1
       }
     ],
-    "atributos_escolha": [],
-    "bonus_pericias": [],
-    "treinar_pericias": []
+    "atributos_escolha": []
   },
   {
-    "id": "moreau",
-    "nome": "Moreau",
-    "descricao": null,
+    "id": "nagah_femea",
+    "nome": "Nagah_femea",
+    "raca_base": "nagah",
+    "descricao": "Fêmea",
     "tamanho": "medio",
     "deslocamento": 9,
-    "atributos_fixos": [],
-    "atributos_escolha": [],
-    "bonus_pericias": [],
-    "treinar_pericias": []
-  },
-  {
-    "id": "nagah",
-    "nome": "Nagah",
-    "descricao": null,
-    "tamanho": "medio",
-    "deslocamento": 9,
-    "atributos_fixos": [],
-    "atributos_escolha": [],
     "bonus_pericias": [
       {
         "pericia": "Enganação",
         "valor": 2
       }
     ],
-    "treinar_pericias": []
+    "treinar_pericias": [],
+    "atributos_fixos": [
+      {
+        "atributo": "int",
+        "valor": 1
+      },
+      {
+        "atributo": "sab",
+        "valor": 1
+      },
+      {
+        "atributo": "car",
+        "valor": 1
+      }
+    ],
+    "atributos_escolha": []
+  },
+  {
+    "id": "nagah_macho",
+    "nome": "Nagah_macho",
+    "raca_base": "nagah",
+    "descricao": "Macho",
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "bonus_pericias": [
+      {
+        "pericia": "Enganação",
+        "valor": 2
+      }
+    ],
+    "treinar_pericias": [],
+    "atributos_fixos": [
+      {
+        "atributo": "for",
+        "valor": 1
+      },
+      {
+        "atributo": "des",
+        "valor": 1
+      },
+      {
+        "atributo": "con",
+        "valor": 1
+      }
+    ],
+    "atributos_escolha": []
   },
   {
     "id": "nezumi",
     "nome": "Nezumi",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "pequeno",
     "deslocamento": 9,
+    "bonus_pericias": [
+      {
+        "pericia": "Intimidação",
+        "valor": 2
+      }
+    ],
+    "treinar_pericias": [],
     "atributos_fixos": [
       {
         "atributo": "con",
@@ -770,21 +971,17 @@
         "valor": -1
       }
     ],
-    "atributos_escolha": [],
-    "bonus_pericias": [
-      {
-        "pericia": "Intimidação",
-        "valor": 2
-      }
-    ],
-    "treinar_pericias": []
+    "atributos_escolha": []
   },
   {
     "id": "ogro",
     "nome": "Ogro",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "grande",
     "deslocamento": 9,
+    "bonus_pericias": [],
+    "treinar_pericias": [],
     "atributos_fixos": [
       {
         "atributo": "for",
@@ -803,16 +1000,17 @@
         "valor": -1
       }
     ],
-    "atributos_escolha": [],
-    "bonus_pericias": [],
-    "treinar_pericias": []
+    "atributos_escolha": []
   },
   {
     "id": "orc",
     "nome": "Orc",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 9,
+    "bonus_pericias": [],
+    "treinar_pericias": [],
     "atributos_fixos": [
       {
         "atributo": "for",
@@ -827,42 +1025,46 @@
         "valor": -1
       }
     ],
-    "atributos_escolha": [],
-    "bonus_pericias": [],
-    "treinar_pericias": []
+    "atributos_escolha": []
   },
   {
     "id": "osteon",
     "nome": "Osteon",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 9,
-    "atributos_fixos": [],
-    "atributos_escolha": [],
     "bonus_pericias": [],
-    "treinar_pericias": []
+    "treinar_pericias": [],
+    "atributos_fixos": [
+      {
+        "atributo": "con",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": [
+      {
+        "valor": 1,
+        "quantidade": 3,
+        "atributos_diferentes": true,
+        "atributos_disponiveis": [
+          "for",
+          "des",
+          "int",
+          "sab",
+          "car"
+        ],
+        "observacao": "+1 em três atributos diferentes, exceto Constituição"
+      }
+    ]
   },
   {
     "id": "pteros",
     "nome": "Pteros",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 9,
-    "atributos_fixos": [
-      {
-        "atributo": "sab",
-        "valor": 2
-      },
-      {
-        "atributo": "des",
-        "valor": 1
-      },
-      {
-        "atributo": "int",
-        "valor": -1
-      }
-    ],
-    "atributos_escolha": [],
     "bonus_pericias": [
       {
         "pericia": "Percepção",
@@ -873,14 +1075,32 @@
         "valor": 2
       }
     ],
-    "treinar_pericias": []
+    "treinar_pericias": [],
+    "atributos_fixos": [
+      {
+        "atributo": "sab",
+        "valor": 2
+      },
+      {
+        "atributo": "des",
+        "valor": 1
+      },
+      {
+        "atributo": "int",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": []
   },
   {
     "id": "qareen",
     "nome": "Qareen",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 9,
+    "bonus_pericias": [],
+    "treinar_pericias": [],
     "atributos_fixos": [
       {
         "atributo": "car",
@@ -895,16 +1115,26 @@
         "valor": -1
       }
     ],
-    "atributos_escolha": [],
-    "bonus_pericias": [],
-    "treinar_pericias": []
+    "atributos_escolha": []
   },
   {
     "id": "satiro",
     "nome": "Sátiro",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 12,
+    "bonus_pericias": [
+      {
+        "pericia": "Atuação",
+        "valor": 2
+      },
+      {
+        "pericia": "Fortitude",
+        "valor": 2
+      }
+    ],
+    "treinar_pericias": [],
     "atributos_fixos": [
       {
         "atributo": "car",
@@ -919,43 +1149,37 @@
         "valor": -1
       }
     ],
-    "atributos_escolha": [],
-    "bonus_pericias": [
-      {
-        "pericia": "Atuação",
-        "valor": 2
-      },
-      {
-        "pericia": "Fortitude",
-        "valor": 2
-      }
-    ],
-    "treinar_pericias": []
+    "atributos_escolha": []
   },
   {
     "id": "sereia_tritao",
     "nome": "Sereia/Tritão",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 9,
+    "bonus_pericias": [],
+    "treinar_pericias": [],
     "atributos_fixos": [],
     "atributos_escolha": [
       {
         "valor": 1,
         "quantidade": 3,
         "atributos_diferentes": true,
+        "atributos_disponiveis": null,
         "observacao": "+1 em três atributos diferentes"
       }
-    ],
-    "bonus_pericias": [],
-    "treinar_pericias": []
+    ]
   },
   {
     "id": "silfide",
     "nome": "Sílfide",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "minusculo",
     "deslocamento": 9,
+    "bonus_pericias": [],
+    "treinar_pericias": [],
     "atributos_fixos": [
       {
         "atributo": "car",
@@ -970,38 +1194,69 @@
         "valor": -2
       }
     ],
-    "atributos_escolha": [],
-    "bonus_pericias": [],
-    "treinar_pericias": []
+    "atributos_escolha": []
   },
   {
     "id": "soterrado",
     "nome": "Soterrado",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 9,
-    "atributos_fixos": [],
-    "atributos_escolha": [],
     "bonus_pericias": [],
-    "treinar_pericias": []
+    "treinar_pericias": [],
+    "atributos_fixos": [
+      {
+        "atributo": "con",
+        "valor": -1
+      }
+    ],
+    "atributos_escolha": [
+      {
+        "valor": 1,
+        "quantidade": 3,
+        "atributos_diferentes": true,
+        "atributos_disponiveis": [
+          "for",
+          "des",
+          "int",
+          "sab",
+          "car"
+        ],
+        "observacao": "+1 em três atributos diferentes (exceto Constituição)"
+      }
+    ]
   },
   {
-    "id": "suraggel",
-    "nome": "Suraggel",
-    "descricao": null,
+    "id": "sulfure",
+    "nome": "Sulfure",
+    "raca_base": "suraggel",
+    "descricao": "Sulfure: descendentes demoníacos",
     "tamanho": "medio",
     "deslocamento": 9,
-    "atributos_fixos": [],
-    "atributos_escolha": [],
     "bonus_pericias": [],
-    "treinar_pericias": []
+    "treinar_pericias": [],
+    "atributos_fixos": [
+      {
+        "atributo": "des",
+        "valor": 2
+      },
+      {
+        "atributo": "int",
+        "valor": 1
+      }
+    ],
+    "atributos_escolha": []
   },
   {
     "id": "tabrachi",
     "nome": "Tabrachi",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 9,
+    "bonus_pericias": [],
+    "treinar_pericias": [],
     "atributos_fixos": [
       {
         "atributo": "con",
@@ -1016,41 +1271,43 @@
         "valor": -1
       }
     ],
-    "atributos_escolha": [],
-    "bonus_pericias": [],
-    "treinar_pericias": []
+    "atributos_escolha": []
   },
   {
     "id": "tengu",
     "nome": "Tengu",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 9,
-    "atributos_fixos": [
-      {
-        "atributo": "des",
-        "valor": 2
-      },
-      {
-        "atributo": "int",
-        "valor": 1
-      }
-    ],
-    "atributos_escolha": [],
     "bonus_pericias": [
       {
         "pericia": "Percepção",
         "valor": 2
       }
     ],
-    "treinar_pericias": []
+    "treinar_pericias": [],
+    "atributos_fixos": [
+      {
+        "atributo": "des",
+        "valor": 2
+      },
+      {
+        "atributo": "int",
+        "valor": 1
+      }
+    ],
+    "atributos_escolha": []
   },
   {
     "id": "trog",
     "nome": "Trog",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 9,
+    "bonus_pericias": [],
+    "treinar_pericias": [],
     "atributos_fixos": [
       {
         "atributo": "con",
@@ -1065,16 +1322,17 @@
         "valor": -1
       }
     ],
-    "atributos_escolha": [],
-    "bonus_pericias": [],
-    "treinar_pericias": []
+    "atributos_escolha": []
   },
   {
     "id": "trog_anao",
     "nome": "Trog Anão",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 6,
+    "bonus_pericias": [],
+    "treinar_pericias": [],
     "atributos_fixos": [
       {
         "atributo": "con",
@@ -1093,16 +1351,22 @@
         "valor": -1
       }
     ],
-    "atributos_escolha": [],
-    "bonus_pericias": [],
-    "treinar_pericias": []
+    "atributos_escolha": []
   },
   {
     "id": "velocis",
     "nome": "Velocis",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 12,
+    "bonus_pericias": [
+      {
+        "pericia": "Sobrevivência",
+        "valor": 2
+      }
+    ],
+    "treinar_pericias": [],
     "atributos_fixos": [
       {
         "atributo": "des",
@@ -1117,21 +1381,26 @@
         "valor": -1
       }
     ],
-    "atributos_escolha": [],
+    "atributos_escolha": []
+  },
+  {
+    "id": "voracis",
+    "nome": "Voracis",
+    "raca_base": null,
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
     "bonus_pericias": [
+      {
+        "pericia": "Atletismo",
+        "valor": 2
+      },
       {
         "pericia": "Sobrevivência",
         "valor": 2
       }
     ],
-    "treinar_pericias": []
-  },
-  {
-    "id": "voracis",
-    "nome": "Voracis",
-    "descricao": null,
-    "tamanho": "medio",
-    "deslocamento": 9,
+    "treinar_pericias": [],
     "atributos_fixos": [
       {
         "atributo": "des",
@@ -1146,28 +1415,37 @@
         "valor": -1
       }
     ],
-    "atributos_escolha": [],
-    "bonus_pericias": [
-      {
-        "pericia": "Atletismo",
-        "valor": 2
-      },
-      {
-        "pericia": "Sobrevivência",
-        "valor": 2
-      }
-    ],
-    "treinar_pericias": []
+    "atributos_escolha": []
   },
   {
     "id": "yidishan",
     "nome": "Yidishan",
+    "raca_base": null,
     "descricao": null,
     "tamanho": "medio",
     "deslocamento": 9,
-    "atributos_fixos": [],
-    "atributos_escolha": [],
     "bonus_pericias": [],
-    "treinar_pericias": []
+    "treinar_pericias": [],
+    "atributos_fixos": [
+      {
+        "atributo": "car",
+        "valor": -2
+      }
+    ],
+    "atributos_escolha": [
+      {
+        "valor": 1,
+        "quantidade": 3,
+        "atributos_diferentes": true,
+        "atributos_disponiveis": [
+          "for",
+          "des",
+          "con",
+          "int",
+          "sab"
+        ],
+        "observacao": "+1 em três atributos diferentes (exceto Carisma)"
+      }
+    ]
   }
 ]

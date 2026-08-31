@@ -9,7 +9,7 @@ export interface AtributoEscolhaDef {
   valor: number;
   quantidade: number;
   atributos_diferentes?: boolean;
-  atributos_disponiveis?: string[];
+  atributos_disponiveis?: string[] | null;
   observacao?: string;
 }
 
