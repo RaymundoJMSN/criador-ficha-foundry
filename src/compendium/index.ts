@@ -7,7 +7,7 @@ const RELEVANT_TYPES = new Set<string>(Object.values(ITEM_TYPES));
 const INDEX_FIELDS = [
   "system.tipo",
   "system.subtipo",
-  "system.descricao",
+  "system.description",
   "system.circulo",
   "system.escola",
   "system.atributos",
@@ -24,6 +24,17 @@ const INDEX_FIELDS = [
   "system.grants",
   "system.atributosDinamicos",
 ];
+
+/** Texto puro a partir do HTML do compêndio. */
+function semHtml(html: string): string {
+  return html
+    .replace(/<[^>]+>/g, " ")
+    .replace(/&nbsp;/gi, " ")
+    .replace(/&amp;/gi, "&")
+    .replace(/&[a-z]+;|&#\d+;/gi, "")
+    .replace(/\s+/g, " ")
+    .trim();
+}
 
 class CompendiumIndexClass {
   private _store = new Map<ItemType, AnyIndexed[]>();
@@ -52,13 +63,18 @@ class CompendiumIndexClass {
         const itemType = type as ItemType;
         if (!this._store.has(itemType)) this._store.set(itemType, []);
 
+        const system = (entry["system"] as Record<string, unknown>) ?? {};
+        // O sistema guarda o texto em `system.description.value`, com HTML.
+        // O código lia `system.descricao`, que NÃO existe — por isso nenhuma
+        // descrição aparecia em lugar nenhum do wizard.
+        const bruto = (system["description"] as { value?: string } | undefined)?.value ?? "";
         this._store.get(itemType)!.push({
           id: entry["_id"] as string,
           name: entry["name"] as string,
           img: (entry["img"] as string) ?? "",
           packId: pack.collection,
           type: itemType,
-          system: (entry["system"] as Record<string, unknown>) ?? {},
+          system: { ...system, descricao: semHtml(bruto) },
         } as AnyIndexed);
       }
     }

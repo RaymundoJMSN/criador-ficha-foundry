@@ -13,6 +13,7 @@ export interface IndexedRace extends IndexedBase {
   system: {
     atributos?: Record<string, unknown>;
     description?: { value?: string };
+    descricao?: string;
     tamanho?: string[];
     movement?: { walk?: number; unit?: string };
     atributosDinamicos?: { description?: string };
@@ -42,6 +43,7 @@ export interface IndexedPoder extends IndexedBase {
   system: {
     tipo?: string;
     subtipo?: string;
+    /** Derivado de `system.description.value`, já sem HTML (ver CompendiumIndex). */
     descricao?: string;
   };
 }

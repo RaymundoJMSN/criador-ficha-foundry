@@ -195,7 +195,7 @@ function poderesDaRaca(raca: IndexedRace, todosPoderes: IndexedPoder[]): PoderRa
     for (const escolha of grant.choices ?? []) {
       const id = String(escolha.uuid ?? "").split(".").pop();
       const poder = id ? porId.get(id) : undefined;
-      if (poder) out.push({ nome: poder.name, descricao: limparHtml(poder.system.descricao ?? "") });
+      if (poder) out.push({ nome: poder.name, descricao: poder.system.descricao ?? "" });
     }
   }
   return out;
@@ -222,7 +222,7 @@ export function prepareRacaContext(
     const choices = (state.escolhasPorItem["raca_modificadores"] as string[][] | undefined) ?? [];
 
     // O texto bom é o do item do compêndio; o T20-DB portado não traz descrição.
-    const descricaoFoundry = limparHtml(selecionada.system.description?.value ?? "");
+    const descricaoFoundry = selecionada.system.descricao ?? "";
     const tamanhoBruto = (selecionada.system.tamanho?.[0] ?? dbRaca?.tamanho ?? "med").toString();
     const deslocamento = selecionada.system.movement?.walk ?? dbRaca?.deslocamento ?? 9;
     const unidade = selecionada.system.movement?.unit ?? "m";
