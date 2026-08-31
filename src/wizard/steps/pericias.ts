@@ -16,6 +16,8 @@ export interface ObrigGroup {
 }
 
 export interface PericiaContext {
+  /** O compêndio não trouxe a lista da classe; escolhe-se entre todas. */
+  listaIncompleta: boolean;
   stepTitle: string;
   hasClasse: boolean;
   fixas: { id: string; nome: string }[];
@@ -68,6 +70,7 @@ function emptyContext(errors: string[]): PericiaContext {
   return {
     stepTitle: "Perícias",
     hasClasse: false,
+    listaIncompleta: false,
     fixas: [],
     obrigatorias: [],
     escolhasQtd: 0,
@@ -164,6 +167,9 @@ export function preparePericiaContext(
   return {
     stepTitle: "Perícias",
     hasClasse: true,
+    listaIncompleta: Boolean(
+      (classe.pericias as { listaIncompleta?: boolean }).listaIncompleta
+    ),
     fixas: plan.fixas.map((id) => ({ id, nome: nome(id) })),
     obrigatorias,
     escolhasQtd: plan.escolhas.quantidade,

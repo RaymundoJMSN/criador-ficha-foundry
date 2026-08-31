@@ -133,9 +133,7 @@ const doCompendio = new Map<string, ClasseData>();
 export function registrarClassesDoCompendio(itens: IndexedClasse[]): void {
   doCompendio.clear();
   for (const item of itens) {
-    const dados = classeDoCompendio(item);
-    if (dados.pericias.fixas.length === 0 && dados.pericias.escolhas.opcoes.length === 0) continue;
-    doCompendio.set(slug(item.name), dados);
+    doCompendio.set(slug(item.name), classeDoCompendio(item));
   }
 }
 

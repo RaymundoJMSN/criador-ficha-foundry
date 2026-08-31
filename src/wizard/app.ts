@@ -288,7 +288,9 @@ export function defineWizardApp(): void {
     async _prepareContext(_options: unknown): Promise<unknown> {
       const step = this._currentStep;
       const state = this._state;
-      const errors = this._errors;
+      // Cada passo acrescenta o que ele mesmo detecta ao que veio da navegação;
+      // sem dedupe a mesma frase aparecia repetida a cada render.
+      const errors = [...new Set(this._errors)];
 
       const passos = this._passos();
       const stepIdx = passos.indexOf(step);
@@ -409,6 +411,9 @@ export function defineWizardApp(): void {
         showEquipamento: step === WizardStep.Equipamento,
         showRevisao: step === WizardStep.Revisao,
         ...(stepCtx as object),
+        // Cada passo soma o que ele detecta ao que veio da navegação, então a
+        // mesma frase chegava pelos dois caminhos e aparecia repetida.
+        errors: [...new Set((stepCtx as { errors?: string[] }).errors ?? errors)],
       };
     }
 
@@ -523,7 +528,23 @@ export function defineWizardApp(): void {
           this._state.apply({
             escolhasPorItem: { ...this._state.escolhasPorItem, divindade_poderes: marcados },
           });
-          void this.render(false);
+          this._errors = [];
+          void this.render();
+        });
+      });
+
+      // ── Origem: marcar 2 benefícios (perícia e/ou poder) ────────────────
+      const beneficios = root.querySelectorAll<HTMLInputElement>("[name='origem_beneficio']");
+      beneficios.forEach((chk) => {
+        chk.addEventListener("change", () => {
+          const marcados = Array.from(beneficios)
+            .filter((c) => c.checked)
+            .map((c) => c.value);
+          this._state.apply({
+            escolhasPorItem: { ...this._state.escolhasPorItem, origem_beneficios: marcados },
+          });
+          this._errors = [];
+          void this.render();
         });
       });
 
@@ -544,7 +565,8 @@ export function defineWizardApp(): void {
               }
             }
             this._state.apply({ escolhasPorItem: novas });
-            void this.render(false);
+            this._errors = [];
+            void this.render();
           });
         });
 
@@ -559,7 +581,8 @@ export function defineWizardApp(): void {
               [`origem_poder_livre_${categoria}`]: sel.value,
             },
           });
-          void this.render(false);
+          this._errors = [];
+          void this.render();
         });
       });
 
@@ -611,7 +634,7 @@ export function defineWizardApp(): void {
       root.querySelectorAll<HTMLSelectElement>("select[name^='raca_mod-']").forEach((sel) => {
         sel.addEventListener("change", () => {
           this.applyFormData(this._gatherFormData());
-          void this.render(false);
+          void this.render();
         });
       });
 
@@ -626,7 +649,8 @@ export function defineWizardApp(): void {
               .filter((c) => c.checked)
               .map((c) => c.value);
             this._state.apply({ [campo]: marcados } as Parameters<typeof this._state.apply>[0]);
-            void this.render(false);
+            this._errors = [];
+            void this.render();
           });
         });
       };
@@ -641,7 +665,8 @@ export function defineWizardApp(): void {
           this._state.apply({
             escolhasPorItem: { ...this._state.escolhasPorItem, [chave]: sel.value },
           });
-          void this.render(false);
+          this._errors = [];
+          void this.render();
         });
       });
 

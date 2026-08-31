@@ -31,8 +31,8 @@ describe("lerPericiasDaFrase", () => {
     expect(p.escolhas.opcoes).toEqual(["cura", "luta"]);
   });
 
-  it("frase vazia ou ausente não quebra", () => {
-    expect(lerPericiasDaFrase("").escolhas.opcoes).toEqual([]);
+  it("frase vazia sem quantidade não abre escolha", () => {
+    expect(lerPericiasDaFrase("").escolhas.quantidade).toBe(0);
     expect(lerPericiasDaFrase(undefined as unknown as string).fixas).toEqual([]);
   });
 });
@@ -53,5 +53,18 @@ describe("classeDoCompendio", () => {
     expect(c.pv.por_nivel).toBe(4);
     expect(c.pm.por_nivel).toBe(4);
     expect(c.pericias.escolhas.quantidade).toBe(2);
+  });
+});
+
+describe("classe sem lista de perícias no compêndio", () => {
+  it("libera todas as perícias e marca a lista como incompleta", () => {
+    const p = lerPericiasDaFrase("", 2);
+    expect(p.escolhas.quantidade).toBe(2);
+    expect(p.escolhas.opcoes.length).toBeGreaterThan(15);
+    expect(p.listaIncompleta).toBe(true);
+  });
+
+  it("sem quantidade não marca nada", () => {
+    expect(lerPericiasDaFrase("", 0).listaIncompleta).toBe(false);
   });
 });

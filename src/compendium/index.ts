@@ -25,13 +25,56 @@ const INDEX_FIELDS = [
   "system.atributosDinamicos",
 ];
 
+/**
+ * Entidades HTML do compêndio. Apagá-las comia letra acentuada no meio da
+ * palavra — "Voc&ecirc; &eacute; uma criatura" virava "Voc uma criatura".
+ */
+const ENTIDADES: Record<string, string> = {
+  nbsp: " ",
+  amp: "&",
+  lt: "<",
+  gt: ">",
+  quot: '"',
+  apos: "'",
+  hellip: "…",
+  mdash: "—",
+  ndash: "–",
+  laquo: "«",
+  raquo: "»",
+  ordm: "º",
+  ordf: "ª",
+  deg: "°",
+  times: "×",
+  frac12: "½",
+};
+
+/** `&ecirc;` → `ê`, `&Aacute;` → `Á`: letra + acento, montados com NFC. */
+const ACENTOS: Record<string, string> = {
+  acute: "́",
+  grave: "̀",
+  circ: "̂",
+  tilde: "̃",
+  uml: "̈",
+  cedil: "̧",
+  ring: "̊",
+};
+
+function decodificar(html: string): string {
+  return html
+    .replace(/&#(\d+);/g, (_, n) => String.fromCodePoint(Number(n)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCodePoint(parseInt(h, 16)))
+    .replace(/&([a-zA-Z]+);/g, (inteiro, nome: string) => {
+      const simples = ENTIDADES[nome.toLowerCase()];
+      if (simples !== undefined) return simples;
+      const m = /^([a-zA-Z])(acute|grave|circ|tilde|uml|cedil|ring)$/.exec(nome);
+      if (m) return (m[1] + ACENTOS[m[2]!]).normalize("NFC");
+      return inteiro;
+    });
+}
+
 /** Texto puro a partir do HTML do compêndio. */
 function semHtml(html: string): string {
-  return html
-    .replace(/<[^>]+>/g, " ")
-    .replace(/&nbsp;/gi, " ")
-    .replace(/&amp;/gi, "&")
-    .replace(/&[a-z]+;|&#\d+;/gi, "")
+  return decodificar(html.replace(/<[^>]+>/g, " "))
     .replace(/\s+/g, " ")
     .trim();
 }

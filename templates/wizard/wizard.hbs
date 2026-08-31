@@ -282,6 +282,7 @@
       {{#if escolhasQtd}}
       <div style="margin-bottom:10px;">
         <strong style="font-size:0.85em;">Perícias da classe — escolha {{escolhasQtd}} (restam {{escolhasRestantes}}):</strong>
+        {{#if listaIncompleta}}<div style="font-size:0.78em;opacity:0.7;margin:2px 0 4px;">O compêndio não traz a lista de perícias desta classe — escolha entre todas e confira no livro.</div>{{/if}}
         <div class="t20w-pcheck-group" data-group="esc" data-max="{{escolhasQtd}}" style="display:grid;grid-template-columns:repeat(2,1fr);gap:2px 12px;margin-top:4px;max-height:200px;overflow-y:auto;">
           {{#each escolhasOpcoes}}
           <label style="font-size:0.88em;display:flex;align-items:center;gap:6px;" class="{{#if this.disabled}}t20w-disabled{{/if}}">

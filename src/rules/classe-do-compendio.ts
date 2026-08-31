@@ -46,6 +46,8 @@ export interface PericiasDaFrase {
   fixas: string[];
   escolhas_obrigatorias: Array<{ quantidade: number; opcoes: string[] }>;
   escolhas: { quantidade: number; opcoes: string[] };
+  /** O item não trouxe a lista; as opções são todas as perícias. */
+  listaIncompleta?: boolean;
 }
 
 /**
@@ -56,12 +58,18 @@ export interface PericiasDaFrase {
  * - depois: a lista de onde saem as N escolhas livres.
  */
 export function lerPericiasDaFrase(frase: string, numero = 0): PericiasDaFrase {
-  const vazio: PericiasDaFrase = {
-    fixas: [],
-    escolhas_obrigatorias: [],
-    escolhas: { quantidade: 0, opcoes: [] },
-  };
-  if (!frase || typeof frase !== "string") return vazio;
+  // Vinte classes de módulo (Samurai, Místico, as de Heróis de Arton) vêm com
+  // `pericias.inatas` vazio: o compêndio não traz a lista. O item ainda diz
+  // QUANTAS escolher, então libera-se a escolha entre todas, avisando na tela —
+  // melhor que travar a classe, e não inventa lista que o livro não deu.
+  if (!frase || typeof frase !== "string" || !frase.trim()) {
+    return {
+      fixas: [],
+      escolhas_obrigatorias: [],
+      escolhas: { quantidade: numero, opcoes: [...PERICIA_SLUGS] },
+      listaIncompleta: numero > 0,
+    };
+  }
 
   const corte = /mais\s+(\d+|uma|duas|três|tres|quatro)\s+a\s+sua\s+escolha\s+entre/i.exec(frase);
   const NUMERO_POR_EXTENSO: Record<string, number> = {
