@@ -19,7 +19,108 @@
     ],
     "pericias_numero": 2,
     "pv_por_nivel": 2,
-    "pm_por_nivel": 6
+    "pm_por_nivel": 6,
+    "tabela": {
+      "1": {
+        "automaticos": [
+          "magias_1_circulo"
+        ],
+        "escolhas": 0
+      },
+      "2": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "3": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "4": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "5": {
+        "automaticos": [
+          "magias_2_circulo"
+        ],
+        "escolhas": 1
+      },
+      "6": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "7": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "8": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "9": {
+        "automaticos": [
+          "magias_3_circulo"
+        ],
+        "escolhas": 1
+      },
+      "10": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "11": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "12": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "13": {
+        "automaticos": [
+          "magias_4_circulo"
+        ],
+        "escolhas": 1
+      },
+      "14": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "15": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "16": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "17": {
+        "automaticos": [
+          "magias_5_circulo"
+        ],
+        "escolhas": 1
+      },
+      "18": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "19": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "20": {
+        "automaticos": [
+          "alta_arcana"
+        ],
+        "escolhas": 1
+      }
+    },
+    "circulos": {
+      "1": 1,
+      "5": 2,
+      "9": 3,
+      "13": 4,
+      "17": 5
+    }
   },
   "barbaro": {
     "pericias_inatas": [
@@ -40,7 +141,115 @@
     ],
     "pericias_numero": 4,
     "pv_por_nivel": 6,
-    "pm_por_nivel": 3
+    "pm_por_nivel": 3,
+    "tabela": {
+      "1": {
+        "automaticos": [
+          "furia_+2"
+        ],
+        "escolhas": 0
+      },
+      "2": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "3": {
+        "automaticos": [
+          "instinto_selvagem_+1"
+        ],
+        "escolhas": 1
+      },
+      "4": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "5": {
+        "automaticos": [
+          "reducao_de_dano_2"
+        ],
+        "escolhas": 1
+      },
+      "6": {
+        "automaticos": [
+          "furia_+3"
+        ],
+        "escolhas": 1
+      },
+      "7": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "8": {
+        "automaticos": [
+          "reducao_de_dano_4"
+        ],
+        "escolhas": 1
+      },
+      "9": {
+        "automaticos": [
+          "instinto_selvagem_+2"
+        ],
+        "escolhas": 1
+      },
+      "10": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "11": {
+        "automaticos": [
+          "furia_+4",
+          "reducao_de_dano_6"
+        ],
+        "escolhas": 1
+      },
+      "12": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "13": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "14": {
+        "automaticos": [
+          "reducao_de_dano_8"
+        ],
+        "escolhas": 1
+      },
+      "15": {
+        "automaticos": [
+          "instinto_selvagem_+3"
+        ],
+        "escolhas": 1
+      },
+      "16": {
+        "automaticos": [
+          "furia_+5"
+        ],
+        "escolhas": 1
+      },
+      "17": {
+        "automaticos": [
+          "reducao_de_dano_10"
+        ],
+        "escolhas": 1
+      },
+      "18": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "19": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "20": {
+        "automaticos": [
+          "furia_titanica"
+        ],
+        "escolhas": 1
+      }
+    },
+    "circulos": {}
   },
   "bardo": {
     "pericias_inatas": [
@@ -68,7 +277,116 @@
     ],
     "pericias_numero": 6,
     "pv_por_nivel": 3,
-    "pm_por_nivel": 4
+    "pm_por_nivel": 4,
+    "tabela": {
+      "1": {
+        "automaticos": [
+          "inspiracao_+1",
+          "magias_1_circulo"
+        ],
+        "escolhas": 0
+      },
+      "2": {
+        "automaticos": [
+          "ecletico"
+        ],
+        "escolhas": 1
+      },
+      "3": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "4": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "5": {
+        "automaticos": [
+          "inspiracao_+2"
+        ],
+        "escolhas": 1
+      },
+      "6": {
+        "automaticos": [
+          "magias_2_circulo"
+        ],
+        "escolhas": 1
+      },
+      "7": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "8": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "9": {
+        "automaticos": [
+          "inspiracao_+3"
+        ],
+        "escolhas": 1
+      },
+      "10": {
+        "automaticos": [
+          "magias_3_circulo"
+        ],
+        "escolhas": 1
+      },
+      "11": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "12": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "13": {
+        "automaticos": [
+          "inspiracao_+4"
+        ],
+        "escolhas": 1
+      },
+      "14": {
+        "automaticos": [
+          "magias_4_circulo"
+        ],
+        "escolhas": 1
+      },
+      "15": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "16": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "17": {
+        "automaticos": [
+          "inspiracao_+5"
+        ],
+        "escolhas": 1
+      },
+      "18": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "19": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "20": {
+        "automaticos": [
+          "artista_completo"
+        ],
+        "escolhas": 1
+      }
+    },
+    "circulos": {
+      "1": 1,
+      "6": 2,
+      "10": 3,
+      "14": 4
+    }
   },
   "bucaneiro": {
     "pericias_inatas": [
@@ -92,7 +410,111 @@
     ],
     "pericias_numero": 4,
     "pv_por_nivel": 4,
-    "pm_por_nivel": 3
+    "pm_por_nivel": 3,
+    "tabela": {
+      "1": {
+        "automaticos": [
+          "audacia",
+          "insolencia"
+        ],
+        "escolhas": 0
+      },
+      "2": {
+        "automaticos": [
+          "evasao"
+        ],
+        "escolhas": 1
+      },
+      "3": {
+        "automaticos": [
+          "esquiva_sagaz_1"
+        ],
+        "escolhas": 1
+      },
+      "4": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "5": {
+        "automaticos": [
+          "panache"
+        ],
+        "escolhas": 1
+      },
+      "6": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "7": {
+        "automaticos": [
+          "esquiva_sagaz_2"
+        ],
+        "escolhas": 1
+      },
+      "8": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "9": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "10": {
+        "automaticos": [
+          "evasao_aprimorada"
+        ],
+        "escolhas": 1
+      },
+      "11": {
+        "automaticos": [
+          "esquiva_sagaz_3"
+        ],
+        "escolhas": 1
+      },
+      "12": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "13": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "14": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "15": {
+        "automaticos": [
+          "esquiva_sagaz_4"
+        ],
+        "escolhas": 1
+      },
+      "16": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "17": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "18": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "19": {
+        "automaticos": [
+          "esquiva_sagaz_5"
+        ],
+        "escolhas": 1
+      },
+      "20": {
+        "automaticos": [
+          "sorte_de_nimb"
+        ],
+        "escolhas": 1
+      }
+    },
+    "circulos": {}
   },
   "cacador": {
     "pericias_inatas": [
@@ -115,7 +537,114 @@
     ],
     "pericias_numero": 6,
     "pv_por_nivel": 4,
-    "pm_por_nivel": 4
+    "pm_por_nivel": 4,
+    "tabela": {
+      "1": {
+        "automaticos": [
+          "marca_da_presa_+1d4",
+          "rastreador"
+        ],
+        "escolhas": 0
+      },
+      "2": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "3": {
+        "automaticos": [
+          "explorador"
+        ],
+        "escolhas": 1
+      },
+      "4": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "5": {
+        "automaticos": [
+          "marca_da_presa_+1d8",
+          "caminho_do_explorador"
+        ],
+        "escolhas": 1
+      },
+      "6": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "7": {
+        "automaticos": [
+          "explorador"
+        ],
+        "escolhas": 1
+      },
+      "8": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "9": {
+        "automaticos": [
+          "marca_da_presa_+1d12"
+        ],
+        "escolhas": 1
+      },
+      "10": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "11": {
+        "automaticos": [
+          "explorador"
+        ],
+        "escolhas": 1
+      },
+      "12": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "13": {
+        "automaticos": [
+          "marca_da_presa_+2d8"
+        ],
+        "escolhas": 1
+      },
+      "14": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "15": {
+        "automaticos": [
+          "explorador"
+        ],
+        "escolhas": 1
+      },
+      "16": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "17": {
+        "automaticos": [
+          "marca_da_presa_+2d10"
+        ],
+        "escolhas": 1
+      },
+      "18": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "19": {
+        "automaticos": [
+          "explorador"
+        ],
+        "escolhas": 1
+      },
+      "20": {
+        "automaticos": [
+          "mestre_cacador"
+        ],
+        "escolhas": 1
+      }
+    },
+    "circulos": {}
   },
   "cavaleiro": {
     "pericias_inatas": [
@@ -136,7 +665,115 @@
     ],
     "pericias_numero": 2,
     "pv_por_nivel": 5,
-    "pm_por_nivel": 3
+    "pm_por_nivel": 3,
+    "tabela": {
+      "1": {
+        "automaticos": [
+          "baluarte_2",
+          "codigo_de_honra"
+        ],
+        "escolhas": 0
+      },
+      "2": {
+        "automaticos": [
+          "duelo_2"
+        ],
+        "escolhas": 1
+      },
+      "3": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "4": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "5": {
+        "automaticos": [
+          "baluarte_4"
+        ],
+        "escolhas": 1
+      },
+      "6": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "7": {
+        "automaticos": [
+          "baluarte_aliados_adjacentes",
+          "duelo_3"
+        ],
+        "escolhas": 1
+      },
+      "8": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "9": {
+        "automaticos": [
+          "baluarte_6"
+        ],
+        "escolhas": 1
+      },
+      "10": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "11": {
+        "automaticos": [
+          "resoluto"
+        ],
+        "escolhas": 1
+      },
+      "12": {
+        "automaticos": [
+          "duelo_4"
+        ],
+        "escolhas": 1
+      },
+      "13": {
+        "automaticos": [
+          "baluarte_8"
+        ],
+        "escolhas": 1
+      },
+      "14": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "15": {
+        "automaticos": [
+          "baluarte_aliados_alcance_curto"
+        ],
+        "escolhas": 1
+      },
+      "16": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "17": {
+        "automaticos": [
+          "baluarte_10",
+          "duelo_5"
+        ],
+        "escolhas": 1
+      },
+      "18": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "19": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "20": {
+        "automaticos": [
+          "bravura_final"
+        ],
+        "escolhas": 1
+      }
+    },
+    "circulos": {}
   },
   "clerigo": {
     "pericias_inatas": [
@@ -158,7 +795,108 @@
     ],
     "pericias_numero": 2,
     "pv_por_nivel": 4,
-    "pm_por_nivel": 5
+    "pm_por_nivel": 5,
+    "tabela": {
+      "1": {
+        "automaticos": [
+          "devoto_fiel",
+          "magias"
+        ],
+        "escolhas": 0
+      },
+      "2": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "3": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "4": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "5": {
+        "automaticos": [
+          "magias_2_circulo"
+        ],
+        "escolhas": 1
+      },
+      "6": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "7": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "8": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "9": {
+        "automaticos": [
+          "magias_3_circulo"
+        ],
+        "escolhas": 1
+      },
+      "10": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "11": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "12": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "13": {
+        "automaticos": [
+          "magias_4_circulo"
+        ],
+        "escolhas": 1
+      },
+      "14": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "15": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "16": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "17": {
+        "automaticos": [
+          "magias_5_circulo"
+        ],
+        "escolhas": 1
+      },
+      "18": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "19": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "20": {
+        "automaticos": [
+          "mao_da_divindade"
+        ],
+        "escolhas": 1
+      }
+    },
+    "circulos": {
+      "5": 2,
+      "9": 3,
+      "13": 4,
+      "17": 5
+    }
   },
   "druida": {
     "pericias_inatas": [
@@ -182,7 +920,108 @@
     ],
     "pericias_numero": 4,
     "pv_por_nivel": 4,
-    "pm_por_nivel": 4
+    "pm_por_nivel": 4,
+    "tabela": {
+      "1": {
+        "automaticos": [
+          "devoto_fiel",
+          "empatia_selvagem",
+          "magias"
+        ],
+        "escolhas": 0
+      },
+      "2": {
+        "automaticos": [
+          "caminho_dos_ermos"
+        ],
+        "escolhas": 1
+      },
+      "3": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "4": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "5": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "6": {
+        "automaticos": [
+          "magias_2_circulo"
+        ],
+        "escolhas": 1
+      },
+      "7": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "8": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "9": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "10": {
+        "automaticos": [
+          "magias_3_circulo"
+        ],
+        "escolhas": 1
+      },
+      "11": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "12": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "13": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "14": {
+        "automaticos": [
+          "magias_4_circulo"
+        ],
+        "escolhas": 1
+      },
+      "15": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "16": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "17": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "18": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "19": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "20": {
+        "automaticos": [
+          "forca_da_natureza"
+        ],
+        "escolhas": 1
+      }
+    },
+    "circulos": {
+      "6": 2,
+      "10": 3,
+      "14": 4
+    }
   },
   "guerreiro": {
     "pericias_inatas": [
@@ -203,7 +1042,106 @@
     ],
     "pericias_numero": 2,
     "pv_por_nivel": 5,
-    "pm_por_nivel": 3
+    "pm_por_nivel": 3,
+    "tabela": {
+      "1": {
+        "automaticos": [
+          "ataque_especial"
+        ],
+        "escolhas": 0
+      },
+      "2": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "3": {
+        "automaticos": [
+          "durao"
+        ],
+        "escolhas": 1
+      },
+      "4": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "5": {
+        "automaticos": [
+          "ataque_especial_8"
+        ],
+        "escolhas": 1
+      },
+      "6": {
+        "automaticos": [
+          "ataque_extra"
+        ],
+        "escolhas": 1
+      },
+      "7": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "8": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "9": {
+        "automaticos": [
+          "ataque_especial_12"
+        ],
+        "escolhas": 1
+      },
+      "10": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "11": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "12": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "13": {
+        "automaticos": [
+          "ataque_especial_16"
+        ],
+        "escolhas": 1
+      },
+      "14": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "15": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "16": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "17": {
+        "automaticos": [
+          "ataque_especial_20"
+        ],
+        "escolhas": 1
+      },
+      "18": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "19": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "20": {
+        "automaticos": [
+          "campeao"
+        ],
+        "escolhas": 1
+      }
+    },
+    "circulos": {}
   },
   "inventor": {
     "pericias_inatas": [
@@ -226,7 +1164,115 @@
     ],
     "pericias_numero": 4,
     "pv_por_nivel": 3,
-    "pm_por_nivel": 4
+    "pm_por_nivel": 4,
+    "tabela": {
+      "1": {
+        "automaticos": [
+          "engenhosidade",
+          "prototipo"
+        ],
+        "escolhas": 0
+      },
+      "2": {
+        "automaticos": [
+          "fabricar_item_superior_1_melhoria"
+        ],
+        "escolhas": 1
+      },
+      "3": {
+        "automaticos": [
+          "comerciante"
+        ],
+        "escolhas": 1
+      },
+      "4": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "5": {
+        "automaticos": [
+          "fabricar_item_superior_2_melhorias"
+        ],
+        "escolhas": 1
+      },
+      "6": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "7": {
+        "automaticos": [
+          "encontrar_fraqueza"
+        ],
+        "escolhas": 1
+      },
+      "8": {
+        "automaticos": [
+          "fabricar_item_superior_3_melhorias"
+        ],
+        "escolhas": 1
+      },
+      "9": {
+        "automaticos": [
+          "fabricar_item_magico_menor"
+        ],
+        "escolhas": 1
+      },
+      "10": {
+        "automaticos": [
+          "olho_do_dragao"
+        ],
+        "escolhas": 1
+      },
+      "11": {
+        "automaticos": [
+          "fabricar_item_superior_4_melhorias"
+        ],
+        "escolhas": 1
+      },
+      "12": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "13": {
+        "automaticos": [
+          "fabricar_item_magico_medio"
+        ],
+        "escolhas": 1
+      },
+      "14": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "15": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "16": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "17": {
+        "automaticos": [
+          "fabricar_item_magico_maior"
+        ],
+        "escolhas": 1
+      },
+      "18": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "19": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "20": {
+        "automaticos": [
+          "obra_prima"
+        ],
+        "escolhas": 1
+      }
+    },
+    "circulos": {}
   },
   "ladino": {
     "pericias_inatas": [
@@ -255,7 +1301,121 @@
     ],
     "pericias_numero": 8,
     "pv_por_nivel": 3,
-    "pm_por_nivel": 4
+    "pm_por_nivel": 4,
+    "tabela": {
+      "1": {
+        "automaticos": [
+          "ataque_furtivo_1d6",
+          "especialista"
+        ],
+        "escolhas": 0
+      },
+      "2": {
+        "automaticos": [
+          "evasao"
+        ],
+        "escolhas": 1
+      },
+      "3": {
+        "automaticos": [
+          "ataque_furtivo_2d6"
+        ],
+        "escolhas": 1
+      },
+      "4": {
+        "automaticos": [
+          "esquiva_sobrenatural"
+        ],
+        "escolhas": 1
+      },
+      "5": {
+        "automaticos": [
+          "ataque_furtivo_3d6"
+        ],
+        "escolhas": 1
+      },
+      "6": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "7": {
+        "automaticos": [
+          "ataque_furtivo_4d6"
+        ],
+        "escolhas": 1
+      },
+      "8": {
+        "automaticos": [
+          "olhos_nas_costas"
+        ],
+        "escolhas": 1
+      },
+      "9": {
+        "automaticos": [
+          "ataque_furtivo_5d6"
+        ],
+        "escolhas": 1
+      },
+      "10": {
+        "automaticos": [
+          "evasao_aprimorada"
+        ],
+        "escolhas": 1
+      },
+      "11": {
+        "automaticos": [
+          "ataque_furtivo_6d6"
+        ],
+        "escolhas": 1
+      },
+      "12": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "13": {
+        "automaticos": [
+          "ataque_furtivo_7d6"
+        ],
+        "escolhas": 1
+      },
+      "14": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "15": {
+        "automaticos": [
+          "ataque_furtivo_8d6"
+        ],
+        "escolhas": 1
+      },
+      "16": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "17": {
+        "automaticos": [
+          "ataque_furtivo_9d6"
+        ],
+        "escolhas": 1
+      },
+      "18": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "19": {
+        "automaticos": [
+          "ataque_furtivo_10d6"
+        ],
+        "escolhas": 1
+      },
+      "20": {
+        "automaticos": [
+          "a_pessoa_certa_para_o_trabalho"
+        ],
+        "escolhas": 1
+      }
+    },
+    "circulos": {}
   },
   "lutador": {
     "pericias_inatas": [
@@ -277,7 +1437,115 @@
     ],
     "pericias_numero": 4,
     "pv_por_nivel": 5,
-    "pm_por_nivel": 3
+    "pm_por_nivel": 3,
+    "tabela": {
+      "1": {
+        "automaticos": [
+          "briga_1d6",
+          "golpe_relampago"
+        ],
+        "escolhas": 0
+      },
+      "2": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "3": {
+        "automaticos": [
+          "casca_grossa_con"
+        ],
+        "escolhas": 1
+      },
+      "4": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "5": {
+        "automaticos": [
+          "briga_1d8",
+          "golpe_cruel"
+        ],
+        "escolhas": 1
+      },
+      "6": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "7": {
+        "automaticos": [
+          "casca_grossa_con_mais_1"
+        ],
+        "escolhas": 1
+      },
+      "8": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "9": {
+        "automaticos": [
+          "briga_1d10",
+          "golpe_violento"
+        ],
+        "escolhas": 1
+      },
+      "10": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "11": {
+        "automaticos": [
+          "casca_grossa_con_mais_2"
+        ],
+        "escolhas": 1
+      },
+      "12": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "13": {
+        "automaticos": [
+          "briga_2d6"
+        ],
+        "escolhas": 1
+      },
+      "14": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "15": {
+        "automaticos": [
+          "casca_grossa_con_mais_3"
+        ],
+        "escolhas": 1
+      },
+      "16": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "17": {
+        "automaticos": [
+          "briga_2d8"
+        ],
+        "escolhas": 1
+      },
+      "18": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "19": {
+        "automaticos": [
+          "casca_grossa_con_mais_4"
+        ],
+        "escolhas": 1
+      },
+      "20": {
+        "automaticos": [
+          "dono_da_rua_2d10"
+        ],
+        "escolhas": 1
+      }
+    },
+    "circulos": {}
   },
   "nobre": {
     "pericias_inatas": [
@@ -305,7 +1573,112 @@
     ],
     "pericias_numero": 4,
     "pv_por_nivel": 4,
-    "pm_por_nivel": 4
+    "pm_por_nivel": 4,
+    "tabela": {
+      "1": {
+        "automaticos": [
+          "autoconfianca",
+          "espolio",
+          "orgulho"
+        ],
+        "escolhas": 0
+      },
+      "2": {
+        "automaticos": [
+          "palavras_afiadas_2d6"
+        ],
+        "escolhas": 1
+      },
+      "3": {
+        "automaticos": [
+          "riqueza"
+        ],
+        "escolhas": 1
+      },
+      "4": {
+        "automaticos": [
+          "gritar_ordens"
+        ],
+        "escolhas": 1
+      },
+      "5": {
+        "automaticos": [
+          "presenca_aristocratica"
+        ],
+        "escolhas": 1
+      },
+      "6": {
+        "automaticos": [
+          "palavras_afiadas_4d6"
+        ],
+        "escolhas": 1
+      },
+      "7": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "8": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "9": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "10": {
+        "automaticos": [
+          "palavras_afiadas_6d6"
+        ],
+        "escolhas": 1
+      },
+      "11": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "12": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "13": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "14": {
+        "automaticos": [
+          "palavras_afiadas_8d6"
+        ],
+        "escolhas": 1
+      },
+      "15": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "16": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "17": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "18": {
+        "automaticos": [
+          "palavras_afiadas_10d6"
+        ],
+        "escolhas": 1
+      },
+      "19": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "20": {
+        "automaticos": [
+          "realeza"
+        ],
+        "escolhas": 1
+      }
+    },
+    "circulos": {}
   },
   "paladino": {
     "pericias_inatas": [
@@ -328,6 +1701,116 @@
     ],
     "pericias_numero": 2,
     "pv_por_nivel": 5,
-    "pm_por_nivel": 3
+    "pm_por_nivel": 3,
+    "tabela": {
+      "1": {
+        "automaticos": [
+          "abencado",
+          "codigo_do_heroi",
+          "golpe_divino_1d8"
+        ],
+        "escolhas": 0
+      },
+      "2": {
+        "automaticos": [
+          "cura_pelas_maos_1d8+1"
+        ],
+        "escolhas": 1
+      },
+      "3": {
+        "automaticos": [
+          "aura_sagrada"
+        ],
+        "escolhas": 1
+      },
+      "4": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "5": {
+        "automaticos": [
+          "bencao_da_justica",
+          "golpe_divino_2d8"
+        ],
+        "escolhas": 1
+      },
+      "6": {
+        "automaticos": [
+          "cura_pelas_maos_2d8+2"
+        ],
+        "escolhas": 1
+      },
+      "7": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "8": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "9": {
+        "automaticos": [
+          "golpe_divino_3d8"
+        ],
+        "escolhas": 1
+      },
+      "10": {
+        "automaticos": [
+          "cura_pelas_maos_3d8+3"
+        ],
+        "escolhas": 1
+      },
+      "11": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "12": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "13": {
+        "automaticos": [
+          "golpe_divino_4d8"
+        ],
+        "escolhas": 1
+      },
+      "14": {
+        "automaticos": [
+          "cura_pelas_maos_4d8+4"
+        ],
+        "escolhas": 1
+      },
+      "15": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "16": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "17": {
+        "automaticos": [
+          "golpe_divino_5d8"
+        ],
+        "escolhas": 1
+      },
+      "18": {
+        "automaticos": [
+          "cura_pelas_maos_5d8+5"
+        ],
+        "escolhas": 1
+      },
+      "19": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "20": {
+        "automaticos": [
+          "vingador_sagrado"
+        ],
+        "escolhas": 1
+      }
+    },
+    "circulos": {}
   }
 }

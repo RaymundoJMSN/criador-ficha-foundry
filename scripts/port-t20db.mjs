@@ -214,12 +214,43 @@ function walkDir(dir) {
     const pericias_escolha = escolhaBlocos.flatMap((b) => b.opcoes ?? []);
     const pericias_numero = escolhaBlocos.reduce((sum, b) => sum + (b.quantidade ?? 0), 0);
 
+    // Level axis: automatic class abilities + how many power picks each level grants.
+    // This is the only place that knows WHEN something is gained — writer, poderes
+    // and magias all derive from it (see rules/progressao.ts).
+    const tabelaSrc = classeData.tabela_progressao ?? {};
+    const tabela = {};
+    for (const [nivel, dados] of Object.entries(tabelaSrc)) {
+      const automaticos = (dados.automaticos ?? [])
+        .filter((a) => a.tipo === "habilidade_classe")
+        .map((a) => a.poder_id);
+      const escolhas = (dados.escolhas ?? []).filter(
+        (e) => e.tipo === "poder_classe" || e.tipo === "poder_geral"
+      ).length;
+      if (automaticos.length > 0 || escolhas > 0) tabela[nivel] = { automaticos, escolhas };
+    }
+
+    // Spell circle unlocks live in the per-class file, not in regras/.
+    const circulos = {};
+    try {
+      const rich = readJson(join(T20DB, "classes", `${classeId}.json`));
+      for (const row of rich.tabela_progressao ?? []) {
+        for (const h of row.habilidades ?? []) {
+          const m = /^magias_(\d+)_circulo$/.exec(h);
+          if (m) circulos[String(row.nivel)] = Number(m[1]);
+        }
+      }
+    } catch {
+      // class without a rich file — no spell progression
+    }
+
     result[classeId] = {
       pericias_inatas: classeData.pericias_inatas ?? [],
       pericias_escolha,
       pericias_numero,
       pv_por_nivel: classeData.pv_por_nivel ?? null,
       pm_por_nivel: classeData.pm_por_nivel ?? null,
+      tabela,
+      circulos,
     };
   }
   writeJson(join(OUT, "progressao_classes.json"), result);
@@ -236,6 +267,26 @@ function walkDir(dir) {
       .replace(/[̀-ͯ]/g, "")
       .replace(/[^a-z0-9]+/g, "_")
       .replace(/^_+|_+$/g, "");
+
+  // Multipath choices (Arcanista → Bruxo/Mago/Feiticeiro) live in the class's
+  // "Caminho do X" poder file, as opcoes[]. The slug we emit is what
+  // toNomeSlug() produces for the Foundry item name ("Caminho do Arcanista: Mago").
+  function caminhosDaClasse(classeId) {
+    const dir = join(T20DB, "poderes", "classe", classeId);
+    let files;
+    try {
+      files = readdirSync(dir);
+    } catch {
+      return [];
+    }
+    for (const f of files) {
+      if (!f.startsWith("caminho")) continue;
+      const p = readJson(join(dir, f));
+      const opcoes = p.opcoes ?? [];
+      if (opcoes.length > 0) return opcoes.map((o) => `${p.id}_${o.id}`);
+    }
+    return [];
+  }
 
   const dir = join(T20DB, "classes");
   const result = {};
@@ -271,6 +322,7 @@ function walkDir(dir) {
       proficiencias: car.proficiencias ?? [],
       habilidades_classe_ids: c.habilidades_classe_ids ?? [],
       poderes_classe_ids: c.poderes_classe_ids ?? [],
+      caminhos: caminhosDaClasse(c.id),
     };
   }
   writeJson(join(OUT, "classes.json"), result);

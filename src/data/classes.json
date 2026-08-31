@@ -99,9 +99,9 @@
       "transliteracao_impossivel"
     ],
     "caminhos": [
+      "caminho_do_arcanista_bruxo",
       "caminho_do_arcanista_feiticeiro",
-      "caminho_do_arcanista_mago",
-      "caminho_do_arcanista_bruxo"
+      "caminho_do_arcanista_mago"
     ]
   },
   "barbaro": {
@@ -191,7 +191,8 @@
       "supersticao",
       "totem_espiritual",
       "vigor_primal"
-    ]
+    ],
+    "caminhos": []
   },
   "bardo": {
     "nome": "Bardo",
@@ -286,7 +287,8 @@
       "prestidigitacao",
       "ressoar",
       "triunfo_do_amor"
-    ]
+    ],
+    "caminhos": []
   },
   "bucaneiro": {
     "nome": "Bucaneiro",
@@ -388,7 +390,8 @@
       "pirouette",
       "remise",
       "sucesso_atrai_sucesso"
-    ]
+    ],
+    "caminhos": []
   },
   "cacador": {
     "nome": "Caçador",
@@ -471,7 +474,8 @@
       "inimigo_de",
       "olho_do_falcao",
       "ponto_fraco"
-    ]
+    ],
+    "caminhos": []
   },
   "cavaleiro": {
     "nome": "Cavaleiro",
@@ -543,6 +547,10 @@
       "solidez",
       "titulo",
       "torre_armada"
+    ],
+    "caminhos": [
+      "caminho_do_cavaleiro_bastiao",
+      "caminho_do_cavaleiro_montaria"
     ]
   },
   "clerigo": {
@@ -629,7 +637,8 @@
       "representante_divino",
       "solo_profanado",
       "solo_sagrado"
-    ]
+    ],
+    "caminhos": []
   },
   "druida": {
     "nome": "Druida",
@@ -724,7 +733,8 @@
       "protecao_fungica",
       "transformacao_repugnante",
       "xama_mistico"
-    ]
+    ],
+    "caminhos": []
   },
   "guerreiro": {
     "nome": "Guerreiro",
@@ -821,7 +831,8 @@
       "valentao",
       "velho_de_guerra",
       "xadrez_de_batalha"
-    ]
+    ],
+    "caminhos": []
   },
   "inventor": {
     "nome": "Inventor",
@@ -903,7 +914,8 @@
       "oficina_de_campo",
       "pedra_de_amolar",
       "sintese_rapida"
-    ]
+    ],
+    "caminhos": []
   },
   "ladino": {
     "nome": "Ladino",
@@ -1000,7 +1012,8 @@
       "truque_de_palco",
       "truque_do_chapeu",
       "vestido_para_a_ocasiao"
-    ]
+    ],
+    "caminhos": []
   },
   "lutador": {
     "nome": "Lutador",
@@ -1092,7 +1105,8 @@
       "rolamento_escapatorio",
       "ruas_furiosas",
       "sequencia_defensiva"
-    ]
+    ],
+    "caminhos": []
   },
   "nobre": {
     "nome": "Nobre",
@@ -1199,7 +1213,8 @@
       "titulo",
       "voz_limpida",
       "voz_poderosa"
-    ]
+    ],
+    "caminhos": []
   },
   "paladino": {
     "nome": "Paladino",
@@ -1276,6 +1291,7 @@
       "virtude_compaixao",
       "virtude_humildade",
       "virtude_temperanca"
-    ]
+    ],
+    "caminhos": []
   }
 }
