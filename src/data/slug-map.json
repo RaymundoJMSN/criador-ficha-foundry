@@ -1,1 +1,6 @@
-{}
+{
+  "_comentario": "Overrides manuais slug T20-DB → slug do item no compêndio. Só entra aqui o que nenhuma regra do resolver alcança. NÃO é gerado pelo port — editar à mão. Rodar scripts/auditar-slugs.mjs depois de mexer.",
+  "sorte_de_nimb": "sorte_do_louco",
+  "olho_do_dragao": "olho_de_dragao",
+  "abencado": "abencoado"
+}

@@ -4,7 +4,8 @@ import type { WizardState } from "../wizard/state.js";
 import { CompendiumIndex } from "../compendium/index.js";
 import { toNomeSlug } from "../compendium/slug.js";
 import { getClasse } from "../rules/classe.js";
-import { habilidadesAte, baseSlug } from "../rules/progressao.js";
+import { habilidadesAte } from "../rules/progressao.js";
+import { resolverPoder } from "../compendium/resolver.js";
 import { getOrigem } from "../rules/origem.js";
 import { getDivindade } from "../rules/divindade.js";
 
@@ -138,9 +139,7 @@ export class ActorWriter {
       const allPoderes = CompendiumIndex.getAll("poder");
       const habItems: unknown[] = [];
       for (const slug of habilidadeSlugs) {
-        const match =
-          allPoderes.find(p => toNomeSlug(p.name) === slug) ??
-          allPoderes.find(p => toNomeSlug(p.name) === baseSlug(slug));
+        const match = resolverPoder(slug, classeSlug, allPoderes)?.item;
         if (match) {
           const doc = await resolveItem(match.id);
           if (doc) habItems.push(doc);
@@ -163,7 +162,7 @@ export class ActorWriter {
     const classeCaminhoSlug = state.escolhasPorItem["classe_caminho"] as string | undefined;
     if (classeCaminhoSlug && classeData?.caminhos?.includes(classeCaminhoSlug)) {
       const allPoderes = CompendiumIndex.getAll("poder");
-      const caminhoItem = allPoderes.find(p => toNomeSlug(p.name) === classeCaminhoSlug);
+      const caminhoItem = resolverPoder(classeCaminhoSlug, classeSlug, allPoderes)?.item;
       if (caminhoItem) {
         const doc = await resolveItem(caminhoItem.id);
         if (doc) {
@@ -191,7 +190,7 @@ export class ActorWriter {
       // Auto-granted poder from origem (e.g. "Sangue Azul" for Aristocrata)
       if (origem.beneficios.poder_unico_id) {
         const slug = origem.beneficios.poder_unico_id;
-        const match = allPoderes.find(p => toNomeSlug(p.name) === slug);
+        const match = resolverPoder(slug, classeSlug, allPoderes)?.item;
         if (match) {
           const doc = await resolveItem(match.id);
           if (doc) origemItems.push(doc);
@@ -204,7 +203,7 @@ export class ActorWriter {
       // Chosen pick-2 poder
       const pick2Slug = state.escolhasPorItem["origem_poder"] as string | undefined;
       if (pick2Slug) {
-        const match = allPoderes.find(p => toNomeSlug(p.name) === pick2Slug);
+        const match = resolverPoder(pick2Slug, classeSlug, allPoderes)?.item;
         if (match) {
           const doc = await resolveItem(match.id);
           if (doc) origemItems.push(doc);
@@ -252,7 +251,7 @@ export class ActorWriter {
 
       const divItems: unknown[] = [];
       for (const slug of poderesParaAdd) {
-        const match = allPoderes.find(p => toNomeSlug(p.name) === slug);
+        const match = resolverPoder(slug, classeSlug, allPoderes)?.item;
         if (match) {
           const doc = await resolveItem(match.id);
           if (doc) divItems.push(doc);

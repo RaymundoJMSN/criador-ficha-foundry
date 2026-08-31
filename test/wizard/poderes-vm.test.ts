@@ -108,3 +108,43 @@ describe("preparePoderesContext — cota acumulada e poderes gerais", () => {
     expect(ctx.poderes.find((p) => p.name === "Foco em Perícia")?.origem).toBe("geral");
   });
 });
+
+describe("preparePoderesContext — poder de classe com nome qualificado", () => {
+  it("Ambidestria (Guerreiro) entra na lista do guerreiro", () => {
+    const s = new WizardState();
+    s.classeNome = "Guerreiro";
+    s.nivel = 2;
+    const itens: IndexedPoder[] = [
+      {
+        id: "amb_g",
+        name: "Ambidestria (Guerreiro)",
+        img: "",
+        packId: "p",
+        type: "poder",
+        system: { tipo: "classe" },
+      },
+      {
+        id: "amb_c",
+        name: "Ambidestria (Caçador)",
+        img: "",
+        packId: "p",
+        type: "poder",
+        system: { tipo: "classe" },
+      },
+    ];
+    const nomes = preparePoderesContext(s, itens).poderes.map((p) => p.name);
+    expect(nomes).toContain("Ambidestria (Guerreiro)");
+    expect(nomes).not.toContain("Ambidestria (Caçador)");
+  });
+
+  it("nomeia habilidade parametrizada pelo item real", () => {
+    const s = new WizardState();
+    s.classeNome = "Bárbaro";
+    s.nivel = 1;
+    const itens: IndexedPoder[] = [
+      { id: "f", name: "Fúria", img: "", packId: "p", type: "poder", system: { tipo: "ability" } },
+    ];
+    const nomes = preparePoderesContext(s, itens).habilidades.map((h) => h.nome);
+    expect(nomes).toContain("Fúria");
+  });
+});

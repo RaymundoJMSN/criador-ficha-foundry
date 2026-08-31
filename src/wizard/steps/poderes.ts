@@ -2,6 +2,7 @@ import { toNomeSlug } from "../../compendium/slug.js";
 import { getClasse } from "../../rules/classe.js";
 import { describeUnmet } from "../../rules/poderes.js";
 import { habilidadesAte, slotsDePoder } from "../../rules/progressao.js";
+import { resolverPoder } from "../../compendium/resolver.js";
 import type { IndexedPoder } from "../../compendium/types.js";
 import type { WizardState } from "../state.js";
 
@@ -53,7 +54,10 @@ export function preparePoderesContext(
   const habilidadeSlugs = habilidadesAte(state.classeNome || state.classeId, state.nivel);
   const habilidades = habilidadeSlugs.map((slug) => ({
     slug,
-    nome: resolvePoderNome(slug) ?? prettifySlug(slug),
+    nome:
+      resolverPoder(slug, classeSlug, allPoderes)?.item.name ??
+      resolvePoderNome(slug) ??
+      prettifySlug(slug),
   }));
 
   // Free picks a character of this level has ACCUMULATED (levels 1..N), not the
@@ -72,8 +76,14 @@ export function preparePoderesContext(
     };
   }
 
-  // Build pick list from poderes_classe_ids — match compendium items by slug
-  const classePoderSlugs = new Set(classeData.poderes_classe_ids ?? []);
+  // Build pick list from poderes_classe_ids. O nome no compêndio raramente é o slug
+  // ("Ambidestria (Guerreiro)"), então resolve slug → item e guarda o id resolvido.
+  // Slug sem item = conteúdo não instalado (Heróis de Arton) — some da lista, sem erro.
+  const idsDaClasse = new Set<string>();
+  for (const slug of classeData.poderes_classe_ids ?? []) {
+    const achado = resolverPoder(slug, classeSlug, allPoderes);
+    if (achado) idsDaClasse.add(achado.item.id);
+  }
 
   const stateForEligibility = {
     nivel: state.nivel,
@@ -87,7 +97,7 @@ export function preparePoderesContext(
   // "Sempre que você recebe um poder de classe, pode trocá-lo por um poder geral"
   // (LB cap. 5) — so every class-power slot may also be spent on a general power.
   const entries: PoderEntry[] = allPoderes
-    .filter((p) => classePoderSlugs.has(toNomeSlug(p.name)) || p.system.tipo === "geral")
+    .filter((p) => idsDaClasse.has(p.id) || p.system.tipo === "geral")
     .map((p) => {
       const slug = toNomeSlug(p.name);
       const unmet = describeUnmet(slug, stateForEligibility);

@@ -113,11 +113,6 @@ function walkDir(dir) {
   writeJson(join(OUT, "prereqs.json"), prereqs);
 }
 
-// 7. slug-map.json — empty override map
-{
-  writeJson(join(OUT, "slug-map.json"), {});
-}
-
 // 8. racas.json — all raças consolidated
 {
   const racasDir = join(T20DB, "racas");
