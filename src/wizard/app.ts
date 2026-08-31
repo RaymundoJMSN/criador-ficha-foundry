@@ -1,4 +1,28 @@
 import { MODULE_ID } from "../constants.js";
+
+/** Chave da flag onde o rascunho do wizard fica salvo no usuário. */
+const RASCUNHO_FLAG = "rascunho";
+
+/**
+ * Acesso às flags do usuário. `fvtt-types` só conhece o escopo "core", então o
+ * escape fica aqui, num lugar só, em vez de espalhado por cada chamada.
+ */
+const rascunho = {
+  ler(): { estado?: string; passo?: WizardStep } | undefined {
+    // @ts-expect-error fvtt-types restringe o escopo de flag aos ids que conhece
+    return game.user?.getFlag(MODULE_ID, RASCUNHO_FLAG) as
+      | { estado?: string; passo?: WizardStep }
+      | undefined;
+  },
+  gravar(valor: { estado: string; passo: WizardStep }): void {
+    // @ts-expect-error idem
+    void game.user?.setFlag(MODULE_ID, RASCUNHO_FLAG, valor);
+  },
+  apagar(): void {
+    // @ts-expect-error idem
+    void game.user?.unsetFlag(MODULE_ID, RASCUNHO_FLAG);
+  },
+};
 import { WizardState } from "./state.js";
 import { WizardStep, STEP_ORDER, STEP_META } from "../rules/steps.js";
 import { CompendiumIndex } from "../compendium/index.js";
@@ -73,6 +97,18 @@ export function defineWizardApp(): void {
     _state = new WizardState();
     _currentStep: WizardStep = WizardStep.Nivel;
     _errors: string[] = [];
+
+    /**
+     * Guarda o rascunho numa flag do usuário para sobreviver a F5.
+     * Falha em silêncio: perder o rascunho é chato, travar o wizard é pior.
+     */
+    _salvarRascunho(): void {
+      try {
+        rascunho.gravar({ estado: this._state.serialize(), passo: this._currentStep });
+      } catch (err) {
+        console.warn(`${MODULE_ID} | não consegui salvar o rascunho:`, err);
+      }
+    }
 
     goToStep(step: WizardStep): void {
       this._currentStep = step;
@@ -363,6 +399,9 @@ export function defineWizardApp(): void {
     }
 
     async _onRender(_context: unknown, _options: unknown): Promise<void> {
+      // Todo estado que vale a pena passa por um render — salvar aqui cobre tudo.
+      this._salvarRascunho();
+
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const root = (this as any).element as HTMLElement;
 
@@ -647,7 +686,10 @@ export function defineWizardApp(): void {
           this.render();
           return;
         }
-        void ActorWriter.create(this._state).then(() => this.close());
+        void ActorWriter.create(this._state).then(() => {
+          rascunho.apagar();
+          this.close();
+        });
       } else if (action === "attrDec") {
         const attr = target.dataset["attr"] as string;
         if (!attr) return;
@@ -765,6 +807,40 @@ export function openWizard(): void {
   const inst = _instance as any;
   if (!inst || !inst.rendered) {
     _instance = new _WizardAppClass();
+    restaurarRascunho(_instance);
   }
   (_instance as any).render(true);
+}
+
+/** Retoma o rascunho salvo, se houver e se o usuário quiser. */
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+function restaurarRascunho(app: any): void {
+  let salvo: { estado?: string; passo?: WizardStep } | undefined;
+  try {
+    salvo = rascunho.ler();
+  } catch {
+    return;
+  }
+  if (!salvo?.estado) return;
+
+  let estado: WizardState;
+  try {
+    estado = WizardState.deserialize(salvo.estado);
+  } catch {
+    rascunho.apagar();
+    return;
+  }
+
+  const nome = estado.nome?.trim() || "sem nome";
+  const retomar = window.confirm(
+    `Você tem uma ficha em andamento ("${nome}"). Retomar de onde parou?
+
+Cancelar começa do zero.`
+  );
+  if (!retomar) {
+    rascunho.apagar();
+    return;
+  }
+  app._state = estado;
+  if (salvo.passo && STEP_ORDER.includes(salvo.passo)) app._currentStep = salvo.passo;
 }
