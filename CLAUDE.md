@@ -43,6 +43,38 @@ encadeada; cota de magias saiu de `(Int-10)/2` (matemática de D&D) para a regra
 classe; raças `misto` (Osteon, Lefou) saíam sem atributo racial nenhum; Revisão
 lista pendências e trava o botão Criar; rascunho sobrevive a F5.
 
+### Rodada de bugs do teste no Foundry (2026-08-31, tarde)
+
+Doze defeitos relatados testando no mundo real. Os de raiz:
+
+- **Poder racial "Magias" no lugar de "Magias (Arcanista)"** — o módulo
+  `bestiario-de-arton` tem um poder `racial` chamado só "Magias", e `magias` é
+  prefixo de `magias_1_circulo`. `resolverPoder` agora aceita o **tipo esperado**
+  e roda a escada primeiro só entre itens desse tipo.
+- **Só 3 divindades apareciam** — o requisito de devoto era **E** entre raça e
+  classe; o livro (cap. 2) diz **OU**, e humanos e clérigos podem qualquer uma.
+- **Contador de magias parado em 0/3** — poder e magia só entravam no estado ao
+  trocar de passo. Agora sincronizam no clique; o que não pode ser marcado vem
+  `disabled` (cota cheia ou pré-requisito não cumprido), e pegar o Poder A
+  libera o Poder B na hora.
+- **Rolagem de atributo gravava o total cru do dado** (Força 14). Converte pela
+  tabela do LB p.17. Épica/Nimb/Valkaria/Khalmyr estavam com valores inventados.
+  Trocar de método zerava e logo reaplicava o formulário antigo — dava pra rolar
+  14 e voltar pra compra de pontos com ele.
+- **Origem**: "um poder de combate a sua escolha" existia no T20-DB
+  (`poderes_categoria_livre`) e o port descartava; itens que vinham como texto
+  solto ("traje da corte") eram descartados em silêncio.
+- **Habilidades raciais com sub-escolha** (Memória Póstuma do Osteon, Deformidade
+  do Lefou, Fonte Elemental do Golem, Qareen, Kliren) não existiam. O port
+  normaliza as três formas do T20-DB numa só; as respostas viram perícia
+  treinada, bônus em `system.pericias.<code>.outros` ou item no actor.
+
+Menores: busca em todo dropdown com 8+ opções; raça mostra descrição, tamanho por
+extenso, deslocamento e as habilidades que concede; seletor de atributo racial
+respeita "diferentes" e "atributos disponíveis" e diz o que é proibido; radios
+voltaram a ser nativos (o desenho à mão virava rosquinha); topo mostra só o passo
+atual; lutador não passa por Magias; dinheiro inicial rola uma vez só.
+
 **Correção de dado contra o livro:** o T20-DB dá ao clérigo 2 magias iniciais e 1 a
 cada nível par (padrão do bardo). LB cap. 4 diz **três** iniciais e **uma a cada nível**.
 A correção está em `scripts/port-t20db.mjs`, citada — o T20-DB não foi alterado.
