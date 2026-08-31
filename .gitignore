@@ -4,3 +4,5 @@ dist/
 *.local
 .claude/
 nul
+scripts/.cache-pdf/
+src/data/textos.json

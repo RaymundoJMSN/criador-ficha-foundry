@@ -7,6 +7,7 @@ import {
   type BeneficioOpcao,
 } from "../../rules/origem.js";
 import type { WizardState } from "../state.js";
+import textosRaw from "../../data/textos.json";
 import type { IndexedPoder } from "../../compendium/types.js";
 import { describeUnmet, type PartialWizardState } from "../../rules/poderes.js";
 import { toNomeSlug } from "../../compendium/slug.js";
@@ -28,9 +29,13 @@ export interface PoderLivre {
   opcoes: Array<{ id: string; nome: string; selected: boolean }>;
 }
 
+const textos = textosRaw as { origens?: Record<string, string> };
+
 export interface OrigemDetail {
   id: string;
   nome: string;
+  /** Descrição do livro. Vazia quando textos.json não foi gerado. */
+  descricao: string;
   pericias: string[];
   itens_iniciais: string[];
   /** Pool de benefícios: o jogador marca dois (perícia e/ou poder). */
@@ -82,6 +87,7 @@ export function prepareOrigemContext(
     selectedDetail = {
       id: selected.id,
       nome: selected.nome,
+      descricao: textos.origens?.[selected.id] ?? "",
       pericias: selected.beneficios.pericias,
       itens_iniciais: formatItensIniciais(selected.id),
       beneficios,

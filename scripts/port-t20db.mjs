@@ -1,5 +1,5 @@
 // @ts-check
-import { readFileSync, writeFileSync, readdirSync, statSync } from "fs";
+import { readFileSync, writeFileSync, readdirSync, statSync, existsSync } from "fs";
 import { join, resolve, dirname } from "path";
 import { fileURLToPath } from "url";
 
@@ -539,6 +539,16 @@ function walkDir(dir) {
     };
   }
   writeJson(join(OUT, "classes.json"), result);
+}
+
+// textos.json é gerado à parte (scripts/gerar-textos.mjs, precisa dos PDFs) e
+// não vai pro git — mas o bundle importa o arquivo, então garanta que exista.
+{
+  const alvo = join(OUT, "textos.json");
+  if (!existsSync(alvo)) {
+    writeJson(alvo, { origens: {}, racas: {}, classes: {} });
+    console.log("  (vazio — rode `npm run textos` para preencher com os PDFs)");
+  }
 }
 
 console.log("Done.");

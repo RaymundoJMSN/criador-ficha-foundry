@@ -49,6 +49,33 @@ encadeada; cota de magias saiu de `(Int-10)/2` (matemática de D&D) para a regra
 classe; raças `misto` (Osteon, Lefou) saíam sem atributo racial nenhum; Revisão
 lista pendências e trava o botão Criar; rascunho sobrevive a F5.
 
+### Conferidor contra os livros (2026-08-31, noite)
+
+**Qual fonte manda.** Três candidatas, e elas discordam:
+
+| fonte | o que é | vale pra quê |
+|---|---|---|
+| `arauto/books/*.pdf` | os livros de verdade | **fonte da verdade** |
+| compêndio do Foundry | Edição Jogo do Ano, com `source` e página | verdade do lado do Foundry |
+| `tormenta-livros/livros/**.md` | conversão de comunidade | ler regra, **não** conferir número |
+
+O markdown erra: joia do Aristocrata sai T$ 100 (PDF, T20-DB e o dataset do
+arauto dizem T$ 300); itens do Amnésico T$ 100 (PDF: T$ 500); a tabela do Nobre é
+de uma impressão anterior (Gritar Ordens no 5º nível, sem Palavras Afiadas —
+o PDF diz "Palavras Afiadas. No 2º nível", igual ao T20-DB e ao compêndio).
+
+**Ferramentas** (`npm run conferir`, `npm run textos`):
+- `scripts/extrair-pdfs.py` — PyMuPDF, 1.648 páginas de 6 livros → `scripts/.cache-pdf/` (gitignorado).
+- `scripts/conferir-livros.mjs` — compara o T20-DB com o PDF. Hoje: **0 divergências
+  em raças e classes**; nas origens sobram 5 candidatas de Heróis de Arton, cujo
+  layout no PDF é diferente. Não corrige nada, só lista.
+- `scripts/gerar-textos.mjs` — descrições → `src/data/textos.json` (**gitignorado**:
+  o repo é público e o texto é da Jambo). Sem ele o wizard roda igual, só sem descrição.
+- `scripts/livros.mjs` — leitor do markdown, ainda útil pra prosa.
+
+**Conclusão da auditoria: o T20-DB conferiu em tudo que dá pra ler automaticamente.**
+Os erros que eu tinha "achado" no markdown eram do markdown.
+
 ### Rodada de bugs do teste no Foundry (2026-08-31, tarde)
 
 Doze defeitos relatados testando no mundo real. Os de raiz:
