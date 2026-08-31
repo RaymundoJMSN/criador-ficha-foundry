@@ -7,6 +7,10 @@ const progressaoData = progressaoDataRaw as unknown as Record<
     pericias_inatas: string[];
     pericias_escolha: string[];
     pericias_numero: number;
+    /** Level → automatic class abilities gained + how many power picks it grants. */
+    tabela?: Record<string, { automaticos: string[]; escolhas: number }>;
+    /** Level → highest spell circle unlocked at that level. */
+    circulos?: Record<string, number>;
   }
 >;
 
@@ -41,6 +45,8 @@ export interface ClasseProgressao {
   pericias_numero: number;
   pv_por_nivel: number;
   pm_por_nivel: number;
+  tabela?: Record<string, { automaticos: string[]; escolhas: number }>;
+  circulos?: Record<string, number>;
 }
 
 /**
@@ -65,4 +71,66 @@ export function getClasseProgressao(classeNome: string): ClasseProgressao | null
   }
 
   return null;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Eixo de nível — única fonte de "o que este personagem tem no nv N" */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Escalonamentos vêm como slug sufixado (`ataque_especial_8`, `duelo_3`,
+ * `casca_grossa_con_mais_2`). São upgrades da mesma habilidade, não itens novos —
+ * agrupar pela família evita conceder Ataque Especial quatro vezes.
+ */
+const ESCALONAMENTO = /(?:_con_mais)?_\d+$/;
+
+/** Strips the numeric upgrade suffix so `ataque_especial_8` groups with `ataque_especial`. */
+export function baseSlug(slug: string): string {
+  return slug.replace(ESCALONAMENTO, "");
+}
+
+/**
+ * Automatic class abilities a character of this level has, one per family:
+ * an upgrade entry (`ataque_especial_8`) replaces its base rather than adding to it.
+ */
+export function habilidadesAte(classeNome: string, nivel: number): string[] {
+  const tabela = getClasseProgressao(classeNome)?.tabela;
+  if (!tabela) return [];
+
+  const melhorPorFamilia = new Map<string, { nivel: number; slug: string }>();
+  for (const [nvStr, row] of Object.entries(tabela)) {
+    const nv = Number(nvStr);
+    if (nv > nivel) continue;
+    for (const slug of row.automaticos ?? []) {
+      const familia = baseSlug(slug);
+      const atual = melhorPorFamilia.get(familia);
+      if (!atual || nv >= atual.nivel) melhorPorFamilia.set(familia, { nivel: nv, slug });
+    }
+  }
+
+  return [...melhorPorFamilia.values()].sort((a, b) => a.nivel - b.nivel).map((e) => e.slug);
+}
+
+/** Total power picks accumulated from level 1 up to `nivel`. */
+export function slotsDePoder(classeNome: string, nivel: number): number {
+  const tabela = getClasseProgressao(classeNome)?.tabela;
+  if (!tabela) return 0;
+
+  let total = 0;
+  for (const [nvStr, row] of Object.entries(tabela)) {
+    if (Number(nvStr) <= nivel) total += row.escolhas ?? 0;
+  }
+  return total;
+}
+
+/** Highest spell circle unlocked at `nivel`; 0 when the class does not cast. */
+export function circuloMaximo(classeNome: string, nivel: number): number {
+  const circulos = getClasseProgressao(classeNome)?.circulos;
+  if (!circulos) return 0;
+
+  let max = 0;
+  for (const [nvStr, circulo] of Object.entries(circulos)) {
+    if (Number(nvStr) <= nivel && circulo > max) max = circulo;
+  }
+  return max;
 }
