@@ -13,6 +13,20 @@
 import type { ClasseData } from "./classe.js";
 import { PERICIA_SLUGS } from "./pericia-slug.js";
 
+/** Slug → nome de tela; a mensagem de erro é lida por jogador, não por dev. */
+function nomeDePericia(slug: string): string {
+  return slug
+    .split("_")
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1))
+    .join(" ");
+}
+
+function listaLegivel(slugs: string[]): string {
+  const nomes = slugs.map(nomeDePericia);
+  if (nomes.length <= 1) return nomes[0] ?? "";
+  return `${nomes.slice(0, -1).join(", ")} ou ${nomes[nomes.length - 1]}`;
+}
+
 export interface PericiaPlan {
   fixas: string[];
   obrigatorias: { quantidade: number; opcoes: string[] }[];
@@ -69,12 +83,14 @@ export function computeTrained(plan: PericiaPlan, picks: PericiaPicks): TrainedR
   plan.obrigatorias.forEach((grupo, i) => {
     const pick = picks.obrigatorias[i] ?? [];
     if (pick.length < grupo.quantidade) {
-      errors.push(`obrigatória ${i}: escolha ${grupo.quantidade} entre ${grupo.opcoes.join("/")}`);
+      errors.push(
+        `Escolha ${grupo.quantidade} entre ${listaLegivel(grupo.opcoes)}.`
+      );
       return;
     }
     for (const p of pick.slice(0, grupo.quantidade)) {
       if (!grupo.opcoes.includes(p)) {
-        errors.push(`obrigatória ${i}: "${p}" fora da lista`);
+        errors.push(`"${nomeDePericia(p)}" não está na lista da classe.`);
         continue;
       }
       trained.add(p);
@@ -85,11 +101,15 @@ export function computeTrained(plan: PericiaPlan, picks: PericiaPicks): TrainedR
   const esc = picks.escolhas ?? [];
   const fora = esc.filter((p) => !plan.escolhas.opcoes.includes(p));
   if (fora.length > 0) {
-    errors.push(`escolhas fora da lista da classe: ${fora.join(", ")}`);
+    errors.push(`Fora da lista da classe: ${fora.map(nomeDePericia).join(", ")}.`);
   } else if (esc.length > plan.escolhas.quantidade) {
-    errors.push(`escolhas: máximo ${plan.escolhas.quantidade}, recebeu ${esc.length}`);
+    errors.push(
+      `Perícias da classe: escolha ${plan.escolhas.quantidade} (marcou ${esc.length}).`
+    );
   } else if (esc.length < plan.escolhas.quantidade) {
-    errors.push(`escolhas: requer ${plan.escolhas.quantidade} da lista da classe`);
+    errors.push(
+      `Perícias da classe: faltam ${plan.escolhas.quantidade - esc.length} de ${plan.escolhas.quantidade}.`
+    );
   } else {
     esc.forEach((p) => trained.add(p));
   }
@@ -98,9 +118,9 @@ export function computeTrained(plan: PericiaPlan, picks: PericiaPicks): TrainedR
   const int = picks.extras_int ?? [];
   const intInvalid = int.filter((p) => !plan.todas.includes(p));
   if (intInvalid.length > 0) {
-    errors.push(`extras de Int desconhecidas: ${intInvalid.join(", ")}`);
+    errors.push(`Perícia desconhecida em Inteligência: ${intInvalid.join(", ")}.`);
   } else if (int.length > plan.intBonus) {
-    errors.push(`extras de Int: máximo ${plan.intBonus}, recebeu ${int.length}`);
+    errors.push(`Perícias por Inteligência: no máximo ${plan.intBonus} (marcou ${int.length}).`);
   } else {
     int.forEach((p) => trained.add(p));
   }
@@ -109,9 +129,9 @@ export function computeTrained(plan: PericiaPlan, picks: PericiaPicks): TrainedR
   const raca = picks.raca ?? [];
   const racaInvalid = raca.filter((p) => !plan.todas.includes(p));
   if (racaInvalid.length > 0) {
-    errors.push(`perícias de raça desconhecidas: ${racaInvalid.join(", ")}`);
+    errors.push(`Perícia de raça desconhecida: ${racaInvalid.join(", ")}.`);
   } else if (raca.length > plan.racaBonus) {
-    errors.push(`perícias de raça: máximo ${plan.racaBonus}, recebeu ${raca.length}`);
+    errors.push(`Perícias de raça: no máximo ${plan.racaBonus} (marcou ${raca.length}).`);
   } else {
     raca.forEach((p) => trained.add(p));
   }
