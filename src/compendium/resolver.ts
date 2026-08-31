@@ -13,6 +13,12 @@
  * | `linhagem_basica_draconica`       | Linhagem Dracônica Básica          | tokens   |
  * | `sorte_de_nimb`                   | Sorte do Louco                     | override |
  *
+ * Passe `tipo` quando souber o que procura. Sem isso, um item de outro módulo
+ * pode roubar o casamento: o bestiário tem um poder RACIAL chamado "Magias", e
+ * `magias` é prefixo de `magias_1_circulo` — o arcanista recebia esse em vez de
+ * "Magias (Arcanista)". Com `tipo: "ability"` a escada roda primeiro só entre
+ * habilidades de classe e só depois, se não achar, entre todos os itens.
+ *
  * Rodar `node scripts/auditar-slugs.mjs` mede quanto ainda não resolve.
  */
 import { toNomeSlug } from "./slug.js";
@@ -22,7 +28,7 @@ const SLUG_MAP = slugMapRaw as Record<string, string>;
 
 export interface Nomeavel {
   name: string;
-  system?: { descricao?: string };
+  system?: { descricao?: string; tipo?: string };
 }
 
 /** Como o slug foi resolvido — útil no log e na auditoria. */
@@ -60,10 +66,24 @@ function chaveTokens(slug: string): string {
 export function resolverPoder<T extends Nomeavel>(
   slug: string,
   classeSlug: string,
-  itens: T[]
+  itens: T[],
+  tipoEsperado?: string
 ): Resolucao<T> | null {
   if (!slug) return null;
 
+  if (tipoEsperado) {
+    const doTipo = itens.filter((i) => i.system?.tipo === tipoEsperado);
+    const achado = doTipo.length > 0 ? escada(slug, classeSlug, doTipo) : null;
+    if (achado) return achado;
+  }
+  return escada(slug, classeSlug, itens);
+}
+
+function escada<T extends Nomeavel>(
+  slug: string,
+  classeSlug: string,
+  itens: T[]
+): Resolucao<T> | null {
   const comSlug = itens.map((item) => ({ item, slug: toNomeSlug(item.name) }));
   const porSlug = (alvo: string): T[] => comSlug.filter((c) => c.slug === alvo).map((c) => c.item);
 

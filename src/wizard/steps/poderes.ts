@@ -57,7 +57,7 @@ export function preparePoderesContext(
   const habilidades = habilidadeSlugs.map((slug) => ({
     slug,
     nome:
-      resolverPoder(slug, classeSlug, allPoderes)?.item.name ??
+      resolverPoder(slug, classeSlug, allPoderes, "ability")?.item.name ??
       resolvePoderNome(slug) ??
       prettifySlug(slug),
   }));
@@ -84,7 +84,7 @@ export function preparePoderesContext(
   const idsDaClasse = new Set<string>();
   const idParaSlug = new Map<string, string>();
   for (const slug of classeData.poderes_classe_ids ?? []) {
-    const achado = resolverPoder(slug, classeSlug, allPoderes);
+    const achado = resolverPoder(slug, classeSlug, allPoderes, "classe");
     if (!achado) continue;
     idsDaClasse.add(achado.item.id);
     idParaSlug.set(achado.item.id, slug);

@@ -139,7 +139,7 @@ export class ActorWriter {
       const allPoderes = CompendiumIndex.getAll("poder");
       const habItems: unknown[] = [];
       for (const slug of habilidadeSlugs) {
-        const match = resolverPoder(slug, classeSlug, allPoderes)?.item;
+        const match = resolverPoder(slug, classeSlug, allPoderes, "ability")?.item;
         if (match) {
           const doc = await resolveItem(match.id);
           if (doc) habItems.push(doc);
@@ -162,7 +162,7 @@ export class ActorWriter {
     const classeCaminhoSlug = state.escolhasPorItem["classe_caminho"] as string | undefined;
     if (classeCaminhoSlug && classeData?.caminhos?.some((c) => c.slug === classeCaminhoSlug)) {
       const allPoderes = CompendiumIndex.getAll("poder");
-      const caminhoItem = resolverPoder(classeCaminhoSlug, classeSlug, allPoderes)?.item;
+      const caminhoItem = resolverPoder(classeCaminhoSlug, classeSlug, allPoderes, "ability")?.item;
       if (caminhoItem) {
         const doc = await resolveItem(caminhoItem.id);
         if (doc) {
@@ -187,7 +187,7 @@ export class ActorWriter {
       );
       if (linhagem) {
         const allPoderes = CompendiumIndex.getAll("poder");
-        const item = resolverPoder(`linhagem_basica_${linhagem}`, classeSlug, allPoderes)?.item;
+        const item = resolverPoder(`linhagem_basica_${linhagem}`, classeSlug, allPoderes, "ability")?.item;
         if (item) {
           const doc = await resolveItem(item.id);
           if (doc) {
@@ -268,7 +268,7 @@ export class ActorWriter {
 
       const divItems: unknown[] = [];
       for (const slug of poderesParaAdd) {
-        const match = resolverPoder(slug, classeSlug, allPoderes)?.item;
+        const match = resolverPoder(slug, classeSlug, allPoderes, "concedido")?.item;
         if (match) {
           const doc = await resolveItem(match.id);
           if (doc) divItems.push(doc);

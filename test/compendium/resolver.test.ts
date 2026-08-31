@@ -90,3 +90,27 @@ describe("resolverPoder", () => {
     expect(resolverPoder("", "guerreiro", PACK)).toBeNull();
   });
 });
+
+describe("resolverPoder — tipo esperado desempata entre módulos", () => {
+  const COM_COLISAO = [
+    // O módulo bestiario-de-arton tem um poder RACIAL chamado só "Magias".
+    { name: "Magias", system: { tipo: "racial" } },
+    { name: "Magias (Arcanista)", system: { tipo: "ability" } },
+  ];
+
+  it("sem tipo, o prefixo racial rouba o casamento", () => {
+    expect(resolverPoder("magias_1_circulo", "arcanista", COM_COLISAO)?.item.name).toBe("Magias");
+  });
+
+  it("com tipo 'ability', acha a habilidade da classe", () => {
+    expect(resolverPoder("magias_1_circulo", "arcanista", COM_COLISAO, "ability")?.item.name).toBe(
+      "Magias (Arcanista)"
+    );
+  });
+
+  it("tipo sem candidato cai de volta na lista inteira", () => {
+    expect(resolverPoder("magias_1_circulo", "arcanista", COM_COLISAO, "origem")?.item.name).toBe(
+      "Magias"
+    );
+  });
+});

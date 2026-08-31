@@ -17,19 +17,21 @@ describe("isDivindadeAcessa", () => {
     expect(isDivindadeAcessa("aharadak", "qualquer_raca", "qualquer_classe")).toBe(true);
   });
 
-  it("allihanna não aceita guerreiro", () => {
-    expect(isDivindadeAcessa("allihanna", "humano", "guerreiro")).toBe(false);
+  it("allihanna não aceita anão guerreiro (nem raça nem classe listadas)", () => {
+    expect(isDivindadeAcessa("allihanna", "anao", "guerreiro")).toBe(false);
   });
 
-  it("allihanna aceita elfo druida (raca e classe ambos OK)", () => {
-    // allihanna: racas_aceitas=[...elfo...], classes_aceitas=[...druida...]
-    // Both restrictions must be satisfied (AND logic).
+  it("allihanna aceita elfo druida", () => {
     expect(isDivindadeAcessa("allihanna", "elfo", "druida")).toBe(true);
   });
 
-  it("allihanna NÃO aceita humano druida (raca não está na lista)", () => {
-    // humano não está em racas_aceitas → fails even though druida is in classes_aceitas
-    expect(isDivindadeAcessa("allihanna", "humano", "druida")).toBe(false);
+  it("basta a CLASSE estar listada — anão druida serve", () => {
+    // "sua raça ou sua classe devem estar listadas" (LB cap. 2)
+    expect(isDivindadeAcessa("allihanna", "anao", "druida")).toBe(true);
+  });
+
+  it("humano é exceção e pode qualquer divindade", () => {
+    expect(isDivindadeAcessa("allihanna", "humano", "guerreiro")).toBe(true);
   });
 
   it("returns false for unknown divindade", () => {
@@ -61,18 +63,13 @@ describe("listDivindadesParaPersonagem", () => {
     expect(list.some((d) => d.id === "aharadak")).toBe(true);
   });
 
-  it("elfo druida vê allihanna (ambas restrições satisfeitas)", () => {
+  it("elfo druida vê allihanna", () => {
     const list = listDivindadesParaPersonagem("elfo", "druida");
     expect(list.some((d) => d.id === "allihanna")).toBe(true);
   });
 
-  it("humano druida NÃO vê allihanna (raca não na lista)", () => {
-    const list = listDivindadesParaPersonagem("humano", "druida");
-    expect(list.some((d) => d.id === "allihanna")).toBe(false);
-  });
-
-  it("guerreiro NÃO vê allihanna", () => {
-    const list = listDivindadesParaPersonagem("humano", "guerreiro");
+  it("anão guerreiro NÃO vê allihanna", () => {
+    const list = listDivindadesParaPersonagem("anao", "guerreiro");
     expect(list.some((d) => d.id === "allihanna")).toBe(false);
   });
 });

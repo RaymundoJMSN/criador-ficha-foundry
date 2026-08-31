@@ -24,23 +24,38 @@ export function getDivindade(id: string): Divindade | null {
   return divindadesData.find((d) => d.id === id) ?? null;
 }
 
-export function isDivindadeAcessa(divindadeId: string, racaId: string, classeId: string): boolean {
-  const div = getDivindade(divindadeId);
+/**
+ * "Para ser devoto de um deus, sua raça **ou** sua classe devem estar listadas na
+ * seção Devotos. Humanos e clérigos são exceção — podem ser devotos de qualquer
+ * divindade." (LB cap. 2, Deuses → Requisitos)
+ *
+ * Era um E entre raça e classe, o que deixava um arcanista humano com três deuses
+ * na lista em vez de todos.
+ */
+const RACAS_CORINGA = new Set(["humano"]);
+const CLASSES_CORINGA = new Set(["clerigo"]);
+
+export function isDivindadeAcessa(divindadeSlug: string, racaSlug: string, classeSlug: string): boolean {
+  const div = getDivindade(divindadeSlug);
   if (!div) return false;
 
-  const { devotos_aceitos } = div;
+  if (RACAS_CORINGA.has(racaSlug) || CLASSES_CORINGA.has(classeSlug)) return true;
 
+  const { devotos_aceitos } = div;
   if (devotos_aceitos.regra === "qualquer") return true;
 
   const racas = devotos_aceitos.racas_aceitas;
   const classes = devotos_aceitos.classes_aceitas;
 
-  const racaOk = !racas || racas === "todas" || (Array.isArray(racas) && racas.includes(racaId));
+  const racaListada =
+    racas === "todas" || (Array.isArray(racas) && !!racaSlug && racas.includes(racaSlug));
+  const classeListada =
+    classes === "todas" || (Array.isArray(classes) && !!classeSlug && classes.includes(classeSlug));
 
-  const classeOk =
-    !classes || classes === "todas" || (Array.isArray(classes) && classes.includes(classeId));
+  // Sem nenhuma das duas listas declaradas, o deus não restringe.
+  if (racas === undefined && classes === undefined) return true;
 
-  return racaOk && classeOk;
+  return racaListada || classeListada;
 }
 
 export function listDivindadesParaPersonagem(racaId: string, classeId: string): Divindade[] {
