@@ -14,13 +14,6 @@ import { getRaca, getRaceFixedModifiers, type AtributoEscolhaDef } from "./raca.
 export type AtributoId = "for" | "des" | "con" | "int" | "sab" | "car";
 const ATRS: readonly AtributoId[] = ["for", "des", "con", "int", "sab", "car"];
 
-export interface SubescolhaContext {
-  itemId: string;
-  classeId: string;
-  racaId: string;
-  nivel: number;
-}
-
 /** Choosable attribute-modifier groups a race offers (empty when none). */
 export function getRaceModifierGroups(idOrName: string): AtributoEscolhaDef[] {
   return getRaca(idOrName)?.atributos_escolha ?? [];
@@ -106,15 +99,4 @@ export function getRaceAttributeTotals(
     if (modificadores[k]) out[k] = (out[k] ?? 0) + (modificadores[k] ?? 0);
   }
   return out;
-}
-
-/**
- * Resolves sub-choices for a given item (race, class, power, origin).
- * Stub for the remaining ROADMAP F2/F3 resolvers.
- */
-export function resolveSubescolhas(
-  _context: SubescolhaContext
-): Array<{ key: string; label: string; options: string[] }> {
-  // TODO (ROADMAP F2/F3): class multipath, origin pick-2, lineage, constructor.
-  return [];
 }

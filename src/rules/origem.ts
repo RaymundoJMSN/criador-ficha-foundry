@@ -47,14 +47,6 @@ export function formatItensIniciais(origemId: string): string[] {
     .filter((l): l is string => l !== null);
 }
 
-export function getPick2Candidates(origemId: string): string[] {
-  const origem = getOrigem(origemId);
-  if (!origem) return [];
-  const autoId = origem.beneficios.poder_unico_id;
-  if (!autoId) return origem.beneficios.poderes;
-  return origem.beneficios.poderes.filter((p) => p !== autoId);
-}
-
 /* ------------------------------------------------------------------ */
 /*  Benefícios: escolha DOIS                                          */
 /* ------------------------------------------------------------------ */

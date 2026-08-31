@@ -2,7 +2,6 @@ import { describe, it, expect } from "vitest";
 import {
   listOrigens,
   getOrigem,
-  getPick2Candidates,
   formatItensIniciais,
 } from "../../src/rules/origem.js";
 
@@ -30,17 +29,6 @@ describe("getOrigem", () => {
 
   it("returns null for unknown id", () => {
     expect(getOrigem("origem_inexistente_xyzzy")).toBeNull();
-  });
-});
-
-describe("getPick2Candidates", () => {
-  it("acolito has pick candidates", () => {
-    const cands = getPick2Candidates("acolito");
-    expect(cands.length).toBeGreaterThan(0);
-  });
-
-  it("returns empty for unknown origem", () => {
-    expect(getPick2Candidates("xyzzy")).toHaveLength(0);
   });
 });
 
