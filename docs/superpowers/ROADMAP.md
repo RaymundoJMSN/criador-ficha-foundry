@@ -1,8 +1,9 @@
 # t20-ficha-wizard — Roadmap forward
 
-**Data:** 2026-05-30
-**Status base:** Plans 1-4 implementados; Plan 5 (bugfix-ux) escrito, em execução.
-**Spec de referência:** [`specs/2026-05-29-ficha-wizard-design.md`](specs/2026-05-29-ficha-wizard-design.md)
+**Data:** 2026-08-31
+**Status base:** F0–F5 feitos; F6 quase. Falta exercitar a camada Foundry.
+**Specs:** [`specs/2026-05-29-ficha-wizard-design.md`](specs/2026-05-29-ficha-wizard-design.md) ·
+[`specs/2026-08-31-nivel-1-20-design.md`](specs/2026-08-31-nivel-1-20-design.md)
 
 > Roadmap **consolidado**: o que já existe + o que falta até o módulo virar produto
 > usável com **paridade ao T20-DB**. Não duplica os Plans 1-5 (que detalham tarefa-a-tarefa);
@@ -21,115 +22,108 @@
 
 ## F0 — Fundação ✅ (Plans 1-4)
 
-- ✅ `CompendiumIndex` — varre packs Item do sistema + módulos, índice mínimo cacheado.
-- ✅ `RuleEngine` — `getOptions`/`validate`, módulos atributos/perícias/poderes/magias/origem/divindade.
-- ✅ `WizardState` — serialize/deserialize, `escolhasPorItem`.
-- ✅ `WizardApp` ApplicationV2 — 11 passos scaffolded, navegação, criar actor.
-- ✅ `ActorWriter` + `mapper` — `WizardState` → `Actor.create("character")`.
-- ✅ Dados portados: `prereqs, origens, divindades, atributos, dinheiro, racas(parcial), poderes-por-nivel, progressao_classes`.
+- ✅ `CompendiumIndex`, `RuleEngine`, `WizardState`, `WizardApp` (11 passos), `ActorWriter` + `mapper`.
+- ✅ Dados portados via `scripts/port-t20db.mjs`.
 
 ---
 
-## F1 — UI + bugfix ✅ (Plans 5 + 6A + Plan6-June02 + Plan7-June02)
+## F1 — UI + bugfix ✅
 
-Objetivo: todos os 11 passos navegáveis e usáveis. Tirar do scaffolding.
-
-- ⚠️ `pericias.inatas` string vs array — normalizar (parcialmente feito, commit `5c563c8`).
-- ✅ Raça/Origem/Classe/Divindade: select + painel de detalhe (em `wizard.hbs`).
-- ✅ Poderes: lista com nome + descrição + motivo específico de inelegibilidade + busca + filtro de categoria (Plan 6A).
-- ✅ Classe: descrição no painel de detalhe (Plan 6A).
-- ✅ `_onRender` listeners do padrão select+detail, pick-2 e filtro de poderes.
-- ✅ Raça free-attribute (modificador escolhível) + Origem pick-2 — UI mínima.
-
-**Saída:** wizard inteiro clicável de ponta a ponta, sem tela quebrada. Critério: criar um guerreiro nv1 sem erro.
+Todos os 11 passos navegáveis. Ver Plans 5, 6A, 6-June02, 7-June02.
 
 ---
 
-## F2 — Sub-escolhas core 🔨 (o grande diferencial)
+## F2 — Sub-escolhas ✅ (2026-08-31)
 
-Implementar `src/rules/subescolhas.ts` (hoje stub) + materialização no `mapper`. Portar de `T20-DB/motor/construtor.py`.
+- ✅ Modificadores escolhíveis de raça (humano +1×3).
+- ✅ Caminho de classe virou **árvore**: `classes.json.caminhos` traz slug do item,
+  nome e sub-escolhas encadeadas. Arcanista → Feiticeiro → linhagem → (Dracônica)
+  tipo de dano. UI = um seletor por nível, revelado conforme o anterior é respondido.
+  `cadeiaSubEscolhas` / `respostaSubEscolha` em `rules/classe.ts`.
+- ✅ Origem: **escolha de dois benefícios** (perícia e/ou poder, o exclusivo incluso).
+  Antes o exclusivo era automático, escolhia-se 1 poder extra e as perícias da
+  origem **nunca chegavam na ficha**.
+- ❌ Escola de especialista do mago — o T20-DB não modela; sem dado, sem UI.
 
-- ✅ **Modificadores escolhíveis de raça** — humano +1 em 3 atributos diferentes; mashin/sereia +1 em N. `getRaceModifierGroups`/`validateRaceModifiers` (porta `_validar_modificadores`); UI = N selects por grupo; choices em `escolhasPorItem.raca_modificadores`; mapper soma em `atributos.*.base`; engine valida no passo Raça. Dados: `racas.json.atributos_escolha`. *(meio-elfo Int fixo + 2 escolhíveis = não no JSON portado ainda.)*
-- ❌ **Multipath de classe** — Arcanista → Bruxo/Mago/Feiticeiro; Bárbaro→Trilha; etc. Sub-passo após escolher classe. Grava em `escolhasPorItem`.
-- ❌ **Pick-2 de origem** — escolher 2 entre perícias/poderes da origem; materializar por nome no pack. Regra já existe em `rules/origem.ts`, falta UI+writer.
-- ❌ Resolver genérico `resolveSubescolhas(context)` → `[{key,label,options}]` consumido pela UI.
-
-**Saída:** humano, meio-elfo e arcanista criáveis com as escolhas corretas gravadas no actor.
-
----
-
-## F3 — Raças complexas ❌
-
-Portar variações e construtores do T20-DB (`racas/*.variacoes`, `racas/*.construtor`). Estender `scripts/port-t20db.mjs` + `racas.json`.
-
-- ❌ **Variações** — Suraggel→Aggelus/Sulfure, Hynne→Comum/Sambaqui, etc. Payload exige `variacao`.
-- ❌ **`variacao_de_outra_raca`** — Trog Anão, Soterrado, Mashin (chassi base + overrides).
-- ❌ **Construtor passo-a-passo** — Duende (4 tipos de passo) e Golem. UI dedicada de N passos dentro do passo Raça.
-- ❌ Linhagem feiticeiro / especialista em escola / familiar arcano — sub-escolhas de poder/classe que abrem picker próprio.
-
-**Saída:** Duende, Golem e Suraggel criáveis. Feiticeiro com linhagem.
+**Nota:** o `resolveSubescolhas()` genérico do plano original não foi feito. Com
+caminho e origem cobertos por dois blocos próprios, um resolvedor genérico seria
+mais código para o mesmo resultado.
 
 ---
 
-## F4 — Auto-grant por nível ⚠️
+## F3 — Raças complexas ✅ para o conteúdo instalado (2026-08-31)
 
-Poderes e habilidades automáticas que a classe/raça concede sem o jogador escolher.
+O compêndio do sistema traz 18 raças e **já separa** Aggelus e Sulfure como itens
+próprios — a variação de Suraggel não precisa de UI. Moreau, Duende, Golem Desperto,
+Mashin, Soterrado e Trog Anão **não estão instalados**: são conteúdo de outros livros.
 
-- ❌ Ler `data/poderes-por-nivel.json` no `RuleEngine`; separar `poderesAutoGrant` (não contam na cota).
-- ❌ `mapper` adiciona os itens auto-grant ao `items[]` do actor, buscados por slug no pack.
-- ❌ Habilidades de classe automáticas do nível 1..N (a partir da `progressao_classes.json`).
-- ❌ UX: mostrar auto-grants como "recebidos" (read-only), distintos dos escolhíveis.
-- ✅ Race powers: `createEmbeddedDocuments` fix — race item adicionado separadamente para disparar hooks `onCreate` do sistema e auto-conceder poderes raciais.
-
-**Saída:** personagem nv5+ vem com todos os poderes/habilidades de nível corretos, sem o jogador ter que escolher os fixos.
-
----
-
-## F5 — Paridade de pré-requisitos ❌
-
-`rules/poderes.ts` cobre 6 tipos; `T20-DB/motor/prerequisitos.py` cobre ~15. Portar os faltantes.
-
-- ❌ `nivel_classe`, `pericia_treinada`, `habilidade_classe`, `habilidade_racial`, `divindade`/`devoto`, `proficiencia`, `poder_subcategoria`, `poder_caminho`, `escola_de_magia`, `magia`, `linhagem`.
-- ❌ Tipos manuais/narrativos não bloqueiam (espelhar T20-DB).
-- ❌ Testes vitest por tipo, com fixtures de `prereqs.json`.
-
-**Saída:** elegibilidade de poder idêntica ao motor do T20-DB.
+- ✅ `modificadores_atributo` tipo `misto` (Osteon, Lefou) — saíam **sem nenhum**
+  atributo racial, porque o port só lia `fixo` e `escolha`.
+- ✅ tipo `alternativo` (Suraggel) → o port emite `aggelus` e `sulfure` como raças.
+- ✅ `atributos_disponiveis` deixou de ser descartado (Lefou aceitava +1 em Carisma).
+- ✅ As 18 raças do compêndio acham suas regras (teste de integração).
+- ❌ Construtor passo-a-passo (Duende/Golem Desperto) — só faz sentido quando o
+  conteúdo estiver instalado.
 
 ---
 
-## F6 — Polish & produto ❌
+## F4 — Auto-grant por nível ✅ (2026-08-31)
 
-- ❌ **Equipamento loja completa** — categorias, busca, carrinho, saldo (nv2+). MVP nv1 = pacote inicial direto.
-- ❌ **Resume** — persistir `WizardState` em `game.user.setFlag`, sobreviver a refresh.
-- ❌ **Limites de magia afinados** por classe/nível (conhecidas vs slots).
-- ❌ **i18n** — completar `lang/pt-BR.json`; preparar gancho en.
-- ❌ **Validação final na Revisão** — bloquear "Criar" se algo obrigatório faltou; listar pendências.
+- ✅ `progressao_classes.json.tabela` (portada de `regras/progressao_classes.json`)
+  é o **eixo de nível**: habilidade automática por nível, slots de poder, círculo.
+- ✅ `habilidadesAte` concede só o que o nível alcança, uma por família
+  (`ataque_especial_8` substitui `ataque_especial`, não soma).
+- ✅ `slotsDePoder` acumula os níveis 1..N (nv5 = 4 poderes, era 1).
+- ✅ Lista de poderes inclui **poderes gerais** (LB cap. 5: poder geral substitui
+  poder de classe).
+- ✅ Nível grava em `classe.system.niveis` — o campo que o sistema realmente usa.
 
-**Saída:** fluxo completo, com loja e resume. Módulo publicável.
+---
+
+## F5 — Paridade de pré-requisitos ✅ (2026-08-31)
+
+`rules/poderes.ts` cobre os 20 tipos de `motor/prerequisitos.py`. Os nomes de campo
+estavam errados, não só faltando: `{tipo:"poder"}` usa `id` e o código lia `poder`,
+então **237 pré-requisitos falhavam sempre**. Comparação passou a ser por slug do
+T20-DB e o atributo é o total final. Tipo narrativo/desconhecido não bloqueia.
+
+---
+
+## F6 — Polish ⚠️
+
+- ✅ Validação final: `engine.pendencias()` lista o que falta e trava o botão Criar.
+- ✅ Cota de magias por classe e nível (o cálculo antigo era modificador de D&D).
+- ✅ Dinheiro inicial de nv2+ (já vinha de `dinheiro.json`).
+- ✅ Resume: rascunho em flag do usuário, sobrevive a F5.
+- ⚠️ Loja de equipamento: funciona, mas sem filtros finos.
+- ❌ i18n: `lang/pt-BR.json` incompleto; sem `en`.
+
+---
+
+## Resolvedor de slug (novo, 2026-08-31)
+
+`src/compendium/resolver.ts` casa slug do T20-DB com item do compêndio por uma
+escada de regras (exato → qualificador de classe → prefixo → prefixo+classe →
+grupo com dois-pontos → mesmos tokens → `slug-map.json` curado à mão).
+Habilidades automáticas que resolvem: **71/161 → 160/161**. Poderes de classe
+com item instalado: **312/513 (61%)** — o resto é Heróis de Arton, não instalado.
+`test/compendium/cobertura-slugs.test.ts` mede isso a cada `npm test`.
 
 ---
 
 ## Fora de escopo (pós-1.0)
 
-- Level-up de actor existente (wizard só cria novos).
-- Export PDF (o T20-DB já faz; não replicar no Foundry).
+- Level-up de actor existente (o wizard só cria).
+- Export PDF (o módulo `t20-pdf-exporter` já faz).
 - NPCs / outros tipos de actor.
-- Sistemas não-`tormenta20`.
-- Foundry < v13.
+- Sistemas não-`tormenta20`. Foundry < v13.
 
 ---
 
-## Marco "produto mínimo usável"
+## Pendente de validação no Foundry
 
-**F1 + F2 + F4** = criar personagens nv1-20 das classes/raças comuns, com sub-escolhas e
-auto-grants corretos. F3/F5/F6 expandem cobertura e polem.
-
----
-
-## Changelog
-
-- **2026-05-30:** Criação. Estado base: Plans 1-4 ✅, Plan 5 🔨. Fases F1-F6 derivadas do gap T20-DB↔módulo.
-- **2026-05-30:** Plans escritos cobrindo F1-resto→F5: [`plan6`](plans/2026-05-30-plan6-descricoes-subescolhas-racas.md) (F1 descrições+poderes, F2 multipath+pick-2, F3 variações/construtor/linhagem) e [`plan7`](plans/2026-05-30-plan7-autogrant-prereqs.md) (F4 auto-grant por nível, F5 pré-requisitos).
-- **2026-05-30:** [`plan8`](plans/2026-05-30-plan8-dinheiro-loja.md) — F6 parcial: dinheiro inicial (rolagem nv1 + fixo nv2+) + loja de compra. **Carga fora de escopo** (sistema `tormenta20` calcula). Resta de F6 (resume/i18n/validação-final) sem Plan.
-- **2026-05-30:** [`plan6a`](plans/2026-05-30-plan6a-poderes-list-exec.md) **EXECUTADO** (6 tasks TDD, 126 testes verdes). Poderes step: descrição + motivo específico de pré-req (`formatPrereq`/`describeUnmet`) + filtro de categoria; descrição da classe no painel. F1 → ✅. **Desvio do plano:** T6 previa porte de `classe.descricao` do T20-DB, mas T20-DB **não tem** esse campo (classes só carregam regras). Descrição da classe vem do **item Foundry** (`IndexedClasse.system.descricao`, indexado), igual à descrição de poder (T2) — sem mexer em `port-t20db.mjs`/`classes.json`. Corrigida corrupção de working-tree em `index.ts` (typo `pivPorNivel`, `system.pericias` perdido) deixada por subagente interrompido. Pendência in-world: confirmar campo real (`system.descricao` vs `system.description.value`) dos itens poder/classe.
-- **2026-06-02:** Plan 6 (June02) executado: slug fix (UUID→slug para divindade/magias), botões +/- atributos, enforcement de perícias, redesign do passo poderes (auto-grant nv1, pick nv2+), fix magias (circulo coerce, tipo relaxado), equipamentos (4 abas, busca, carrinho, dinheiro, rolagem de dados), race powers (createEmbeddedDocuments). F1 totalmente ✅. F4 parcial ⚠️.
+O código está testado (219 testes, incluindo integração contra os compêndios
+reais), mas **a camada Foundry ainda não foi exercitada nesta rodada** — criar
+actor, hooks do sistema, PV/PM na ficha aberta. Rodar no mundo
+`testes-criador-de-ficha` a matriz: guerreiro nv1, guerreiro nv7, arcanista mago
+nv5, clérigo nv3 com divindade, anão nv1.

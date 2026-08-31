@@ -10,11 +10,42 @@
 
 ## 🎯 FOCO ATUAL
 
-Levar o wizard de "scaffolding navegável" a "paridade com o T20-DB". A ordem está
-em [`docs/superpowers/ROADMAP.md`](docs/superpowers/ROADMAP.md). Fase atual: **F1 (UI+bugfix)** /
-**F2 (sub-escolhas core)**. O grande diferencial — sub-escolhas (caminhos de
-arcanista, modificadores de atributo de raça, construtor de Golem/Duende,
-pick-2 de origem) — ainda é stub em `src/rules/subescolhas.ts`.
+Wizard cria personagem correto de **nível 1 a 20**. F0–F5 do
+[`ROADMAP.md`](docs/superpowers/ROADMAP.md) fechados em 2026-08-31; F6 quase.
+
+**O que falta:** exercitar a camada Foundry (criar actor no mundo
+`testes-criador-de-ficha` e conferir PV/PM/itens na ficha). 219 testes cobrem
+regra pura + integração contra os compêndios reais, mas nenhum abre o Foundry.
+
+### O que mudou em 2026-08-31 (spec `2026-08-31-nivel-1-20-design.md`)
+
+Cinco defeitos de raiz, todos na junção regra × compêndio × actor:
+
+1. **Nível não persistia.** O sistema deriva `nivel` de `soma(itens classe .system.niveis)`
+   (`tormenta20.mjs:7711`); gravar `attributes.nivel.value` dava PV/PM de nv1 e o número
+   voltava para 1 no primeiro update. Agora o writer grava `niveis` no item de classe.
+2. **Pré-requisito de poder falhava sempre.** `{tipo:"poder"}` usa o campo `id`, o
+   código lia `poder`. 237 ocorrências. Também comparava id de compêndio com slug.
+3. **Atributo do pré-requisito ignorava bônus racial.**
+4. **Cota de poderes era a do nível, não a acumulada** (nv5 dava 1, devia dar 4);
+   e a lista não oferecia poderes gerais, que a regra permite no lugar do de classe.
+5. **Todas as habilidades de classe vinham de uma vez** — guerreiro nv1 nascia com Campeão.
+
+**Peça nova: `src/compendium/resolver.ts`.** T20-DB e compêndio nomeiam a mesma coisa
+de formas diferentes (`ambidestria` × "Ambidestria (Guerreiro)", `furia_+2` × "Fúria",
+`virtude_temperanca` × "Virtude Paladinesca: Temperança"). Uma escada de regras
++ `src/data/slug-map.json` curado à mão. Habilidades automáticas resolvidas:
+**71/161 → 160/161**. `test/compendium/cobertura-slugs.test.ts` mede a cada `npm test`.
+
+Também: origem virou escolha de **dois** benefícios (as perícias de origem nunca
+chegavam na ficha); caminho de classe virou árvore com a linhagem do feiticeiro
+encadeada; cota de magias saiu de `(Int-10)/2` (matemática de D&D) para a regra da
+classe; raças `misto` (Osteon, Lefou) saíam sem atributo racial nenhum; Revisão
+lista pendências e trava o botão Criar; rascunho sobrevive a F5.
+
+**Correção de dado contra o livro:** o T20-DB dá ao clérigo 2 magias iniciais e 1 a
+cada nível par (padrão do bardo). LB cap. 4 diz **três** iniciais e **uma a cada nível**.
+A correção está em `scripts/port-t20db.mjs`, citada — o T20-DB não foi alterado.
 
 ---
 
