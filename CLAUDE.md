@@ -35,7 +35,13 @@ Cinco defeitos de raiz, todos na junção regra × compêndio × actor:
 de formas diferentes (`ambidestria` × "Ambidestria (Guerreiro)", `furia_+2` × "Fúria",
 `virtude_temperanca` × "Virtude Paladinesca: Temperança"). Uma escada de regras
 + `src/data/slug-map.json` curado à mão. Habilidades automáticas resolvidas:
-**71/161 → 160/161**. `test/compendium/cobertura-slugs.test.ts` mede a cada `npm test`.
+**71/161 → 160/161**; poderes de classe com item: **507/513 (99%)** neste mundo,
+que tem o módulo `suplementos-de-arton` (Heróis de Arton, deuses).
+`test/compendium/cobertura-slugs.test.ts` mede a cada `npm test`.
+
+Os 6 que sobram são erro de dado no T20-DB, não do casamento: `inspicar_confianca`
+(é "inspirar"), `inimigo_de`, `canalizar_energia`, `catalisador_instavel`,
+`combinacao_tecnica_sacrificio`, `palavras_ressonantes`.
 
 Também: origem virou escolha de **dois** benefícios (as perícias de origem nunca
 chegavam na ficha); caminho de classe virou árvore com a linhagem do feiticeiro

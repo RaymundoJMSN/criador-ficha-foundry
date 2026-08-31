@@ -70,6 +70,9 @@ export function resolverPoder<T extends Nomeavel>(
   tipoEsperado?: string
 ): Resolucao<T> | null {
   if (!slug) return null;
+  // O slug do T20-DB às vezes vem com acento ou cedilha ("adereço_musical",
+  // "postura_aríete_implacavel"); passar pela mesma normalização dos nomes.
+  slug = toNomeSlug(slug);
 
   if (tipoEsperado) {
     const doTipo = itens.filter((i) => i.system?.tipo === tipoEsperado);

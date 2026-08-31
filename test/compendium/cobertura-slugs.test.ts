@@ -21,6 +21,13 @@ import classes from "../../src/data/classes.json";
 const FOUNDRY_CODE = process.env["FOUNDRY_CODE"] ?? "X:/FoundryVTT/Code";
 const FOUNDRY_DATA = process.env["FOUNDRY_DATA"] ?? "X:/FoundryVTT/Data";
 const PACKS = join(FOUNDRY_DATA, "systems/tormenta20/packs");
+/**
+ * O mundo do Ray tem o módulo `suplementos-de-arton`, que traz os poderes de
+ * Heróis de Arton e dos livros de deuses. Em runtime o CompendiumIndex varre
+ * TODOS os packs, então a medição precisa varrer também — olhar só o sistema
+ * subestima a cobertura.
+ */
+const PACKS_MODULO = join(FOUNDRY_DATA, "modules/suplementos-de-arton/packs");
 
 interface ItemPack {
   name: string;
@@ -48,7 +55,11 @@ async function lerPacks(nomes: string[]): Promise<ItemPack[]> {
     for (const nome of nomes) {
       const destino = join(tmp, nome);
       // LOCK é o único arquivo que o Foundry mantém aberto; o resto copia limpo.
-      cpSync(join(PACKS, nome), destino, { recursive: true, filter: (s) => !s.endsWith("LOCK") });
+      const origem = existsSync(join(PACKS, nome))
+        ? join(PACKS, nome)
+        : join(PACKS_MODULO, nome);
+      if (!existsSync(origem)) continue;
+      cpSync(origem, destino, { recursive: true, filter: (s) => !s.endsWith("LOCK") });
       const db = new ClassicLevel(destino, { valueEncoding: "json" });
       await db.open();
       for await (const [chave, valor] of db.iterator()) {
@@ -86,7 +97,13 @@ describe.skipIf(!existsSync(PACKS))("cobertura de slugs contra o compêndio inst
   });
 
   it("mede quanto dos poderes de classe está instalado", async () => {
-    const itens = await lerPacks(["poderes", "poderes-distincao"]);
+    const itens = await lerPacks([
+      "poderes",
+      "poderes-distincao",
+      "herois-de-arton",
+      "deuses-de-arton",
+      "distincoes",
+    ]);
     let achados = 0;
     let total = 0;
     const semItem: string[] = [];
@@ -101,9 +118,9 @@ describe.skipIf(!existsSync(PACKS))("cobertura de slugs contra o compêndio inst
 
     const pct = Math.round((achados / total) * 100);
     console.log(`poderes de classe instalados: ${achados}/${total} (${pct}%)`);
-    console.log(`sem item (conteúdo de Heróis de Arton etc.): ${semItem.length}`);
-    // Livro Básico sozinho cobre ~60%; abaixo disso é regressão de nomenclatura.
-    expect(pct).toBeGreaterThanOrEqual(55);
+    console.log(`sem item: ${semItem.length}`, semItem.join(", "));
+    // Com os suplementos instalados passa de 85%; abaixo disso é regressão.
+    expect(pct).toBeGreaterThanOrEqual(80);
   });
 });
 
