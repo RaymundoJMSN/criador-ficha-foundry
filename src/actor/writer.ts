@@ -8,6 +8,8 @@ import { itensDeEscolhasRaciais, periciasDeEscolhasRaciais } from "../rules/raca
 import { toPericiaCode } from "../rules/pericia-slug.js";
 import { habilidadesAte } from "../rules/progressao.js";
 import { resolverPoder } from "../compendium/resolver.js";
+import { prepareEquipamentoContext } from "../wizard/steps/equipamento.js";
+import type { IndexedEquipamento } from "../compendium/types.js";
 import { getOrigem, validarBeneficios } from "../rules/origem.js";
 import { getDivindade } from "../rules/divindade.js";
 
@@ -97,7 +99,12 @@ export class ActorWriter {
     }
 
     // NOTE: pericias excluded from Actor.create data — applied via update() after init
-    const data = mapStateToActorData(state, otherItems);
+    const equip = prepareEquipamentoContext(state, [
+      ...CompendiumIndex.getAll("equipamento"),
+      ...CompendiumIndex.getAll("arma"),
+      ...CompendiumIndex.getAll("consumivel"),
+    ] as IndexedEquipamento[]);
+    const data = mapStateToActorData(state, otherItems, equip.dinheiroRestante);
 
     const actor = (await Actor.create(data as unknown as Parameters<typeof Actor.create>[0])) as
       | {

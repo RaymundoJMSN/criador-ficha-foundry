@@ -88,11 +88,16 @@ export function getClasseProgressao(classeNome: string): ClasseProgressao | null
 /* ------------------------------------------------------------------ */
 
 /**
- * Escalonamentos vêm como slug sufixado (`ataque_especial_8`, `duelo_3`,
- * `casca_grossa_con_mais_2`). São upgrades da mesma habilidade, não itens novos —
- * agrupar pela família evita conceder Ataque Especial quatro vezes.
+ * Escalonamentos vêm como slug com número (`ataque_especial_8`, `duelo_3`,
+ * `casca_grossa_con_mais_2`, `magias_2_circulo`, `ataque_furtivo_10d6`,
+ * `fabricar_item_superior_2_melhorias`). São upgrades da mesma habilidade, não
+ * itens novos — agrupar pela família evita conceder Ataque Especial quatro vezes.
+ *
+ * O número pode vir no MEIO: `magias_2_circulo` é a mesma habilidade "Magias"
+ * de `magias_1_circulo`. Só tirar o sufixo numérico deixava as duas como famílias
+ * diferentes, e o arcanista recebia o item "Magias (Arcanista)" em dobro.
  */
-const ESCALONAMENTO = /(?:_con_mais)?_\d+$/;
+const ESCALONAMENTO = /(?:_con_mais)?_\d+[a-z0-9+]*(?:_(?:circulo|melhorias?))?$/;
 
 /** Strips the numeric upgrade suffix so `ataque_especial_8` groups with `ataque_especial`. */
 export function baseSlug(slug: string): string {

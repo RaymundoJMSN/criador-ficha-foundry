@@ -154,3 +154,12 @@ describe("getTrainedPericaCodes — perícias de origem", () => {
     expect(getTrainedPericaCodes(state)["nobr"]).toBeUndefined();
   });
 });
+
+describe("mapStateToActorData — dinheiro é derivado, não lido do estado", () => {
+  it("grava em system.dinheiro.tl o saldo que o writer calcula", () => {
+    const state = new WizardState({ nome: "Rico", nivel: 5 });
+    // o estado nunca escreve dinheiroRestante (fica 0); quem manda é o parâmetro
+    const data = mapStateToActorData(state, [], 2000);
+    expect(data.system.dinheiro.tl).toBe(2000);
+  });
+});

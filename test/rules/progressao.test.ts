@@ -119,3 +119,23 @@ describe("magiasConhecidas", () => {
     expect(magiasConhecidas("Guerreiro", 20)).toBe(0);
   });
 });
+
+describe("família de habilidade com número no meio", () => {
+  it("magias_2_circulo é upgrade de magias, não habilidade nova", () => {
+    expect(baseSlug("magias_2_circulo")).toBe("magias");
+    expect(baseSlug("magias_1_circulo")).toBe("magias");
+    expect(baseSlug("fabricar_item_superior_2_melhorias")).toBe("fabricar_item_superior");
+    expect(baseSlug("ataque_furtivo_10d6")).toBe("ataque_furtivo");
+    expect(baseSlug("cura_pelas_maos_1d8+1")).toBe("cura_pelas_maos");
+  });
+
+  it("arcanista nv5 recebe a habilidade Magias uma vez só", () => {
+    const magias = habilidadesAte("Arcanista", 5).filter((s) => baseSlug(s) === "magias");
+    expect(magias).toHaveLength(1);
+  });
+
+  it("clérigo nv5 idem (magias + magias_2_circulo são a mesma)", () => {
+    const magias = habilidadesAte("Clérigo", 5).filter((s) => baseSlug(s) === "magias");
+    expect(magias).toHaveLength(1);
+  });
+});

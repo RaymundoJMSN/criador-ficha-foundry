@@ -35,7 +35,8 @@ export function prepareRevisaoContext(
   state: WizardState,
   racaNome: string,
   classeNome: string,
-  errors: string[] = []
+  errors: string[] = [],
+  dinheiroRestante: number = state.dinheiroRestante
 ): RevisaoContext {
   const origem = getOrigem(state.origemId);
   const divindade = state.divindadeId ? getDivindade(state.divindadeId) : null;
@@ -59,7 +60,7 @@ export function prepareRevisaoContext(
     poderesSelecionados: state.poderes.length,
     magiasSelecionadas: state.magias.length,
     equipamentoSelecionado: state.equipamento.length,
-    dinheiroRestante: state.dinheiroRestante,
+    dinheiroRestante,
     isComplete: faltando.length === 0,
     pendencias: faltando,
     errors,

@@ -380,11 +380,17 @@ export function defineWizardApp(): void {
         case WizardStep.Revisao: {
           const racaItem = CompendiumIndex.getAll("race").find((r) => r.id === state.racaId);
           const classeItem = CompendiumIndex.getAll("classe").find((c) => c.id === state.classeId);
+          const equipRev = prepareEquipamentoContext(state, [
+            ...CompendiumIndex.getAll("equipamento"),
+            ...CompendiumIndex.getAll("arma"),
+            ...CompendiumIndex.getAll("consumivel"),
+          ] as IndexedEquipamento[]);
           stepCtx = prepareRevisaoContext(
             state,
             racaItem?.name ?? state.racaId,
             classeItem?.name ?? state.classeId,
-            errors
+            errors,
+            equipRev.dinheiroRestante
           );
           break;
         }

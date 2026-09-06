@@ -47,7 +47,11 @@ export interface ActorCreateData {
  * straight would show the right number until the first update and compute PV/PM
  * from niveis=1 the whole time. writer.ts sets `niveis` on the classe item instead.
  */
-export function mapStateToActorData(state: WizardState, items: unknown[] = []): ActorCreateData {
+export function mapStateToActorData(
+  state: WizardState,
+  items: unknown[] = [],
+  dinheiroRestante: number = state.dinheiroRestante
+): ActorCreateData {
   // Choosable racial modifiers (e.g. humano +1×3) are added to .base — the
   // Foundry race item only applies *fixed* racial bonuses (.racial), so the
   // player's free picks have no item to carry them. Invalid picks are dropped.
@@ -78,9 +82,12 @@ export function mapStateToActorData(state: WizardState, items: unknown[] = []): 
         origem: origemNome,
         divindade: divindadeNome,
       },
+      // O saldo é derivado (inicial da tabela/rolagem − carrinho) na hora de
+      // gravar. `state.dinheiroRestante` nunca era escrito e valia 0: um nv5
+      // com T$ 2.000 na tela nascia sem um tostão na ficha.
       dinheiro: {
         tc: 0,
-        tl: state.dinheiroRestante,
+        tl: dinheiroRestante,
         to: 0,
         tp: 0,
       },
