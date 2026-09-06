@@ -10,12 +10,53 @@
 
 ## 🎯 FOCO ATUAL
 
-Wizard cria personagem correto de **nível 1 a 20**. F0–F5 do
-[`ROADMAP.md`](docs/superpowers/ROADMAP.md) fechados em 2026-08-31; F6 quase.
+Wizard cria personagem correto de **nível 1 a 20**. Passos refeitos um a um
+contra o PDF em 2026-09-06 (Atributos, Equipamento, Magias, Poderes, Revisão) e
+conferidos criando fichas de verdade no mundo `Testes criador de ficha` (login
+Mestre2). 317 testes. Ver "Refeito passo a passo" abaixo e o
+[`ROADMAP.md`](docs/superpowers/ROADMAP.md) para o que ainda falta.
 
-**O que falta:** exercitar a camada Foundry (criar actor no mundo
-`testes-criador-de-ficha` e conferir PV/PM/itens na ficha). 219 testes cobrem
-regra pura + integração contra os compêndios reais, mas nenhum abre o Foundry.
+### Refeito passo a passo (2026-09-06)
+
+Regra: **nada de memória** — cada passo lido no PDF (`scripts/.cache-pdf/`),
+implementado, testado e criado no Foundry. Achados que mudaram comportamento:
+
+- **Atributos.** Rolagem gera um *pool* de seis valores convertidos que o jogador
+  distribui (LB p.17 "distribua como quiser"); Valkaria é 7d6 aplicados inteiros
+  sobre base 8, Nimb 7d20 descartando o menor (HA p.281); Khalmyr é pool fixo.
+  Validação existe para todo método (antes só compra de pontos).
+- **Equipamento.** Kit do 1º nível (LB p.146: mochila, saco, traje, arma simples
+  + marcial se proficiente, armadura leve/brunea, escudo leve; arcanista sem
+  armadura) e itens de origem de verdade (escolha "X ou Y", quantidade, T$ em dado).
+  **T$ é `system.dinheiro.tp`** — `tl` é platina, oculta. Quantidade no carrinho.
+- **Duas armadilhas do sistema na criação:** (1) item de arma dentro do
+  `Actor.create` quebra `prepareData` (`getAttackToHit` lê atributo que não
+  existe) — equipamento entra por `createEmbeddedDocuments` depois de raça e
+  classe; (2) raça com atributo à escolha abre o diálogo "Atributos Dinâmicos"
+  (`_onCreateOwnedRace`) e **fica esperando o jogador** — a escolha vai somada em
+  `system.atributos` do item de raça (vira `.racial`) com `atributosDinamicos.value=[]`.
+  A base do actor é só a base.
+- **Magias.** Tradição/escolas vêm do T20-DB pelo port; universais entram para
+  todos; bardo/druida escolhem 3 escolas (LB p.44/61); mago +1 por círculo novo;
+  teto por círculo (LB: iniciais são de 1º, cada nível aprende uma de qualquer
+  círculo aberto); cota soma poderes que ensinam magia (`magias_por_poder.json`);
+  paladino só vê o passo com Orar. Excesso vira pendência.
+- **Poderes.** Poder de classe = `tipo:"classe"` + `subtipo:"<Classe>"` no
+  compêndio (serve para qualquer classe instalada). Repetíveis
+  (`poderes_repetiveis.json`) têm contador ×N.
+- **Classes fora do T20-DB.** `scripts/port-pdf-classes.mjs` lê a tabela
+  "O <Classe> / Nível / Habilidades de Classe" dos PDFs → `progressao_livros.json`
+  (Frade, Treinador, 14 de Heróis de Arton). `--conferir` compara as 14 do LB com
+  o T20-DB — achou que `furia_+2`/`inspiracao_+N` não eram escalonamento (bardo
+  nv17 ganhava Inspiração 5×) e Baluarte em dobro. Samurai/Místico/Miragem não
+  têm tabela em livro nenhum dos PDFs → aviso no passo.
+- Caminho da classe só no nível certo (cavaleiro: 5º, `caminho_nivel`).
+
+**Ainda não cobre:** habilidade de classe com opção (Frade "Dádiva da Fé: Cólera
+Divina / Proteção Sagrada" — o item não resolve, o writer avisa); Raças Abertas
+(setting `openRaces` do sistema reabre o diálogo); proficiências/perícias das
+classes só do compêndio (Samurai sai com "escolha 2 entre todas"); poder que dá
+uma magia específica (Manto de Batalha) fora da cota.
 
 ### O que mudou em 2026-08-31 (spec `2026-08-31-nivel-1-20-design.md`)
 

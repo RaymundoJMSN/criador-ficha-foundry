@@ -95,7 +95,7 @@ T20-DB e o atributo é o total final. Tipo narrativo/desconhecido não bloqueia.
 - ✅ Cota de magias por classe e nível (o cálculo antigo era modificador de D&D).
 - ✅ Dinheiro inicial de nv2+ (já vinha de `dinheiro.json`).
 - ✅ Resume: rascunho em flag do usuário, sobrevive a F5.
-- ⚠️ Loja de equipamento: funciona, mas sem filtros finos.
+- ✅ Loja de equipamento: kit do 1º nível, itens de origem, quantidade, T$ em `tp`.
 - ❌ i18n: `lang/pt-BR.json` incompleto; sem `en`.
 
 ---
@@ -120,10 +120,21 @@ com item instalado: **312/513 (61%)** — o resto é Heróis de Arton, não inst
 
 ---
 
-## Pendente de validação no Foundry
+## Refeito contra o PDF (2026-09-06)
 
-O código está testado (219 testes, incluindo integração contra os compêndios
-reais), mas **a camada Foundry ainda não foi exercitada nesta rodada** — criar
-actor, hooks do sistema, PV/PM na ficha aberta. Rodar no mundo
-`testes-criador-de-ficha` a matriz: guerreiro nv1, guerreiro nv7, arcanista mago
-nv5, clérigo nv3 com divindade, anão nv1.
+Atributos, Equipamento, Magias, Poderes e Revisão reescritos passo a passo
+(ver `CLAUDE.md` → "Refeito passo a passo") e validados criando actor no mundo
+de teste: guerreiro humano acólito nv1 (kit, T$ em `tp`, atributos com racial
+no item, perícias, poderes de origem/raça/classe), bardo nv6 (escolas, teto do
+2º círculo), paladino nv4 com Orar ×2, Frade nv5 e Treinador nv3 (tabela dos
+PDFs), Samurai (aviso), cavaleiro nv1/nv5 (caminho).
+
+## Pendente
+
+- Habilidade de classe com opção ("Dádiva da Fé: X / Y" do Frade): oferecer a
+  escolha quando o slug resolve para vários itens `Nome: Opção`.
+- Proficiências e perícias das classes fora do T20-DB (ler do PDF, como a tabela).
+- Raças Abertas (`openRaces`): o diálogo do sistema volta a abrir na criação.
+- Poder que ensina uma magia específica (Manto de Batalha, Flagelo dos Mares):
+  adicionar a magia, sem passar pela cota.
+- i18n `en`.
