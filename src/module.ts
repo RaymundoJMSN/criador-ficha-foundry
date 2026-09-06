@@ -1,5 +1,6 @@
 import { MODULE_ID } from "./constants.js";
 import { CompendiumIndex } from "./compendium/index.js";
+import { registrarNomesDePoder } from "./rules/magias.js";
 import { registerLauncher } from "./ui/launcher.js";
 import { defineWizardApp } from "./wizard/app.js";
 import { registrarClassesDoCompendio, classesRegistradas } from "./rules/classe.js";
@@ -99,5 +100,8 @@ Hooks.once("ready", async () => {
   // Classes fora do Livro Básico (Samurai, Heróis de Arton…) tiram a regra de
   // perícia do próprio item do compêndio.
   registrarClassesDoCompendio(CompendiumIndex.getAll("classe"));
+  // Poder escolhido é id de compêndio; a cota de magias (Orar, Conhecimento
+  // Mágico…) precisa do slug — que vem do nome.
+  registrarNomesDePoder((id) => CompendiumIndex.getById("poder", id)?.name);
   console.log(`${MODULE_ID} | ${classesRegistradas()} classe(s) do compêndio registradas`);
 });

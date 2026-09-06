@@ -1,0 +1,70 @@
+{
+  "aumentar_repertorio": {
+    "quantidade": 2,
+    "tradicao": []
+  },
+  "conhecimento_magico": {
+    "quantidade": 2,
+    "tradicao": []
+  },
+  "aspecto_da_primavera": {
+    "quantidade": 1,
+    "tradicao": [
+      "arcana",
+      "divina"
+    ]
+  },
+  "aspecto_do_inverno": {
+    "quantidade": 1,
+    "tradicao": [
+      "arcana",
+      "divina"
+    ]
+  },
+  "aspecto_do_outono": {
+    "quantidade": 1,
+    "tradicao": [
+      "arcana",
+      "divina"
+    ]
+  },
+  "aspecto_do_verao": {
+    "quantidade": 1,
+    "tradicao": [
+      "arcana",
+      "divina"
+    ]
+  },
+  "orador_dos_elementos": {
+    "quantidade": 1,
+    "tradicao": [
+      "arcana",
+      "divina"
+    ]
+  },
+  "segredos_da_natureza": {
+    "quantidade": 2,
+    "tradicao": [
+      "arcana",
+      "divina"
+    ]
+  },
+  "truque_de_palco": {
+    "quantidade": 3,
+    "tradicao": [
+      "arcana"
+    ]
+  },
+  "truque_magico": {
+    "quantidade": 1,
+    "tradicao": [
+      "arcana"
+    ]
+  },
+  "orar": {
+    "quantidade": 1,
+    "tradicao": [
+      "divina"
+    ]
+  }
+}

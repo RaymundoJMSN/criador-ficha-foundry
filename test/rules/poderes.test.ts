@@ -103,7 +103,7 @@ describe("checkPrereqs — tipos portados de motor/prerequisitos.py", () => {
     const s = com({
       proficiencias: ["armas_marciais"],
       magias: ["bola_de_fogo"],
-      escolaMagia: "necromancia",
+      escolasMagia: ["necromancia"],
     });
     expect(ok([{ tipo: "proficiencia", valor: "armas_marciais" }], s)).toBe(true);
     expect(ok([{ tipo: "proficiencia", valor: "armas_exoticas" }], s)).toBe(false);

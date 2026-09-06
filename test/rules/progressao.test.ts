@@ -5,6 +5,7 @@ import {
   slotsDePoder,
   circuloMaximo,
   magiasConhecidas,
+  magiasMaxPorCirculo,
 } from "../../src/rules/progressao.js";
 
 describe("baseSlug", () => {
@@ -91,9 +92,19 @@ describe("magiasConhecidas", () => {
     expect(magiasConhecidas("Arcanista", 5, "caminho_do_arcanista_bruxo")).toBe(7);
   });
 
-  it("mago começa com 4", () => {
+  it("mago começa com 4 e ganha +1 a cada círculo novo (5º, 9º…)", () => {
     expect(magiasConhecidas("Arcanista", 1, "caminho_do_arcanista_mago")).toBe(4);
-    expect(magiasConhecidas("Arcanista", 5, "caminho_do_arcanista_mago")).toBe(8);
+    expect(magiasConhecidas("Arcanista", 4, "caminho_do_arcanista_mago")).toBe(7);
+    expect(magiasConhecidas("Arcanista", 5, "caminho_do_arcanista_mago")).toBe(9);
+    expect(magiasConhecidas("Arcanista", 9, "caminho_do_arcanista_mago")).toBe(14);
+  });
+
+  it("teto por círculo: arcanista nv5 só pode ter 1 magia de 2º círculo", () => {
+    expect(magiasMaxPorCirculo("Arcanista", 5, "caminho_do_arcanista_bruxo")).toEqual({ 2: 1 });
+    expect(magiasMaxPorCirculo("Arcanista", 5, "caminho_do_arcanista_mago")).toEqual({ 2: 2 });
+    expect(magiasMaxPorCirculo("Arcanista", 9, "caminho_do_arcanista_bruxo")).toEqual({ 2: 5, 3: 1 });
+    expect(magiasMaxPorCirculo("Bardo", 6)).toEqual({ 2: 1 });
+    expect(magiasMaxPorCirculo("Arcanista", 4)).toEqual({});
   });
 
   it("feiticeiro aprende só em nível ímpar (3º, 5º…)", () => {

@@ -10,6 +10,12 @@ describe("passosAplicaveis", () => {
     expect(passosAplicaveis("arcanista")).toContain(WizardStep.Magias);
   });
 
+  it("paladino só vê Magias com Orar; lutador com Truque Mágico? não, é do ladino", () => {
+    expect(passosAplicaveis("paladino")).not.toContain(WizardStep.Magias);
+    expect(passosAplicaveis("paladino", ["orar"])).toContain(WizardStep.Magias);
+    expect(passosAplicaveis("ladino", ["truque_magico"])).toContain(WizardStep.Magias);
+  });
+
   it("sem classe ainda, mostra o fluxo sem Magias", () => {
     expect(passosAplicaveis("")).not.toContain(WizardStep.Magias);
   });

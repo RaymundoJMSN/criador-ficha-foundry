@@ -414,7 +414,7 @@
                  style="flex:1;min-width:120px;padding:4px 8px;background:rgba(255,255,255,0.08);border:1px solid #555;color:inherit;border-radius:3px;" />
         </div>
 
-        <div class="t20w-poderes-list" style="display:flex;flex-direction:column;gap:3px;max-height:340px;overflow-y:auto;">
+        <div class="t20w-poderes-list t20w-scroll" style="display:flex;flex-direction:column;gap:3px;max-height:340px;overflow-y:auto;">
           {{#each poderes}}
           <label class="t20w-poder-row"
                  data-poder-name="{{this.name}}"
@@ -451,19 +451,30 @@
       <h2>{{stepTitle}}</h2>
       <input type="hidden" name="passo_magias" value="1" />
       {{#if isConjurador}}
+      {{#if escolasAEscolher}}
+      <div style="margin-bottom:10px;padding:6px 10px;background:rgba(255,255,255,0.05);border-radius:4px;">
+        <strong style="font-size:0.9em;">Escolha {{escolasAEscolher}} escolas de magia</strong>
+        <span style="font-size:0.8em;opacity:0.7;"> — escolha permanente; só magias dessas escolas.{{#if escolasFaltam}} Faltam {{escolasFaltam}}.{{/if}}</span>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;margin-top:6px;">
+          {{#each escolas}}
+          <label class="t20w-opcao"><input type="checkbox" name="escola-{{this.abrev}}" value="{{this.abrev}}" {{#if this.selected}}checked{{/if}} {{#if this.bloqueado}}disabled{{/if}} /><span>{{this.nome}}</span></label>
+          {{/each}}
+        </div>
+      </div>
+      {{/if}}
       <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap;">
-        <span style="font-size:0.9em;" class="{{#if atMaxLimit}}t20w-neg{{/if}}">Selecionadas: <strong>{{selectedCount}}</strong> / {{magiaLimit}}</span>
-        {{#if atMaxLimit}}<span style="color:#f90;font-size:0.85em;">⚠ Limite atingido ({{magiaLimit}} magias)</span>{{/if}}
+        <span style="font-size:0.9em;" class="{{#if excesso}}t20w-over{{/if}}">Selecionadas: <strong>{{selectedCount}}</strong> / {{magiaLimit}}</span>
+        {{#if excesso}}<span style="color:#f55;font-size:0.85em;">⚠ Remova {{excesso}}</span>{{else}}{{#if atMaxLimit}}<span style="color:#f90;font-size:0.85em;">✓ Limite atingido</span>{{/if}}{{/if}}
         <input type="text" id="t20w-magia-search" placeholder="Buscar magia..."
                value="{{magiaSearch}}"
                style="flex:1;min-width:120px;padding:4px 8px;background:rgba(255,255,255,0.08);border:1px solid #555;color:inherit;border-radius:3px;" />
       </div>
       {{#each magiasByCirculo}}
       <div style="margin-bottom:14px;">
-        <h3 style="font-size:0.9em;margin:0 0 6px;opacity:0.8;">{{label}}</h3>
-        <div style="display:flex;flex-direction:column;gap:3px;max-height:260px;overflow-y:auto;">
+        <h3 style="font-size:0.9em;margin:0 0 6px;opacity:0.8;">{{label}}{{#if teto}} <small style="opacity:0.7;">(até {{teto}} deste círculo para cima)</small>{{/if}}</h3>
+        <div class="t20w-scroll" style="display:flex;flex-direction:column;gap:3px;max-height:260px;overflow-y:auto;">
           {{#each magias}}
-          <label style="display:flex;align-items:center;gap:8px;padding:5px 8px;background:rgba(255,255,255,0.04);border-radius:3px;cursor:pointer;{{#if this.selected}}outline:1px solid rgba(255,160,0,0.5);{{/if}}">
+          <label style="display:flex;align-items:center;gap:8px;padding:5px 8px;background:rgba(255,255,255,0.04);border-radius:3px;cursor:pointer;{{#if this.excedente}}outline:1px solid #f55;{{else}}{{#if this.selected}}outline:1px solid rgba(255,160,0,0.5);{{/if}}{{/if}}">
             <input type="checkbox" name="magia-{{this.id}}" value="{{this.id}}" {{#if this.selected}}checked{{/if}} {{#if this.bloqueado}}disabled{{/if}} />
             <img src="{{this.img}}" width="28" height="28" style="object-fit:contain;flex-shrink:0;border-radius:2px;" onerror="this.style.display='none'" />
             <div style="flex:1;">
@@ -475,7 +486,7 @@
         </div>
       </div>
       {{else}}
-      <p class="t20w-hint" style="opacity:0.7;">Nenhuma magia disponível para esta classe/nível{{#if magiaSearch}} com esse filtro{{/if}}.</p>
+      <p class="t20w-hint" style="opacity:0.7;">{{#if escolasFaltam}}Marque as escolas acima para ver as magias.{{else}}Nenhuma magia disponível para esta classe/nível{{#if magiaSearch}} com esse filtro{{/if}}.{{/if}}</p>
       {{/each}}
       {{else}}
       <p class="t20w-hint">{{classeNome}} não conjura magias. Clique em Próximo.</p>
@@ -539,7 +550,7 @@
 
       <div class="t20w-equip-layout" style="display:grid;grid-template-columns:1fr 220px;gap:10px;">
         <!-- Item list -->
-        <div class="t20w-equip-list" style="display:flex;flex-direction:column;gap:3px;max-height:320px;overflow-y:auto;">
+        <div class="t20w-equip-list t20w-scroll" style="display:flex;flex-direction:column;gap:3px;max-height:320px;overflow-y:auto;">
           {{#each itens}}
           <div class="t20w-equip-row{{#if selected}} t20w-selected{{/if}}"
             style="display:flex;align-items:center;gap:8px;padding:4px 8px;background:{{#if selected}}rgba(255,160,0,0.12){{else}}rgba(255,255,255,0.04){{/if}};border-radius:3px;font-size:0.85em;">

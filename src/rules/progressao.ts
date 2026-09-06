@@ -46,6 +46,10 @@ export interface MagiasProgressao {
   por_nivel: number;
   por_nivel_par: number;
   por_nivel_impar: number;
+  /** "arcana" | "divina" (T20-DB `lancar_magia`). */
+  tradicao?: string | null;
+  /** Quantas escolas a classe escolhe de forma permanente (bardo/druida: 3). */
+  escolas?: number;
 }
 
 export interface ClasseProgressao {
@@ -71,6 +75,10 @@ export function getClasseProgressao(classeNome: string): ClasseProgressao | null
     .replace(/[̀-ͯ]/g, "")
     .replace(/[^a-z0-9]+/g, "_")
     .replace(/^_+|_+$/g, "");
+
+  // Sem classe ainda: "" casaria com qualquer chave no startsWith abaixo e
+  // devolvia a primeira (arcanista) — o wizard mostrava Magias antes da classe.
+  if (!slug) return null;
 
   // Direct match
   if (slug in progressaoData) return progressaoData[slug];
@@ -151,29 +159,57 @@ export function circuloMaximo(classeNome: string, nivel: number): number {
 }
 
 /**
- * Quantas magias o personagem conhece no nível dado.
+ * Magias aprendidas em cada nível (índice = nível; [0] não existe).
  *
- * Fonte: poder "Magias (<classe>)" do T20-DB. O caminho do arcanista muda os dois
+ * Fonte: poder "Magias (<classe>)" do T20-DB. O caminho do arcanista muda os
  * termos (LB cap. 4, Arcanista → "Aprendendo Magias" / "Magias Iniciais"):
- * mago começa com 4 em vez de 3; feiticeiro aprende a cada nível ÍMPAR (3º, 5º…).
+ * mago começa com 4 em vez de 3 e "sempre que ganha acesso a um novo círculo
+ * de magias, aprende uma magia adicional daquele círculo"; feiticeiro aprende
+ * a cada nível ÍMPAR (3º, 5º…).
  */
-export function magiasConhecidas(classeNome: string, nivel: number, caminho = ""): number {
+export function ganhosDeMagiaPorNivel(classeNome: string, nivel: number, caminho = ""): number[] {
   const prog = getClasseProgressao(classeNome);
   const m = prog?.magias;
-  if (!m) return 0;
+  if (!m) return [];
 
   const ehMago = caminho.endsWith("_mago");
   const ehFeiticeiro = caminho.endsWith("_feiticeiro");
 
-  let total = m.inicio + (ehMago ? 1 : 0);
+  const ganhos: number[] = [0, m.inicio + (ehMago ? 1 : 0)];
   for (let nv = 2; nv <= nivel; nv++) {
+    let g = 0;
     if (ehFeiticeiro) {
-      if (nv % 2 === 1) total += 1;
+      if (nv % 2 === 1) g += 1;
     } else {
-      total += m.por_nivel;
-      if (nv % 2 === 0) total += m.por_nivel_par;
-      if (nv % 2 === 1) total += m.por_nivel_impar;
+      g += m.por_nivel;
+      if (nv % 2 === 0) g += m.por_nivel_par;
+      if (nv % 2 === 1) g += m.por_nivel_impar;
     }
+    if (ehMago && prog?.circulos?.[String(nv)]) g += 1;
+    ganhos.push(g);
   }
-  return total;
+  return ganhos;
+}
+
+/** Quantas magias o personagem conhece no nível dado (só pela classe). */
+export function magiasConhecidas(classeNome: string, nivel: number, caminho = ""): number {
+  return ganhosDeMagiaPorNivel(classeNome, nivel, caminho).reduce((a, b) => a + b, 0);
+}
+
+/**
+ * Para cada círculo C ≥ 2, quantas magias de círculo ≥ C o personagem pode
+ * ter: só as aprendidas em níveis em que C já estava aberto (as iniciais são
+ * sempre de 1º círculo).
+ */
+export function magiasMaxPorCirculo(classeNome: string, nivel: number, caminho = ""): Record<number, number> {
+  const ganhos = ganhosDeMagiaPorNivel(classeNome, nivel, caminho);
+  const out: Record<number, number> = {};
+  for (let c = 2; c <= circuloMaximo(classeNome, nivel); c++) {
+    let total = 0;
+    for (let nv = 2; nv < ganhos.length; nv++) {
+      if (circuloMaximo(classeNome, nv) >= c) total += ganhos[nv] ?? 0;
+    }
+    out[c] = total;
+  }
+  return out;
 }

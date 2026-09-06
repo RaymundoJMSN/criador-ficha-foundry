@@ -39,7 +39,8 @@ export interface PartialWizardState {
   proficiencias?: string[];
   magias?: string[];
   linhagem?: string;
-  escolaMagia?: string;
+  /** Escolas escolhidas pelo bardo/druida (slugs completos: "necromancia"). */
+  escolasMagia?: string[];
   caminho?: string;
 }
 
@@ -156,7 +157,7 @@ function atende(req: Prereq, state: PartialWizardState): boolean {
       return (state.magias ?? []).map(norm).includes(norm(req["id"]));
 
     case "escola_de_magia_escolhida":
-      return norm(state.escolaMagia) === norm(req["valor"]);
+      return (state.escolasMagia ?? []).map(norm).includes(norm(req["valor"]));
 
     case "proficiencia":
       return (state.proficiencias ?? []).map(norm).includes(norm(req["valor"]));

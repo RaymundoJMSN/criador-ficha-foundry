@@ -25,6 +25,7 @@ const rascunho = {
 };
 import { WizardState } from "./state.js";
 import { WizardStep, STEP_ORDER, STEP_META, passosAplicaveis } from "../rules/steps.js";
+import { slugsDosPoderes } from "../rules/magias.js";
 import { CompendiumIndex } from "../compendium/index.js";
 import { validate } from "../rules/engine.js";
 import {
@@ -105,7 +106,9 @@ export function defineWizardApp(): void {
 
     // Single PART — avoids @partial-block / sibling-PART layout issues
     static PARTS = {
-      wizard: { template: TPL("wizard") },
+      // Listas longas guardam o scroll entre renders — marcar uma magia no fim
+      // da lista devolvia a lista ao topo a cada clique.
+      wizard: { template: TPL("wizard"), scrollable: [".t20w-scroll"] },
     };
 
     _state = new WizardState();
@@ -126,7 +129,7 @@ export function defineWizardApp(): void {
 
     /** Passos válidos para a classe escolhida (lutador não vê Magias). */
     _passos(): WizardStep[] {
-      return passosAplicaveis(toNomeSlug(this._state.classeNome ?? ""));
+      return passosAplicaveis(toNomeSlug(this._state.classeNome ?? ""), slugsDosPoderes(this._state.poderes));
     }
 
     goToStep(step: WizardStep): void {
@@ -375,7 +378,15 @@ export function defineWizardApp(): void {
         }
         case WizardStep.Magias: {
           const magias = CompendiumIndex.getAll("magia") as IndexedMagia[];
-          stepCtx = prepareMagiasContext(state, magias, errors);
+          let ctx = prepareMagiasContext(state, magias, errors);
+          // Trocou classe/escola/nível? Magia que não vale mais sai do estado
+          // aqui, sem esperar o clique em Próximo.
+          const validas = new Set(ctx.idsValidos);
+          if (state.magias.some((id) => !validas.has(id))) {
+            state.apply({ magias: state.magias.filter((id) => validas.has(id)) });
+            ctx = prepareMagiasContext(state, magias, errors);
+          }
+          stepCtx = ctx;
           break;
         }
         case WizardStep.Equipamento: {
@@ -708,6 +719,19 @@ export function defineWizardApp(): void {
       };
       sincronizarEscolhas("poder-", "poderes");
       sincronizarEscolhas("magia-", "magias");
+
+      // ── Escolas do bardo/druida ("Escolha três escolas de magia") ────────
+      const caixasEscola = root.querySelectorAll<HTMLInputElement>('input[name^="escola-"]');
+      caixasEscola.forEach((caixa) => {
+        caixa.addEventListener("change", () => {
+          const marcadas = Array.from(caixasEscola).filter((c) => c.checked).map((c) => c.value);
+          this._state.apply({
+            escolhasPorItem: { ...this._state.escolhasPorItem, classe_escolas: marcadas },
+          });
+          this._errors = [];
+          void this.render();
+        });
+      });
 
       // ── Sub-escolhas dependentes do caminho (linhagem, tipo de dano) ─────
       root.querySelectorAll<HTMLSelectElement>("select[name='subescolha']").forEach((sel) => {

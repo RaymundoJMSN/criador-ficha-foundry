@@ -6,6 +6,7 @@ import { habilidadesAte, slotsDePoder } from "../../rules/progressao.js";
 import { resolverPoder } from "../../compendium/resolver.js";
 import type { IndexedMagia, IndexedPoder } from "../../compendium/types.js";
 import type { WizardState } from "../state.js";
+import { ESCOLAS } from "../../rules/magias.js";
 
 export interface PoderEntry {
   id: string;
@@ -131,7 +132,9 @@ export function preparePoderesContext(
       state.escolhasPorItem,
       "linhagem"
     ),
-    escolaMagia: (state.escolhasPorItem["classe_escola"] as string) ?? "",
+    escolasMagia: ((state.escolhasPorItem["classe_escolas"] as string[] | undefined) ?? []).map(
+      (abrev) => ESCOLAS[abrev]?.slug ?? abrev
+    ),
     caminho: (state.escolhasPorItem["classe_caminho"] as string) ?? "",
   };
 

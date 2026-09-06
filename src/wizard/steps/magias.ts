@@ -1,6 +1,14 @@
-import { filterMagias, isConjurador } from "../../rules/magias.js";
+import {
+  filterMagias,
+  isConjurador,
+  escolasAEscolher,
+  ESCOLAS,
+  cotaDeMagias,
+  slugsDosPoderes,
+  tetoPorCirculo,
+  excedentesPorCirculo,
+} from "../../rules/magias.js";
 import { toNomeSlug } from "../../compendium/slug.js";
-import { magiasConhecidas } from "../../rules/progressao.js";
 import type { WizardState } from "../state.js";
 import type { IndexedMagia } from "../../compendium/types.js";
 
@@ -12,13 +20,17 @@ export interface MagiaEntry {
   escola: string;
   tipo: string;
   selected: boolean;
-  /** No limite, as não escolhidas ficam travadas em vez de aceitar mais uma. */
+  /** No limite (total ou do círculo), as não escolhidas ficam travadas. */
   bloqueado: boolean;
+  /** Escolhida além do teto do círculo — precisa sair. */
+  excedente: boolean;
 }
 
 export interface MagiasByCirculo {
   circulo: number;
   label: string;
+  /** Teto de magias de círculo ≥ este (só a partir do 2º). */
+  teto?: number;
   magias: MagiaEntry[];
 }
 
@@ -26,13 +38,19 @@ export interface MagiasContext {
   stepTitle: string;
   classeNome: string;
   isConjurador: boolean;
-  /** How many magias this character may know (enforced as warning) */
+  /** Bardo/druida: quantas escolas escolher; 0 = não se aplica. */
+  escolasAEscolher: number;
+  escolas: Array<{ abrev: string; nome: string; selected: boolean; bloqueado: boolean }>;
+  escolasFaltam: number;
   magiaLimit: number;
-  /** Whether the character is at or over the magia limit */
   atMaxLimit: boolean;
+  /** Escolhidas a mais (nível ou caminho mudaram depois). */
+  excesso: number;
   magiaSearch: string;
   magiasByCirculo: MagiasByCirculo[];
   selectedCount: number;
+  /** Ids que continuam válidos para esta classe/nível — o app poda o resto. */
+  idsValidos: string[];
   errors: string[];
 }
 
@@ -47,61 +65,90 @@ export function prepareMagiasContext(
   errors: string[] = []
 ): MagiasContext {
   const classeSlug = toNomeSlug(state.classeNome ?? "");
+  const poderSlugs = slugsDosPoderes(state.poderes);
   const conjurador = isConjurador(classeSlug);
-
-  // Quantas magias o personagem conhece no nível — regra da classe, não chute.
-  // O cálculo antigo usava `(Int - 10) / 2`, que é modificador de D&D: em T20 o
-  // atributo JÁ é o modificador (vai de -1 a 4), então dava 1 para todo mundo.
   const classeCaminho = (state.escolhasPorItem["classe_caminho"] as string | undefined) ?? "";
-  const magiaLimit = magiasConhecidas(state.classeNome || "", state.nivel, classeCaminho);
+
+  // Quantas magias o personagem conhece: regra da classe (LB cap. 4) mais os
+  // poderes que ensinam magia (Orar, Conhecimento Mágico…). Nunca é chute.
+  const magiaLimit = cotaDeMagias(state.classeNome || "", state.nivel, classeCaminho, poderSlugs);
+
+  const precisaEscolas = escolasAEscolher(classeSlug);
+  const escolhidas = (state.escolhasPorItem["classe_escolas"] as string[] | undefined) ?? [];
+  const escolas = Object.entries(ESCOLAS).map(([abrev, e]) => ({
+    abrev,
+    nome: e.nome,
+    selected: escolhidas.includes(abrev),
+    bloqueado: escolhidas.length >= precisaEscolas && !escolhidas.includes(abrev),
+  }));
+  const escolasFaltam = Math.max(0, precisaEscolas - escolhidas.length);
+
+  const validas = filterMagias(allMagias, {
+    classeSlug,
+    nivel: state.nivel,
+    escolas: escolhidas,
+    poderSlugs,
+  });
+  const idsValidos = validas.map((m) => m.id);
 
   const magiaSearch = (state.escolhasPorItem["magia_search"] as string) ?? "";
+  const q = magiaSearch.toLowerCase();
+  const filtered = q ? validas.filter((m) => m.name.toLowerCase().includes(q)) : validas;
 
-  let filtered = conjurador ? filterMagias(allMagias, classeSlug, state.nivel) : [];
+  const selecionadas = state.magias.filter((id) => idsValidos.includes(id));
+  const noLimite = selecionadas.length >= magiaLimit;
+  const excesso = Math.max(0, selecionadas.length - magiaLimit);
 
-  // Apply name search filter
-  if (magiaSearch) {
-    const q = magiaSearch.toLowerCase();
-    filtered = filtered.filter((m) => m.name.toLowerCase().includes(q));
-  }
+  // Teto por círculo: a magia de 2º círculo só cabe nas aprendidas depois do nível
+  // que abriu o 2º círculo — sem isso um arcanista nv5 punha 7 magias de 2º.
+  const teto = tetoPorCirculo(state.classeNome || "", state.nivel, classeCaminho);
+  const circuloDe = new Map(validas.map((m) => [m.id, Number(m.system.circulo) || 0]));
+  const escolhidasComCirculo = selecionadas.map((id) => ({ id, circulo: circuloDe.get(id) ?? 0 }));
+  const excedentes = new Set(excedentesPorCirculo(escolhidasComCirculo, teto));
+  const caberia = (circulo: number) =>
+    !excedentesPorCirculo([...escolhidasComCirculo, { id: "?", circulo }], teto).includes("?");
 
-  const noLimite = state.magias.length >= magiaLimit;
-
-  // Group by círculo
   const byCirculo = new Map<number, MagiaEntry[]>();
   for (const m of filtered) {
     const circulo = Number(m.system.circulo) || 0;
     if (!byCirculo.has(circulo)) byCirculo.set(circulo, []);
+    const selected = selecionadas.includes(m.id);
     byCirculo.get(circulo)!.push({
       id: m.id,
       name: m.name,
       img: m.img,
       circulo,
-      escola: m.system.escola ?? "",
+      escola: ESCOLAS[m.system.escola ?? ""]?.nome ?? (m.system.escola ?? ""),
       tipo: m.system.tipo ?? "",
-      selected: state.magias.includes(m.id),
-      bloqueado: noLimite && !state.magias.includes(m.id),
+      selected,
+      bloqueado: !selected && (noLimite || !caberia(circulo)),
+      excedente: selected && excedentes.has(m.id),
     });
   }
 
-  // Sort by círculo number
   const magiasByCirculo: MagiasByCirculo[] = Array.from(byCirculo.entries())
     .sort(([a], [b]) => a - b)
     .map(([circulo, magias]) => ({
       circulo,
       label: circuloLabel(circulo),
+      teto: teto[circulo],
       magias,
     }));
 
   return {
     stepTitle: "Magias",
     classeNome: state.classeNome ?? "",
-    isConjurador: conjurador,
+    isConjurador: conjurador || magiaLimit > 0,
+    escolasAEscolher: precisaEscolas,
+    escolas,
+    escolasFaltam,
     magiaLimit,
     atMaxLimit: noLimite,
+    excesso,
     magiaSearch,
     magiasByCirculo,
-    selectedCount: state.magias.length,
+    selectedCount: selecionadas.length,
+    idsValidos,
     errors,
   };
 }

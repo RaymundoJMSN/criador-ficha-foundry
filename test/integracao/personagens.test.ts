@@ -114,7 +114,7 @@ describe.skipIf(!existsSync(PACKS))("personagens de aceitação (compêndio real
     expect(pendencias(est(s))).toEqual([]);
   });
 
-  it("arcanista mago nv5: caminho, 8 magias, 4 poderes", async () => {
+  it("arcanista mago nv5: caminho, 9 magias (4 + 4 níveis + 1 pelo 2º círculo), 4 poderes", async () => {
     const s = new WizardState({
       nome: "Mago NV5",
       nivel: 5,
@@ -129,10 +129,12 @@ describe.skipIf(!existsSync(PACKS))("personagens de aceitação (compêndio real
         pericias: { obrigatorias: [], escolhas: ["conhecimento", "diplomacia"], extras_int: [], raca: [] },
       },
       poderes: ["p1", "p2", "p3", "p4"],
-      magias: ["m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8"],
+      magias: ["m1", "m2", "m3", "m4", "m5", "m6", "m7", "m8", "m9"],
     });
 
-    expect(magiasConhecidas("Arcanista", 5, "caminho_do_arcanista_mago")).toBe(8);
+    // LB p.37, Mago: "sempre que ganha acesso a um novo círculo de magias,
+    // aprende uma magia adicional daquele círculo".
+    expect(magiasConhecidas("Arcanista", 5, "caminho_do_arcanista_mago")).toBe(9);
     expect(slotsDePoder("Arcanista", 5)).toBe(4);
     expect(pendencias(est(s))).toEqual([]);
   });

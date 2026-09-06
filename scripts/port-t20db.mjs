@@ -131,6 +131,27 @@ function walkDir(dir) {
     }
   }
   writeJson(join(OUT, "poder-subcategoria.json"), subcats);
+
+  // 5c. magias_por_poder.json — poder que faz aprender N magias a mais
+  // (Conhecimento Mágico, Orar, Aspectos do druida…). Só quantidade numérica;
+  // poder que dá UMA magia específica (Manto de Batalha) não entra na cota.
+  const magiasPorPoder = {};
+  for (const f of walkDir(join(T20DB, "poderes"))) {
+    if (!f.endsWith(".json")) continue;
+    const d = readJson(f);
+    for (const ef of d.efeitos ?? []) {
+      const aprende = ef.tipo === "aprender_magia" || ef.subtipo === "aprender_magia" || ef.subtipo === "aprender_magias";
+      if (!aprende || ef.magia) continue;
+      const q = ef.quantidade ?? ef.valor?.quantidade ?? 1;
+      if (typeof q !== "number") continue;
+      const tradicao = ef.tradicao ?? ef.tipo_magia ?? ef.valor?.tradicao ?? null;
+      magiasPorPoder[d.id] = {
+        quantidade: q,
+        tradicao: Array.isArray(tradicao) ? tradicao : tradicao ? [tradicao] : [],
+      };
+    }
+  }
+  writeJson(join(OUT, "magias_por_poder.json"), magiasPorPoder);
 }
 
 // 8. racas.json — all raças consolidated
@@ -385,10 +406,16 @@ function walkDir(dir) {
     let magias = null;
     try {
       const magiasPoder = readJson(join(T20DB, "poderes/classe", classeId, `magias_${classeId}.json`));
+      let tradicao = null;
+      let escolas = 0;
       for (const ef of magiasPoder.efeitos ?? []) {
         if (ef.subtipo === "circulo_por_nivel") {
           for (const row of ef.valor ?? []) circulos[String(row.nivel)] = row.circulo;
         }
+        // Arcana ou divina — decide se a classe vê magias "arc" ou "div" (mais as universais).
+        if (ef.tipo === "lancar_magia") tradicao = ef.valor?.tradicao ?? null;
+        // "Escolha três escolas de magia" (bardo e druida, LB p.44 e p.61).
+        if (ef.subtipo === "escolher_escolas") escolas = ef.quantidade ?? 3;
         if (ef.subtipo === "magias_conhecidas") {
           magias = {
             inicio: ef.valor?.inicio ?? 0,
@@ -397,6 +424,12 @@ function walkDir(dir) {
             por_nivel_impar: ef.valor?.por_nivel_impar ?? 0,
           };
         }
+      }
+      if (magias) {
+        magias.tradicao = tradicao;
+        // Correção contra o Livro Básico: o T20-DB só marca as escolas no druida,
+        // mas o bardo tem o mesmo texto (LB p.44, "Magias").
+        magias.escolas = classeId === "bardo" ? 3 : escolas;
       }
     } catch {
       // classe não conjuradora
@@ -421,7 +454,7 @@ function walkDir(dir) {
     // para o clérigo, mas LB cap. 4 (Clérigo, "Magias") diz: "Você começa com
     // três magias de 1º círculo" e "A cada nível, aprende uma magia".
     if (classeId === "clerigo" && magias) {
-      magias = { inicio: 3, por_nivel: 1, por_nivel_par: 0, por_nivel_impar: 0 };
+      magias = { ...magias, inicio: 3, por_nivel: 1, por_nivel_par: 0, por_nivel_impar: 0 };
     }
 
     result[classeId] = {

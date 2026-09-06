@@ -1,7 +1,7 @@
 import { WizardStep } from "./steps.js";
 import { validarAtributos, listMetodos } from "./atributos.js";
 import type { AtributosBase } from "./atributos.js";
-import { filterMagias } from "./magias.js";
+import { filterMagias, cotaDeMagias, slugsDosPoderes, escolasAEscolher } from "./magias.js";
 import { listOrigens, validarBeneficios } from "./origem.js";
 import {
   listDivindadesParaPersonagem,
@@ -17,7 +17,7 @@ import {
 } from "./subescolhas.js";
 import { getClasse, cadeiaSubEscolhas } from "./classe.js";
 
-import { slotsDePoder, magiasConhecidas } from "./progressao.js";
+import { slotsDePoder } from "./progressao.js";
 import { getRaceSkillBonus, pendenciasDeEscolhasRaciais } from "./raca.js";
 import { buildPericiaPlan, computeTrained, type PericiaPicks } from "./pericias.js";
 import type { IndexedMagia, AnyIndexed } from "../compendium/types.js";
@@ -202,16 +202,27 @@ export function pendencias(state: EngineState): string[] {
     faltando.push(`Escolha ${slots} poder(es) — ${state.poderes.length} escolhido(s).`);
   }
 
-  const cotaMagias = magiasConhecidas(
+  const classeSlugPend = toNomeSlug(classeRef);
+  const cotaMagias = cotaDeMagias(
     classeRef,
     state.nivel,
-    (state.escolhasPorItem["classe_caminho"] as string) ?? ""
+    (state.escolhasPorItem["classe_caminho"] as string) ?? "",
+    slugsDosPoderes(state.poderes)
   );
   if (state.magias.length < cotaMagias) {
     faltando.push(`Escolha ${cotaMagias} magia(s) — ${state.magias.length} escolhida(s).`);
   }
+  // "Sua classe diz com quantas magias você começa" é um número exato: baixar o
+  // nível ou trocar mago→bruxo deixava a ficha com magias a mais.
+  if (state.magias.length > cotaMagias) {
+    faltando.push(`Magias a mais: remova ${state.magias.length - cotaMagias}.`);
+  }
+  const escolasPrecisa = escolasAEscolher(classeSlugPend);
+  const escolasTem = ((state.escolhasPorItem["classe_escolas"] as string[] | undefined) ?? []).length;
+  if (escolasPrecisa > 0 && escolasTem < escolasPrecisa) {
+    faltando.push(`Escolha ${escolasPrecisa} escolas de magia — ${escolasTem} marcada(s).`);
+  }
 
-  const classeSlugPend = toNomeSlug(classeRef);
   if (isDivindadeObrigatoria(classeSlugPend) && !state.divindadeId) {
     faltando.push("Esta classe exige uma divindade.");
   }
@@ -246,7 +257,12 @@ export function getOptions(
 
     case WizardStep.Magias: {
       const magias = (compendiumItems ?? []).filter((i): i is IndexedMagia => i.type === "magia");
-      return filterMagias(magias, state.classeId, state.nivel);
+      return filterMagias(magias, {
+        classeSlug: toNomeSlug(state.classeNome || ""),
+        nivel: state.nivel,
+        escolas: (state.escolhasPorItem["classe_escolas"] as string[] | undefined) ?? [],
+        poderSlugs: slugsDosPoderes(state.poderes),
+      });
     }
 
     default:

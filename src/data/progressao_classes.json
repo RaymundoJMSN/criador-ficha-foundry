@@ -125,7 +125,9 @@
       "inicio": 3,
       "por_nivel": 1,
       "por_nivel_par": 0,
-      "por_nivel_impar": 0
+      "por_nivel_impar": 0,
+      "tradicao": "arcana",
+      "escolas": 0
     }
   },
   "barbaro": {
@@ -398,7 +400,9 @@
       "inicio": 2,
       "por_nivel": 0,
       "por_nivel_par": 1,
-      "por_nivel_impar": 0
+      "por_nivel_impar": 0,
+      "tradicao": "arcana",
+      "escolas": 3
     }
   },
   "bucaneiro": {
@@ -918,7 +922,9 @@
       "inicio": 3,
       "por_nivel": 1,
       "por_nivel_par": 0,
-      "por_nivel_impar": 0
+      "por_nivel_impar": 0,
+      "tradicao": "divina",
+      "escolas": 0
     }
   },
   "druida": {
@@ -1050,7 +1056,9 @@
       "inicio": 2,
       "por_nivel": 0,
       "por_nivel_par": 1,
-      "por_nivel_impar": 0
+      "por_nivel_impar": 0,
+      "tradicao": "divina",
+      "escolas": 3
     }
   },
   "guerreiro": {
