@@ -108,8 +108,8 @@ describe.skipIf(!existsSync(PACKS))("personagens de aceitação (compêndio real
     expect(treinadas["luta"]).toBe(true); // obrigatória do guerreiro
     expect(treinadas["fort"]).toBe(true); // fixa do guerreiro
 
-    // Atributo final soma o +1 escolhido do humano.
-    expect(mapStateToActorData(s).system.atributos.for.base).toBe(4);
+    // O +1 escolhido do humano NÃO entra na base: vai no item de raça (.racial).
+    expect(mapStateToActorData(s).system.atributos.for.base).toBe(3);
 
     expect(pendencias(est(s))).toEqual([]);
   });

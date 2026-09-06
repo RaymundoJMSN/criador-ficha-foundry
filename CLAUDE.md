@@ -191,7 +191,7 @@ em `system.json` + `templates/` + `tormenta20.mjs` do sistema instalado.
 
 **Origem e Divindade = TEXTO:** `system.detalhes.origem` / `system.detalhes.divindade` (strings). Benefícios (poderes/itens) materializados buscando por **nome** nos packs.
 
-**Dinheiro:** `system.dinheiro` = `{tc, tl, to, tp}` (cobre/prata-Tibar/ouro/platina). Moeda principal = **`tl` (T$, Tibar)**. Dinheiro inicial vai em `dinheiro.tl`.
+**Dinheiro:** `system.dinheiro` = `{tc, tp, to, tl}`. **T$ (Tibar, prata) = `tp`**; `tl` é platina e só aparece na ficha com a flag `sheet.mostrarPlatina` (lang: CurrencySilver abrev. "T$" ↔ `tp`; Item Piles usa `tp` como primária). Dinheiro inicial vai em `dinheiro.tp`.
 
 **Perícias (chaves do actor):** `system.pericias.{code}` onde **`code` = 4 letras** (`acro ades atle atua cava conh cura dipl enga fort furt guer inic inti intu inve joga ladi luta mist nobr perc pilo pont refl reli sobr vont`). Treino = `system.pericias.{code}.treinado` (Boolean). **NÃO** é o slug completo (`fortitude`).
 

@@ -9,9 +9,9 @@ import { toPericiaCode } from "../rules/pericia-slug.js";
 import { habilidadesAte } from "../rules/progressao.js";
 import { resolverPoder } from "../compendium/resolver.js";
 import { prepareEquipamentoContext } from "../wizard/steps/equipamento.js";
-import type { IndexedEquipamento } from "../compendium/types.js";
 import { getOrigem, validarBeneficios } from "../rules/origem.js";
 import { getDivindade } from "../rules/divindade.js";
+import { validateRaceModifiers } from "../rules/subescolhas.js";
 
 /**
  * Resolves a compendium item id to its full document object.
@@ -52,7 +52,6 @@ export class ActorWriter {
       ...state.poderes,
       ...state.poderesAutoGrant,
       ...state.magias,
-      ...state.equipamento.map((e) => e.itemId),
     ].filter(Boolean);
 
     const resolvedItems: unknown[] = [];
@@ -98,12 +97,56 @@ export class ActorWriter {
       sys["inicial"] = true;
     }
 
+    // Raça com atributo à escolha (humano +1×3, osteon…): o sistema abriria o
+    // diálogo "Atributos Dinâmicos" ao embutir o item e ficava esperando o
+    // jogador — a criação travava aí. A escolha já foi feita no wizard: soma
+    // no `system.atributos` do item (vira `.racial` na ficha) e zera a lista
+    // dinâmica para o diálogo não abrir.
+    if (raceItemData) {
+      const sys = (((raceItemData as Record<string, unknown>)["system"] ??= {}) as Record<string, unknown>);
+      const escolhas = (state.escolhasPorItem["raca_modificadores"] as string[][] | undefined) ?? [];
+      const { modificadores } = validateRaceModifiers(state.racaNome || state.racaId, escolhas);
+      const atributos = ((sys["atributos"] ??= {}) as Record<string, number>);
+      for (const [k, v] of Object.entries(modificadores)) atributos[k] = (atributos[k] ?? 0) + (v ?? 0);
+      const din = (sys["atributosDinamicos"] as Record<string, unknown> | undefined) ?? {};
+      sys["atributosDinamicos"] = { ...din, value: [] };
+    }
+
     // NOTE: pericias excluded from Actor.create data — applied via update() after init
-    const equip = prepareEquipamentoContext(state, [
-      ...CompendiumIndex.getAll("equipamento"),
-      ...CompendiumIndex.getAll("arma"),
-      ...CompendiumIndex.getAll("consumivel"),
-    ] as IndexedEquipamento[]);
+    const equip = prepareEquipamentoContext(state, CompendiumIndex.equipamentos());
+    // Comprados (com quantidade) + grátis (origem e kit do 1º nível, LB p.146).
+    // Item que não existe no compêndio (“joia de família”) vira item simples com
+    // a observação na descrição, para não sumir da ficha.
+    const mochila: unknown[] = [];
+    for (const e of state.equipamento) {
+      const doc = (await resolveItem(e.itemId)) as { system?: Record<string, unknown> } | null;
+      if (!doc) {
+        console.warn(`${MODULE_ID} | ActorWriter: item comprado não achado: ${e.itemId}`);
+        continue;
+      }
+      (doc.system ??= {})["qtd"] = e.qty;
+      mochila.push(doc);
+    }
+    for (const g of equip.gratis) {
+      const doc = g.itemId
+        ? ((await resolveItem(g.itemId)) as { system?: Record<string, unknown> } | null)
+        : null;
+      if (doc) {
+        (doc.system ??= {})["qtd"] = g.qtd;
+        if (g.nota) {
+          const d = (doc.system["description"] as { value?: string } | undefined) ?? {};
+          doc.system["description"] = { ...d, value: `<p><em>${g.nota}</em></p>${d.value ?? ""}` };
+        }
+        mochila.push(doc);
+      } else {
+        mochila.push({
+          name: g.label,
+          type: "equipamento",
+          img: "icons/svg/item-bag.svg",
+          system: { qtd: g.qtd, description: { value: g.nota ? `<p>${g.nota}</p>` : "" } },
+        });
+      }
+    }
     const data = mapStateToActorData(state, otherItems, equip.dinheiroRestante);
 
     const actor = (await Actor.create(data as unknown as Parameters<typeof Actor.create>[0])) as
@@ -136,6 +179,17 @@ export class ActorWriter {
         console.log(`${MODULE_ID} | ActorWriter: classe item added via createEmbeddedDocuments`);
       } catch (err) {
         console.warn(`${MODULE_ID} | ActorWriter: failed to add classe item:`, err);
+      }
+    }
+
+    // Arma dentro do Actor.create quebrava a preparação de dados (getAttackToHit
+    // lê atributos que ainda não existem) e abortava raça/classe. Vai depois.
+    if (mochila.length > 0) {
+      try {
+        await actor.createEmbeddedDocuments("Item", mochila);
+        console.log(`${MODULE_ID} | ActorWriter: ${mochila.length} item(ns) de equipamento`);
+      } catch (err) {
+        console.warn(`${MODULE_ID} | ActorWriter: falha no equipamento:`, err);
       }
     }
 
@@ -217,11 +271,6 @@ export class ActorWriter {
     const origem = state.origemId ? getOrigem(state.origemId) : null;
     if (origem) {
       const allPoderes = CompendiumIndex.getAll("poder");
-      const allEquip = [
-        ...CompendiumIndex.getAll("equipamento"),
-        ...CompendiumIndex.getAll("arma"),
-        ...CompendiumIndex.getAll("consumivel"),
-      ];
       const origemItems: unknown[] = [];
 
       // Benefícios escolhidos: DOIS da lista (perícia e/ou poder). O poder
@@ -245,19 +294,6 @@ export class ActorWriter {
           else console.warn(`${MODULE_ID} | ActorWriter: origem poder "${slug}" resolved null`);
         } else {
           console.warn(`${MODULE_ID} | ActorWriter: origem poder "${slug}" not found`);
-        }
-      }
-
-      // Physical initial items from origem (look up by name in compendium)
-      for (const it of origem.itens_iniciais ?? []) {
-        if (!it.item?.trim()) continue;
-        const itemName = it.item.trim();
-        const match = allEquip.find(e => e.name.toLowerCase() === itemName.toLowerCase());
-        if (match) {
-          const doc = await resolveItem(match.id);
-          if (doc) origemItems.push(doc);
-        } else {
-          console.warn(`${MODULE_ID} | ActorWriter: origem item "${itemName}" not found in compendium`);
         }
       }
 

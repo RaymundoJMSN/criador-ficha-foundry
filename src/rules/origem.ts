@@ -10,7 +10,10 @@ export interface OrigensBeneficio {
 }
 
 export interface ItemInicial {
-  item: string;
+  item?: string;
+  /** "Estojo de disfarces ou gazua": o jogador escolhe um. */
+  escolha?: string[];
+  quantidade?: number;
   valor_max?: string;
   observacao?: string;
 }
@@ -40,8 +43,9 @@ export function formatItensIniciais(origemId: string): string[] {
   if (!origem) return [];
   return (origem.itens_iniciais ?? [])
     .map((it) => {
-      if (!it.item || !it.item.trim()) return null; // skip empty entries
-      let line = it.item.trim();
+      let line = it.escolha?.length ? it.escolha.join(" ou ") : (it.item ?? "").trim();
+      if (!line) return null; // skip empty entries
+      if (it.quantidade && it.quantidade > 1) line += ` ×${it.quantidade}`;
       if (it.valor_max) line += ` (até ${it.valor_max})`;
       if (it.observacao) line += ` — ${it.observacao}`;
       return line;

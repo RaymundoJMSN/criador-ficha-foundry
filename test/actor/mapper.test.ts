@@ -71,7 +71,7 @@ describe("mapStateToActorData — pericias NOT included in Actor.create data", (
 });
 
 describe("mapStateToActorData — race choosable modifiers", () => {
-  it("adds humano +1 choices to atributos.base", () => {
+  it("humano +1 choices do NOT go to base (they ride on the race item as .racial)", () => {
     const state = new WizardState({
       nome: "Hero",
       racaNome: "Humano",
@@ -79,10 +79,10 @@ describe("mapStateToActorData — race choosable modifiers", () => {
       escolhasPorItem: { raca_modificadores: [["for", "des", "con"]] },
     });
     const data = mapStateToActorData(state);
-    expect(data.system.atributos.for.base).toBe(2); // 1 + 1
-    expect(data.system.atributos.des.base).toBe(1); // 0 + 1
-    expect(data.system.atributos.con.base).toBe(1); // 0 + 1
-    expect(data.system.atributos.int.base).toBe(2); // unchanged
+    expect(data.system.atributos.for.base).toBe(1);
+    expect(data.system.atributos.des.base).toBe(0);
+    expect(data.system.atributos.con.base).toBe(0);
+    expect(data.system.atributos.int.base).toBe(2);
   });
 
   it("does not touch base when no modifier choices stored", () => {
@@ -156,10 +156,11 @@ describe("getTrainedPericaCodes — perícias de origem", () => {
 });
 
 describe("mapStateToActorData — dinheiro é derivado, não lido do estado", () => {
-  it("grava em system.dinheiro.tl o saldo que o writer calcula", () => {
+  it("grava em system.dinheiro.tp (T$ = prata) o saldo que o writer calcula", () => {
     const state = new WizardState({ nome: "Rico", nivel: 5 });
     // o estado nunca escreve dinheiroRestante (fica 0); quem manda é o parâmetro
     const data = mapStateToActorData(state, [], 2000);
-    expect(data.system.dinheiro.tl).toBe(2000);
+    expect(data.system.dinheiro.tp).toBe(2000);
+    expect(data.system.dinheiro.tl).toBe(0);
   });
 });

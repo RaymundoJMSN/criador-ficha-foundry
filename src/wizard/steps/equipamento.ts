@@ -1,33 +1,13 @@
 import dinheiroDataRaw from "../../data/dinheiro.json";
-import origensDataRaw from "../../data/origens.json";
 import type { IndexedEquipamento } from "../../compendium/types.js";
 import type { WizardState } from "../state.js";
+import { equipamentoInicial, type EquipamentoInicial } from "../../rules/itens-iniciais.js";
 
 const dinheiroData = dinheiroDataRaw as {
   por_nivel: Array<{ nivel: number; valor: number | string; moeda: string }>;
 };
 
-type OrigemEntry = {
-  id: string;
-  nome: string;
-  itens_iniciais?: Array<string | { item: string; observacao?: string }>;
-};
-const origensData = origensDataRaw as OrigemEntry[];
-
 export type ItemCategoria = "arma" | "armadura" | "geral" | "consumivel";
-
-// These are the actual subtipo values in tormenta20 system for armor-type items
-const ARMADURA_SUBTIPOS = new Set([
-  "Armadura Leve",
-  "Armadura Pesada",
-  "Escudo",
-  "Armadura Natural",
-  "Bônus Mágico",
-  "Acessório",
-  "Vestuário",
-  "Ferramenta",
-  "Esotérico",
-]);
 
 export interface EquipItem {
   id: string;
@@ -38,47 +18,34 @@ export interface EquipItem {
   peso: number;
   qty: number;
   selected: boolean;
-  isInitial: boolean; // from origin — included free
 }
 
-export interface EquipamentoContext {
+export interface EquipamentoContext extends EquipamentoInicial {
   stepTitle: string;
-  // Money
   dinheiroInicial: number;
-  /** Nível 1 rola 4d6 uma vez só; depois de rolado o botão some. */
-  dinheiroJaRolado: boolean;
+  /** Fórmulas ainda não roladas (4d6 do 1º nível + T$ em dado da origem). */
+  formulasPendentes: string[];
+  dinheiroRolado: number | undefined;
   dinheiroGasto: number;
   dinheiroRestante: number;
   dinheiroOk: boolean;
   isNivel1: boolean;
-  // Categories
   categoriaAtual: ItemCategoria;
-  // Search
   equipSearch: string;
-  // Items in current category
   itens: EquipItem[];
-  // Cart: selected non-initial items
   carrinho: EquipItem[];
-  // Initial items (from origin)
-  itensIniciais: EquipItem[];
-  // Navigation guard
+  escolhasPendentes: number;
   canProceed: boolean;
   errors: string[];
 }
 
-function resolveItensIniciaisNomes(origemId: string): Set<string> {
-  const origem = origensData.find((o) => o.id === origemId);
-  if (!origem?.itens_iniciais) return new Set();
-  const nomes = origem.itens_iniciais.map((entry) =>
-    typeof entry === "string" ? entry : entry.item
-  );
-  return new Set(nomes);
-}
-
-function toCategoria(type: string, subtipo?: string): ItemCategoria {
-  if (type === "arma") return "arma";
-  if (type === "consumivel" || type === "pocao") return "consumivel";
-  if (subtipo && ARMADURA_SUBTIPOS.has(subtipo)) return "armadura";
+/** Armadura/escudo é `equipamento` com `system.tipo` leve|pesada|escudo (não há subtipo). */
+function toCategoria(item: IndexedEquipamento): ItemCategoria {
+  if (item.type === "arma") return "arma";
+  if (item.type === "consumivel") return "consumivel";
+  if (item.type === "equipamento" && ["leve", "pesada", "escudo"].includes(String(item.system.tipo ?? ""))) {
+    return "armadura";
+  }
   return "geral";
 }
 
@@ -88,66 +55,53 @@ export function prepareEquipamentoContext(
   errors: string[] = []
 ): EquipamentoContext {
   const isNivel1 = state.nivel === 1;
+  const inicial = equipamentoInicial(state, allItems);
 
-  // Starting money — prefer rolled value for level 1
+  // T$: 4d6 no 1º nível (mais o que a origem der em dado), Tabela 3-1 acima.
   const nivelEntry = dinheiroData.por_nivel.find((e) => e.nivel === state.nivel);
-  const rolado = isNivel1
-    ? (state.escolhasPorItem["dinheiro_rolado"] as number | undefined)
-    : undefined;
-  const dinheiroInicial =
-    rolado ?? (typeof nivelEntry?.valor === "number" ? nivelEntry.valor : 14);
+  const dinheiroRolado = state.escolhasPorItem["dinheiro_rolado"] as number | undefined;
+  const formulas = [...(isNivel1 ? ["4d6"] : []), ...inicial.formulasDinheiro];
+  const formulasPendentes = dinheiroRolado === undefined ? formulas : [];
+  const daTabela = typeof nivelEntry?.valor === "number" ? nivelEntry.valor : 0;
+  const dinheiroInicial = (isNivel1 ? (dinheiroRolado ?? 0) : daTabela) + inicial.dinheiroFixo;
 
-  // Initial items from origin
-  const itensIniciaisNomes = resolveItensIniciaisNomes(state.origemId);
-
-  // Current category tab
-  const categoriaAtual = ((state.escolhasPorItem["equip_categoria"] as string) ??
-    "arma") as ItemCategoria;
-
-  // Search filter
+  const categoriaAtual = ((state.escolhasPorItem["equip_categoria"] as string) ?? "arma") as ItemCategoria;
   const equipSearch = (state.escolhasPorItem["equip_search"] as string | undefined) ?? "";
   const searchLower = equipSearch.toLowerCase();
 
-  // Build cart map from state.equipamento
   const cartMap = new Map<string, number>(state.equipamento.map((e) => [e.itemId, e.qty]));
-
-  const allEquipItems: EquipItem[] = allItems.map((item) => {
+  const todos = allItems.map((item) => {
     const qty = cartMap.get(item.id) ?? 0;
-    const subtipo = item.system?.subtipo as string | undefined;
     return {
       id: item.id,
       name: item.name,
       img: item.img,
       type: item.type,
-      preco: (item.system?.preco as number | undefined) ?? 0,
-      peso: (item.system?.peso as number | undefined) ?? 0,
+      preco: item.system.preco ?? 0,
+      peso: item.system.peso ?? 0,
       qty,
       selected: qty > 0,
-      isInitial: itensIniciaisNomes.has(item.name),
-      // carry subtipo for display
-      _subtipo: subtipo,
-      _categoria: toCategoria(item.type, subtipo),
-    } as EquipItem & { _subtipo?: string; _categoria: ItemCategoria };
+      categoria: toCategoria(item),
+    };
   });
 
-  // Filter to current category + search
-  const itens = (allEquipItems as Array<EquipItem & { _categoria: ItemCategoria }>)
-    .filter((i) => i._categoria === categoriaAtual)
-    .filter((i) => !searchLower || i.name.toLowerCase().includes(searchLower));
+  const itens = todos
+    .filter((i) => i.categoria === categoriaAtual)
+    .filter((i) => !searchLower || i.name.toLowerCase().includes(searchLower))
+    .sort((a, b) => a.name.localeCompare(b.name));
+  const carrinho = todos.filter((i) => i.selected);
 
-  // Cart: selected items that are NOT initial (initial are free, no cost)
-  const carrinho = allEquipItems.filter((i) => i.selected && !i.isInitial);
-  const itensIniciais = allEquipItems.filter((i) => i.isInitial);
-
-  // Spending (sum qty * preco for cart items)
   const dinheiroGasto = carrinho.reduce((sum, i) => sum + i.preco * i.qty, 0);
   const dinheiroRestante = dinheiroInicial - dinheiroGasto;
   const dinheiroOk = dinheiroRestante >= 0;
+  const escolhasPendentes = inicial.escolhas.filter((e) => !e.feita).length;
 
   return {
     stepTitle: "Equipamentos",
+    ...inicial,
     dinheiroInicial,
-    dinheiroJaRolado: rolado !== undefined,
+    formulasPendentes,
+    dinheiroRolado,
     dinheiroGasto,
     dinheiroRestante,
     dinheiroOk,
@@ -156,8 +110,8 @@ export function prepareEquipamentoContext(
     equipSearch,
     itens,
     carrinho,
-    itensIniciais,
-    canProceed: dinheiroOk,
+    escolhasPendentes,
+    canProceed: dinheiroOk && escolhasPendentes === 0 && formulasPendentes.length === 0,
     errors,
   };
 }

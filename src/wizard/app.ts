@@ -70,7 +70,6 @@ import type {
   IndexedRace,
   IndexedPoder,
   IndexedMagia,
-  IndexedEquipamento,
 } from "../compendium/types.js";
 
 const TPL = (name: string) => `modules/${MODULE_ID}/templates/wizard/${name}.hbs`;
@@ -137,16 +136,13 @@ export function defineWizardApp(): void {
     }
 
     async nextStep(): Promise<void> {
-      // Equipamento: block if overspent
       if (this._currentStep === WizardStep.Equipamento) {
-        const allEquip = [
-          ...CompendiumIndex.getAll("equipamento"),
-          ...CompendiumIndex.getAll("arma"),
-          ...CompendiumIndex.getAll("consumivel"),
-        ] as IndexedEquipamento[];
-        const equipCtx = prepareEquipamentoContext(this._state, allEquip, []);
-        if (!equipCtx.canProceed) {
-          this._errors = ["Você excedeu o orçamento disponível. Remova itens do carrinho."];
+        const equipCtx = prepareEquipamentoContext(this._state, CompendiumIndex.equipamentos(), []);
+        const erros: string[] = [];
+        if (!equipCtx.dinheiroOk) erros.push("Você excedeu o orçamento disponível. Remova itens do carrinho.");
+        if (equipCtx.escolhasPendentes) erros.push("Escolha os itens iniciais que faltam.");
+        if (erros.length) {
+          this._errors = erros;
           this.render();
           return;
         }
@@ -383,22 +379,24 @@ export function defineWizardApp(): void {
           break;
         }
         case WizardStep.Equipamento: {
-          const allEquip = [
-            ...CompendiumIndex.getAll("equipamento"),
-            ...CompendiumIndex.getAll("arma"),
-            ...CompendiumIndex.getAll("consumivel"),
-          ] as IndexedEquipamento[];
-          stepCtx = prepareEquipamentoContext(state, allEquip, errors);
+          // T$ 4d6 (e dado da origem) rola sozinho na primeira vez que o passo abre.
+          let ctx = prepareEquipamentoContext(state, CompendiumIndex.equipamentos(), errors);
+          if (ctx.formulasPendentes.length) {
+            let total = 0;
+            for (const f of ctx.formulasPendentes) {
+              // @ts-expect-error Roll is a Foundry global
+              total += ((await new Roll(f).roll({ async: true })) as { total: number }).total;
+            }
+            state.apply({ escolhasPorItem: { ...state.escolhasPorItem, dinheiro_rolado: total } });
+            ctx = prepareEquipamentoContext(state, CompendiumIndex.equipamentos(), errors);
+          }
+          stepCtx = ctx;
           break;
         }
         case WizardStep.Revisao: {
           const racaItem = CompendiumIndex.getAll("race").find((r) => r.id === state.racaId);
           const classeItem = CompendiumIndex.getAll("classe").find((c) => c.id === state.classeId);
-          const equipRev = prepareEquipamentoContext(state, [
-            ...CompendiumIndex.getAll("equipamento"),
-            ...CompendiumIndex.getAll("arma"),
-            ...CompendiumIndex.getAll("consumivel"),
-          ] as IndexedEquipamento[]);
+          const equipRev = prepareEquipamentoContext(state, CompendiumIndex.equipamentos());
           stepCtx = prepareRevisaoContext(
             state,
             racaItem?.name ?? state.racaId,
@@ -756,6 +754,19 @@ export function defineWizardApp(): void {
       if (poderCat) poderCat.addEventListener("change", applyPoderFilter);
 
       // ── Equip search ───────────────────────────────────────────────────
+      // Itens iniciais com escolha (origem "X ou Y", arma simples do kit…).
+      root.querySelectorAll<HTMLSelectElement>("select.t20w-item-inicial").forEach((sel) => {
+        sel.addEventListener("change", () => {
+          const chave = sel.dataset["chave"]!;
+          const atual = { ...((this._state.escolhasPorItem["itens_iniciais"] as Record<string, string>) ?? {}) };
+          atual[chave] = sel.value;
+          // Trocou a opção de primeiro nível? A sub-escolha antiga não vale mais.
+          if (!chave.endsWith("_item")) delete atual[`${chave}_item`];
+          this._state.apply({ escolhasPorItem: { ...this._state.escolhasPorItem, itens_iniciais: atual } });
+          void this.render();
+        });
+      });
+
       const equipSearch = root.querySelector<HTMLInputElement>("#t20w-equip-search");
       if (equipSearch) {
         equipSearch.addEventListener("input", (e) => {
@@ -905,35 +916,15 @@ export function defineWizardApp(): void {
           });
           void this.render();
         }
-      } else if (action === "equipAdd") {
+      } else if (action === "equipAdd" || action === "equipRemove" || action === "equipRemoveAll") {
         const id = target.dataset["id"];
-        if (id && !this._state.equipamento.some((e) => e.itemId === id)) {
-          this._state.apply({
-            equipamento: [...this._state.equipamento, { itemId: id, qty: 1 }],
-          });
-          void this.render();
-        }
-      } else if (action === "equipRemove") {
-        const id = target.dataset["id"];
-        if (id) {
-          this._state.apply({
-            equipamento: this._state.equipamento.filter((e) => e.itemId !== id),
-          });
-          void this.render();
-        }
-      } else if (action === "rollDinheiro") {
-        // Uma rolagem só: reclicar era rerrolar até vir 24.
-        if (this._state.nivel === 1 && this._state.escolhasPorItem["dinheiro_rolado"] === undefined) {
-          // @ts-expect-error Roll is a Foundry global
-          const roll = await new Roll("4d6").roll({ async: true });
-          this._state.apply({
-            escolhasPorItem: {
-              ...this._state.escolhasPorItem,
-              dinheiro_rolado: (roll as { total: number }).total,
-            },
-          });
-          await this.render();
-        }
+        if (!id) return;
+        const delta = action === "equipAdd" ? 1 : action === "equipRemove" ? -1 : -Infinity;
+        const atual = this._state.equipamento.find((e) => e.itemId === id)?.qty ?? 0;
+        const qty = Math.max(0, atual + delta);
+        const semEle = this._state.equipamento.filter((e) => e.itemId !== id);
+        this._state.apply({ equipamento: qty > 0 ? [...semEle, { itemId: id, qty }] : semEle });
+        void this.render();
       } else if (action === "rollAtributos") {
         const metodo = this._state.metodoAtributos;
         const esc = { ...this._state.escolhasPorItem };

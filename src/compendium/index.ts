@@ -17,6 +17,9 @@ const INDEX_FIELDS = [
   "system.niveis",
   "system.preco",
   "system.peso",
+  // Arma: categoria de proficiência e alcance (kit inicial e "arma simples" da origem).
+  "system.proficiencia",
+  "system.alcance",
   // Raça: texto, tamanho, deslocamento e os poderes que o item concede.
   "system.description",
   "system.tamanho",
@@ -127,6 +130,16 @@ class CompendiumIndexClass {
 
   getAll<T extends ItemType>(type: T): TypeToIndexed[T][] {
     return (this._store.get(type) ?? []) as TypeToIndexed[T][];
+  }
+
+  /** Tudo que pode ir para a mochila (Mochila e Saco de dormir são `tesouro` no sistema). */
+  equipamentos(): TypeToIndexed["equipamento"][] {
+    return [
+      ...this.getAll("equipamento"),
+      ...this.getAll("arma"),
+      ...this.getAll("consumivel"),
+      ...this.getAll("tesouro"),
+    ] as TypeToIndexed["equipamento"][];
   }
 
   getById<T extends ItemType>(type: T, id: string): TypeToIndexed[T] | undefined {

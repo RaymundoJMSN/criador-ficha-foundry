@@ -52,16 +52,13 @@ export function mapStateToActorData(
   items: unknown[] = [],
   dinheiroRestante: number = state.dinheiroRestante
 ): ActorCreateData {
-  // Choosable racial modifiers (e.g. humano +1×3) are added to .base — the
-  // Foundry race item only applies *fixed* racial bonuses (.racial), so the
-  // player's free picks have no item to carry them. Invalid picks are dropped.
-  const choices = (state.escolhasPorItem["raca_modificadores"] as string[][] | undefined) ?? [];
-  const racaRef = state.racaNome || state.racaId;
-  const { modificadores } = validateRaceModifiers(racaRef, choices);
-
+  // Só a base vai aqui. Modificador racial (fixo E escolhido, ex. humano +1×3)
+  // entra pelo item de raça: o writer soma a escolha em `system.atributos` do
+  // item e o sistema grava tudo em `.racial` ao embutir (`_onCreateOwnedRace`).
+  // Somar a escolha na base dobrava o bônus quando o diálogo do sistema abria.
   const atributos = {} as ActorCreateData["system"]["atributos"];
   for (const attr of ["for", "des", "con", "int", "sab", "car"] as const) {
-    atributos[attr] = { base: (state.atributosBase[attr] ?? 0) + (modificadores[attr] ?? 0) };
+    atributos[attr] = { base: state.atributosBase[attr] ?? 0 };
   }
 
   // Origem/Divindade are stored as TEXT names in tormenta20 (not ids).
@@ -83,13 +80,13 @@ export function mapStateToActorData(
         divindade: divindadeNome,
       },
       // O saldo é derivado (inicial da tabela/rolagem − carrinho) na hora de
-      // gravar. `state.dinheiroRestante` nunca era escrito e valia 0: um nv5
-      // com T$ 2.000 na tela nascia sem um tostão na ficha.
+      // gravar. T$ (Tibar, prata) é o campo `tp` — `tl` é platina, escondida
+      // na ficha por padrão; gravar lá deixava o personagem "sem dinheiro".
       dinheiro: {
         tc: 0,
-        tl: dinheiroRestante,
+        tl: 0,
         to: 0,
-        tp: 0,
+        tp: dinheiroRestante,
       },
     },
     items,
