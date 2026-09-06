@@ -56,6 +56,18 @@ Hooks.once("init", () => {
   .t20w-opcao:hover {
     background: rgba(255,255,255,0.08);
   }
+  .t20w-over { color: #f55; font-weight: bold; }
+  .t20w-chip {
+    display: inline-block;
+    min-width: 26px;
+    padding: 2px 6px;
+    margin-right: 4px;
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 3px;
+    text-align: center;
+    font-weight: bold;
+  }
+  .t20w-mini th, .t20w-mini td { padding: 2px 8px; }
   .t20w-busca-select {
     width: 100%;
     padding: 4px 8px;

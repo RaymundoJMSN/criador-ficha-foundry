@@ -98,39 +98,58 @@ export function converterNimb(d20: number): number {
   return converterRolagem(d20);
 }
 
+export const ATRIBUTOS = ["for", "des", "con", "int", "sab", "car"] as const;
+export type Atributo = (typeof ATRIBUTOS)[number];
+
 export interface EspecRolagem {
-  /** Fórmula por atributo. */
+  /** Fórmula de UM total. */
   formula: string;
+  /** Quantos totais rolar. */
+  quantidade: number;
   converter: (total: number) => number;
-  /** Teto do valor convertido, quando o método impõe um. */
-  maximo?: number;
+  /** Nimb rola 7 e descarta o menor (HA p.281). */
+  descartarMenor: boolean;
+  /** "Caso seus atributos não somem pelo menos 6, role novamente o menor valor" (LB p.17). */
+  somaMinima: boolean;
 }
 
-/** Como cada método oficial gera um atributo. `null` = método sem rolagem. */
+/** Como cada método oficial gera o conjunto de valores. `null` = não rola. */
 export function especRolagem(metodo: string): EspecRolagem | null {
+  const padrao = { quantidade: 6, converter: converterRolagem, descartarMenor: false, somaMinima: true };
   switch (metodo) {
     case "rolagem_padrao":
-      return { formula: "4d6kh3", converter: converterRolagem };
+      return { formula: "4d6kh3", ...padrao };
     case "classica":
-      return { formula: "3d6", converter: converterRolagem };
+      return { formula: "3d6", ...padrao };
     case "epica":
       // "Descarte o menor dos 3d6 e some os dois restantes + 6"
-      return { formula: "3d6kh2 + 6", converter: converterRolagem };
+      return { formula: "3d6kh2 + 6", ...padrao };
     case "nimb":
-      return { formula: "1d20", converter: converterNimb };
-    case "valkaria":
-      // 7d6 distribuídos sobre base 8; aqui um dado por atributo, teto +4.
-      return { formula: "1d6 + 8", converter: converterRolagem, maximo: 4 };
+      // Nimb é vendido como "por sua conta e risco": sem piso de soma.
+      return { formula: "1d20", quantidade: 7, converter: converterNimb, descartarMenor: true, somaMinima: false };
     default:
       return null;
   }
 }
 
+/** Valkaria (HA p.281): cada atributo começa em 8; 7d6 aplicados inteiros onde quiser. */
+export const VALKARIA = { formula: "1d6", quantidade: 7, base: 8 } as const;
+
 /** Valores fixos que o método distribui, quando houver (Khalmyr). */
 export function valoresFixos(metodo: string): number[] | null {
-  // LB p.281: "Distribua os 6 valores entre os 6 atributos como quiser."
+  // HA p.281: "Distribua os seguintes valores em seus atributos, sem rolar nada"
   if (metodo === "khalmyr") return [3, 3, 2, 1, 0, -1];
   return null;
+}
+
+/** Totais rolados → pool de valores convertidos (descartando o menor quando o método manda). */
+export function poolDaRolagem(espec: EspecRolagem, totais: number[]): number[] {
+  let lista = [...totais];
+  if (espec.descartarMenor) {
+    const menor = lista.indexOf(Math.min(...lista));
+    lista = lista.filter((_, i) => i !== menor);
+  }
+  return lista.map(espec.converter);
 }
 
 /** Soma mínima 6: abaixo disso o método manda rolar de novo (LB p.17). */
@@ -138,4 +157,65 @@ export const SOMA_MINIMA = 6;
 
 export function precisaRerolar(valores: number[]): boolean {
   return valores.reduce((a, b) => a + b, 0) < SOMA_MINIMA;
+}
+
+export function indiceDoMenor(valores: number[]): number {
+  return valores.indexOf(Math.min(...valores));
+}
+
+/** Distribuição: atributo → índice no pool. */
+export type Distribuicao = Partial<Record<Atributo, number>>;
+
+/**
+ * "Distribua esses valores entre os seis atributos como quiser" (LB p.17).
+ * Atributo sem valor fica 0; a validação é que exige tudo preenchido.
+ */
+export function atributosDistribuidos(pool: number[], dist: Distribuicao): AtributosBase {
+  const out = {} as AtributosBase;
+  for (const a of ATRIBUTOS) {
+    const i = dist[a];
+    out[a] = i !== undefined && pool[i] !== undefined ? pool[i] : 0;
+  }
+  return out;
+}
+
+/** Valkaria: dado i → atributo (ou undefined). Base 8 + dados, convertido pela tabela (teto 4 vem dela). */
+export function atributosValkaria(dados: number[], dist: Array<Atributo | undefined>): AtributosBase {
+  const soma = {} as Record<Atributo, number>;
+  for (const a of ATRIBUTOS) soma[a] = VALKARIA.base;
+  dados.forEach((d, i) => {
+    const a = dist[i];
+    if (a) soma[a] += d;
+  });
+  const out = {} as AtributosBase;
+  for (const a of ATRIBUTOS) out[a] = converterRolagem(soma[a]);
+  return out;
+}
+
+/** Erros do passo Atributos para qualquer método (compra, pool ou Valkaria). */
+export function validarAtributos(
+  metodo: string,
+  atributosBase: AtributosBase,
+  escolhas: Record<string, unknown>
+): string[] {
+  if (metodo === "compra_pontos") {
+    const r = validatePointBuy(atributosBase);
+    const erros = [...r.errors];
+    if (r.remaining < 0) erros.push(`Pontos excedidos em ${-r.remaining}.`);
+    return erros;
+  }
+  if (metodo === "valkaria") {
+    const dados = escolhas["valkaria_dados"] as number[] | undefined;
+    if (!dados?.length) return ["Clique em Rolar para gerar os 7 dados."];
+    const dist = (escolhas["valkaria_dist"] as Array<string | undefined>) ?? [];
+    const faltam = dados.filter((_, i) => !ATRIBUTOS.includes(dist[i] as Atributo)).length;
+    return faltam ? [`Aplique todos os dados em atributos (faltam ${faltam}).`] : [];
+  }
+  const pool = valoresFixos(metodo) ?? (escolhas["atributos_pool"] as number[] | undefined);
+  if (!pool?.length) return ["Clique em Rolar para gerar os valores."];
+  const dist = (escolhas["atributos_dist"] as Distribuicao) ?? {};
+  const usados = ATRIBUTOS.map((a) => dist[a]).filter((i): i is number => i !== undefined && pool[i] !== undefined);
+  if (usados.length < ATRIBUTOS.length) return ["Distribua os seis valores entre os atributos."];
+  if (new Set(usados).size < usados.length) return ["Cada valor rolado só pode ser usado uma vez."];
+  return [];
 }

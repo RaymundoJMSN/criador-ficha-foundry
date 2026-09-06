@@ -1,5 +1,5 @@
 import { WizardStep } from "./steps.js";
-import { validatePointBuy, listMetodos } from "./atributos.js";
+import { validarAtributos, listMetodos } from "./atributos.js";
 import type { AtributosBase } from "./atributos.js";
 import { filterMagias } from "./magias.js";
 import { listOrigens, validarBeneficios } from "./origem.js";
@@ -58,11 +58,7 @@ export function validate(step: WizardStep, state: EngineState): ValidationResult
       break;
 
     case WizardStep.Atributos:
-      if (state.metodoAtributos === "compra_pontos") {
-        const result = validatePointBuy(state.atributosBase);
-        if (!result.valid) errors.push(...result.errors);
-        if (result.remaining < 0) errors.push(`Pontos excedidos em ${-result.remaining}.`);
-      }
+      errors.push(...validarAtributos(state.metodoAtributos, state.atributosBase, state.escolhasPorItem));
       break;
 
     case WizardStep.Raca: {

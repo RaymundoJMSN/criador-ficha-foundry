@@ -27,7 +27,21 @@ import { WizardState } from "./state.js";
 import { WizardStep, STEP_ORDER, STEP_META, passosAplicaveis } from "../rules/steps.js";
 import { CompendiumIndex } from "../compendium/index.js";
 import { validate } from "../rules/engine.js";
-import { especRolagem, valoresFixos, precisaRerolar } from "../rules/atributos.js";
+import {
+  ATRIBUTOS,
+  type Atributo,
+  type Distribuicao,
+  especRolagem,
+  valoresFixos,
+  precisaRerolar,
+  poolDaRolagem,
+  indiceDoMenor,
+  atributosDistribuidos,
+  atributosValkaria,
+  VALKARIA,
+  pointBuyCost,
+  validatePointBuy,
+} from "../rules/atributos.js";
 import { prepareNivelContext } from "./steps/nivel.js";
 import { prepareAtributosContext } from "./steps/atributos.js";
 import { prepareRacaContext } from "./steps/raca.js";
@@ -430,34 +444,65 @@ export function defineWizardApp(): void {
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const root = (this as any).element as HTMLElement;
 
-      // ── Dynamic point buy ──────────────────────────────────────────────
-      const COST: Record<number, number> = { [-1]: -1, 0: 0, 1: 1, 2: 2, 3: 4, 4: 7 };
-      const BUDGET = 10;
-
-      const updatePointBuy = () => {
-        let spent = 0;
+      // ── Compra de pontos: número digitado entra no estado na hora ──────
+      // Sem re-render: o blur do input já disparava o render e engolia o clique
+      // no botão +/− ao lado. Atualiza custo e saldo direto no DOM.
+      const atualizarCompra = () => {
+        this.applyFormData(this._gatherFormData());
         root.querySelectorAll<HTMLInputElement>("[name^='attr-']").forEach((inp) => {
-          const val = parseInt(inp.value, 10);
-          const cost = COST[val] ?? 0;
-          const row = inp.closest("tr");
-          if (row) {
-            const cell = row.querySelector("td:last-child");
-            if (cell) cell.textContent = String(isNaN(val) || !(val in COST) ? "?" : cost);
+          const span = inp.parentElement?.querySelector(".t20w-custo");
+          if (!span) return;
+          try {
+            span.textContent = `custo: ${pointBuyCost(Number(inp.value))}`;
+          } catch {
+            span.textContent = "custo: ?";
           }
-          spent += isNaN(val) ? 0 : (COST[val] ?? 0);
         });
-        const remaining = BUDGET - spent;
-        const foot = root.querySelector<HTMLElement>(".t20w-attrs tfoot td:last-child");
-        if (foot) {
-          foot.textContent = String(remaining);
-          foot.style.color = remaining < 0 ? "#f55" : "";
+        const rest = root.querySelector<HTMLElement>("#t20w-pontos-restantes");
+        if (rest) {
+          const r = validatePointBuy(this._state.atributosBase);
+          rest.textContent = String(r.remaining);
+          rest.classList.toggle("t20w-over", r.remaining < 0);
         }
       };
-
       root.querySelectorAll<HTMLInputElement>("[name^='attr-']").forEach((inp) => {
-        inp.addEventListener("input", updatePointBuy);
+        inp.addEventListener("input", atualizarCompra);
       });
-      updatePointBuy();
+
+      // ── Distribuição dos valores rolados (LB p.17 "distribua como quiser") ──
+      root.querySelectorAll<HTMLSelectElement>("select.t20w-dist").forEach((sel) => {
+        sel.addEventListener("change", () => {
+          const attr = sel.name.replace("dist-", "") as Atributo;
+          const esc = this._state.escolhasPorItem;
+          const dist: Distribuicao = { ...((esc["atributos_dist"] as Distribuicao) ?? {}) };
+          const novo = sel.value === "" ? undefined : Number(sel.value);
+          // Valor já usado por outro atributo? Troca os dois em vez de duplicar.
+          const dono = ATRIBUTOS.find((a) => a !== attr && novo !== undefined && dist[a] === novo);
+          if (dono) dist[dono] = dist[attr];
+          dist[attr] = novo;
+          const pool = valoresFixos(this._state.metodoAtributos) ?? ((esc["atributos_pool"] as number[]) ?? []);
+          this._state.apply({
+            escolhasPorItem: { ...esc, atributos_dist: dist },
+            atributosBase: atributosDistribuidos(pool, dist),
+          });
+          void this.render();
+        });
+      });
+
+      // ── Valkaria: cada dado vai para um atributo ──────────────────────
+      root.querySelectorAll<HTMLSelectElement>("select.t20w-vdado").forEach((sel) => {
+        sel.addEventListener("change", () => {
+          const esc = this._state.escolhasPorItem;
+          const dados = (esc["valkaria_dados"] as number[]) ?? [];
+          const dist = [...(((esc["valkaria_dist"] as Array<Atributo | undefined>) ?? []))];
+          dist[Number(sel.name.replace("vdado-", ""))] = (sel.value || undefined) as Atributo | undefined;
+          this._state.apply({
+            escolhasPorItem: { ...esc, valkaria_dist: dist },
+            atributosBase: atributosValkaria(dados, dist),
+          });
+          void this.render();
+        });
+      });
 
       // ── Method select → reset atributosBase + re-render ───────────────
       const sel = root.querySelector<HTMLSelectElement>("[name='metodoAtributos']");
@@ -465,9 +510,12 @@ export function defineWizardApp(): void {
         sel.addEventListener("change", () => {
           // NÃO reaproveitar o formulário aqui: ele ainda tem os valores do método
           // anterior, e reaplicá-los deixava um 14 rolado dentro da compra de pontos.
+          const esc = { ...this._state.escolhasPorItem };
+          for (const k of ["atributos_pool", "atributos_dist", "valkaria_dados", "valkaria_dist"]) delete esc[k];
           this._state.apply({
             metodoAtributos: sel.value,
             atributosBase: { for: 0, des: 0, con: 0, int: 0, sab: 0, car: 0 },
+            escolhasPorItem: esc,
           });
           this.render();
         });
@@ -828,8 +876,8 @@ export function defineWizardApp(): void {
       } else if (action === "attrDec") {
         const attr = target.dataset["attr"] as string;
         if (!attr) return;
-        const isCompra = this._state.metodoAtributos === "compra_pontos";
-        const min = isCompra ? -1 : -5;
+        this.applyFormData(this._gatherFormData());
+        const min = -1;
         const current = this._state.atributosBase[attr as keyof typeof this._state.atributosBase] ?? 0;
         if (current > min) {
           this._state.apply({
@@ -840,8 +888,8 @@ export function defineWizardApp(): void {
       } else if (action === "attrInc") {
         const attr = target.dataset["attr"] as string;
         if (!attr) return;
-        const isCompra = this._state.metodoAtributos === "compra_pontos";
-        const max = isCompra ? 4 : 10;
+        this.applyFormData(this._gatherFormData());
+        const max = 4;
         const current = this._state.atributosBase[attr as keyof typeof this._state.atributosBase] ?? 0;
         if (current < max) {
           this._state.apply({
@@ -887,40 +935,46 @@ export function defineWizardApp(): void {
           await this.render();
         }
       } else if (action === "rollAtributos") {
-        const attrs = ["for", "des", "con", "int", "sab", "car"] as const;
         const metodo = this._state.metodoAtributos;
+        const esc = { ...this._state.escolhasPorItem };
+        const rolar = async (formula: string): Promise<number> => {
+          // @ts-expect-error Roll is a Foundry global
+          const roll = await new Roll(formula).roll({ async: true });
+          return (roll as { total: number }).total;
+        };
 
-        const fixos = valoresFixos(metodo);
-        if (fixos) {
-          const patch = { ...this._state.atributosBase };
-          attrs.forEach((a, i) => { patch[a] = fixos[i] ?? 0; });
-          this._state.apply({ atributosBase: patch });
+        if (metodo === "valkaria") {
+          // HA p.281: 7d6, cada dado inteiro no atributo que o jogador quiser.
+          const dados: number[] = [];
+          for (let i = 0; i < VALKARIA.quantidade; i++) dados.push(await rolar(VALKARIA.formula));
+          const dist: Array<Atributo | undefined> = [];
+          this._state.apply({
+            escolhasPorItem: { ...esc, valkaria_dados: dados, valkaria_dist: dist },
+            atributosBase: atributosValkaria(dados, dist),
+          });
           await this.render();
           return;
         }
 
         const espec = especRolagem(metodo);
         if (!espec) return;
-
-        const rolarUm = async (): Promise<number> => {
-          // @ts-expect-error Roll is a Foundry global
-          const roll = await new Roll(espec.formula).roll({ async: true });
-          const bruto = espec.converter((roll as { total: number }).total);
-          return espec.maximo === undefined ? bruto : Math.min(bruto, espec.maximo);
-        };
-
-        const patch = { ...this._state.atributosBase };
-        for (const a of attrs) patch[a] = await rolarUm();
-
+        const totais: number[] = [];
+        for (let i = 0; i < espec.quantidade; i++) totais.push(await rolar(espec.formula));
+        let pool = poolDaRolagem(espec, totais);
         // "Caso seus atributos não somem pelo menos 6, role novamente o menor
         // valor. Repita até somarem 6 ou mais." (LB p.17)
         let guarda = 0;
-        while (precisaRerolar(attrs.map((a) => patch[a])) && guarda++ < 50) {
-          const menor = attrs.reduce((m, a) => (patch[a] < patch[m] ? a : m), attrs[0]);
-          patch[menor] = await rolarUm();
+        while (espec.somaMinima && precisaRerolar(pool) && guarda++ < 50) {
+          pool = [...pool];
+          pool[indiceDoMenor(pool)] = espec.converter(await rolar(espec.formula));
         }
-
-        this._state.apply({ atributosBase: patch });
+        // Ordem rolada é o padrão; o jogador redistribui nos selects.
+        const dist: Distribuicao = {};
+        ATRIBUTOS.forEach((a, i) => { dist[a] = i; });
+        this._state.apply({
+          escolhasPorItem: { ...esc, atributos_pool: pool, atributos_dist: dist },
+          atributosBase: atributosDistribuidos(pool, dist),
+        });
         await this.render();
       }
     }

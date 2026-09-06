@@ -33,33 +33,66 @@
           {{/each}}
         </select>
       </div>
-      <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px;">
+      <p class="t20w-hint" style="margin:6px 0 10px;">{{metodoTexto}}</p>
+
+      {{#if isCompra}}
+      <div style="display:flex;flex-direction:column;gap:6px;">
         {{#each atributos}}
         <div class="t20w-attr-row" style="display:flex;align-items:center;gap:8px;">
           <span style="width:110px;font-size:0.9em;">{{this.label}}</span>
           <button type="button" class="t20w-btn-sm" data-action="attrDec" data-attr="{{this.id}}" style="width:26px;height:26px;padding:0;font-size:1em;line-height:1;cursor:pointer;">−</button>
           <input type="number" name="attr-{{this.id}}" value="{{this.value}}"
-            class="t20w-attr-input"
-            data-attr="{{this.id}}"
-            style="width:52px;text-align:center;"
-            {{#if ../isCompra}}min="-1" max="4"{{/if}} />
+            class="t20w-attr-input" data-attr="{{this.id}}"
+            style="width:52px;text-align:center;" min="-1" max="4" />
           <button type="button" class="t20w-btn-sm" data-action="attrInc" data-attr="{{this.id}}" style="width:26px;height:26px;padding:0;font-size:1em;line-height:1;cursor:pointer;">+</button>
-          {{#if ../isCompra}}<span style="font-size:0.8em;opacity:0.7;width:60px;">custo: {{this.custo}}</span>{{/if}}
+          <span class="t20w-custo" style="font-size:0.8em;opacity:0.7;width:60px;">custo: {{this.custo}}</span>
         </div>
         {{/each}}
       </div>
-      {{#if isCompra}}
       <p style="margin-top:10px;font-size:0.9em;">
         Pontos restantes: <strong id="t20w-pontos-restantes" class="{{#if pontosNegativo}}t20w-over{{/if}}">{{pontosRestantes}}</strong> / {{pontosTotal}}
       </p>
-      {{else}}
-      <div class="t20w-roll-bar" style="margin-top:10px;">
-        <p class="t20w-hint" style="margin:0 0 6px;">
-          <strong>{{metodoDescricao}}</strong> — insira os valores ou clique em Rolar.
-        </p>
-        <button type="button" data-action="rollAtributos" class="t20w-btn" style="padding:4px 12px;cursor:pointer;">🎲 Rolar Atributos</button>
+      {{/if}}
+
+      {{#if podeRolar}}
+      <div class="t20w-roll-bar" style="margin-bottom:10px;">
+        <button type="button" data-action="rollAtributos" class="t20w-btn" style="padding:4px 12px;cursor:pointer;">🎲 {{#if precisaRolar}}Rolar{{else}}Rolar de novo{{/if}}</button>
       </div>
       {{/if}}
+
+      {{#if isPool}}{{#unless precisaRolar}}
+      <p style="font-size:0.9em;margin:0 0 6px;">Valores: {{#each pool}}<span class="t20w-chip">{{this}}</span>{{/each}}</p>
+      <div style="display:flex;flex-direction:column;gap:6px;">
+        {{#each atributos}}
+        <div class="t20w-attr-row" style="display:flex;align-items:center;gap:8px;">
+          <span style="width:110px;font-size:0.9em;">{{this.label}}</span>
+          <select name="dist-{{this.id}}" class="t20w-dist" style="width:70px;">
+            {{#each this.opcoes}}<option value="{{this.valor}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>{{/each}}
+          </select>
+        </div>
+        {{/each}}
+      </div>
+      {{/unless}}{{/if}}
+
+      {{#if isValkaria}}{{#unless precisaRolar}}
+      <div style="display:flex;gap:16px;flex-wrap:wrap;">
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          {{#each dados}}
+          <div class="t20w-attr-row" style="display:flex;align-items:center;gap:8px;">
+            <span class="t20w-chip">{{this.valor}}</span>
+            <span style="opacity:0.7;">→</span>
+            <select name="vdado-{{this.idx}}" class="t20w-vdado" style="width:120px;">
+              {{#each this.opcoes}}<option value="{{this.valor}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>{{/each}}
+            </select>
+          </div>
+          {{/each}}
+        </div>
+        <table class="t20w-mini" style="font-size:0.85em;align-self:flex-start;">
+          <tr><th style="text-align:left;">Atributo</th><th>Total</th><th>Valor</th></tr>
+          {{#each valkariaTotais}}<tr><td>{{this.label}}</td><td style="text-align:center;">{{this.total}}</td><td style="text-align:center;"><strong>{{this.value}}</strong></td></tr>{{/each}}
+        </table>
+      </div>
+      {{/unless}}{{/if}}
     </section>
     {{/if}}
 
