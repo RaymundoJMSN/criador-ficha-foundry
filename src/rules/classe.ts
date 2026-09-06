@@ -46,6 +46,8 @@ export interface ClasseData {
   habilidades_classe_ids: string[];
   poderes_classe_ids: string[];
   caminhos?: CaminhoDef[];
+  /** Nível em que a classe ganha o caminho (cavaleiro: 5). */
+  caminho_nivel?: number;
 }
 
 const classesData = classesDataRaw as unknown as Record<string, ClasseData>;

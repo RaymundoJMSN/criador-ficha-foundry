@@ -201,9 +201,14 @@ export class ActorWriter {
     if (classeData && habilidadeSlugs.length > 0) {
       const allPoderes = CompendiumIndex.getAll("poder");
       const habItems: unknown[] = [];
+      // Slugs diferentes podem ser o mesmo item (Baluarte "aliados adjacentes" e
+      // "alcance curto"): um item por id, senão a ficha ganha a habilidade em dobro.
+      const idsVistos = new Set<string>();
       for (const slug of habilidadeSlugs) {
         const match = resolverPoder(slug, classeSlug, allPoderes, "ability")?.item;
         if (match) {
+          if (idsVistos.has(match.id)) continue;
+          idsVistos.add(match.id);
           const doc = await resolveItem(match.id);
           if (doc) habItems.push(doc);
           else console.warn(`${MODULE_ID} | ActorWriter: habilidade "${slug}" resolved null`);

@@ -708,9 +708,15 @@ export function defineWizardApp(): void {
         const caixas = root.querySelectorAll<HTMLInputElement>(`input[name^="${prefixo}"]`);
         caixas.forEach((caixa) => {
           caixa.addEventListener("change", () => {
+            // Poder repetível (Orar ×2) tem o id N vezes no estado; a caixa
+            // marcada mantém as cópias, desmarcar tira todas.
+            const atual = this._state[campo] as string[];
             const marcados = Array.from(caixas)
               .filter((c) => c.checked)
-              .map((c) => c.value);
+              .flatMap((c) => {
+                const n = atual.filter((id) => id === c.value).length;
+                return Array(Math.max(1, n)).fill(c.value) as string[];
+              });
             this._state.apply({ [campo]: marcados } as Parameters<typeof this._state.apply>[0]);
             this._errors = [];
             void this.render();
@@ -940,6 +946,15 @@ export function defineWizardApp(): void {
           });
           void this.render();
         }
+      } else if (action === "poderMais" || action === "poderMenos") {
+        const id = target.dataset["id"];
+        if (!id) return;
+        const lista = [...this._state.poderes];
+        if (action === "poderMais") lista.push(id);
+        else lista.splice(lista.lastIndexOf(id), 1);
+        this._state.apply({ poderes: lista });
+        this._errors = [];
+        void this.render();
       } else if (action === "equipAdd" || action === "equipRemove" || action === "equipRemoveAll") {
         const id = target.dataset["id"];
         if (!id) return;

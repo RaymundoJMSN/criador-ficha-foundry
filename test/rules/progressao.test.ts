@@ -6,9 +6,16 @@ import {
   circuloMaximo,
   magiasConhecidas,
   magiasMaxPorCirculo,
+  getClasseProgressao,
 } from "../../src/rules/progressao.js";
 
 describe("baseSlug", () => {
+  it("sinal antes do número também é escalonamento (furia_+2, inspiracao_+1, marca_da_presa_+1d4)", () => {
+    expect(baseSlug("furia_+2")).toBe("furia");
+    expect(baseSlug("inspiracao_+5")).toBe("inspiracao");
+    expect(baseSlug("marca_da_presa_+1d4")).toBe("marca_da_presa");
+  });
+
   it("tira sufixo de escalonamento numérico", () => {
     expect(baseSlug("ataque_especial_8")).toBe("ataque_especial");
     expect(baseSlug("reducao_de_dano_10")).toBe("reducao_de_dano");
@@ -83,6 +90,24 @@ describe("circuloMaximo", () => {
 
   it("guerreiro nunca conjura", () => {
     expect(circuloMaximo("Guerreiro", 20)).toBe(0);
+  });
+});
+
+describe("classes fora do T20-DB — tabela lida dos PDFs", () => {
+  it("Frade (Deuses de Arton): magias divinas 3+1/nível, círculos 5/9/13/17, poder de frade a partir do 2º", () => {
+    expect(getClasseProgressao("Frade")?.magias?.tradicao).toBe("divina");
+    expect(magiasConhecidas("Frade", 4)).toBe(6);
+    expect(circuloMaximo("Frade", 9)).toBe(3);
+    expect(slotsDePoder("Frade", 3)).toBe(2);
+    expect(habilidadesAte("Frade", 5)).toEqual(expect.arrayContaining(["devoto_fiel", "erudicao", "magias", "dadiva_da_fe"]));
+  });
+  it("Treinador (Heróis de Arton): melhor amigo escala sem duplicar", () => {
+    const h = habilidadesAte("Treinador", 10);
+    expect(h.filter((s) => s === "melhor_amigo")).toHaveLength(1);
+    expect(slotsDePoder("Treinador", 10)).toBe(9);
+  });
+  it("Samurai: sem tabela em lugar nenhum", () => {
+    expect(getClasseProgressao("Samurai")).toBeNull();
   });
 });
 

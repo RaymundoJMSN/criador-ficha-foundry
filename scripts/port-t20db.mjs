@@ -152,6 +152,15 @@ function walkDir(dir) {
     }
   }
   writeJson(join(OUT, "magias_por_poder.json"), magiasPorPoder);
+
+  // 5d. poderes_repetiveis.json — "Você pode escolher este poder quantas vezes
+  // quiser" (Orar, Foco em Arma, Aumento de Atributo…).
+  const repetiveis = [];
+  for (const f of walkDir(join(T20DB, "poderes"))) {
+    const d = readJson(f);
+    if (d.escolhivel_multiplas_vezes || d.repetivel) repetiveis.push(d.id);
+  }
+  writeJson(join(OUT, "poderes_repetiveis.json"), repetiveis.sort());
 }
 
 // 8. racas.json — all raças consolidated
@@ -515,14 +524,16 @@ function walkDir(dir) {
     try {
       files = readdirSync(dir);
     } catch {
-      return [];
+      return { caminhos: [], nivel: 1 };
     }
     for (const f of files) {
       if (!f.startsWith("caminho")) continue;
       const p = readJson(join(dir, f));
       const opcoes = p.opcoes ?? [];
       if (opcoes.length === 0) continue;
-      return opcoes.map((o) => ({
+      // Cavaleiro só escolhe o caminho no 5º nível (LB Tabela 1-8); arcanista no 1º.
+      const nivel = p.nivel_aquisicao ?? 1;
+      const caminhos = opcoes.map((o) => ({
         // slug = o que toNomeSlug() produz para "Caminho do Arcanista: Mago"
         slug: `${p.id}_${o.id}`,
         id: o.id,
@@ -530,8 +541,9 @@ function walkDir(dir) {
         atributoChave: o.atributo_chave_magia ?? null,
         sub: subEscolha(o.sub_escolha_obrigatoria, `classe_${o.sub_escolha_obrigatoria?.tipo ?? "sub"}`),
       }));
+      return { caminhos, nivel };
     }
-    return [];
+    return { caminhos: [], nivel: 1 };
   }
 
   const dir = join(T20DB, "classes");
@@ -568,7 +580,8 @@ function walkDir(dir) {
       proficiencias: car.proficiencias ?? [],
       habilidades_classe_ids: c.habilidades_classe_ids ?? [],
       poderes_classe_ids: c.poderes_classe_ids ?? [],
-      caminhos: caminhosDaClasse(c.id),
+      caminhos: caminhosDaClasse(c.id).caminhos,
+      caminho_nivel: caminhosDaClasse(c.id).nivel,
     };
   }
   writeJson(join(OUT, "classes.json"), result);

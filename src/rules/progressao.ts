@@ -1,20 +1,33 @@
 import progressaoDataRaw from "../data/progressao_classes.json";
-const progressaoData = progressaoDataRaw as unknown as Record<
-  string,
-  {
-    pv_por_nivel: number;
-    pm_por_nivel: number;
-    pericias_inatas: string[];
-    pericias_escolha: string[];
-    pericias_numero: number;
-    /** Level → automatic class abilities gained + how many power picks it grants. */
-    tabela?: Record<string, { automaticos: string[]; escolhas: number }>;
-    /** Level → highest spell circle unlocked at that level. */
-    circulos?: Record<string, number>;
-    /** Quantas magias a classe conhece: inicial + ganho por nível. */
-    magias?: MagiasProgressao | null;
-  }
->;
+import progressaoLivrosRaw from "../data/progressao_livros.json";
+
+type ProgressaoRaw = {
+  pv_por_nivel: number;
+  pm_por_nivel: number;
+  pericias_inatas: string[];
+  pericias_escolha: string[];
+  pericias_numero: number;
+  /** Level → automatic class abilities gained + how many power picks it grants. */
+  tabela?: Record<string, { automaticos: string[]; escolhas: number }>;
+  /** Level → highest spell circle unlocked at that level. */
+  circulos?: Record<string, number>;
+  /** Quantas magias a classe conhece: inicial + ganho por nível. */
+  magias?: MagiasProgressao | null;
+};
+
+// T20-DB (conferido) cobre o Livro Básico; as tabelas lidas dos PDFs
+// (scripts/port-pdf-classes.mjs) entram só para o que falta: Frade, Treinador
+// e as classes de Heróis de Arton. PV/PM/perícias dessas vêm do item de classe
+// do compêndio (classe-do-compendio.ts), não daqui.
+const progressaoData: Record<string, ProgressaoRaw> = {
+  ...Object.fromEntries(
+    Object.entries(progressaoLivrosRaw as Record<string, Partial<ProgressaoRaw>>).map(([k, v]) => [
+      k,
+      { pv_por_nivel: 0, pm_por_nivel: 0, pericias_inatas: [], pericias_escolha: [], pericias_numero: 0, ...v },
+    ])
+  ),
+  ...(progressaoDataRaw as unknown as Record<string, ProgressaoRaw>),
+};
 
 /**
  * Normalize a pericia field that may be string, array, null, or object.
@@ -104,8 +117,11 @@ export function getClasseProgressao(classeNome: string): ClasseProgressao | null
  * O número pode vir no MEIO: `magias_2_circulo` é a mesma habilidade "Magias"
  * de `magias_1_circulo`. Só tirar o sufixo numérico deixava as duas como famílias
  * diferentes, e o arcanista recebia o item "Magias (Arcanista)" em dobro.
+ * `furia_+2`/`furia_+3` (bárbaro), `inspiracao_+1…+5` (bardo) e
+ * `marca_da_presa_+1d4` (caçador) têm o sinal antes do número — sem o `\+?`
+ * o bardo nv17 recebia Inspiração cinco vezes (achado do conferidor de PDFs).
  */
-const ESCALONAMENTO = /(?:_con_mais)?_\d+[a-z0-9+]*(?:_(?:circulo|melhorias?))?$/;
+const ESCALONAMENTO = /(?:_con_mais)?_\+?\d+[a-z0-9+]*(?:_(?:circulo|melhorias?))?$/;
 
 /** Strips the numeric upgrade suffix so `ataque_especial_8` groups with `ataque_especial`. */
 export function baseSlug(slug: string): string {

@@ -175,7 +175,7 @@ export function pendencias(state: EngineState): string[] {
 
   const classe = getClasse(classeRef);
   if (classe) {
-    const caminhos = classe.caminhos ?? [];
+    const caminhos = state.nivel >= (classe.caminho_nivel ?? 1) ? (classe.caminhos ?? []) : [];
     const caminhoEscolhido = (state.escolhasPorItem["classe_caminho"] as string) ?? "";
     if (caminhos.length > 0 && !caminhoEscolhido) {
       faltando.push("Escolha o caminho da classe.");

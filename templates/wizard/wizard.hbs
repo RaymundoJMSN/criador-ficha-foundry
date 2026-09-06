@@ -391,6 +391,9 @@
       <h2>{{stepTitle}}</h2>
       <input type="hidden" name="passo_poderes" value="1" />
 
+      {{#if semTabela}}
+      <p class="t20w-hint" style="color:#f90;">Esta classe existe no compêndio, mas nenhum livro disponível traz sua tabela de progressão — habilidades e poderes de classe terão de ser postos na ficha à mão.</p>
+      {{/if}}
       {{#if habilidades.length}}
       <div style="margin-bottom:16px;">
         <h3 style="font-size:0.95em;margin:0 0 6px 0;opacity:0.8;">Habilidades de Classe</h3>
@@ -427,6 +430,17 @@
               <div style="display:flex;align-items:center;gap:8px;">
                 <span style="font-size:0.9em;font-weight:600;">{{this.name}}</span>
                 {{#if this.tipo}}<small style="opacity:0.55;font-size:0.72em;">{{this.tipo}}</small>{{/if}}
+                {{#if this.repetivel}}
+                  {{#if this.selected}}
+                  <span style="margin-left:auto;display:flex;align-items:center;gap:4px;font-size:0.8em;">
+                    <button type="button" class="t20w-btn-sm" data-action="poderMenos" data-id="{{this.id}}" style="width:20px;height:20px;padding:0;line-height:1;cursor:pointer;">−</button>
+                    <strong>×{{this.vezes}}</strong>
+                    <button type="button" class="t20w-btn-sm" data-action="poderMais" data-id="{{this.id}}" style="width:20px;height:20px;padding:0;line-height:1;cursor:pointer;" {{#unless this.podeMais}}disabled{{/unless}}>+</button>
+                  </span>
+                  {{else}}
+                  <small style="opacity:0.55;font-size:0.72em;">(repetível)</small>
+                  {{/if}}
+                {{/if}}
               </div>
               {{#if this.descricao}}<div style="font-size:0.78em;opacity:0.75;margin-top:2px;">{{this.descricao}}</div>{{/if}}
               {{#unless this.eligible}}

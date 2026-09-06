@@ -46,7 +46,8 @@ export function prepareClasseContext(
   // Resolve T20-DB data for caminho sub-choice
   const classeSlug = toNomeSlug(state.classeNome ?? selectedClasse?.name ?? "");
   const classeData = classeSlug ? getClasse(classeSlug) : null;
-  const caminhoDefs = classeData?.caminhos ?? [];
+  // Caminho do cavaleiro chega no 5º nível: um cavaleiro nv1 não escolhe nada.
+  const caminhoDefs = state.nivel >= (classeData?.caminho_nivel ?? 1) ? (classeData?.caminhos ?? []) : [];
   const classeCaminho = (state.escolhasPorItem["classe_caminho"] as string | undefined) ?? null;
 
   const caminhos = caminhoDefs.map((c) => ({

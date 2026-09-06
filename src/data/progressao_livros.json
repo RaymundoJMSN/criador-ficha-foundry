@@ -1,0 +1,1882 @@
+{
+  "frade": {
+    "nome": "Frade",
+    "fonte": {
+      "livro": "Deuses de Arton",
+      "pagina": 42
+    },
+    "tabela": {
+      "1": {
+        "automaticos": [
+          "devoto_fiel",
+          "erudicao",
+          "magias"
+        ],
+        "escolhas": 0
+      },
+      "2": {
+        "automaticos": [
+          "versiculario"
+        ],
+        "escolhas": 1
+      },
+      "3": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "4": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "5": {
+        "automaticos": [
+          "dadiva_da_fe"
+        ],
+        "escolhas": 1
+      },
+      "6": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "7": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "8": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "9": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "10": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "11": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "12": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "13": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "14": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "15": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "16": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "17": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "18": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "19": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "20": {
+        "automaticos": [
+          "solo_santificado"
+        ],
+        "escolhas": 1
+      }
+    },
+    "circulos": {
+      "1": 1,
+      "5": 2,
+      "9": 3,
+      "13": 4,
+      "17": 5
+    },
+    "magias": {
+      "inicio": 3,
+      "por_nivel": 1,
+      "por_nivel_par": 0,
+      "por_nivel_impar": 0,
+      "tradicao": "divina",
+      "escolas": 0
+    }
+  },
+  "treinador": {
+    "nome": "Treinador",
+    "fonte": {
+      "livro": "Heróis de Arton",
+      "pagina": 20
+    },
+    "tabela": {
+      "1": {
+        "automaticos": [
+          "direcionar",
+          "melhor_amigo"
+        ],
+        "escolhas": 0
+      },
+      "2": {
+        "automaticos": [
+          "domar_criatura"
+        ],
+        "escolhas": 1
+      },
+      "3": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "4": {
+        "automaticos": [
+          "melhor_amigo"
+        ],
+        "escolhas": 1
+      },
+      "5": {
+        "automaticos": [
+          "domar_criatura",
+          "treino_especializado"
+        ],
+        "escolhas": 1
+      },
+      "6": {
+        "automaticos": [
+          "domar_criatura",
+          "sincronia_de_combate"
+        ],
+        "escolhas": 1
+      },
+      "7": {
+        "automaticos": [
+          "melhor_amigo"
+        ],
+        "escolhas": 1
+      },
+      "8": {
+        "automaticos": [
+          "domar_criatura"
+        ],
+        "escolhas": 1
+      },
+      "9": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "10": {
+        "automaticos": [
+          "domar_criatura",
+          "melhor_amigo"
+        ],
+        "escolhas": 1
+      },
+      "11": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "12": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "13": {
+        "automaticos": [
+          "melhor_amigo"
+        ],
+        "escolhas": 1
+      },
+      "14": {
+        "automaticos": [
+          "domar_criatura"
+        ],
+        "escolhas": 1
+      },
+      "15": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "16": {
+        "automaticos": [
+          "melhor_amigo"
+        ],
+        "escolhas": 1
+      },
+      "17": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "18": {
+        "automaticos": [
+          "domar_criatura"
+        ],
+        "escolhas": 1
+      },
+      "19": {
+        "automaticos": [
+          "melhor_amigo"
+        ],
+        "escolhas": 1
+      },
+      "20": {
+        "automaticos": [
+          "sincronia_perfeita"
+        ],
+        "escolhas": 1
+      }
+    },
+    "circulos": {},
+    "magias": null
+  },
+  "alquimista": {
+    "nome": "Alquimista",
+    "fonte": {
+      "livro": "Heróis de Arton",
+      "pagina": 25
+    },
+    "tabela": {
+      "1": {
+        "automaticos": [
+          "engenhosidade",
+          "laboratorio_pessoal"
+        ],
+        "escolhas": 0
+      },
+      "2": {
+        "automaticos": [
+          "alquimista_iniciado"
+        ],
+        "escolhas": 1
+      },
+      "3": {
+        "automaticos": [
+          "mistura_basica"
+        ],
+        "escolhas": 1
+      },
+      "4": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "5": {
+        "automaticos": [
+          "aplicacao_rapida"
+        ],
+        "escolhas": 1
+      },
+      "6": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "7": {
+        "automaticos": [
+          "magia_engarrafada"
+        ],
+        "escolhas": 1
+      },
+      "8": {
+        "automaticos": [
+          "odores_alquimicos"
+        ],
+        "escolhas": 1
+      },
+      "9": {
+        "automaticos": [
+          "fabricar_emulsao"
+        ],
+        "escolhas": 1
+      },
+      "10": {
+        "automaticos": [
+          "mestre_alquimista"
+        ],
+        "escolhas": 1
+      },
+      "11": {
+        "automaticos": [
+          "bombardeio_eficiente"
+        ],
+        "escolhas": 1
+      },
+      "12": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "13": {
+        "automaticos": [
+          "fabricar_emulsao"
+        ],
+        "escolhas": 1
+      },
+      "14": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "15": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "16": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "17": {
+        "automaticos": [
+          "fabricar_emulsao"
+        ],
+        "escolhas": 1
+      },
+      "18": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "19": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "20": {
+        "automaticos": [
+          "pedra_filosofal",
+          "estao_chegando",
+          "afinal_afinal"
+        ],
+        "escolhas": 1
+      }
+    },
+    "circulos": {},
+    "magias": null
+  },
+  "atleta": {
+    "nome": "Atleta",
+    "fonte": {
+      "livro": "Heróis de Arton",
+      "pagina": 27
+    },
+    "tabela": {
+      "1": {
+        "automaticos": [
+          "briga",
+          "facanha_atletica"
+        ],
+        "escolhas": 0
+      },
+      "2": {
+        "automaticos": [
+          "arremesso_atletico",
+          "poderio_muscular"
+        ],
+        "escolhas": 1
+      },
+      "3": {
+        "automaticos": [
+          "casca_grossa"
+        ],
+        "escolhas": 1
+      },
+      "4": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "5": {
+        "automaticos": [
+          "briga",
+          "mais_alto_e_mais_rapido"
+        ],
+        "escolhas": 1
+      },
+      "6": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "7": {
+        "automaticos": [
+          "casca_grossa"
+        ],
+        "escolhas": 1
+      },
+      "8": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "9": {
+        "automaticos": [
+          "briga",
+          "disciplina_atletica"
+        ],
+        "escolhas": 1
+      },
+      "10": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "11": {
+        "automaticos": [
+          "casca_grossa"
+        ],
+        "escolhas": 1
+      },
+      "12": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "13": {
+        "automaticos": [
+          "briga"
+        ],
+        "escolhas": 1
+      },
+      "14": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "15": {
+        "automaticos": [
+          "casca_grossa"
+        ],
+        "escolhas": 1
+      },
+      "16": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "17": {
+        "automaticos": [
+          "briga"
+        ],
+        "escolhas": 1
+      },
+      "18": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "19": {
+        "automaticos": [
+          "casca_grossa"
+        ],
+        "escolhas": 1
+      },
+      "20": {
+        "automaticos": [
+          "corpo_ideal",
+          "mas_voce_soma_seu_nivel_de_atleta_no_total_de_rodadas_para_prender_sua_respiracao_veja_tormenta20",
+          "p"
+        ],
+        "escolhas": 1
+      }
+    },
+    "circulos": {},
+    "magias": null
+  },
+  "burgues": {
+    "nome": "Burguês",
+    "fonte": {
+      "livro": "Heróis de Arton",
+      "pagina": 28
+    },
+    "tabela": {
+      "1": {
+        "automaticos": [
+          "meios_de_producao",
+          "orgulho",
+          "poder_monetario"
+        ],
+        "escolhas": 0
+      },
+      "2": {
+        "automaticos": [
+          "desmoralizar_1"
+        ],
+        "escolhas": 1
+      },
+      "3": {
+        "automaticos": [
+          "negociante_nato"
+        ],
+        "escolhas": 1
+      },
+      "4": {
+        "automaticos": [
+          "suborno"
+        ],
+        "escolhas": 1
+      },
+      "5": {
+        "automaticos": [
+          "ostentacao"
+        ],
+        "escolhas": 1
+      },
+      "6": {
+        "automaticos": [
+          "desmoralizar_2"
+        ],
+        "escolhas": 1
+      },
+      "7": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "8": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "9": {
+        "automaticos": [
+          "novo_rico"
+        ],
+        "escolhas": 1
+      },
+      "10": {
+        "automaticos": [
+          "desmoralizar_3"
+        ],
+        "escolhas": 1
+      },
+      "11": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "12": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "13": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "14": {
+        "automaticos": [
+          "desmoralizar_4"
+        ],
+        "escolhas": 1
+      },
+      "15": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "16": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "17": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "18": {
+        "automaticos": [
+          "desmoralizar_5"
+        ],
+        "escolhas": 1
+      },
+      "19": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "20": {
+        "automaticos": [
+          "magnata_james",
+          "o_aventureiro_james",
+          "o_aventureiro_esta_sem_mana_e_nao_esta_sem_mana_e_nao_temos_essencias_temos_essencias"
+        ],
+        "escolhas": 0
+      }
+    },
+    "circulos": {},
+    "magias": null
+  },
+  "duelista": {
+    "nome": "Duelista",
+    "fonte": {
+      "livro": "Heróis de Arton",
+      "pagina": 29
+    },
+    "tabela": {
+      "1": {
+        "automaticos": [
+          "duelo",
+          "insolencia"
+        ],
+        "escolhas": 0
+      },
+      "2": {
+        "automaticos": [
+          "escola_de_duelo"
+        ],
+        "escolhas": 1
+      },
+      "3": {
+        "automaticos": [
+          "esquiva_sagaz"
+        ],
+        "escolhas": 1
+      },
+      "4": {
+        "automaticos": [
+          "truques_de_capa"
+        ],
+        "escolhas": 1
+      },
+      "5": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "6": {
+        "automaticos": [
+          "duelo"
+        ],
+        "escolhas": 1
+      },
+      "7": {
+        "automaticos": [
+          "esquiva_sagaz"
+        ],
+        "escolhas": 1
+      },
+      "8": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "9": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "10": {
+        "automaticos": [
+          "tecnica_avancada"
+        ],
+        "escolhas": 1
+      },
+      "11": {
+        "automaticos": [
+          "duelo",
+          "esquiva_sagaz"
+        ],
+        "escolhas": 1
+      },
+      "12": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "13": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "14": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "15": {
+        "automaticos": [
+          "esquiva_sagaz"
+        ],
+        "escolhas": 1
+      },
+      "16": {
+        "automaticos": [
+          "duelo"
+        ],
+        "escolhas": 1
+      },
+      "17": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "18": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "19": {
+        "automaticos": [
+          "esquiva_sagaz"
+        ],
+        "escolhas": 1
+      },
+      "20": {
+        "automaticos": [
+          "duelista_lendario"
+        ],
+        "escolhas": 1
+      }
+    },
+    "circulos": {},
+    "magias": null
+  },
+  "ermitao": {
+    "nome": "Ermitão",
+    "fonte": {
+      "livro": "Heróis de Arton",
+      "pagina": 31
+    },
+    "tabela": {
+      "1": {
+        "automaticos": [
+          "devoto_fiel",
+          "empatia_selvagem",
+          "magias"
+        ],
+        "escolhas": 0
+      },
+      "2": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "3": {
+        "automaticos": [
+          "sitio_sagrado"
+        ],
+        "escolhas": 1
+      },
+      "4": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "5": {
+        "automaticos": [
+          "vinculo_com_a_terra"
+        ],
+        "escolhas": 1
+      },
+      "6": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "7": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "8": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "9": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "10": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "11": {
+        "automaticos": [
+          "temperado_pelo_clima"
+        ],
+        "escolhas": 1
+      },
+      "12": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "13": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "14": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "15": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "16": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "17": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "18": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "19": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "20": {
+        "automaticos": [
+          "eixo_de_pedras"
+        ],
+        "escolhas": 1
+      }
+    },
+    "circulos": {
+      "1": 1,
+      "6": 2,
+      "10": 3,
+      "14": 4
+    },
+    "magias": null
+  },
+  "inovador": {
+    "nome": "Inovador",
+    "fonte": {
+      "livro": "Heróis de Arton",
+      "pagina": 33
+    },
+    "tabela": {
+      "1": {
+        "automaticos": [
+          "do_bom_e_do_melhor",
+          "sequencia_especial"
+        ],
+        "escolhas": 0
+      },
+      "2": {
+        "automaticos": [
+          "bombardeio_sequencial"
+        ],
+        "escolhas": 1
+      },
+      "3": {
+        "automaticos": [
+          "acrobacia_defensiva"
+        ],
+        "escolhas": 1
+      },
+      "4": {
+        "automaticos": [
+          "dominio_excentrico"
+        ],
+        "escolhas": 1
+      },
+      "5": {
+        "automaticos": [
+          "sequencia_especial"
+        ],
+        "escolhas": 1
+      },
+      "6": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "7": {
+        "automaticos": [
+          "tecnica_excentrica"
+        ],
+        "escolhas": 1
+      },
+      "8": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "9": {
+        "automaticos": [
+          "sequencia_especial"
+        ],
+        "escolhas": 1
+      },
+      "10": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "11": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "12": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "13": {
+        "automaticos": [
+          "sequencia_especial"
+        ],
+        "escolhas": 1
+      },
+      "14": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "15": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "16": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "17": {
+        "automaticos": [
+          "sequencia_especial"
+        ],
+        "escolhas": 1
+      },
+      "18": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "19": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "20": {
+        "automaticos": [
+          "estilo_unico"
+        ],
+        "escolhas": 1
+      }
+    },
+    "circulos": {},
+    "magias": null
+  },
+  "machado_de_pedra": {
+    "nome": "Machado de Pedra",
+    "fonte": {
+      "livro": "Heróis de Arton",
+      "pagina": 34
+    },
+    "tabela": {
+      "1": {
+        "automaticos": [
+          "furia",
+          "grunhidos",
+          "machado_de_pedra",
+          "tanga_de_peles"
+        ],
+        "escolhas": 0
+      },
+      "2": {
+        "automaticos": [
+          "furia_primitiva"
+        ],
+        "escolhas": 1
+      },
+      "3": {
+        "automaticos": [
+          "instinto_selvagem",
+          "tanga_de_peles"
+        ],
+        "escolhas": 1
+      },
+      "4": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "5": {
+        "automaticos": [
+          "resiliencia_primal_3"
+        ],
+        "escolhas": 1
+      },
+      "6": {
+        "automaticos": [
+          "furia"
+        ],
+        "escolhas": 1
+      },
+      "7": {
+        "automaticos": [
+          "tanga_de_peles"
+        ],
+        "escolhas": 1
+      },
+      "8": {
+        "automaticos": [
+          "resiliencia_primal_6"
+        ],
+        "escolhas": 1
+      },
+      "9": {
+        "automaticos": [
+          "instinto_selvagem"
+        ],
+        "escolhas": 1
+      },
+      "10": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "11": {
+        "automaticos": [
+          "furia",
+          "resiliencia_primal_9",
+          "tanga_de_peles"
+        ],
+        "escolhas": 1
+      },
+      "12": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "13": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "14": {
+        "automaticos": [
+          "resiliencia_primal_12"
+        ],
+        "escolhas": 1
+      },
+      "15": {
+        "automaticos": [
+          "instinto_selvagem",
+          "tanga_de_peles"
+        ],
+        "escolhas": 1
+      },
+      "16": {
+        "automaticos": [
+          "furia"
+        ],
+        "escolhas": 1
+      },
+      "17": {
+        "automaticos": [
+          "resiliencia_primal_15"
+        ],
+        "escolhas": 1
+      },
+      "18": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "19": {
+        "automaticos": [
+          "tanga_de_peles"
+        ],
+        "escolhas": 1
+      },
+      "20": {
+        "automaticos": [
+          "furia_rustica"
+        ],
+        "escolhas": 1
+      }
+    },
+    "circulos": {},
+    "magias": null
+  },
+  "magimarcialista": {
+    "nome": "Magimarcialista",
+    "fonte": {
+      "livro": "Heróis de Arton",
+      "pagina": 35
+    },
+    "tabela": {
+      "1": {
+        "automaticos": [
+          "cadencia_magimarcial",
+          "magificacao",
+          "magias"
+        ],
+        "escolhas": 0
+      },
+      "2": {
+        "automaticos": [
+          "bravado_magimarcial"
+        ],
+        "escolhas": 1
+      },
+      "3": {
+        "automaticos": [
+          "danca_defensiva"
+        ],
+        "escolhas": 1
+      },
+      "4": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "5": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "6": {
+        "automaticos": [
+          "magias",
+          "magificacao"
+        ],
+        "escolhas": 1
+      },
+      "7": {
+        "automaticos": [
+          "arte_sublime"
+        ],
+        "escolhas": 1
+      },
+      "8": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "9": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "10": {
+        "automaticos": [
+          "magias"
+        ],
+        "escolhas": 1
+      },
+      "11": {
+        "automaticos": [
+          "magificacao"
+        ],
+        "escolhas": 1
+      },
+      "12": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "13": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "14": {
+        "automaticos": [
+          "magias"
+        ],
+        "escolhas": 1
+      },
+      "15": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "16": {
+        "automaticos": [
+          "magificacao"
+        ],
+        "escolhas": 1
+      },
+      "17": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "18": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "19": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "20": {
+        "automaticos": [
+          "crescendo_vitorioso"
+        ],
+        "escolhas": 1
+      }
+    },
+    "circulos": {},
+    "magias": null
+  },
+  "necromante": {
+    "nome": "Necromante",
+    "fonte": {
+      "livro": "Heróis de Arton",
+      "pagina": 36
+    },
+    "tabela": {
+      "1": {
+        "automaticos": [
+          "caminho_do_necromante",
+          "falar_com_mortos",
+          "magias"
+        ],
+        "escolhas": 0
+      },
+      "2": {
+        "automaticos": [
+          "animar_cadaver"
+        ],
+        "escolhas": 1
+      },
+      "3": {
+        "automaticos": [
+          "necrologia"
+        ],
+        "escolhas": 1
+      },
+      "4": {
+        "automaticos": [
+          "distorcao_necrotica"
+        ],
+        "escolhas": 1
+      },
+      "5": {
+        "automaticos": [
+          "magias",
+          "necropotencia"
+        ],
+        "escolhas": 1
+      },
+      "6": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "7": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "8": {
+        "automaticos": [
+          "necrologia"
+        ],
+        "escolhas": 1
+      },
+      "9": {
+        "automaticos": [
+          "magias"
+        ],
+        "escolhas": 1
+      },
+      "10": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "11": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "12": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "13": {
+        "automaticos": [
+          "magias",
+          "necrologia"
+        ],
+        "escolhas": 1
+      },
+      "14": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "15": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "16": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "17": {
+        "automaticos": [
+          "magias"
+        ],
+        "escolhas": 1
+      },
+      "18": {
+        "automaticos": [
+          "necrologia"
+        ],
+        "escolhas": 1
+      },
+      "19": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "20": {
+        "automaticos": [
+          "dominio_sobre_a_morte"
+        ],
+        "escolhas": 1
+      }
+    },
+    "circulos": {},
+    "magias": null
+  },
+  "santo": {
+    "nome": "Santo",
+    "fonte": {
+      "livro": "Heróis de Arton",
+      "pagina": 39
+    },
+    "tabela": {
+      "1": {
+        "automaticos": [
+          "abencoado",
+          "codigo_do_heroi",
+          "ladainha_de_combate"
+        ],
+        "escolhas": 0
+      },
+      "2": {
+        "automaticos": [
+          "santo_curandeiro"
+        ],
+        "escolhas": 1
+      },
+      "3": {
+        "automaticos": [
+          "vaso_sagrado"
+        ],
+        "escolhas": 1
+      },
+      "4": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "5": {
+        "automaticos": [
+          "ladainha_de_combate"
+        ],
+        "escolhas": 1
+      },
+      "6": {
+        "automaticos": [
+          "martir"
+        ],
+        "escolhas": 1
+      },
+      "7": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "8": {
+        "automaticos": [
+          "pira_santa"
+        ],
+        "escolhas": 1
+      },
+      "9": {
+        "automaticos": [
+          "ladainha_de_combate"
+        ],
+        "escolhas": 1
+      },
+      "10": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "11": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "12": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "13": {
+        "automaticos": [
+          "ladainha_de_combate"
+        ],
+        "escolhas": 1
+      },
+      "14": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "15": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "16": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "17": {
+        "automaticos": [
+          "ladainha_de_combate"
+        ],
+        "escolhas": 1
+      },
+      "18": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "19": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "20": {
+        "automaticos": [
+          "vingador_santificado"
+        ],
+        "escolhas": 1
+      }
+    },
+    "circulos": {},
+    "magias": null
+  },
+  "seteiro": {
+    "nome": "Seteiro",
+    "fonte": {
+      "livro": "Heróis de Arton",
+      "pagina": 40
+    },
+    "tabela": {
+      "1": {
+        "automaticos": [
+          "caminho_do_atirador",
+          "marca_da_presa",
+          "tiro_de_supressao"
+        ],
+        "escolhas": 0
+      },
+      "2": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "3": {
+        "automaticos": [
+          "evasao"
+        ],
+        "escolhas": 1
+      },
+      "4": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "5": {
+        "automaticos": [
+          "disparo_constritor",
+          "marca_da_presa"
+        ],
+        "escolhas": 1
+      },
+      "6": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "7": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "8": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "9": {
+        "automaticos": [
+          "marca_da_presa"
+        ],
+        "escolhas": 1
+      },
+      "10": {
+        "automaticos": [
+          "rajada_de_flechas"
+        ],
+        "escolhas": 1
+      },
+      "11": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "12": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "13": {
+        "automaticos": [
+          "evasao_aprimorada",
+          "marca_da_presa"
+        ],
+        "escolhas": 1
+      },
+      "14": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "15": {
+        "automaticos": [
+          "sentinela"
+        ],
+        "escolhas": 1
+      },
+      "16": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "17": {
+        "automaticos": [
+          "marca_da_presa"
+        ],
+        "escolhas": 1
+      },
+      "18": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "19": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "20": {
+        "automaticos": [
+          "mestre_do_disparo"
+        ],
+        "escolhas": 1
+      }
+    },
+    "circulos": {},
+    "magias": null
+  },
+  "usurpador": {
+    "nome": "Usurpador",
+    "fonte": {
+      "livro": "Heróis de Arton",
+      "pagina": 42
+    },
+    "tabela": {
+      "1": {
+        "automaticos": [
+          "inimigo_dos_deuses",
+          "magias",
+          "usurpar"
+        ],
+        "escolhas": 0
+      },
+      "2": {
+        "automaticos": [
+          "canalizacao_falsa"
+        ],
+        "escolhas": 1
+      },
+      "3": {
+        "automaticos": [
+          "discricao_divina"
+        ],
+        "escolhas": 1
+      },
+      "4": {
+        "automaticos": [
+          "poder_capturado"
+        ],
+        "escolhas": 1
+      },
+      "5": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "6": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "7": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "8": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "9": {
+        "automaticos": [
+          "discricao_divina"
+        ],
+        "escolhas": 1
+      },
+      "10": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "11": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "12": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "13": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "14": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "15": {
+        "automaticos": [
+          "discricao_divina"
+        ],
+        "escolhas": 1
+      },
+      "16": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "17": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "18": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "19": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "20": {
+        "automaticos": [
+          "roubo_divino"
+        ],
+        "escolhas": 1
+      }
+    },
+    "circulos": {
+      "1": 1,
+      "5": 2,
+      "9": 3,
+      "13": 4,
+      "17": 5
+    },
+    "magias": null
+  },
+  "vassalo": {
+    "nome": "Vassalo",
+    "fonte": {
+      "livro": "Heróis de Arton",
+      "pagina": 44
+    },
+    "tabela": {
+      "1": {
+        "automaticos": [
+          "baluarte",
+          "codigo_de_honra",
+          "jovem_pajem",
+          "suserano"
+        ],
+        "escolhas": 0
+      },
+      "2": {
+        "automaticos": [
+          "valete"
+        ],
+        "escolhas": 0
+      },
+      "3": {
+        "automaticos": [
+          "escudeiro_aprendiz"
+        ],
+        "escolhas": 0
+      },
+      "4": {
+        "automaticos": [
+          "guarda_do_castelo"
+        ],
+        "escolhas": 0
+      },
+      "5": {
+        "automaticos": [
+          "baluarte",
+          "vigilante_das_estradas"
+        ],
+        "escolhas": 0
+      },
+      "6": {
+        "automaticos": [
+          "cavaleiro_do_reino"
+        ],
+        "escolhas": 0
+      },
+      "7": {
+        "automaticos": [
+          "sargento_do_reino"
+        ],
+        "escolhas": 0
+      },
+      "8": {
+        "automaticos": [
+          "capitao_do_reino"
+        ],
+        "escolhas": 0
+      },
+      "9": {
+        "automaticos": [
+          "baluarte",
+          "lorde"
+        ],
+        "escolhas": 0
+      },
+      "10": {
+        "automaticos": [
+          "barao"
+        ],
+        "escolhas": 0
+      },
+      "11": {
+        "automaticos": [
+          "visconde"
+        ],
+        "escolhas": 0
+      },
+      "12": {
+        "automaticos": [
+          "conde"
+        ],
+        "escolhas": 0
+      },
+      "13": {
+        "automaticos": [
+          "baluarte",
+          "marques"
+        ],
+        "escolhas": 0
+      },
+      "14": {
+        "automaticos": [
+          "duque"
+        ],
+        "escolhas": 0
+      },
+      "15": {
+        "automaticos": [
+          "arquiduque"
+        ],
+        "escolhas": 0
+      },
+      "16": {
+        "automaticos": [
+          "conselheiro_real"
+        ],
+        "escolhas": 0
+      },
+      "17": {
+        "automaticos": [
+          "baluarte",
+          "rei_mercenario"
+        ],
+        "escolhas": 0
+      },
+      "18": {
+        "automaticos": [
+          "rei"
+        ],
+        "escolhas": 0
+      },
+      "19": {
+        "automaticos": [
+          "alto_rei"
+        ],
+        "escolhas": 0
+      },
+      "20": {
+        "automaticos": [
+          "imperador"
+        ],
+        "escolhas": 0
+      }
+    },
+    "circulos": {},
+    "magias": null
+  },
+  "ventanista": {
+    "nome": "Ventanista",
+    "fonte": {
+      "livro": "Heróis de Arton",
+      "pagina": 47
+    },
+    "tabela": {
+      "1": {
+        "automaticos": [
+          "charme",
+          "truques_do_oficio"
+        ],
+        "escolhas": 0
+      },
+      "2": {
+        "automaticos": [
+          "evasao"
+        ],
+        "escolhas": 1
+      },
+      "3": {
+        "automaticos": [
+          "disfarce_elaborado"
+        ],
+        "escolhas": 1
+      },
+      "4": {
+        "automaticos": [
+          "esquiva_sobrenatural"
+        ],
+        "escolhas": 1
+      },
+      "5": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "6": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "7": {
+        "automaticos": [
+          "virar_a_casaca"
+        ],
+        "escolhas": 1
+      },
+      "8": {
+        "automaticos": [
+          "olhos_nas_costas"
+        ],
+        "escolhas": 1
+      },
+      "9": {
+        "automaticos": [
+          "disfarce_elaborado"
+        ],
+        "escolhas": 1
+      },
+      "10": {
+        "automaticos": [
+          "evasao_aprimorada"
+        ],
+        "escolhas": 1
+      },
+      "11": {
+        "automaticos": [
+          "provocacao_ousada"
+        ],
+        "escolhas": 1
+      },
+      "12": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "13": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "14": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "15": {
+        "automaticos": [
+          "disfarce_elaborado"
+        ],
+        "escolhas": 1
+      },
+      "16": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "17": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "18": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "19": {
+        "automaticos": [],
+        "escolhas": 1
+      },
+      "20": {
+        "automaticos": [
+          "o_grande_golpe"
+        ],
+        "escolhas": 1
+      }
+    },
+    "circulos": {},
+    "magias": null
+  }
+}

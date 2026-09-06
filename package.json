@@ -10,7 +10,8 @@
     "test": "vitest run",
     "port": "node scripts/port-t20db.mjs",
     "textos": "node scripts/gerar-textos.mjs",
-    "conferir": "node scripts/conferir-livros.mjs"
+    "conferir": "node scripts/conferir-livros.mjs",
+    "port:pdf": "node scripts/port-pdf-classes.mjs --conferir"
   },
   "devDependencies": {
     "@league-of-foundry-developers/foundry-vtt-types": "github:League-of-Foundry-Developers/foundry-vtt-types#b3a6b69cedb1d67e19b5b537baa46505900873f7",

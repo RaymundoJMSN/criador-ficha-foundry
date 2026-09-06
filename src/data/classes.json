@@ -170,7 +170,8 @@
         "atributoChave": "int",
         "sub": null
       }
-    ]
+    ],
+    "caminho_nivel": 1
   },
   "barbaro": {
     "nome": "Bárbaro",
@@ -260,7 +261,8 @@
       "totem_espiritual",
       "vigor_primal"
     ],
-    "caminhos": []
+    "caminhos": [],
+    "caminho_nivel": 1
   },
   "bardo": {
     "nome": "Bardo",
@@ -356,7 +358,8 @@
       "ressoar",
       "triunfo_do_amor"
     ],
-    "caminhos": []
+    "caminhos": [],
+    "caminho_nivel": 1
   },
   "bucaneiro": {
     "nome": "Bucaneiro",
@@ -459,7 +462,8 @@
       "remise",
       "sucesso_atrai_sucesso"
     ],
-    "caminhos": []
+    "caminhos": [],
+    "caminho_nivel": 1
   },
   "cacador": {
     "nome": "Caçador",
@@ -543,7 +547,8 @@
       "olho_do_falcao",
       "ponto_fraco"
     ],
-    "caminhos": []
+    "caminhos": [],
+    "caminho_nivel": 1
   },
   "cavaleiro": {
     "nome": "Cavaleiro",
@@ -631,7 +636,8 @@
         "atributoChave": null,
         "sub": null
       }
-    ]
+    ],
+    "caminho_nivel": 5
   },
   "clerigo": {
     "nome": "Clérigo",
@@ -718,7 +724,8 @@
       "solo_profanado",
       "solo_sagrado"
     ],
-    "caminhos": []
+    "caminhos": [],
+    "caminho_nivel": 1
   },
   "druida": {
     "nome": "Druida",
@@ -814,7 +821,8 @@
       "transformacao_repugnante",
       "xama_mistico"
     ],
-    "caminhos": []
+    "caminhos": [],
+    "caminho_nivel": 1
   },
   "guerreiro": {
     "nome": "Guerreiro",
@@ -912,7 +920,8 @@
       "velho_de_guerra",
       "xadrez_de_batalha"
     ],
-    "caminhos": []
+    "caminhos": [],
+    "caminho_nivel": 1
   },
   "inventor": {
     "nome": "Inventor",
@@ -995,7 +1004,8 @@
       "pedra_de_amolar",
       "sintese_rapida"
     ],
-    "caminhos": []
+    "caminhos": [],
+    "caminho_nivel": 1
   },
   "ladino": {
     "nome": "Ladino",
@@ -1093,7 +1103,8 @@
       "truque_do_chapeu",
       "vestido_para_a_ocasiao"
     ],
-    "caminhos": []
+    "caminhos": [],
+    "caminho_nivel": 1
   },
   "lutador": {
     "nome": "Lutador",
@@ -1186,7 +1197,8 @@
       "ruas_furiosas",
       "sequencia_defensiva"
     ],
-    "caminhos": []
+    "caminhos": [],
+    "caminho_nivel": 1
   },
   "nobre": {
     "nome": "Nobre",
@@ -1294,7 +1306,8 @@
       "voz_limpida",
       "voz_poderosa"
     ],
-    "caminhos": []
+    "caminhos": [],
+    "caminho_nivel": 1
   },
   "paladino": {
     "nome": "Paladino",
@@ -1372,6 +1385,7 @@
       "virtude_humildade",
       "virtude_temperanca"
     ],
-    "caminhos": []
+    "caminhos": [],
+    "caminho_nivel": 1
   }
 }
