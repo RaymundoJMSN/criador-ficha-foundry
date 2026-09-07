@@ -7,10 +7,13 @@ import { getClasse, respostaSubEscolha } from "../rules/classe.js";
 import { itensDeEscolhasRaciais, periciasDeEscolhasRaciais } from "../rules/raca.js";
 import { toPericiaCode } from "../rules/pericia-slug.js";
 import { habilidadesAte } from "../rules/progressao.js";
-import { resolverPoder } from "../compendium/resolver.js";
+import { resolverPoder, opcoesDaHabilidade, chaveHabilidade } from "../compendium/resolver.js";
 import { prepareEquipamentoContext } from "../wizard/steps/equipamento.js";
 import { getOrigem, validarBeneficios } from "../rules/origem.js";
 import { getDivindade } from "../rules/divindade.js";
+import { slugsDosPoderes } from "../rules/magias.js";
+import magiaPorPoderRaw from "../data/magia_por_poder.json";
+const magiaPorPoder = magiaPorPoderRaw as Record<string, string>;
 import { validateRaceModifiers, distribuirAbertos } from "../rules/subescolhas.js";
 import {
   beneficiosDeOrigemPermitidos,
@@ -185,11 +188,23 @@ export class ActorWriter {
 
     // Add race item separately — fires tormenta20 onCreate hooks → auto-grants race powers
     if (raceItemData) {
+      // Com a regra "Raças Abertas" DO SISTEMA ligada, _onCreateOwnedRace abre o
+      // diálogo de distribuição e espera o jogador — e o wizard já distribuiu.
+      // Mestre desliga só durante o embed; jogador sem permissão só é avisado.
+      // @ts-expect-error settings do sistema não tipados
+      const openRaces = Boolean(game.settings.get("tormenta20", "openRaces"));
+      const podeMexer = openRaces && Boolean(game.user?.isGM);
+      // @ts-expect-error settings do sistema não tipados
+      if (podeMexer) await game.settings.set("tormenta20", "openRaces", false);
+      else if (openRaces) ui.notifications?.warn("Raças Abertas do sistema está ligada: confirme o diálogo de atributos com os valores já escolhidos.");
       try {
         await actor.createEmbeddedDocuments("Item", [raceItemData]);
         console.log(`${MODULE_ID} | ActorWriter: race item added via createEmbeddedDocuments (hooks fired)`);
       } catch (err) {
         console.warn(`${MODULE_ID} | ActorWriter: failed to add race item separately:`, err);
+      } finally {
+        // @ts-expect-error settings do sistema não tipados
+        if (podeMexer) await game.settings.set("tormenta20", "openRaces", true);
       }
     }
 
@@ -226,7 +241,12 @@ export class ActorWriter {
       // "alcance curto"): um item por id, senão a ficha ganha a habilidade em dobro.
       const idsVistos = new Set<string>();
       for (const slug of habilidadeSlugs) {
-        const match = resolverPoder(slug, classeSlug, allPoderes, "ability")?.item;
+        // "Bênção da Justiça: Égide Sagrada / Montaria Sagrada": vai a opção escolhida.
+        const opcoes = opcoesDaHabilidade(slug, allPoderes);
+        const escolhido = state.escolhasPorItem[chaveHabilidade(slug)] as string | undefined;
+        const match = opcoes.length
+          ? opcoes.find((o) => o.id === escolhido)
+          : resolverPoder(slug, classeSlug, allPoderes, "ability")?.item;
         if (match) {
           if (idsVistos.has(match.id)) continue;
           idsVistos.add(match.id);
@@ -359,6 +379,34 @@ export class ActorWriter {
         } catch (err) {
           console.warn(`${MODULE_ID} | ActorWriter: failed to add divindade powers:`, err);
         }
+      }
+    }
+
+    // Poder que dá uma magia específica (Manto de Batalha → Vestimenta da Fé,
+    // Dedo Verde → Controlar Plantas): a magia vai junto, fora da cota.
+    const slugsComMagia = [
+      ...slugsDosPoderes(state.poderes),
+      ...((state.escolhasPorItem["divindade_poderes"] as string[] | undefined) ?? []),
+      ...(origem ? validarBeneficios(origem.id, (state.escolhasPorItem["origem_beneficios"] as string[]) ?? [], beneficiosDeOrigemPermitidos(state)).poderes : []),
+    ];
+    const magiasDePoder: unknown[] = [];
+    const jaTem = new Set(state.magias);
+    for (const slug of slugsComMagia) {
+      const magiaSlug = magiaPorPoder[slug];
+      if (!magiaSlug) continue;
+      const magia = CompendiumIndex.getAll("magia").find((m) => toNomeSlug(m.name) === magiaSlug);
+      if (!magia || jaTem.has(magia.id)) continue;
+      jaTem.add(magia.id);
+      const doc = await resolveItem(magia.id);
+      if (doc) magiasDePoder.push(doc);
+      else console.warn(`${MODULE_ID} | ActorWriter: magia "${magiaSlug}" do poder "${slug}" não resolveu`);
+    }
+    if (magiasDePoder.length > 0) {
+      try {
+        await actor.createEmbeddedDocuments("Item", magiasDePoder);
+        console.log(`${MODULE_ID} | ActorWriter: ${magiasDePoder.length} magia(s) de poder`);
+      } catch (err) {
+        console.warn(`${MODULE_ID} | ActorWriter: falha nas magias de poder:`, err);
       }
     }
 

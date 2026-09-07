@@ -138,10 +138,7 @@ cap. 4, com passo novo "Idade & Complicações". Ver `CLAUDE.md`.
 
 ## Pendente
 
-- Habilidade de classe com opção ("Dádiva da Fé: X / Y" do Frade): oferecer a
-  escolha quando o slug resolve para vários itens `Nome: Opção`.
 - Proficiências e perícias das classes fora do T20-DB (ler do PDF, como a tabela).
-- Raças Abertas (`openRaces`): o diálogo do sistema volta a abrir na criação.
-- Poder que ensina uma magia específica (Manto de Batalha, Flagelo dos Mares):
-  adicionar a magia, sem passar pela cota.
+- "Tipo: X" do Melhor Amigo (Treinador) e "Origem em Construção" com origem de
+  um benefício só.
 - i18n `en`.

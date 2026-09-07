@@ -4,7 +4,7 @@ import { describeUnmet, type PartialWizardState } from "../../rules/poderes.js";
 import { totaisRaciaisDoEstado } from "../../rules/subescolhas.js";
 import { poderesGeraisExtras, faixaDoPersonagem } from "../../rules/idade.js";
 import { habilidadesAte, slotsDePoder, getClasseProgressao } from "../../rules/progressao.js";
-import { resolverPoder } from "../../compendium/resolver.js";
+import { resolverPoder, opcoesDaHabilidade, chaveHabilidade } from "../../compendium/resolver.js";
 import type { IndexedMagia, IndexedPoder } from "../../compendium/types.js";
 import type { WizardState } from "../state.js";
 import { ESCOLAS } from "../../rules/magias.js";
@@ -44,8 +44,13 @@ export interface PoderEntry {
 
 export interface PoderesContext {
   stepTitle: string;
-  /** Auto-granted class ability slugs with display names */
-  habilidades: Array<{ slug: string; nome: string }>;
+  /** Auto-granted class ability slugs with display names; `opcoes` quando é "Nome: X". */
+  habilidades: Array<{
+    slug: string;
+    nome: string;
+    opcoes: Array<{ id: string; nome: string; selected: boolean }>;
+    pendente: boolean;
+  }>;
   /** How many free picks allowed at this level (0 = none) */
   poderesParaPick: number;
   /** Dos quais, quantos vêm de complicação/Já Vi Coisas e têm de ser gerais. */
@@ -80,13 +85,27 @@ export function preparePoderesContext(
   // Auto-granted class abilities up to this level (same source the writer uses)
   const habilidadeSlugs = habilidadesAte(state.classeNome || state.classeId, state.nivel);
   const habilidades = habilidadeSlugs
-    .map((slug) => ({
-      slug,
-      nome:
-        resolverPoder(slug, classeSlug, allPoderes, "ability")?.item.name ??
-        resolvePoderNome(slug) ??
-        prettifySlug(slug),
-    }))
+    .map((slug) => {
+      const opcoes = opcoesDaHabilidade(slug, allPoderes);
+      if (opcoes.length > 0) {
+        const escolhido = state.escolhasPorItem[chaveHabilidade(slug)] as string | undefined;
+        return {
+          slug,
+          nome: opcoes[0]!.name.split(":")[0]!.trim(),
+          opcoes: opcoes.map((o) => ({ id: o.id, nome: o.name.split(":").slice(1).join(":").trim(), selected: o.id === escolhido })),
+          pendente: !opcoes.some((o) => o.id === escolhido),
+        };
+      }
+      return {
+        slug,
+        nome:
+          resolverPoder(slug, classeSlug, allPoderes, "ability")?.item.name ??
+          resolvePoderNome(slug) ??
+          prettifySlug(slug),
+        opcoes: [] as Array<{ id: string; nome: string; selected: boolean }>,
+        pendente: false,
+      };
+    })
     .filter((h, i, arr) => arr.findIndex((o) => o.nome === h.nome) === i);
   // Samurai, Místico, Miragem: existem no compêndio mas nenhum livro dos PDFs
   // traz a tabela de progressão — sem ela não há como saber habilidades e cota.
@@ -237,4 +256,16 @@ export function preparePoderesContext(
     selectedCount: state.poderes.length,
     errors,
   };
+}
+
+/** Habilidades "Nome: X" ainda sem opção escolhida — vai para as pendências da Revisão. */
+export function pendenciasDeHabilidades(state: WizardState, allPoderes: IndexedPoder[]): string[] {
+  const out: string[] = [];
+  for (const slug of habilidadesAte(state.classeNome || state.classeId, state.nivel)) {
+    const opcoes = opcoesDaHabilidade(slug, allPoderes);
+    if (opcoes.length === 0) continue;
+    const escolhido = state.escolhasPorItem[chaveHabilidade(slug)] as string | undefined;
+    if (!opcoes.some((o) => o.id === escolhido)) out.push(`Escolha a opção de ${opcoes[0]!.name.split(":")[0]!.trim()}.`);
+  }
+  return out;
 }

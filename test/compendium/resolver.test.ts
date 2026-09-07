@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { resolverPoder } from "../../src/compendium/resolver.js";
+import { opcoesDaHabilidade, chaveHabilidade, resolverPoder } from "../../src/compendium/resolver.js";
 
 /** Nomes reais do pack `tormenta20.poderes` (v1.5.015). */
 const PACK = [
@@ -112,5 +112,18 @@ describe("resolverPoder — tipo esperado desempata entre módulos", () => {
     expect(resolverPoder("magias_1_circulo", "arcanista", COM_COLISAO, "origem")?.item.name).toBe(
       "Magias"
     );
+  });
+});
+
+describe("opcoesDaHabilidade — habilidade que é várias opções 'Nome: X'", () => {
+  const ab = (name: string) => ({ name, system: { tipo: "ability" } });
+  it("Bênção da Justiça tem duas opções; habilidade simples não tem", () => {
+    const itens = [ab("Bênção da Justiça: Égide Sagrada"), ab("Bênção da Justiça: Montaria Sagrada"), ab("Durão"), { name: "Bênção da Justiça: Falsa", system: { tipo: "classe" } }];
+    expect(opcoesDaHabilidade("bencao_da_justica", itens).map((i) => i.name)).toEqual([
+      "Bênção da Justiça: Égide Sagrada",
+      "Bênção da Justiça: Montaria Sagrada",
+    ]);
+    expect(opcoesDaHabilidade("durao", itens)).toEqual([]);
+    expect(chaveHabilidade("Dádiva da Fé")).toBe("habilidade_dadiva_da_fe");
   });
 });

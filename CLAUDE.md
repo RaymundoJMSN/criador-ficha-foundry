@@ -85,11 +85,18 @@ PM, perícias, PV/PM por nível) vai como Active Effect nos itens criados
 Validado no Foundry: anão guerreiro ancião com Raças Abertas, Caolho, Já Vi
 Coisas e 5 complicações de idade → nível 4, PV 25, PM 8, atributos certos.
 
-**Ainda não cobre:** habilidade de classe com opção (Frade "Dádiva da Fé: Cólera
-Divina / Proteção Sagrada" — o item não resolve, o writer avisa); Raças Abertas
-(setting `openRaces` do sistema reabre o diálogo); proficiências/perícias das
-classes só do compêndio (Samurai sai com "escolha 2 entre todas"); poder que dá
-uma magia específica (Manto de Batalha) fora da cota.
+Fechados depois: **habilidade de classe com opção** ("Bênção da Justiça: Égide
+/ Montaria", "Dádiva da Fé", "Escola de Duelo", "Lorde" — `opcoesDaHabilidade`
+no resolver; o passo Poderes mostra um select e a Revisão trava sem escolha);
+**poder que dá uma magia específica** (`magia_por_poder.json` do port: Dedo
+Verde → Controlar Plantas, Manto de Batalha → Vestimenta da Fé…, a magia entra
+fora da cota); **`openRaces` do sistema** ligado — o writer desliga durante o
+embed da raça se for mestre, senão avisa; **criança** não precisa de origem.
+
+**Ainda não cobre:** proficiências/perícias das classes só do compêndio (Samurai
+sai com "escolha 2 entre todas"); "Origem em Construção" com origem de um
+benefício só (perícia a menos da classe); "Tipo: X" do Melhor Amigo do Treinador
+(o prefixo não é o nome da habilidade).
 
 ### O que mudou em 2026-08-31 (spec `2026-08-31-nivel-1-20-design.md`)
 

@@ -161,6 +161,20 @@ function walkDir(dir) {
     if (d.escolhivel_multiplas_vezes || d.repetivel) repetiveis.push(d.id);
   }
   writeJson(join(OUT, "poderes_repetiveis.json"), repetiveis.sort());
+
+  // 5e. magia_por_poder.json — poder que dá UMA magia específica (Manto de
+  // Batalha → Vestimenta da Fé, Dedo Verde → Controlar Plantas…). O writer
+  // adiciona a magia à ficha; ela não entra na cota de magias conhecidas.
+  const magiaPorPoder = {};
+  for (const f of walkDir(join(T20DB, "poderes"))) {
+    const d = readJson(f);
+    for (const ef of d.efeitos ?? []) {
+      if (ef.tipo !== "aprender_magia" && ef.tipo !== "lancar_magia") continue;
+      const magia = ef.magia ?? (typeof ef.valor === "object" ? ef.valor?.magia_id : undefined);
+      if (typeof magia === "string" && magia) magiaPorPoder[d.id] = magia;
+    }
+  }
+  writeJson(join(OUT, "magia_por_poder.json"), magiaPorPoder);
 }
 
 // 8. racas.json — all raças consolidated

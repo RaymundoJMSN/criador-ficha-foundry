@@ -144,3 +144,26 @@ function escada<T extends Nomeavel>(
 
   return null;
 }
+
+/**
+ * Habilidade de classe que no compêndio é várias opções "Nome: X" (Bênção da
+ * Justiça: Égide Sagrada / Montaria Sagrada; Dádiva da Fé: Cólera Divina /
+ * Proteção Sagrada; Escola de Duelo: …). O T20-DB e a tabela do livro trazem um
+ * slug só — sem isto a escada pegava a primeira opção em silêncio.
+ */
+export function opcoesDaHabilidade<T extends Nomeavel>(
+  slug: string,
+  itens: T[]
+): T[] {
+  const alvo = toNomeSlug(slug);
+  if (!alvo) return [];
+  const grupo = itens.filter((i) => {
+    if (i.system?.tipo !== "ability") return false;
+    const dois = i.name.indexOf(":");
+    return dois > 0 && toNomeSlug(i.name.slice(0, dois)) === alvo;
+  });
+  return grupo.length > 1 ? grupo.sort((a, b) => a.name.localeCompare(b.name)) : [];
+}
+
+/** Chave em `escolhasPorItem` para a opção escolhida de uma habilidade. */
+export const chaveHabilidade = (slug: string): string => `habilidade_${toNomeSlug(slug)}`;

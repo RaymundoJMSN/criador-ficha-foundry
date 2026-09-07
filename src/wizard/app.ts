@@ -74,7 +74,8 @@ function aplicarConfig(state: WizardState): void {
   state.apply(patch as Parameters<WizardState["apply"]>[0]);
 }
 import { prepareDivindadeContext } from "./steps/divindade.js";
-import { preparePoderesContext } from "./steps/poderes.js";
+import { preparePoderesContext, pendenciasDeHabilidades } from "./steps/poderes.js";
+import { chaveHabilidade } from "../compendium/resolver.js";
 import { prepareMagiasContext } from "./steps/magias.js";
 import { prepareEquipamentoContext } from "./steps/equipamento.js";
 import { prepareRevisaoContext } from "./steps/revisao.js";
@@ -435,7 +436,7 @@ export function defineWizardApp(): void {
           const racaItem = CompendiumIndex.getAll("race").find((r) => r.id === state.racaId);
           const classeItem = CompendiumIndex.getAll("classe").find((c) => c.id === state.classeId);
           const equipRev = prepareEquipamentoContext(state, CompendiumIndex.equipamentos());
-          stepCtx = prepareRevisaoContext(
+          const rev = prepareRevisaoContext(
             state,
             racaItem?.name ?? state.racaId,
             classeItem?.name ?? state.classeId,
@@ -443,6 +444,8 @@ export function defineWizardApp(): void {
             equipRev.dinheiroRestante,
             (id) => CompendiumIndex.getById("poder", id)?.name
           );
+          const habPend = pendenciasDeHabilidades(state, CompendiumIndex.getAll("poder") as IndexedPoder[]);
+          stepCtx = { ...rev, pendencias: [...rev.pendencias, ...habPend], isComplete: rev.isComplete && habPend.length === 0 };
           break;
         }
       }
@@ -803,6 +806,17 @@ export function defineWizardApp(): void {
         salvarEscolha("complicacao", (e.target as HTMLSelectElement).value);
       });
 
+      // ── Habilidade de classe com opção (Bênção da Justiça: X) ─────────────
+      root.querySelectorAll<HTMLSelectElement>("select.t20w-habilidade").forEach((sel) => {
+        sel.addEventListener("change", () => {
+          this._state.apply({
+            escolhasPorItem: { ...this._state.escolhasPorItem, [chaveHabilidade(sel.dataset["slug"]!)]: sel.value },
+          });
+          this._errors = [];
+          void this.render();
+        });
+      });
+
       // ── Raças Abertas: cada modificador fixo vai para um atributo ─────────
       root.querySelectorAll<HTMLSelectElement>("select.t20w-raca-aberta").forEach((sel) => {
         sel.addEventListener("change", () => {
@@ -983,7 +997,10 @@ export function defineWizardApp(): void {
         const s = target.dataset["step"] as WizardStep;
         if (s) this.goToStep(s);
       } else if (action === "create") {
-        const faltando = pendencias(this._state as unknown as EngineState);
+        const faltando = [
+          ...pendencias(this._state as unknown as EngineState),
+          ...pendenciasDeHabilidades(this._state, CompendiumIndex.getAll("poder") as IndexedPoder[]),
+        ];
         if (faltando.length > 0) {
           this._errors = faltando;
           this.render();

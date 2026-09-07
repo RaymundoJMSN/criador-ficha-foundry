@@ -92,7 +92,8 @@ export function validate(step: WizardStep, state: EngineState): ValidationResult
 
     case WizardStep.Origem: {
       if (!state.origemId) {
-        errors.push("Origem é obrigatória.");
+        // Criança (HA p.288, "Sem Origem") não tem benefício de origem: escolher é só cor.
+        if (beneficiosDeOrigemPermitidos(state) > 0) errors.push("Origem é obrigatória.");
         break;
       }
       const escolhidos = (state.escolhasPorItem["origem_beneficios"] as string[]) ?? [];
@@ -157,7 +158,7 @@ export function pendencias(state: EngineState): string[] {
 
   if (!state.nome.trim()) faltando.push("Dê um nome ao personagem.");
   if (!state.racaId) faltando.push("Escolha uma raça.");
-  if (!state.origemId) faltando.push("Escolha uma origem.");
+  if (!state.origemId && beneficiosDeOrigemPermitidos(state) > 0) faltando.push("Escolha uma origem.");
   if (!state.classeId) faltando.push("Escolha uma classe.");
 
   const classeRef = state.classeNome || state.classeId;
