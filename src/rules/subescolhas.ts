@@ -50,11 +50,14 @@ export function validateRaceModifiers(
   }
 
   groups.forEach((def, i) => {
-    const qtd = def.quantidade ?? 1;
-    const valor = def.valor ?? 1;
+    const escolhidos = choices[i] ?? [];
+    // "+2 em um OU +1 em dois": o número de atributos marcados diz o modo.
+    const alt = def.alternativa;
+    const noAlternativo = Boolean(alt) && escolhidos.length === alt!.quantidade && alt!.quantidade !== (def.quantidade ?? 1);
+    const qtd = noAlternativo ? alt!.quantidade : (def.quantidade ?? 1);
+    const valor = noAlternativo ? alt!.valor : (def.valor ?? 1);
     const disponiveis = (def.atributos_disponiveis ?? [...ATRS]) as string[];
     const diferentes = Boolean(def.atributos_diferentes);
-    const escolhidos = choices[i] ?? [];
 
     if (escolhidos.length !== qtd) {
       errors.push(`grupo ${i}: esperado ${qtd} atributo(s), recebido ${escolhidos.length}`);

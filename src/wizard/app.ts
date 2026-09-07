@@ -750,6 +750,17 @@ export function defineWizardApp(): void {
       });
 
       // ── Atributos escolhíveis da raça: re-render tira o já usado das outras ──
+      root.querySelectorAll<HTMLInputElement>("input[name^='raca_mod_modo-']").forEach((r) => {
+        r.addEventListener("change", () => {
+          const gi = Number(r.name.replace("raca_mod_modo-", ""));
+          const atuais = ((this._state.escolhasPorItem["raca_modificadores"] as string[][]) ?? []).map((g) => [...g]);
+          atuais[gi] = [];
+          this._state.apply({
+            escolhasPorItem: { ...this._state.escolhasPorItem, [r.name]: r.value, raca_modificadores: atuais },
+          });
+          void this.render();
+        });
+      });
       root.querySelectorAll<HTMLSelectElement>("select[name^='raca_mod-']").forEach((sel) => {
         sel.addEventListener("change", () => {
           this.applyFormData(this._gatherFormData());

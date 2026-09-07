@@ -58,6 +58,8 @@ export interface ModSlot {
 }
 
 export interface ModGroup {
+  /** Modos alternativos ("+2 em um" / "+1 em dois"); vazio quando não há. */
+  modos: Array<{ id: string; label: string; selected: boolean }>;
   groupIndex: number;
   valor: number;
   quantidade: number;
@@ -169,10 +171,12 @@ function formatAtributos(raca: RacaData): string {
  * - `atributos_disponiveis`: Osteon não pode Constituição, Lefou não pode
  *   Carisma. Antes os seis apareciam sempre, sem dizer nada.
  */
-function buildModGroups(racaRef: string, choices: string[][]): ModGroup[] {
+function buildModGroups(racaRef: string, choices: string[][], escolhas: Record<string, unknown> = {}): ModGroup[] {
   return getRaceModifierGroups(racaRef).map((def, gi) => {
-    const qtd = def.quantidade ?? 1;
-    const escolhidos = choices[gi] ?? [];
+    // Kallyanach: "+2 em um atributo ou +1 em dois" — radio escolhe o modo.
+    const modoAlt = Boolean(def.alternativa) && escolhas[`raca_mod_modo-${gi}`] === "alt";
+    const qtd = modoAlt ? def.alternativa!.quantidade : (def.quantidade ?? 1);
+    const escolhidos = (choices[gi] ?? []).slice(0, qtd);
     const diferentes = Boolean(def.atributos_diferentes);
     const disponiveis = def.atributos_disponiveis ?? null;
 
@@ -193,9 +197,9 @@ function buildModGroups(racaRef: string, choices: string[][]): ModGroup[] {
       });
     }
 
-    const valor = def.valor ?? 1;
+    const valor = modoAlt ? def.alternativa!.valor : (def.valor ?? 1);
     let titulo = `${valor > 0 ? "+" : ""}${valor} em ${qtd} atributo${qtd > 1 ? "s" : ""}`;
-    if (diferentes) titulo += " diferentes";
+    if (diferentes && qtd > 1) titulo += " diferentes";
     if (proibidos.length > 0) {
       titulo += ` — não pode ${listar(proibidos.map((p) => p.label))}`;
     }
@@ -208,6 +212,12 @@ function buildModGroups(racaRef: string, choices: string[][]): ModGroup[] {
       titulo,
       observacao: def.observacao ?? "",
       slots,
+      modos: def.alternativa
+        ? [
+            { id: "principal", label: `${def.valor > 0 ? "+" : ""}${def.valor} em ${def.quantidade} atributo${def.quantidade > 1 ? "s" : ""}`, selected: !modoAlt },
+            { id: "alt", label: `${def.alternativa.valor > 0 ? "+" : ""}${def.alternativa.valor} em ${def.alternativa.quantidade} atributo${def.alternativa.quantidade > 1 ? "s" : ""}`, selected: modoAlt },
+          ]
+        : [],
     };
   });
 }
@@ -270,7 +280,7 @@ export function prepareRacaContext(
       name: selecionada.name,
       descricao: descricaoFoundry || String(dbRaca?.descricao ?? ""),
       atributosTexto: dbRaca ? formatAtributos(dbRaca) : "—",
-      modGroups: dbRaca ? buildModGroups(selecionada.name, choices) : [],
+      modGroups: dbRaca ? buildModGroups(selecionada.name, choices, state.escolhasPorItem) : [],
       racaAberta: state.config.racasAbertas && dbRaca ? montarRacaAberta(selecionada.name, state.escolhasPorItem) : null,
       poderesRaciais: poderesDaRaca(selecionada, todosPoderes),
       periciasBonus: (dbRaca?.bonus_pericias ?? []).map((p) =>

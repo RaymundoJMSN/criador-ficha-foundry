@@ -11,6 +11,8 @@ export interface AtributoEscolhaDef {
   atributos_diferentes?: boolean;
   atributos_disponiveis?: string[] | null;
   observacao?: string;
+  /** "+2 em um atributo OU +1 em dois" (Kallyanach): o outro modo. */
+  alternativa?: { valor: number; quantidade: number };
 }
 
 export interface TreinarPericia {
@@ -41,10 +43,87 @@ function slug(value: string): string {
     .replace(/^_+|_+$/g, "");
 }
 
+/** Raças que só existem no compêndio (Moreau, Kallyanach, Vampiro…), lidas do item. */
+const racasDoCompendio: RacaData[] = [];
+
 /** Find a race by its db id or by a display name (slug-matched). */
 export function getRaca(idOrName: string): RacaData | null {
   const s = slug(idOrName);
-  return racasData.find((r) => r.id === s || slug(r.nome) === s) ?? null;
+  return (
+    racasData.find((r) => r.id === s || slug(r.nome) === s) ??
+    racasDoCompendio.find((r) => r.id === s || slug(r.nome) === s) ??
+    null
+  );
+}
+
+const NUMERO: Record<string, number> = { um: 1, uma: 1, dois: 2, duas: 2, tres: 3, quatro: 4 };
+
+/**
+ * "+1 em dois atributos", "+2 em um atributo a sua escolha ou +1 em dois
+ * atributos a sua escolha", "+1 em Dois Atributos Diferentes" → grupo(s) de
+ * escolha. Texto do campo `atributosDinamicos.description` do item de raça.
+ */
+export function escolhasDaDescricao(descricao: string, disponiveis: string[] | null): AtributoEscolhaDef[] {
+  const t = descricao
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "");
+  const modos: Array<{ valor: number; quantidade: number }> = [];
+  for (const m of t.matchAll(/([+-]\d+) em (\w+) atributos?/g)) {
+    const quantidade = NUMERO[m[2]!] ?? Number(m[2]);
+    if (quantidade) modos.push({ valor: Number(m[1]), quantidade });
+  }
+  if (modos.length === 0) return [];
+  // Modo principal = o de mais atributos (o jogador vê os slots todos e escolhe o outro se quiser).
+  modos.sort((a, b) => b.quantidade - a.quantidade);
+  const principal = modos[0]!;
+  return [
+    {
+      valor: principal.valor,
+      quantidade: principal.quantidade,
+      atributos_diferentes: true,
+      atributos_disponiveis: disponiveis && disponiveis.length < 6 ? disponiveis : null,
+      observacao: descricao,
+      ...(modos.length > 1 ? { alternativa: modos[1]! } : {}),
+    },
+  ];
+}
+
+/**
+ * Registra as raças do compêndio que o T20-DB não tem, com atributos fixos e
+ * escolhas tiradas do próprio item. Chamar depois do CompendiumIndex.build().
+ */
+export function registrarRacasDoCompendio(
+  itens: Array<{
+    name: string;
+    system: {
+      atributos?: Record<string, unknown>;
+      tamanho?: string[];
+      movement?: { walk?: number };
+      atributosDinamicos?: { value?: string[]; description?: string };
+    };
+  }>
+): number {
+  racasDoCompendio.length = 0;
+  for (const item of itens) {
+    if (racasData.some((r) => r.id === slug(item.name) || slug(r.nome) === slug(item.name))) continue;
+    const fixos: AtributoFixo[] = Object.entries(item.system.atributos ?? {})
+      .filter(([, v]) => typeof v === "number" && v !== 0)
+      .map(([atributo, valor]) => ({ atributo, valor: valor as number }));
+    const din = item.system.atributosDinamicos;
+    racasDoCompendio.push({
+      id: slug(item.name),
+      nome: item.name,
+      descricao: null,
+      tamanho: item.system.tamanho?.[0] ?? "med",
+      deslocamento: item.system.movement?.walk ?? 9,
+      atributos_fixos: fixos,
+      atributos_escolha: din?.value?.length ? escolhasDaDescricao(din.description ?? "", din.value) : [],
+      bonus_pericias: [],
+      treinar_pericias: [],
+    });
+  }
+  return racasDoCompendio.length;
 }
 
 /**

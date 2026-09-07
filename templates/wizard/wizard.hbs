@@ -189,6 +189,11 @@
         <div style="margin-top:10px;">
           <strong style="font-size:0.85em;">{{this.titulo}}:</strong>
           {{#if this.observacao}}<div style="font-size:0.8em;opacity:0.7;">{{this.observacao}}</div>{{/if}}
+          {{#if this.modos.length}}
+          <div class="t20w-row t20w-wrap" style="margin-top:4px;">
+            {{#each this.modos}}<label class="t20w-row" style="font-size:0.85em;"><input type="radio" name="raca_mod_modo-{{../groupIndex}}" value="{{this.id}}" {{#if this.selected}}checked{{/if}} /> {{this.label}}</label>{{/each}}
+          </div>
+          {{/if}}
           <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;">
             {{#each this.slots}}
             <select name="raca_mod-{{this.groupIndex}}-{{this.slotIndex}}" style="padding:4px;">

@@ -4,6 +4,7 @@ import { registrarNomesDePoder } from "./rules/magias.js";
 import { registerLauncher } from "./ui/launcher.js";
 import { defineWizardApp } from "./wizard/app.js";
 import { registrarClassesDoCompendio, classesRegistradas } from "./rules/classe.js";
+import { registrarRacasDoCompendio } from "./rules/raca.js";
 import { CONFIG_PADRAO, SETTING_CONFIG } from "./config/config.js";
 import { defineConfigApp } from "./config/app.js";
 
@@ -53,6 +54,8 @@ Hooks.once("ready", async () => {
   // Classes fora do Livro Básico (Samurai, Heróis de Arton…) tiram a regra de
   // perícia do próprio item do compêndio.
   registrarClassesDoCompendio(CompendiumIndex.getAll("classe"));
+  // Moreau, Kallyanach, Vampiro…: o T20-DB não tem; atributos vêm do item.
+  console.log(`${MODULE_ID} | ${registrarRacasDoCompendio(CompendiumIndex.getAll("race"))} raça(s) só do compêndio`);
   // Poder escolhido é id de compêndio; a cota de magias (Orar, Conhecimento
   // Mágico…) precisa do slug — que vem do nome.
   registrarNomesDePoder((id) => CompendiumIndex.getById("poder", id)?.name);
