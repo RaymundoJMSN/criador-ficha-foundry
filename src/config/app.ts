@@ -64,6 +64,7 @@ async function ConfigApp_onSubmit(_event: Event, form: HTMLFormElement, formData
     idadesVariadas: o["idadesVariadas"] === true,
     racasAbertas: o["racasAbertas"] === true,
     devocoesAbertas: o["devocoesAbertas"] === true,
+    distincoes: o["distincoes"] === true,
   };
   await gravarConfig(config);
   (ui as any).notifications?.info("Regras da mesa salvas.");

@@ -513,22 +513,33 @@
 
       {{#if poderesParaPick}}
       <div>
+        {{#if distincoes}}
+        <div class="t20w-card" style="margin:0 0 10px;">
+          <h3>Distinção <small style="text-transform:none;letter-spacing:0;opacity:0.7;">(HA cap. 2 — admissão é do mestre; a marca vem junto e os poderes contam como gerais)</small></h3>
+          <select name="distincao" style="width:100%;">
+            <option value="">— nenhuma —</option>
+            {{#each distincoes.opcoes}}<option value="{{this.nome}}" {{#if this.selected}}selected{{/if}}>{{this.nome}} ({{this.n}} poderes)</option>{{/each}}
+          </select>
+          {{#if distincoes.escolhida}}<p class="t20w-hint" style="margin-top:6px;">{{#if distincoes.escolhida.marca}}Marca da distinção: <strong>{{distincoes.escolhida.marca}}</strong> (automática). {{/if}}Os {{distincoes.escolhida.n}} poderes aparecem na lista com a etiqueta “distinção”.</p>{{/if}}
+        </div>
+        {{/if}}
         <h3 style="font-size:0.95em;margin:0 0 6px 0;opacity:0.8;">Escolha de Poderes</h3>
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap;">
           <span style="font-size:0.9em;">Escolha <strong>{{poderesParaPick}}</strong>{{#if extrasGerais}} <small style="opacity:0.7;">({{extrasGerais}} extra(s) por complicação, só gerais)</small>{{/if}} — Selecionados: <strong>{{selectedCount}}</strong></span>
-          <select id="t20w-poder-cat" style="padding:4px 8px;background:rgba(255,255,255,0.08);border:1px solid #555;color:inherit;border-radius:3px;">
+          <select id="t20w-poder-cat">
             <option value="">Todas as categorias</option>
             {{#each categorias}}<option value="{{this}}">{{this}}</option>{{/each}}
           </select>
-          <input type="text" id="t20w-poder-search" placeholder="Filtrar poderes..."
-                 style="flex:1;min-width:120px;padding:4px 8px;background:rgba(255,255,255,0.08);border:1px solid #555;color:inherit;border-radius:3px;" />
+          <input type="text" id="t20w-poder-search" placeholder="Filtrar poderes..." style="flex:1;min-width:120px;" />
+          <label class="t20w-row" style="font-size:0.85em;white-space:nowrap;"><input type="checkbox" id="t20w-poder-so-elegiveis" {{#if soElegiveis}}checked{{/if}} /> só elegíveis{{#if inelegiveis}} <small style="opacity:0.6;">({{inelegiveis}} escondidos)</small>{{/if}}</label>
         </div>
 
         <div class="t20w-poderes-list t20w-scroll t20w-lista" style="max-height:360px;overflow-y:auto;">
           {{#each poderes}}
           <label class="t20w-poder-row t20w-item{{#if this.selected}} selecionado{{/if}}{{#unless this.eligible}} inelegivel{{/unless}}"
                  data-poder-name="{{this.name}}"
-                 data-poder-cat="{{this.tipo}}">
+                 data-poder-cat="{{this.tipo}}"
+                 data-poder-elegivel="{{#if this.eligible}}1{{else}}{{#if this.selected}}1{{else}}0{{/if}}{{/if}}">
             <input type="checkbox" name="poder-{{this.id}}" value="{{this.id}}"
                    {{#if this.selected}}checked{{/if}} {{#if this.bloqueado}}disabled{{/if}} />
             <img src="{{this.img}}" onerror="this.style.display='none'" />

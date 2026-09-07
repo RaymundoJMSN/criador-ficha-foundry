@@ -3,6 +3,7 @@ import { getClasse, respostaSubEscolha } from "../../rules/classe.js";
 import { describeUnmet, type PartialWizardState } from "../../rules/poderes.js";
 import { totaisRaciaisDoEstado } from "../../rules/subescolhas.js";
 import { poderesGeraisExtras, faixaDoPersonagem } from "../../rules/idade.js";
+import { distincaoEscolhida, podeTerDistincao, listDistincoes } from "../../rules/distincoes.js";
 import { habilidadesAte, getClasseProgressao } from "../../rules/progressao.js";
 import { classesDoPersonagem, habilidadesDeTodas, slotsDePoderTotal, niveisPorClasse } from "../../rules/multiclasse.js";
 import { resolverPoder, opcoesDaHabilidade, chaveHabilidade } from "../../compendium/resolver.js";
@@ -60,6 +61,15 @@ export interface PoderesContext {
   poderes: PoderEntry[];
   /** Classe sem tabela de progressão em nenhuma fonte disponível. */
   semTabela: boolean;
+  /** Distinções (HA cap. 2) quando liberadas pelo mestre e nível ≥ 5. */
+  distincoes: {
+    opcoes: Array<{ nome: string; n: number; selected: boolean }>;
+    escolhida: { nome: string; marca: string; n: number } | null;
+  } | null;
+  /** Filtro "só elegíveis" ligado. */
+  soElegiveis: boolean;
+  /** Quantos ficam escondidos com o filtro. */
+  inelegiveis: number;
   categorias: string[];
   selectedCount: number;
   errors: string[];
@@ -132,6 +142,9 @@ export function preparePoderesContext(
       poderes: [],
       semTabela,
       categorias: [],
+      distincoes: null,
+      soElegiveis: false,
+      inelegiveis: 0,
       selectedCount: state.poderes.length,
       errors,
     };
@@ -216,9 +229,12 @@ export function preparePoderesContext(
   // "Sempre que você recebe um poder de classe, pode trocá-lo por um poder geral"
   // (LB cap. 5) — so every class-power slot may also be spent on a general power.
   // O mesmo poder geral em dois módulos aparecia duas vezes; fica o primeiro.
+  // Distinção admitida pelo mestre (HA p.104): os poderes dela entram como gerais.
+  const distincao = distincaoEscolhida(state);
+  const idsDaDistincao = new Set(distincao?.poderes.map((p) => p.id) ?? []);
   const nomesVistos = new Set<string>();
   const entries: PoderEntry[] = allPoderes
-    .filter((p) => idsDaClasse.has(p.id) || p.system.tipo === "geral")
+    .filter((p) => idsDaClasse.has(p.id) || p.system.tipo === "geral" || idsDaDistincao.has(p.id))
     .filter((p) => !nomesVistos.has(p.name) && nomesVistos.add(p.name))
     .map((p) => {
       const unmet = describeUnmet(slugDoItem(p), stateForEligibility);
@@ -231,17 +247,17 @@ export function preparePoderesContext(
         eligible: unmet.length === 0,
         unmet,
         selected: state.poderes.includes(p.id),
-        tipo: p.system.tipo ?? "",
+        tipo: idsDaDistincao.has(p.id) ? "distinção" : (p.system.tipo ?? ""),
         subtipo: p.system.subtipo ?? "",
         descricao: p.system.descricao ?? "",
-        origem: p.system.tipo === "geral" ? ("geral" as const) : ("classe" as const),
+        origem: p.system.tipo === "geral" || idsDaDistincao.has(p.id) ? ("geral" as const) : ("classe" as const),
         // Elegibilidade é recalculada a cada render: escolher o Poder A libera
         // na hora o Poder B que exigia A.
         bloqueado:
           !state.poderes.includes(p.id) &&
           (unmet.length > 0 ||
             noLimite ||
-            (p.system.tipo !== "geral" && classeNoLimite) ||
+            (p.system.tipo !== "geral" && !idsDaDistincao.has(p.id) && classeNoLimite) ||
             (faixa.bloqueiaAumentoFisico && aumentoFisico.test(p.name))),
         repetivel,
         vezes,
@@ -249,7 +265,18 @@ export function preparePoderesContext(
       };
     });
 
+  // Marcados primeiro, depois os elegíveis, depois o resto — cada bloco por nome.
+  const ordem = (e: PoderEntry) => (e.selected ? 0 : e.eligible ? 1 : 2);
+  entries.sort((a, b) => ordem(a) - ordem(b) || a.name.localeCompare(b.name));
   const categorias = [...new Set(entries.map((e) => e.tipo).filter(Boolean))].sort();
+
+  const podeDistincao = podeTerDistincao(state);
+  const distincoesView = podeDistincao
+    ? {
+        opcoes: listDistincoes().map((d) => ({ nome: d.nome, n: d.poderes.length, selected: d.nome === distincao?.nome })),
+        escolhida: distincao ? { nome: distincao.nome, marca: distincao.marca?.name ?? "", n: distincao.poderes.length } : null,
+      }
+    : null;
 
   return {
     stepTitle: "Poderes",
@@ -259,6 +286,9 @@ export function preparePoderesContext(
     poderes: entries,
     semTabela,
     categorias,
+    distincoes: distincoesView,
+    soElegiveis: Boolean(state.escolhasPorItem["poder_so_elegiveis"]),
+    inelegiveis: entries.filter((e) => !e.eligible && !e.selected).length,
     selectedCount: state.poderes.length,
     errors,
   };

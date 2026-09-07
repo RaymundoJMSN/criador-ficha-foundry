@@ -58,6 +58,7 @@ import { nivelEfetivo, faixaDoPersonagem } from "../rules/idade.js";
 import { prepareIdadeContext } from "./steps/idade.js";
 import { openConfigApp } from "../config/app.js";
 import { classesDoPersonagem } from "../rules/multiclasse.js";
+import { idsDePoderesDeDistincao } from "../rules/distincoes.js";
 
 /** Final Int = base + racial (fixed + chosen). Drives the perícia Int bonus. */
 function finalInt(state: WizardState): number {
@@ -921,19 +922,41 @@ export function defineWizardApp(): void {
       // ── Poder search + category filter ──────────────────────────────────
       const poderSearch = root.querySelector<HTMLInputElement>("#t20w-poder-search");
       const poderCat = root.querySelector<HTMLSelectElement>("#t20w-poder-cat");
+      const soElegiveis = root.querySelector<HTMLInputElement>("#t20w-poder-so-elegiveis");
       const applyPoderFilter = () => {
         const q = (poderSearch?.value ?? "").toLowerCase();
         const cat = poderCat?.value ?? "";
+        const so = Boolean(soElegiveis?.checked);
         root.querySelectorAll<HTMLElement>(".t20w-poder-row").forEach((item) => {
           const name = (item.dataset["poderName"] ?? "").toLowerCase();
           const c = item.dataset["poderCat"] ?? "";
           const matchName = name.includes(q);
           const matchCat = !cat || c === cat;
-          item.style.display = matchName && matchCat ? "" : "none";
+          const matchEleg = !so || item.dataset["poderElegivel"] === "1";
+          item.style.display = matchName && matchCat && matchEleg ? "" : "none";
         });
       };
+      if (soElegiveis) {
+        soElegiveis.addEventListener("change", () => {
+          // Persiste sem re-render (o filtro é só visual); o próximo render lê o estado.
+          this._state.apply({ escolhasPorItem: { ...this._state.escolhasPorItem, poder_so_elegiveis: soElegiveis.checked } });
+          applyPoderFilter();
+        });
+      }
+      root.querySelector<HTMLSelectElement>('select[name="distincao"]')?.addEventListener("change", (e) => {
+        const nome = (e.target as HTMLSelectElement).value;
+        // Trocou de distinção: os poderes da anterior saem da lista escolhida.
+        const deDistincao = idsDePoderesDeDistincao();
+        this._state.apply({
+          escolhasPorItem: { ...this._state.escolhasPorItem, distincao: nome },
+          poderes: this._state.poderes.filter((id) => !deDistincao.has(id)),
+        });
+        this._errors = [];
+        void this.render();
+      });
       if (poderSearch) poderSearch.addEventListener("input", applyPoderFilter);
       if (poderCat) poderCat.addEventListener("change", applyPoderFilter);
+      if (soElegiveis?.checked) applyPoderFilter();
 
       // ── Equip search ───────────────────────────────────────────────────
       // Itens iniciais com escolha (origem "X ou Y", arma simples do kit…).

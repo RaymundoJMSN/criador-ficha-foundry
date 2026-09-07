@@ -3,6 +3,7 @@ import { pendencias, type EngineState } from "../../rules/engine.js";
 import { getDivindade } from "../../rules/divindade.js";
 import type { WizardState } from "../state.js";
 import { classesDoPersonagem, temMulticlasse } from "../../rules/multiclasse.js";
+import { distincaoEscolhida } from "../../rules/distincoes.js";
 import { totaisRaciaisDoEstado } from "../../rules/subescolhas.js";
 import { faixaDoPersonagem, complicacaoEscolhida, complicacoesIdadeEscolhidas, getComplicacaoIdade } from "../../rules/idade.js";
 
@@ -91,6 +92,8 @@ export function prepareRevisaoContext(
   if (compl) idadeResumo.push(`Complicação: ${nomeDoPoder(compl) ?? compl}`);
   const complIdade = complicacoesIdadeEscolhidas(state).map((id) => getComplicacaoIdade(id)?.nome ?? id);
   if (complIdade.length) idadeResumo.push(`Complicações de idade: ${complIdade.join(", ")}`);
+  const dist = distincaoEscolhida(state);
+  if (dist) idadeResumo.push(`Distinção: ${dist.nome}${dist.marca ? ` (marca: ${dist.marca.name})` : ""}`);
 
   const classesTexto = classesDoPersonagem(state)
     .map((c) => (c.principal ? classeNome : c.classeNome) + (temMulticlasse(state) ? ` ${c.niveis}` : ""))

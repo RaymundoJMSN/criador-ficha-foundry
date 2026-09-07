@@ -7,6 +7,7 @@ import { getClasse, respostaSubEscolha } from "../rules/classe.js";
 import { itensDeEscolhasRaciais, periciasDeEscolhasRaciais } from "../rules/raca.js";
 import { toPericiaCode } from "../rules/pericia-slug.js";
 import { classesDoPersonagem, habilidadesDeTodas, caminhoDe } from "../rules/multiclasse.js";
+import { distincaoEscolhida } from "../rules/distincoes.js";
 import { resolverPoder, opcoesDaHabilidade, chaveHabilidade } from "../compendium/resolver.js";
 import { prepareEquipamentoContext } from "../wizard/steps/equipamento.js";
 import { getOrigem, validarBeneficios } from "../rules/origem.js";
@@ -512,6 +513,13 @@ export class ActorWriter {
         system: { tipo: "geral", subtipo: "Idade", description: { value: linhas.map((l) => `<p>${l}</p>`).join("") } },
         effects: ae(`Faixa etária: ${faixa.nome}`, efeitos),
       });
+    }
+    // Marca da distinção (HA p.104): "recebida automaticamente quando o personagem conquista a distinção".
+    const distincao = distincaoEscolhida(state);
+    if (distincao?.marca) {
+      const doc = await resolveItem(distincao.marca.id);
+      if (doc) itensIdade.push(doc);
+      else console.warn(`${MODULE_ID} | ActorWriter: marca da distinção "${distincao.nome}" não resolveu`);
     }
     if (itensIdade.length > 0) {
       try {

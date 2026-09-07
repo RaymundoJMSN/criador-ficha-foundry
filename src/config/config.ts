@@ -34,6 +34,8 @@ export interface ConfigCriacao {
   racasAbertas: boolean;
   /** Devoções Abertas: qualquer deus, sem restrição de raça/classe (HA p.281). */
   devocoesAbertas: boolean;
+  /** Distinções (HA cap. 2): personagem de 5º nível+ pode começar com uma distinção admitida pelo mestre. */
+  distincoes: boolean;
 }
 
 export const CONFIG_PADRAO: ConfigCriacao = {
@@ -48,6 +50,7 @@ export const CONFIG_PADRAO: ConfigCriacao = {
   idadesVariadas: false,
   racasAbertas: false,
   devocoesAbertas: false,
+  distincoes: false,
 };
 
 export const SETTING_CONFIG = "configuracao";
@@ -92,5 +95,6 @@ export function resumoConfig(c: ConfigCriacao, nomeMetodo: (id: string) => strin
   if (c.idadesVariadas) partes.push("idades variadas");
   if (c.racasAbertas) partes.push("raças abertas");
   if (c.devocoesAbertas) partes.push("devoções abertas");
+  if (c.distincoes) partes.push("distinções");
   return partes;
 }
