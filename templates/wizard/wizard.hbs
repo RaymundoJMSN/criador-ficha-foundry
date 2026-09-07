@@ -455,9 +455,18 @@
         <label for="t20w-div-sel">Divindade</label>
         <select id="t20w-div-sel" name="divindadeId" style="width:100%;padding:6px;">
           <option value="">— nenhuma —</option>
-          {{#each divindades}}
+          <optgroup label="Panteão">
+          {{#each maiores}}
             <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.nome}}</option>
           {{/each}}
+          </optgroup>
+          {{#if menores.length}}
+          <optgroup label="Deuses menores">
+          {{#each menores}}
+            <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.nome}}</option>
+          {{/each}}
+          </optgroup>
+          {{/if}}
         </select>
       </div>
       {{#if selectedDivindade}}

@@ -8,6 +8,7 @@ import { classesDoPersonagem, caminhoDe, slotsDePoderTotal, errosMulticlasse } f
 import { listOrigens, validarBeneficios } from "./origem.js";
 import {
   listDivindadesParaPersonagem,
+  getDivindade,
   isDivindadeObrigatoria,
   isDivindadeAcessa,
   poderesConcedidosParaEscolher,
@@ -137,7 +138,11 @@ export function validate(step: WizardStep, state: EngineState): ValidationResult
       ) {
         errors.push("Esta divindade não aceita personagens com esta raça/classe.");
       }
-      const quantos = Math.max(...slugsClasses.map((c) => poderesConcedidosParaEscolher(c, Boolean(state.divindadeId))));
+      const deus = state.divindadeId ? getDivindade(state.divindadeId) : null;
+      const quantos = Math.min(
+        Math.max(...slugsClasses.map((c) => poderesConcedidosParaEscolher(c, Boolean(state.divindadeId)))),
+        deus ? deus.poderes_concedidos.length : 99
+      );
       const marcados = (state.escolhasPorItem["divindade_poderes"] as string[]) ?? [];
       if (marcados.length !== quantos) {
         errors.push(`Escolha ${quantos} poder(es) concedido(s) da divindade.`);
@@ -253,9 +258,11 @@ export function pendencias(state: EngineState): string[] {
     faltando.push("Esta classe exige uma divindade.");
   }
   void classeSlugPend;
-  const quantosConcedidos = Math.max(
+  const cotaConcedidos = Math.max(
     ...classesTodas.map((c) => poderesConcedidosParaEscolher(c.classeSlug, Boolean(state.divindadeId)))
   );
+  const deusEscolhido = state.divindadeId ? getDivindade(state.divindadeId) : null;
+  const quantosConcedidos = deusEscolhido ? Math.min(cotaConcedidos, deusEscolhido.poderes_concedidos.length) : cotaConcedidos;
   const concedidosEscolhidos = (state.escolhasPorItem["divindade_poderes"] as string[]) ?? [];
   if (concedidosEscolhidos.length !== quantosConcedidos) {
     faltando.push(

@@ -51,7 +51,7 @@ import { prepareClasseContext } from "./steps/classe.js";
 import { preparePericiaContext } from "./steps/pericias.js";
 import { getRaceSkillBonus } from "../rules/raca.js";
 import { totaisRaciaisDoEstado, distribuirAbertos, valoresFixosDaRaca } from "../rules/subescolhas.js";
-import { toSlug, toNomeSlug } from "../compendium/slug.js";
+import { toNomeSlug } from "../compendium/slug.js";
 import { lerConfig, resumoConfig } from "../config/config.js";
 import { listMetodos } from "../rules/atributos.js";
 import { nivelEfetivo, faixaDoPersonagem } from "../rules/idade.js";
@@ -369,7 +369,7 @@ export function defineWizardApp(): void {
         case WizardStep.Origem: {
           const poderes = CompendiumIndex.getAll("poder") as IndexedPoder[];
           const resolvePoderNome = (slug: string): string | null =>
-            poderes.find((p) => toSlug(p.name) === slug)?.name ?? null;
+            poderes.find((p) => toNomeSlug(p.name) === slug)?.name ?? null;
           stepCtx = prepareOrigemContext(state, errors, resolvePoderNome, poderes);
           break;
         }
@@ -390,7 +390,7 @@ export function defineWizardApp(): void {
         case WizardStep.Divindade: {
           const divPoderes = CompendiumIndex.getAll("poder") as IndexedPoder[];
           const resolvePoderNome = (slug: string): string | null =>
-            divPoderes.find((p) => toSlug(p.name) === slug)?.name ?? null;
+            divPoderes.find((p) => toNomeSlug(p.name) === slug)?.name ?? null;
           stepCtx = prepareDivindadeContext(state, errors, resolvePoderNome);
           break;
         }

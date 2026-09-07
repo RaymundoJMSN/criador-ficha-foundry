@@ -17,6 +17,8 @@ function prettifySlug(slug: string): string {
 }
 
 export interface DivindadeContext {
+  maiores: Array<{ id: string; nome: string; selected: boolean }>;
+  menores: Array<{ id: string; nome: string; selected: boolean }>;
   stepTitle: string;
   obrigatoria: boolean;
   divindades: Array<{ id: string; nome: string; selected: boolean }>;
@@ -49,10 +51,15 @@ export function prepareDivindadeContext(
     id: d.id,
     nome: d.nome,
     selected: d.id === state.divindadeId,
+    menor: Boolean(d.menor),
   }));
+  const maiores = mappedDivindades.filter((d) => !d.menor);
+  const menores = mappedDivindades.filter((d) => d.menor);
 
   const selected = divindades.find((d: Divindade) => d.id === state.divindadeId) ?? null;
-  const quantosPoderes = Math.max(...slugsClasses.map((c) => poderesConcedidosParaEscolher(c, Boolean(selected))));
+  // Deus menor costuma ter um poder só: a cota não passa do que existe.
+  const cotaClasse = Math.max(...slugsClasses.map((c) => poderesConcedidosParaEscolher(c, Boolean(selected))));
+  const quantosPoderes = selected ? Math.min(cotaClasse, selected.poderes_concedidos.length) : cotaClasse;
   const escolhidos = (state.escolhasPorItem["divindade_poderes"] as string[] | undefined) ?? [];
 
   const selectedDivindade = selected
@@ -78,6 +85,8 @@ export function prepareDivindadeContext(
     stepTitle: "Divindade",
     obrigatoria: slugsClasses.some(isDivindadeObrigatoria),
     divindades: mappedDivindades,
+    maiores,
+    menores,
     selectedDivindade,
     quantosPoderes,
     poderesEscolhidos: escolhidos,

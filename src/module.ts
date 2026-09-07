@@ -5,6 +5,7 @@ import { registerLauncher } from "./ui/launcher.js";
 import { defineWizardApp } from "./wizard/app.js";
 import { registrarClassesDoCompendio, classesRegistradas } from "./rules/classe.js";
 import { registrarRacasDoCompendio } from "./rules/raca.js";
+import { registrarDeusesMenores } from "./rules/divindade.js";
 import { CONFIG_PADRAO, SETTING_CONFIG } from "./config/config.js";
 import { defineConfigApp } from "./config/app.js";
 
@@ -59,5 +60,9 @@ Hooks.once("ready", async () => {
   // Poder escolhido é id de compêndio; a cota de magias (Orar, Conhecimento
   // Mágico…) precisa do slug — que vem do nome.
   registrarNomesDePoder((id) => CompendiumIndex.getById("poder", id)?.name);
+  // Deuses menores: poder concedido do compêndio + lista "Devotos" do Guia.
+  console.log(
+    `${MODULE_ID} | ${registrarDeusesMenores(CompendiumIndex.getAll("poder").filter((p) => p.system.tipo === "concedido"))} deus(es) menor(es)`
+  );
   console.log(`${MODULE_ID} | ${classesRegistradas()} classe(s) do compêndio registradas`);
 });

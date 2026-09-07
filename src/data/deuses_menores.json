@@ -1,0 +1,1261 @@
+[
+  {
+    "id": "sckhar",
+    "nome": "Sckhar",
+    "curto": "Sckhar",
+    "devotos": {
+      "qualquer": true,
+      "racas": [],
+      "classes": []
+    }
+  },
+  {
+    "id": "a_espada_deus",
+    "nome": "A Espada-Deus",
+    "curto": "A Espada-Deus",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "anao",
+        "elfo",
+        "minotauro",
+        "moreau"
+      ],
+      "classes": [
+        "barbaro",
+        "cacador",
+        "cavaleiro",
+        "guerreiro"
+      ]
+    }
+  },
+  {
+    "id": "akok",
+    "nome": "Akok",
+    "curto": "Akok",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "centauro",
+        "dahllan",
+        "elfo",
+        "gnoll",
+        "goblin",
+        "kobold"
+      ],
+      "classes": [
+        "barbaro",
+        "cacador",
+        "druida",
+        "guerreiro",
+        "ladino",
+        "lutador",
+        "treinador"
+      ]
+    }
+  },
+  {
+    "id": "altair",
+    "nome": "Altair",
+    "curto": "Altair",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "anao",
+        "minotauro",
+        "naidora",
+        "trog"
+      ],
+      "classes": [
+        "barbaro",
+        "cacador",
+        "druida",
+        "guerreiro",
+        "lutador"
+      ]
+    }
+  },
+  {
+    "id": "anilatir",
+    "nome": "Anilatir",
+    "curto": "Anilatir",
+    "devotos": {
+      "qualquer": true,
+      "racas": [],
+      "classes": []
+    }
+  },
+  {
+    "id": "apis",
+    "nome": "Apis",
+    "curto": "Apis",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "dahllan",
+        "hobgoblin",
+        "kobold",
+        "silfide",
+        "trog"
+      ],
+      "classes": [
+        "barbaro",
+        "cacador",
+        "druida"
+      ]
+    }
+  },
+  {
+    "id": "artaphan",
+    "nome": "Artaphan",
+    "curto": "Artaphan",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "gnoll",
+        "goblin",
+        "hynne",
+        "qareen",
+        "silfide"
+      ],
+      "classes": [
+        "bardo",
+        "cavaleiro",
+        "nobre",
+        "treinador",
+        "paladino"
+      ]
+    }
+  },
+  {
+    "id": "ayllana",
+    "nome": "Ayllana",
+    "curto": "Ayllana",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "qareen",
+        "sereia_tritao"
+      ],
+      "classes": [
+        "arcanista",
+        "bardo",
+        "bucaneiro"
+      ]
+    }
+  },
+  {
+    "id": "beluhga",
+    "nome": "Beluhga",
+    "curto": "Beluhga",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "anao",
+        "hynne",
+        "galokk",
+        "golem",
+        "kallyanach",
+        "minotauro",
+        "ogro"
+      ],
+      "classes": [
+        "barbaro",
+        "cacador",
+        "druida",
+        "guerreiro",
+        "paladino"
+      ]
+    }
+  },
+  {
+    "id": "benthos",
+    "nome": "Benthos",
+    "curto": "Benthos",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "elfo_do_mar",
+        "kallyanach",
+        "sereia_tritao",
+        "tabrachi"
+      ],
+      "classes": [
+        "bucaneiro",
+        "cacador",
+        "druida",
+        "guerreiro",
+        "ladino"
+      ]
+    }
+  },
+  {
+    "id": "betsumial",
+    "nome": "Betsumial",
+    "curto": "Betsumial",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "anao",
+        "elfo",
+        "hynne",
+        "kliren",
+        "naidora"
+      ],
+      "classes": [
+        "barbaro",
+        "bucaneiro",
+        "cacador",
+        "cavaleiro",
+        "guerreiro",
+        "ladino",
+        "paladino"
+      ]
+    }
+  },
+  {
+    "id": "blinar",
+    "nome": "Blinar",
+    "curto": "Blinar",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "goblin",
+        "hynne",
+        "medusa",
+        "osteon",
+        "silfide",
+        "sulfure"
+      ],
+      "classes": [
+        "bardo",
+        "bucaneiro",
+        "ladino",
+        "nobre"
+      ]
+    }
+  },
+  {
+    "id": "caerdellach",
+    "nome": "Caerdellach",
+    "curto": "Caerdellach",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "aggelus",
+        "centauro",
+        "dahllan",
+        "eiradaan",
+        "elfo",
+        "meio_elfo",
+        "silfide"
+      ],
+      "classes": [
+        "cavaleiro",
+        "druida",
+        "treinador",
+        "paladino"
+      ]
+    }
+  },
+  {
+    "id": "canastra",
+    "nome": "Canastra",
+    "curto": "Canastra",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "finntroll",
+        "gnoll",
+        "goblin",
+        "harpia",
+        "hynne",
+        "kliren",
+        "kobold",
+        "nezumi",
+        "silfide",
+        "trog"
+      ],
+      "classes": [
+        "bardo",
+        "cacador",
+        "inventor",
+        "ladino"
+      ]
+    }
+  },
+  {
+    "id": "canora",
+    "nome": "Canora",
+    "curto": "Canora",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "anao",
+        "elfo",
+        "harpia",
+        "hynne",
+        "qareen",
+        "sereia_tritao",
+        "silfide"
+      ],
+      "classes": [
+        "arcanista",
+        "bardo",
+        "bucaneiro",
+        "nobre",
+        "paladino"
+      ]
+    }
+  },
+  {
+    "id": "cette",
+    "nome": "Cette",
+    "curto": "Cette",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "elfo",
+        "medusa",
+        "naidora"
+      ],
+      "classes": [
+        "cacador",
+        "inventor",
+        "guerreiro",
+        "nobre",
+        "paladino"
+      ]
+    }
+  },
+  {
+    "id": "champarr",
+    "nome": "Champarr",
+    "curto": "Champarr",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "anao",
+        "elfo",
+        "hynne",
+        "moreau",
+        "satiro",
+        "silfide"
+      ],
+      "classes": [
+        "bardo",
+        "bucaneiro",
+        "guerreiro",
+        "ladino",
+        "lutador",
+        "nobre"
+      ]
+    }
+  },
+  {
+    "id": "dahriol",
+    "nome": "Dahriol",
+    "curto": "Dahriol",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "anao",
+        "elfo",
+        "qareen"
+      ],
+      "classes": [
+        "arcanista",
+        "bardo",
+        "cavaleiro",
+        "guerreiro",
+        "nobre",
+        "paladino"
+      ]
+    }
+  },
+  {
+    "id": "drumak",
+    "nome": "Drumak",
+    "curto": "Drumak",
+    "devotos": {
+      "qualquer": true,
+      "racas": [],
+      "classes": []
+    }
+  },
+  {
+    "id": "dunsark",
+    "nome": "Dunsark",
+    "curto": "Dunsark",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "gnoll",
+        "goblin",
+        "kobold",
+        "lefou",
+        "nezumi",
+        "orc",
+        "osteon",
+        "suraggel",
+        "trog"
+      ],
+      "classes": [
+        "barbaro",
+        "bucaneiro",
+        "cacador",
+        "guerreiro",
+        "ladino",
+        "lutador",
+        "nobre"
+      ]
+    }
+  },
+  {
+    "id": "elrophin",
+    "nome": "Elrophin",
+    "curto": "Elrophin",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "elfo",
+        "goblin",
+        "medusa",
+        "minauro",
+        "minotauro",
+        "naidora",
+        "qareen",
+        "suraggel",
+        "tabrachi"
+      ],
+      "classes": [
+        "bardo",
+        "bucaneiro",
+        "cavaleiro",
+        "guerreiro",
+        "lutador",
+        "nobre"
+      ]
+    }
+  },
+  {
+    "id": "escamandra",
+    "nome": "Escamandra",
+    "curto": "Escamandra",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "anao",
+        "centauro",
+        "elfo",
+        "golem",
+        "medusa",
+        "osteon"
+      ],
+      "classes": [
+        "arcanista",
+        "barbaro",
+        "cacador",
+        "cavaleiro",
+        "druida",
+        "nobre"
+      ]
+    }
+  },
+  {
+    "id": "esmeralda",
+    "nome": "Esmeralda",
+    "curto": "Esmeralda",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "anao",
+        "elfo",
+        "qareen",
+        "silfide"
+      ],
+      "classes": [
+        "arcanista",
+        "bardo",
+        "bucaneiro",
+        "inventor",
+        "ladino",
+        "nobre"
+      ]
+    }
+  },
+  {
+    "id": "garanaam",
+    "nome": "Garanaam",
+    "curto": "Garanaam",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "goblin",
+        "kliren",
+        "qareen"
+      ],
+      "classes": [
+        "arcanista",
+        "bardo",
+        "bucaneiro",
+        "inventor",
+        "ladino"
+      ]
+    }
+  },
+  {
+    "id": "garth",
+    "nome": "Garth",
+    "curto": "Garth",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "anao",
+        "goblin",
+        "hobgoblin",
+        "kliren",
+        "meio_orc",
+        "minauro",
+        "osteon",
+        "sulfure"
+      ],
+      "classes": [
+        "bucaneiro",
+        "cacador",
+        "inventor",
+        "ladino"
+      ]
+    }
+  },
+  {
+    "id": "goharom",
+    "nome": "Goharom",
+    "curto": "Goharom",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "anao",
+        "galokk",
+        "trog"
+      ],
+      "classes": [
+        "barbaro",
+        "cacador",
+        "cavaleiro",
+        "guerreiro",
+        "inventor"
+      ]
+    }
+  },
+  {
+    "id": "granto",
+    "nome": "Granto",
+    "curto": "Granto",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "anao",
+        "golem",
+        "kliren",
+        "qareen"
+      ],
+      "classes": [
+        "barbaro",
+        "cavaleiro",
+        "guerreiro",
+        "inventor",
+        "lutador",
+        "nobre"
+      ]
+    }
+  },
+  {
+    "id": "gratissa",
+    "nome": "Gratissa",
+    "curto": "Gratissa",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "anao",
+        "centauro",
+        "elfo",
+        "hynne",
+        "minotauro",
+        "qareen"
+      ],
+      "classes": [
+        "bardo",
+        "bucaneiro",
+        "cacador",
+        "druida",
+        "nobre",
+        "paladino"
+      ]
+    }
+  },
+  {
+    "id": "hippion",
+    "nome": "Hippion",
+    "curto": "Hippion",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "aggelus",
+        "centauro",
+        "eiradaan"
+      ],
+      "classes": [
+        "barbaro",
+        "cacador",
+        "cavaleiro",
+        "druida",
+        "guerreiro",
+        "nobre",
+        "treinador",
+        "paladino"
+      ]
+    }
+  },
+  {
+    "id": "hurlaagh",
+    "nome": "Hurlaagh",
+    "curto": "Hurlaagh",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "goblin",
+        "hobgoblin",
+        "minotauro",
+        "orc"
+      ],
+      "classes": [
+        "barbaro",
+        "cacador",
+        "cavaleiro",
+        "guerreiro"
+      ]
+    }
+  },
+  {
+    "id": "hydora",
+    "nome": "Hydora",
+    "curto": "Hydora",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "elfo",
+        "kallyanach",
+        "kliren",
+        "naidora",
+        "qareen",
+        "silfide",
+        "suraggel",
+        "tengu"
+      ],
+      "classes": [
+        "arcanista",
+        "bardo",
+        "cacador",
+        "cavaleiro",
+        "guerreiro",
+        "inventor"
+      ]
+    }
+  },
+  {
+    "id": "inghlblhpholstgt",
+    "nome": "Inghlblhpholstgt",
+    "curto": "Inghlblhpholstgt",
+    "devotos": {
+      "qualquer": true,
+      "racas": [],
+      "classes": []
+    }
+  },
+  {
+    "id": "irione",
+    "nome": "Irione",
+    "curto": "Irione",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "dahllan",
+        "goblin",
+        "lefou",
+        "sereia_tritao",
+        "tabrachi",
+        "trog"
+      ],
+      "classes": [
+        "arcanista",
+        "barbaro",
+        "cacador",
+        "druida",
+        "ladino",
+        "treinador"
+      ]
+    }
+  },
+  {
+    "id": "jandra",
+    "nome": "Jandra",
+    "curto": "Jandra",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "aggelus",
+        "anao",
+        "elfo",
+        "golem",
+        "hynne",
+        "minotauro"
+      ],
+      "classes": [
+        "bardo",
+        "cavaleiro",
+        "nobre"
+      ]
+    }
+  },
+  {
+    "id": "klangor",
+    "nome": "Klangor",
+    "curto": "Klangor",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "aggelus",
+        "anao"
+      ],
+      "classes": [
+        "cavaleiro",
+        "guerreiro",
+        "inventor",
+        "paladino"
+      ]
+    }
+  },
+  {
+    "id": "kurur_lianth",
+    "nome": "Kurur Lianth",
+    "curto": "Kurur Lianth",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "qareen",
+        "suraggel",
+        "trog"
+      ],
+      "classes": [
+        "barbaro",
+        "bardo",
+        "druida",
+        "guerreiro",
+        "lutador"
+      ]
+    }
+  },
+  {
+    "id": "laan",
+    "nome": "Laan",
+    "curto": "Laan",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "goblin",
+        "golem",
+        "kliren",
+        "lefou",
+        "moreau",
+        "naidora"
+      ],
+      "classes": [
+        "bardo",
+        "bucaneiro",
+        "cacador",
+        "guerreiro",
+        "paladino"
+      ]
+    }
+  },
+  {
+    "id": "lamashtu",
+    "nome": "Lamashtu",
+    "curto": "Lamashtu",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "medusa",
+        "minotauro",
+        "osteon",
+        "sulfure",
+        "trog"
+      ],
+      "classes": [
+        "barbaro",
+        "bucaneiro",
+        "guerreiro",
+        "ladino",
+        "lutador",
+        "nobre"
+      ]
+    }
+  },
+  {
+    "id": "lupan",
+    "nome": "Lupan",
+    "curto": "Lupan",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "dahllan",
+        "elfo",
+        "medusa",
+        "sereia_tritao",
+        "trog"
+      ],
+      "classes": [
+        "barbaro",
+        "cacador",
+        "druida",
+        "ladino",
+        "treinador"
+      ]
+    }
+  },
+  {
+    "id": "luvithy",
+    "nome": "Luvithy",
+    "curto": "Luvithy",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "dahllan",
+        "kobold",
+        "nezumi",
+        "orc",
+        "osteon",
+        "sulfure",
+        "trog"
+      ],
+      "classes": [
+        "arcanista",
+        "barbaro",
+        "cacador",
+        "druida",
+        "guerreiro",
+        "ladino"
+      ]
+    }
+  },
+  {
+    "id": "marina",
+    "nome": "Marina",
+    "curto": "Marina",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "elfo",
+        "elfo_do_mar",
+        "hynne",
+        "kappa",
+        "minotauro",
+        "qareen",
+        "sereia_tritao"
+      ],
+      "classes": [
+        "arcanista",
+        "barbaro",
+        "bucaneiro",
+        "cacador",
+        "druida",
+        "ladino"
+      ]
+    }
+  },
+  {
+    "id": "mzzileyn",
+    "nome": "Mzzileyn",
+    "curto": "Mzzileyn",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "finntroll",
+        "gnoll",
+        "goblin",
+        "kallyanach",
+        "nagah",
+        "tengu"
+      ],
+      "classes": [
+        "arcanista",
+        "bardo",
+        "bucaneiro",
+        "ladino"
+      ]
+    }
+  },
+  {
+    "id": "nerelim",
+    "nome": "Nerelim",
+    "curto": "Nerelim",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "elfo",
+        "elfo_do_mar",
+        "hynne",
+        "kappa",
+        "minotauro",
+        "qareen",
+        "sereia_tritao"
+      ],
+      "classes": [
+        "barbaro",
+        "bucaneiro",
+        "cacador",
+        "druida",
+        "treinador"
+      ]
+    }
+  },
+  {
+    "id": "neruite",
+    "nome": "Neruíte",
+    "curto": "Neruíte",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "aggelus",
+        "elfo",
+        "qareen",
+        "sereia_tritao",
+        "silfide"
+      ],
+      "classes": [
+        "arcanista",
+        "bardo",
+        "cacador",
+        "nobre"
+      ]
+    }
+  },
+  {
+    "id": "o_deus_cristal_de_urielka",
+    "nome": "O Deus Cristal de Urielka",
+    "curto": "O Deus Cristal de Urielka",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "aggelus",
+        "elfo",
+        "hynne",
+        "qareen"
+      ],
+      "classes": [
+        "bardo",
+        "cacador",
+        "cavaleiro",
+        "nobre",
+        "paladino"
+      ]
+    }
+  },
+  {
+    "id": "o_deus_das_cidades",
+    "nome": "O Deus das Cidades",
+    "curto": "O Deus das Cidades",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "anao",
+        "elfo",
+        "goblin",
+        "hynne",
+        "kliren",
+        "minotauro"
+      ],
+      "classes": [
+        "arcanista",
+        "bardo",
+        "inventor",
+        "ladino",
+        "lutador",
+        "nobre"
+      ]
+    }
+  },
+  {
+    "id": "o_deus_do_medo",
+    "nome": "O Deus do Medo",
+    "curto": "O Deus do Medo",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "bugbear",
+        "lefou",
+        "minotauro",
+        "medusa",
+        "osteon",
+        "sulfure",
+        "trog",
+        "voracis"
+      ],
+      "classes": [
+        "arcanista",
+        "barbaro",
+        "bardo",
+        "bucaneiro",
+        "guerreiro",
+        "ladino",
+        "lutador"
+      ]
+    }
+  },
+  {
+    "id": "piscigeros",
+    "nome": "Piscigeros",
+    "curto": "Piscigeros",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "dahllan",
+        "elfo_do_mar",
+        "hynne",
+        "kappa",
+        "minotauro",
+        "sereia_tritao"
+      ],
+      "classes": [
+        "barbaro",
+        "bucaneiro",
+        "cacador",
+        "druida",
+        "treinador"
+      ]
+    }
+  },
+  {
+    "id": "rhond",
+    "nome": "Rhond",
+    "curto": "Rhond",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "anao",
+        "elfo",
+        "golem",
+        "minotauro"
+      ],
+      "classes": [
+        "barbaro",
+        "bucaneiro",
+        "cacador",
+        "cavaleiro",
+        "guerreiro",
+        "inventor",
+        "nobre"
+      ]
+    }
+  },
+  {
+    "id": "sartan",
+    "nome": "Sartan",
+    "curto": "Sartan",
+    "devotos": {
+      "qualquer": true,
+      "racas": [],
+      "classes": []
+    }
+  },
+  {
+    "id": "sunnary",
+    "nome": "Sunnary",
+    "curto": "Sunnary",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "aggelus",
+        "anao",
+        "elfo",
+        "hynne",
+        "qareen"
+      ],
+      "classes": [
+        "bardo",
+        "druida",
+        "nobre",
+        "paladino"
+      ]
+    }
+  },
+  {
+    "id": "tamagrah",
+    "nome": "Tamagrah",
+    "curto": "Tamagrah",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "anao",
+        "dahllan",
+        "elfo",
+        "hynne",
+        "moreau",
+        "silfide"
+      ],
+      "classes": [
+        "barbaro",
+        "bucaneiro",
+        "cacador",
+        "druida",
+        "treinador"
+      ]
+    }
+  },
+  {
+    "id": "teldiskan",
+    "nome": "Teldiskan",
+    "curto": "Teldiskan",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "dahllan",
+        "gnoll",
+        "harpia",
+        "hynne",
+        "kallyanach",
+        "medusa",
+        "ogro",
+        "trog"
+      ],
+      "classes": [
+        "barbaro",
+        "cacador",
+        "druida",
+        "lutador"
+      ]
+    }
+  },
+  {
+    "id": "tessalus",
+    "nome": "Tessalus",
+    "curto": "Tessalus",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "elfo_do_mar",
+        "qareen"
+      ],
+      "classes": [
+        "barbaro",
+        "bucaneiro",
+        "cacador"
+      ]
+    }
+  },
+  {
+    "id": "toris",
+    "nome": "Toris",
+    "curto": "Toris",
+    "devotos": {
+      "qualquer": false,
+      "racas": [],
+      "classes": [
+        "cacador",
+        "cavaleiro",
+        "guerreiro",
+        "ladino",
+        "nobre",
+        "paladino"
+      ]
+    }
+  },
+  {
+    "id": "ur",
+    "nome": "Ur",
+    "curto": "Ur",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "anao",
+        "dahllan",
+        "eiradaan",
+        "elfo",
+        "silfide"
+      ],
+      "classes": [
+        "barbaro",
+        "cacador",
+        "druida"
+      ]
+    }
+  },
+  {
+    "id": "yasshara",
+    "nome": "Yasshara",
+    "curto": "Yasshara",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "anao",
+        "elfo",
+        "finntroll",
+        "minotauro"
+      ],
+      "classes": [
+        "cavaleiro",
+        "guerreiro",
+        "nobre"
+      ]
+    }
+  },
+  {
+    "id": "zadbblein",
+    "nome": "Zadbblein",
+    "curto": "Zadbblein",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "centauro",
+        "dahllan",
+        "eiradaan",
+        "elfo",
+        "kallyanach",
+        "satiro",
+        "tabrachi",
+        "trog"
+      ],
+      "classes": [
+        "arcanista",
+        "barbaro",
+        "cacador",
+        "druida",
+        "guerreiro",
+        "treinador"
+      ]
+    }
+  },
+  {
+    "id": "zakharov",
+    "nome": "Zakharov",
+    "curto": "Zakharov",
+    "devotos": {
+      "qualquer": false,
+      "racas": [
+        "anao",
+        "centauro",
+        "golem",
+        "minotauro",
+        "trog"
+      ],
+      "classes": [
+        "barbaro",
+        "cavaleiro",
+        "guerreiro",
+        "lutador",
+        "paladino"
+      ]
+    }
+  }
+]

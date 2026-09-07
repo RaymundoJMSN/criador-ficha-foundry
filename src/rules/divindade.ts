@@ -1,5 +1,18 @@
 import divindadesDataRaw from "../data/divindades.json";
+import deusesMenoresRaw from "../data/deuses_menores.json";
+import { toNomeSlug } from "../compendium/slug.js";
 const divindadesData = divindadesDataRaw as unknown as Divindade[];
+
+interface DeusMenorPortado {
+  id: string;
+  nome: string;
+  curto: string;
+  devotos: { qualquer: boolean; racas: string[]; classes: string[] };
+}
+const deusesMenoresPortados = deusesMenoresRaw as DeusMenorPortado[];
+
+/** Deuses menores (Guia de Deuses Menores + os que só existem no compêndio). */
+const deusesMenores: Divindade[] = [];
 
 export interface DevotosAceitos {
   regra: "qualquer" | "lista_restrita" | "druida" | string;
@@ -12,17 +25,81 @@ export interface Divindade {
   nome: string;
   devotos_aceitos: DevotosAceitos;
   poderes_concedidos: string[];
+  /** Deus menor: a lista "Devotos" do Guia vale ao pé da letra (sem coringa humano/clérigo). */
+  menor?: boolean;
 }
 
 const CLASSES_OBRIGATORIAS = new Set(["clerigo", "paladino", "druida"]);
 
 export function listDivindades(): Divindade[] {
-  return divindadesData;
+  return [...divindadesData, ...deusesMenores];
 }
 
 export function getDivindade(id: string): Divindade | null {
-  return divindadesData.find((d) => d.id === id) ?? null;
+  return divindadesData.find((d) => d.id === id) ?? deusesMenores.find((d) => d.id === id) ?? null;
 }
+
+const normNome = (s: string) => s.replace(/\s+/g, " ").trim().toLowerCase();
+const curtoDe = (nome: string) => normNome(nome.split(",")[0] ?? nome);
+
+/**
+ * Monta os deuses menores a partir dos poderes concedidos do compêndio
+ * (`tipo:"concedido"`, `subtipo` = nome do deus) e da lista "Devotos" portada do
+ * Guia de Deuses Menores. Deus que só existe no compêndio (Mauziell, Tibar…)
+ * entra sem restrição de devotos. Chamar depois do CompendiumIndex.build().
+ */
+export function registrarDeusesMenores(
+  concedidos: Array<{ name: string; system?: { subtipo?: string } }>
+): number {
+  deusesMenores.length = 0;
+  const majores = new Set(divindadesData.map((d) => normNome(d.nome)));
+  // subtipo → {nome de exibição, slugs dos poderes}
+  const porDeus = new Map<string, { nome: string; slugs: string[] }>();
+  for (const p of concedidos) {
+    const sub = p.system?.subtipo?.replace(/\s+/g, " ").trim();
+    // "Allihanna, Azgher" = poder partilhado por deuses maiores; "system.…" = lixo do pacote.
+    if (!sub || sub.includes("system.") || sub.split(",").some((parte) => majores.has(normNome(parte)))) continue;
+    const chave = curtoDe(sub);
+    const entrada = porDeus.get(chave) ?? { nome: sub, slugs: [] };
+    entrada.slugs.push(slugPoder(p.name));
+    porDeus.set(chave, entrada);
+  }
+  const vistos = new Set<string>();
+  for (const d of deusesMenoresPortados) {
+    const chave = normNome(d.curto);
+    const doCompendio = porDeus.get(chave);
+    vistos.add(chave);
+    deusesMenores.push({
+      id: d.id,
+      nome: doCompendio?.nome ?? d.nome,
+      menor: true,
+      devotos_aceitos: d.devotos.qualquer
+        ? { regra: "qualquer", racas_aceitas: "todas", classes_aceitas: "todas" }
+        : { regra: "lista_restrita", racas_aceitas: d.devotos.racas, classes_aceitas: d.devotos.classes },
+      poderes_concedidos: doCompendio?.slugs ?? [],
+    });
+  }
+  for (const [chave, e] of porDeus) {
+    if (vistos.has(chave)) continue;
+    // Subtipo que não é nome de deus ("Honra", "Ambição" da Tradição de Samurai) fica de fora.
+    if (!/(deus|deusa|drag[aã]o|dragoa|gigante)/i.test(e.nome)) continue;
+    deusesMenores.push({
+      id: slugPoder(e.nome.split(",")[0] ?? e.nome),
+      nome: e.nome,
+      menor: true,
+      devotos_aceitos: { regra: "qualquer", racas_aceitas: "todas", classes_aceitas: "todas" },
+      poderes_concedidos: e.slugs,
+    });
+  }
+  deusesMenores.sort((a, b) => a.nome.localeCompare(b.nome));
+  return deusesMenores.length;
+}
+
+/** Mesmo slug do resolver ("exato"), senão o nome do poder não casa na tela. */
+const slugPoder = (nome: string): string => toNomeSlug(nome);
+
+/** "kobolds" (id do T20-DB) ↔ "kobold" (Guia): compara sem o plural. */
+const mesmoSlug = (a: string, b: string) => a.replace(/s$/, "") === b.replace(/s$/, "");
 
 /**
  * "Para ser devoto de um deus, sua raça **ou** sua classe devem estar listadas na
@@ -46,7 +123,8 @@ export function isDivindadeAcessa(
   if (!div) return false;
   if (abertas) return true;
 
-  if (RACAS_CORINGA.has(racaSlug) || CLASSES_CORINGA.has(classeSlug)) return true;
+  // Coringa (humano/clérigo) é regra do Panteão maior; deus menor diz quem aceita.
+  if (!div.menor && (RACAS_CORINGA.has(racaSlug) || CLASSES_CORINGA.has(classeSlug))) return true;
 
   const { devotos_aceitos } = div;
   if (devotos_aceitos.regra === "qualquer") return true;
@@ -55,7 +133,7 @@ export function isDivindadeAcessa(
   const classes = devotos_aceitos.classes_aceitas;
 
   const racaListada =
-    racas === "todas" || (Array.isArray(racas) && !!racaSlug && racas.includes(racaSlug));
+    racas === "todas" || (Array.isArray(racas) && !!racaSlug && racas.some((r) => mesmoSlug(r, racaSlug)));
   const classeListada =
     classes === "todas" || (Array.isArray(classes) && !!classeSlug && classes.includes(classeSlug));
 
@@ -66,7 +144,7 @@ export function isDivindadeAcessa(
 }
 
 export function listDivindadesParaPersonagem(racaId: string, classeId: string, abertas = false): Divindade[] {
-  return divindadesData.filter((d) => isDivindadeAcessa(d.id, racaId, classeId, abertas));
+  return listDivindades().filter((d) => isDivindadeAcessa(d.id, racaId, classeId, abertas));
 }
 
 export function isDivindadeObrigatoria(classeId: string): boolean {
