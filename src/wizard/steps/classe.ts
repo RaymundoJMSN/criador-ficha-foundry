@@ -2,6 +2,7 @@ import type { WizardState } from "../state.js";
 import type { IndexedClasse } from "../../compendium/types.js";
 import { getClasse } from "../../rules/classe.js";
 import { toNomeSlug } from "../../compendium/slug.js";
+import { classesDoPersonagem, caminhoDe, errosMulticlasse } from "../../rules/multiclasse.js";
 import textosRaw from "../../data/textos.json";
 
 const textos = textosRaw as { classes?: Record<string, string> };
@@ -26,6 +27,25 @@ export interface ClasseContext {
   requiresCaminho: boolean;
   /** Escolhas dependentes do caminho, na ordem em que devem ser respondidas. */
   subEscolhas: SubEscolhaView[];
+  /** Caminho e sub-escolhas de cada classe (principal e multiclasse). */
+  caminhosPorClasse: CaminhosDeClasse[];
+  multiclasse: MulticlasseView;
+}
+
+export interface CaminhosDeClasse {
+  classeNome: string;
+  /** Nome do radio: `classe_caminho` (principal) ou `classe_caminho_<slug>`. */
+  chave: string;
+  principal: boolean;
+  caminhos: Array<{ slug: string; nome: string; selected: boolean }>;
+  subEscolhas: SubEscolhaView[];
+}
+
+export interface MulticlasseView {
+  linhas: Array<{ idx: number; classeId: string; niveis: number; opcoes: Array<{ id: string; name: string; selected: boolean }> }>;
+  principalNiveis: number;
+  podeAdicionar: boolean;
+  erros: string[];
 }
 
 export interface SubEscolhaView {
@@ -43,34 +63,61 @@ export function prepareClasseContext(
 ): ClasseContext {
   const selectedClasse = classes.find((c) => c.id === state.classeId) ?? null;
 
-  // Resolve T20-DB data for caminho sub-choice
   const classeSlug = toNomeSlug(state.classeNome ?? selectedClasse?.name ?? "");
-  const classeData = classeSlug ? getClasse(classeSlug) : null;
-  // Caminho do cavaleiro chega no 5º nível: um cavaleiro nv1 não escolhe nada.
-  const caminhoDefs = state.nivel >= (classeData?.caminho_nivel ?? 1) ? (classeData?.caminhos ?? []) : [];
+
+  // Caminho de CADA classe (principal + multiclasse), no nível que ela tem:
+  // um cavaleiro nv1 não escolhe nada, o caminho dele chega no 5º.
+  const caminhosPorClasse: CaminhosDeClasse[] = [];
+  for (const c of classesDoPersonagem(state)) {
+    const dados = getClasse(c.classeNome || c.classeId);
+    const defs = c.niveis >= (dados?.caminho_nivel ?? 1) ? (dados?.caminhos ?? []) : [];
+    if (defs.length === 0) continue;
+    const escolhido = caminhoDe(state, c) || null;
+    const caminhos = defs.map((d) => ({
+      slug: d.slug,
+      nome: resolvePoderNome(d.slug) ?? d.nome,
+      selected: d.slug === escolhido,
+    }));
+    // Caminho escolhido pode abrir uma escolha, que pode abrir outra
+    // (Feiticeiro -> linhagem -> Draconica -> tipo de dano). Só mostra o próximo
+    // nível depois que o anterior foi respondido.
+    const subEscolhas: SubEscolhaView[] = [];
+    let sub = defs.find((d) => d.slug === escolhido)?.sub ?? null;
+    while (sub) {
+      const resp = (state.escolhasPorItem[sub.chave] as string | undefined) ?? null;
+      subEscolhas.push({
+        chave: sub.chave,
+        label: sub.label,
+        escolhido: resp,
+        opcoes: sub.opcoes.map((o) => ({ id: o.id, nome: o.nome, selected: o.id === resp })),
+      });
+      sub = sub.opcoes.find((o) => o.id === resp)?.sub ?? null;
+    }
+    caminhosPorClasse.push({ classeNome: c.classeNome, chave: c.caminhoChave, principal: c.principal, caminhos, subEscolhas });
+  }
+  const principal = caminhosPorClasse.find((c) => c.principal);
+  const caminhos = principal?.caminhos ?? [];
+  const subEscolhas = principal?.subEscolhas ?? [];
   const classeCaminho = (state.escolhasPorItem["classe_caminho"] as string | undefined) ?? null;
 
-  const caminhos = caminhoDefs.map((c) => ({
-    slug: c.slug,
-    nome: resolvePoderNome(c.slug) ?? c.nome,
-    selected: c.slug === classeCaminho,
-  }));
-
-  // Caminho escolhido pode abrir uma escolha, que pode abrir outra
-  // (Feiticeiro -> linhagem -> Draconica -> tipo de dano). So mostra o proximo
-  // nivel depois que o anterior foi respondido.
-  const subEscolhas: SubEscolhaView[] = [];
-  let sub = caminhoDefs.find((c) => c.slug === classeCaminho)?.sub ?? null;
-  while (sub) {
-    const escolhido = (state.escolhasPorItem[sub.chave] as string | undefined) ?? null;
-    subEscolhas.push({
-      chave: sub.chave,
-      label: sub.label,
-      escolhido,
-      opcoes: sub.opcoes.map((o) => ({ id: o.id, nome: o.nome, selected: o.id === escolhido })),
-    });
-    sub = sub.opcoes.find((o) => o.id === escolhido)?.sub ?? null;
-  }
+  // Multiclasse (LB p.35): linhas [classe, níveis]; a principal fica com o resto.
+  const permitidas = classes.filter(
+    (c) => state.config.classesPermitidas.length === 0 || state.config.classesPermitidas.includes(c.name)
+  );
+  const extras = (state.escolhasPorItem["multiclasse"] as Array<{ classeId: string; classeNome: string; niveis: number }> | undefined) ?? [];
+  const multiclasse: MulticlasseView = {
+    linhas: extras.map((e, idx) => ({
+      idx,
+      classeId: e.classeId,
+      niveis: Math.max(1, Number(e.niveis) || 1),
+      opcoes: permitidas
+        .filter((c) => c.id !== state.classeId)
+        .map((c) => ({ id: c.id, name: c.name, selected: c.id === e.classeId })),
+    })),
+    principalNiveis: classesDoPersonagem(state)[0]?.niveis ?? state.nivel,
+    podeAdicionar: Boolean(state.classeId) && state.nivel >= 2 && extras.length < 3,
+    erros: errosMulticlasse(state),
+  };
 
   return {
     stepTitle: "Classe",
@@ -90,7 +137,9 @@ export function prepareClasseContext(
     errors,
     caminhos,
     classeCaminho,
-    requiresCaminho: caminhoDefs.length > 0,
+    requiresCaminho: caminhos.length > 0,
     subEscolhas,
+    caminhosPorClasse,
+    multiclasse,
   };
 }

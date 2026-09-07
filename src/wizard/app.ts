@@ -57,6 +57,7 @@ import { listMetodos } from "../rules/atributos.js";
 import { nivelEfetivo, faixaDoPersonagem } from "../rules/idade.js";
 import { prepareIdadeContext } from "./steps/idade.js";
 import { openConfigApp } from "../config/app.js";
+import { classesDoPersonagem } from "../rules/multiclasse.js";
 
 /** Final Int = base + racial (fixed + chosen). Drives the perícia Int bonus. */
 function finalInt(state: WizardState): number {
@@ -145,7 +146,7 @@ export function defineWizardApp(): void {
     /** Passos válidos para a classe escolhida (lutador não vê Magias). */
     _passos(): WizardStep[] {
       return passosAplicaveis(
-        toNomeSlug(this._state.classeNome ?? ""),
+        classesDoPersonagem(this._state).map((c) => c.classeSlug),
         slugsDosPoderes(this._state.poderes),
         this._state.config
       );
@@ -846,16 +847,43 @@ export function defineWizardApp(): void {
       });
 
       // ── Caminho radios → save + re-render ────────────────────────────────
-      const caminhoInputs = root.querySelectorAll<HTMLInputElement>('input[name="classe_caminho"]');
+      // Nome do radio = chave: `classe_caminho` (principal) ou `classe_caminho_<slug>`.
+      const caminhoInputs = root.querySelectorAll<HTMLInputElement>('input[name^="classe_caminho"]');
       caminhoInputs.forEach((inp) => {
         inp.addEventListener("change", () => {
           this._state.apply({
             escolhasPorItem: {
               ...this._state.escolhasPorItem,
-              classe_caminho: inp.value,
+              [inp.name]: inp.value,
             },
           });
           void this.render();
+        });
+      });
+
+      // ── Multiclasse: linhas [classe, níveis] ──────────────────────────────
+      const salvarMulticlasse = (linhas: Array<{ classeId: string; classeNome: string; niveis: number }>) => {
+        this._state.apply({ escolhasPorItem: { ...this._state.escolhasPorItem, multiclasse: linhas } });
+        this._errors = [];
+        void this.render();
+      };
+      const linhasAtuais = () =>
+        ((this._state.escolhasPorItem["multiclasse"] as Array<{ classeId: string; classeNome: string; niveis: number }>) ?? []).map((l) => ({ ...l }));
+      root.querySelectorAll<HTMLSelectElement>("select.t20w-mc-classe").forEach((sel) => {
+        sel.addEventListener("change", () => {
+          const linhas = linhasAtuais();
+          const idx = Number(sel.dataset["idx"]);
+          const item = CompendiumIndex.getAll("classe").find((c) => c.id === sel.value);
+          linhas[idx] = { ...(linhas[idx] ?? { niveis: 1 }), classeId: sel.value, classeNome: item?.name ?? "" };
+          salvarMulticlasse(linhas);
+        });
+      });
+      root.querySelectorAll<HTMLInputElement>("input.t20w-mc-niveis").forEach((inp) => {
+        inp.addEventListener("change", () => {
+          const linhas = linhasAtuais();
+          const idx = Number(inp.dataset["idx"]);
+          if (linhas[idx]) linhas[idx].niveis = Math.max(1, Math.floor(Number(inp.value) || 1));
+          salvarMulticlasse(linhas);
         });
       });
 
@@ -1044,6 +1072,13 @@ export function defineWizardApp(): void {
         }
       } else if (action === "abrirConfig") {
         openConfigApp();
+      } else if (action === "mcAdd" || action === "mcRemove") {
+        const linhas = ((this._state.escolhasPorItem["multiclasse"] as Array<{ classeId: string; classeNome: string; niveis: number }>) ?? []).map((l) => ({ ...l }));
+        if (action === "mcAdd") linhas.push({ classeId: "", classeNome: "", niveis: 1 });
+        else linhas.splice(Number(target.dataset["idx"]), 1);
+        this._state.apply({ escolhasPorItem: { ...this._state.escolhasPorItem, multiclasse: linhas } });
+        this._errors = [];
+        void this.render();
       } else if (action === "poderMais" || action === "poderMenos") {
         const id = target.dataset["id"];
         if (!id) return;

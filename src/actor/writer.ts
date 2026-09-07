@@ -6,7 +6,7 @@ import { toNomeSlug } from "../compendium/slug.js";
 import { getClasse, respostaSubEscolha } from "../rules/classe.js";
 import { itensDeEscolhasRaciais, periciasDeEscolhasRaciais } from "../rules/raca.js";
 import { toPericiaCode } from "../rules/pericia-slug.js";
-import { habilidadesAte } from "../rules/progressao.js";
+import { classesDoPersonagem, habilidadesDeTodas, caminhoDe } from "../rules/multiclasse.js";
 import { resolverPoder, opcoesDaHabilidade, chaveHabilidade } from "../compendium/resolver.js";
 import { prepareEquipamentoContext } from "../wizard/steps/equipamento.js";
 import { getOrigem, validarBeneficios } from "../rules/origem.js";
@@ -208,11 +208,29 @@ export class ActorWriter {
       }
     }
 
-    // Add classe item separately — fires tormenta20 onCreate hooks for PV/PM setup
+    // Add classe item separately — fires tormenta20 onCreate hooks for PV/PM setup.
+    // Multiclasse (LB p.35): um item por classe; só a principal é `inicial`
+    // (PV do 1º nível) — "ganha os PV de um nível subsequente, não do primeiro".
+    const todasClasses = classesDoPersonagem(state);
+    const classeItens: unknown[] = [];
     if (classeItemData) {
+      ((classeItemData as Record<string, unknown>)["system"] as Record<string, unknown>)["niveis"] = todasClasses[0]!.niveis;
+      classeItens.push(classeItemData);
+    }
+    for (const c of todasClasses.slice(1)) {
+      const doc = (await resolveItem(c.classeId)) as { system?: Record<string, unknown> } | null;
+      if (!doc) {
+        console.warn(`${MODULE_ID} | ActorWriter: classe "${c.classeNome}" não resolveu`);
+        continue;
+      }
+      (doc.system ??= {})["niveis"] = c.niveis;
+      doc.system["inicial"] = false;
+      classeItens.push(doc);
+    }
+    if (classeItens.length > 0) {
       try {
-        await actor.createEmbeddedDocuments("Item", [classeItemData]);
-        console.log(`${MODULE_ID} | ActorWriter: classe item added via createEmbeddedDocuments`);
+        await actor.createEmbeddedDocuments("Item", classeItens);
+        console.log(`${MODULE_ID} | ActorWriter: ${classeItens.length} item(ns) de classe`);
       } catch (err) {
         console.warn(`${MODULE_ID} | ActorWriter: failed to add classe item:`, err);
       }
@@ -233,20 +251,20 @@ export class ActorWriter {
     // (ataque_especial_8) has no item of its own — fall back to the family's base slug.
     const classeSlug = toNomeSlug(state.classeNome ?? "");
     const classeData = getClasse(classeSlug);
-    const habilidadeSlugs = habilidadesAte(state.classeNome || state.classeId, state.nivel);
-    if (classeData && habilidadeSlugs.length > 0) {
+    const habilidadesTodas = habilidadesDeTodas(state);
+    if (habilidadesTodas.length > 0) {
       const allPoderes = CompendiumIndex.getAll("poder");
       const habItems: unknown[] = [];
       // Slugs diferentes podem ser o mesmo item (Baluarte "aliados adjacentes" e
       // "alcance curto"): um item por id, senão a ficha ganha a habilidade em dobro.
       const idsVistos = new Set<string>();
-      for (const slug of habilidadeSlugs) {
+      for (const { classe, slug } of habilidadesTodas) {
         // "Bênção da Justiça: Égide Sagrada / Montaria Sagrada": vai a opção escolhida.
         const opcoes = opcoesDaHabilidade(slug, allPoderes);
         const escolhido = state.escolhasPorItem[chaveHabilidade(slug)] as string | undefined;
         const match = opcoes.length
           ? opcoes.find((o) => o.id === escolhido)
-          : resolverPoder(slug, classeSlug, allPoderes, "ability")?.item;
+          : resolverPoder(slug, classe.classeSlug, allPoderes, "ability")?.item;
         if (match) {
           if (idsVistos.has(match.id)) continue;
           idsVistos.add(match.id);
@@ -267,29 +285,34 @@ export class ActorWriter {
       }
     }
 
-    // Add chosen caminho (if class has caminhos)
-    const classeCaminhoSlug = state.escolhasPorItem["classe_caminho"] as string | undefined;
-    if (classeCaminhoSlug && classeData?.caminhos?.some((c) => c.slug === classeCaminhoSlug)) {
-      const allPoderes = CompendiumIndex.getAll("poder");
-      const caminhoItem = resolverPoder(classeCaminhoSlug, classeSlug, allPoderes, "ability")?.item;
-      if (caminhoItem) {
-        const doc = await resolveItem(caminhoItem.id);
-        if (doc) {
-          try {
-            await actor.createEmbeddedDocuments("Item", [doc]);
-            console.log(`${MODULE_ID} | ActorWriter: caminho "${classeCaminhoSlug}" added`);
-          } catch (err) {
-            console.warn(`${MODULE_ID} | ActorWriter: failed to add caminho:`, err);
-          }
-        }
+    // Caminho de cada classe (principal e multiclasse), se ela tem e já chegou nele.
+    void classeData;
+    const caminhosItens: unknown[] = [];
+    for (const c of todasClasses) {
+      const dados = getClasse(c.classeNome || c.classeId);
+      const slugCaminho = caminhoDe(state, c);
+      if (!slugCaminho || !dados?.caminhos?.some((x) => x.slug === slugCaminho) || c.niveis < (dados.caminho_nivel ?? 1)) continue;
+      const item = resolverPoder(slugCaminho, c.classeSlug, CompendiumIndex.getAll("poder"), "ability")?.item;
+      const doc = item ? await resolveItem(item.id) : null;
+      if (doc) caminhosItens.push(doc);
+      else console.warn(`${MODULE_ID} | ActorWriter: caminho "${slugCaminho}" não resolveu`);
+    }
+    if (caminhosItens.length > 0) {
+      try {
+        await actor.createEmbeddedDocuments("Item", caminhosItens);
+        console.log(`${MODULE_ID} | ActorWriter: ${caminhosItens.length} caminho(s)`);
+      } catch (err) {
+        console.warn(`${MODULE_ID} | ActorWriter: failed to add caminho:`, err);
       }
     }
 
     // Linhagem do feiticeiro: no 1º nível ele recebe a herança BÁSICA
     // ("Linhagem Dracônica Básica" no compêndio) — LB cap. 4, Arcanista.
-    if (classeCaminhoSlug) {
+    const arcanista = todasClasses.find((c) => c.classeSlug === "arcanista");
+    const classeCaminhoSlug = arcanista ? caminhoDe(state, arcanista) : "";
+    if (arcanista && classeCaminhoSlug) {
       const linhagem = respostaSubEscolha(
-        classeSlug,
+        arcanista.classeSlug,
         classeCaminhoSlug,
         state.escolhasPorItem,
         "linhagem"

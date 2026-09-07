@@ -319,30 +319,50 @@
         </dl>
       </div>
       {{/if}}
-      {{#if requiresCaminho}}
+      {{#if selectedClasse}}
+      <div class="t20w-multiclasse" style="margin-top:12px;padding:10px;background:rgba(255,255,255,0.05);border-radius:4px;">
+        <strong style="font-size:0.9em;">Multiclasse</strong>
+        <span class="t20w-hint"> — opcional (LB p.35). {{selectedClasse.name}} fica com {{multiclasse.principalNiveis}} nível(is); só ela dá perícias e proficiências.</span>
+        {{#each multiclasse.linhas}}
+        <div style="display:flex;align-items:center;gap:8px;margin-top:6px;">
+          <select class="t20w-mc-classe" data-idx="{{this.idx}}" style="flex:1;padding:4px;">
+            <option value="">— classe —</option>
+            {{#each this.opcoes}}<option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.name}}</option>{{/each}}
+          </select>
+          <label style="font-size:0.85em;">níveis <input type="number" class="t20w-mc-niveis" data-idx="{{this.idx}}" value="{{this.niveis}}" min="1" max="19" style="width:56px;" /></label>
+          <button type="button" class="t20w-btn-sm" data-action="mcRemove" data-idx="{{this.idx}}" title="Remover" style="width:24px;height:24px;padding:0;cursor:pointer;">×</button>
+        </div>
+        {{/each}}
+        {{#each multiclasse.erros}}<div class="t20w-hint" style="color:#f90;margin-top:4px;">{{this}}</div>{{/each}}
+        {{#if multiclasse.podeAdicionar}}
+        <button type="button" class="t20w-btn-sm" data-action="mcAdd" style="margin-top:8px;padding:2px 10px;cursor:pointer;">+ outra classe</button>
+        {{/if}}
+      </div>
+      {{/if}}
+      {{#each caminhosPorClasse}}
       <div class="t20w-caminho-section" style="margin-top:12px;padding:10px;background:rgba(255,255,255,0.05);border-radius:4px;">
-        <strong style="font-size:0.9em;">Escolha seu Caminho:</strong>
+        <strong style="font-size:0.9em;">Caminho{{#unless this.principal}} de {{this.classeNome}}{{/unless}}:</strong>
         <div style="display:flex;flex-direction:column;gap:6px;margin-top:8px;">
-          {{#each caminhos}}
-          <label for="caminho-{{this.slug}}" style="display:flex;align-items:center;gap:8px;font-size:0.9em;cursor:pointer;width:100%;">
-            <input type="radio" id="caminho-{{this.slug}}" name="classe_caminho" value="{{this.slug}}"
+          {{#each this.caminhos}}
+          <label for="{{../chave}}-{{this.slug}}" style="display:flex;align-items:center;gap:8px;font-size:0.9em;cursor:pointer;width:100%;">
+            <input type="radio" id="{{../chave}}-{{this.slug}}" name="{{../chave}}" value="{{this.slug}}"
               {{#if this.selected}}checked{{/if}}
               style="flex-shrink:0;">
             <span style="cursor:pointer;">{{this.nome}}</span>
           </label>
           {{/each}}
         </div>
-      </div>
-      {{/if}}
-      {{#each subEscolhas}}
-      <div class="form-group" style="margin-top:10px;">
-        <label for="sub-{{this.chave}}">{{this.label}}</label>
-        <select id="sub-{{this.chave}}" name="subescolha" data-chave="{{this.chave}}" style="width:100%;padding:6px;">
-          <option value="">— escolha —</option>
-          {{#each this.opcoes}}
-          <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.nome}}</option>
-          {{/each}}
-        </select>
+        {{#each this.subEscolhas}}
+        <div class="form-group" style="margin-top:10px;">
+          <label for="sub-{{this.chave}}">{{this.label}}</label>
+          <select id="sub-{{this.chave}}" name="subescolha" data-chave="{{this.chave}}" style="width:100%;padding:6px;">
+            <option value="">— escolha —</option>
+            {{#each this.opcoes}}
+            <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.nome}}</option>
+            {{/each}}
+          </select>
+        </div>
+        {{/each}}
       </div>
       {{/each}}
     </section>
@@ -698,7 +718,7 @@
         <dt>Nível</dt><dd>{{nivel}}</dd>
         <dt>Raça</dt><dd>{{racaNome}}</dd>
         <dt>Origem</dt><dd>{{origemNome}}</dd>
-        <dt>Classe</dt><dd>{{classeNome}}</dd>
+        <dt>Classe</dt><dd>{{classesTexto}}</dd>
         {{#if divindadeNome}}<dt>Divindade</dt><dd>{{divindadeNome}}</dd>{{/if}}
         {{#each idadeResumo}}<dt>Idade</dt><dd>{{this}}</dd>{{/each}}
       </dl>

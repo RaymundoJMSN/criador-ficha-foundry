@@ -41,6 +41,8 @@ export interface PartialWizardState {
   linhagem?: string;
   /** Escolas escolhidas pelo bardo/druida (slugs completos: "necromancia"). */
   escolasMagia?: string[];
+  /** Multiclasse: níveis em cada classe ({guerreiro: 3, ladino: 2}). */
+  niveisPorClasse?: Record<string, number>;
   caminho?: string;
 }
 
@@ -91,9 +93,11 @@ function atende(req: Prereq, state: PartialWizardState): boolean {
       return state.nivel >= Number(req["valor"] ?? 0);
 
     case "nivel_classe": {
-      // Sem multiclasse no wizard: o nível na classe é o nível do personagem.
+      // Multiclasse: "X níveis de guerreiro" compara o nível NA classe (LB p.35).
+      const alvo = Number(req["valor"] ?? req["nivel"] ?? 0);
+      if (state.niveisPorClasse) return (state.niveisPorClasse[norm(req["classe"])] ?? 0) >= alvo;
       if (norm(req["classe"]) !== norm(state.classeSlug)) return false;
-      return state.nivel >= Number(req["valor"] ?? req["nivel"] ?? 0);
+      return state.nivel >= alvo;
     }
 
     case "poder":

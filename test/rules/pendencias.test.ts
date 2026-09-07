@@ -19,7 +19,7 @@ describe("pendencias — o que bloqueia o botão Criar", () => {
     const falta = pendencias(
       estado({ nome: "X", racaId: "r", origemId: "aristocrata", classeId: "c", classeNome: "Arcanista" })
     );
-    expect(falta).toContain("Escolha o caminho da classe.");
+    expect(falta).toContain("Escolha o caminho de Arcanista.");
   });
 
   it("cobra os poderes que faltam para o nível", () => {

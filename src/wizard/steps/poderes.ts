@@ -3,7 +3,8 @@ import { getClasse, respostaSubEscolha } from "../../rules/classe.js";
 import { describeUnmet, type PartialWizardState } from "../../rules/poderes.js";
 import { totaisRaciaisDoEstado } from "../../rules/subescolhas.js";
 import { poderesGeraisExtras, faixaDoPersonagem } from "../../rules/idade.js";
-import { habilidadesAte, slotsDePoder, getClasseProgressao } from "../../rules/progressao.js";
+import { habilidadesAte, getClasseProgressao } from "../../rules/progressao.js";
+import { classesDoPersonagem, habilidadesDeTodas, slotsDePoderTotal, niveisPorClasse } from "../../rules/multiclasse.js";
 import { resolverPoder, opcoesDaHabilidade, chaveHabilidade } from "../../compendium/resolver.js";
 import type { IndexedMagia, IndexedPoder } from "../../compendium/types.js";
 import type { WizardState } from "../state.js";
@@ -83,9 +84,11 @@ export function preparePoderesContext(
   const classeData = getClasse(classeSlug);
 
   // Auto-granted class abilities up to this level (same source the writer uses)
-  const habilidadeSlugs = habilidadesAte(state.classeNome || state.classeId, state.nivel);
-  const habilidades = habilidadeSlugs
-    .map((slug) => {
+  // Multiclasse: habilidades de cada classe no nível dela (LB p.35).
+  const todasClasses = classesDoPersonagem(state);
+  const habilidadeSlugs = habilidadesDeTodas(state).map((h) => h.slug);
+  const habilidades = habilidadesDeTodas(state)
+    .map(({ classe, slug }) => {
       const opcoes = opcoesDaHabilidade(slug, allPoderes);
       if (opcoes.length > 0) {
         const escolhido = state.escolhasPorItem[chaveHabilidade(slug)] as string | undefined;
@@ -99,7 +102,7 @@ export function preparePoderesContext(
       return {
         slug,
         nome:
-          resolverPoder(slug, classeSlug, allPoderes, "ability")?.item.name ??
+          resolverPoder(slug, classe.classeSlug, allPoderes, "ability")?.item.name ??
           resolvePoderNome(slug) ??
           prettifySlug(slug),
         opcoes: [] as Array<{ id: string; nome: string; selected: boolean }>,
@@ -115,7 +118,7 @@ export function preparePoderesContext(
   // single pick this level grants — a nv5 guerreiro picks 4 powers, not 1.
   // Vagas de classe (podem virar geral) + poderes gerais extras de complicação /
   // Já Vi Coisas (HA p.282/289), que só podem ser gerais.
-  const slotsClasse = slotsDePoder(state.classeNome || state.classeId, state.nivel);
+  const slotsClasse = slotsDePoderTotal(state);
   const extrasGerais = poderesGeraisExtras(state);
   const poderesParaPick = slotsClasse + extrasGerais;
   const faixa = faixaDoPersonagem(state);
@@ -143,19 +146,21 @@ export function preparePoderesContext(
   // pré-requisito {tipo:"poder"} pelo slug certo.
   const idsDaClasse = new Set<string>();
   const idParaSlug = new Map<string, string>();
-  const nomeClasse = norm(state.classeNome ?? "");
+  const nomesClasses = todasClasses.map((c) => norm(c.classeNome)).filter(Boolean);
   for (const p of allPoderes) {
     // subtipo "Geral" = poder de classe de toda classe (Aumento de Atributo).
     const sub = norm(p.system.subtipo ?? "");
-    if (p.system.tipo === "classe" && nomeClasse && (sub === nomeClasse || sub === "geral")) {
+    if (p.system.tipo === "classe" && nomesClasses.length && (nomesClasses.includes(sub) || sub === "geral")) {
       idsDaClasse.add(p.id);
     }
   }
-  for (const slug of classeData?.poderes_classe_ids ?? []) {
-    const achado = resolverPoder(slug, classeSlug, allPoderes, "classe");
-    if (!achado) continue;
-    idsDaClasse.add(achado.item.id);
-    idParaSlug.set(achado.item.id, slug);
+  for (const c of todasClasses) {
+    for (const slug of getClasse(c.classeNome || c.classeId)?.poderes_classe_ids ?? []) {
+      const achado = resolverPoder(slug, c.classeSlug, allPoderes, "classe");
+      if (!achado) continue;
+      idsDaClasse.add(achado.item.id);
+      idParaSlug.set(achado.item.id, slug);
+    }
   }
 
   // Pré-requisito compara slug do T20-DB, não id de compêndio nem nome de item:
@@ -182,6 +187,7 @@ export function preparePoderesContext(
     periciasTreinadas: state.periciasTreinadas,
     poderes: poderesEscolhidos,
     habilidadesClasse: habilidadeSlugs,
+    niveisPorClasse: niveisPorClasse(state),
     divindadeSlug: state.divindadeId,
     proficiencias: classeData?.proficiencias ?? [],
     // state.magias guarda id de compêndio; o pré-req {tipo:"magia"} compara slug.
@@ -261,7 +267,7 @@ export function preparePoderesContext(
 /** Habilidades "Nome: X" ainda sem opção escolhida — vai para as pendências da Revisão. */
 export function pendenciasDeHabilidades(state: WizardState, allPoderes: IndexedPoder[]): string[] {
   const out: string[] = [];
-  for (const slug of habilidadesAte(state.classeNome || state.classeId, state.nivel)) {
+  for (const slug of habilidadesDeTodas(state).map((h) => h.slug)) {
     const opcoes = opcoesDaHabilidade(slug, allPoderes);
     if (opcoes.length === 0) continue;
     const escolhido = state.escolhasPorItem[chaveHabilidade(slug)] as string | undefined;

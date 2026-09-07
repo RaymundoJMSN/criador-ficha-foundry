@@ -2,6 +2,7 @@ import { getOrigem } from "../../rules/origem.js";
 import { pendencias, type EngineState } from "../../rules/engine.js";
 import { getDivindade } from "../../rules/divindade.js";
 import type { WizardState } from "../state.js";
+import { classesDoPersonagem, temMulticlasse } from "../../rules/multiclasse.js";
 import { totaisRaciaisDoEstado } from "../../rules/subescolhas.js";
 import { faixaDoPersonagem, complicacaoEscolhida, complicacoesIdadeEscolhidas, getComplicacaoIdade } from "../../rules/idade.js";
 
@@ -12,6 +13,8 @@ export interface RevisaoContext {
   racaNome: string;
   origemNome: string;
   classeNome: string;
+  /** "Guerreiro 3 / Ladino 2" na multiclasse; só o nome sem ela. */
+  classesTexto: string;
   divindadeNome: string;
   /** `value` = final (base + raça); `base` só aparece quando a raça mexe. */
   atributos: Array<{ label: string; value: number; base: number; racial: number; idade: number }>;
@@ -68,9 +71,14 @@ export function prepareRevisaoContext(
   const complIdade = complicacoesIdadeEscolhidas(state).map((id) => getComplicacaoIdade(id)?.nome ?? id);
   if (complIdade.length) idadeResumo.push(`Complicações de idade: ${complIdade.join(", ")}`);
 
+  const classesTexto = classesDoPersonagem(state)
+    .map((c) => (c.principal ? classeNome : c.classeNome) + (temMulticlasse(state) ? ` ${c.niveis}` : ""))
+    .join(" / ");
+
   return {
     stepTitle: "Revisão",
     idadeResumo,
+    classesTexto,
     nome: state.nome,
     nivel: state.nivel,
     racaNome,

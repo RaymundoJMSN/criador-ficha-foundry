@@ -6,6 +6,7 @@ import {
 } from "../../rules/divindade.js";
 import { toNomeSlug } from "../../compendium/slug.js";
 import type { WizardState } from "../state.js";
+import { classesDoPersonagem } from "../../rules/multiclasse.js";
 
 function prettifySlug(slug: string): string {
   return slug
@@ -36,10 +37,14 @@ export function prepareDivindadeContext(
   errors: string[] = [],
   resolvePoderNome: (slug: string) => string | null = () => null
 ): DivindadeContext {
-  const classeSlug = toNomeSlug(state.classeNome ?? "");
+  const slugsClasses = classesDoPersonagem(state).map((c) => c.classeSlug);
   const racaSlug = toNomeSlug(state.racaNome ?? "");
 
-  const divindades = listDivindadesParaPersonagem(racaSlug, classeSlug, state.config.devocoesAbertas);
+  // Multiclasse: qualquer das classes abre a lista do deus.
+  const vistos = new Set<string>();
+  const divindades = slugsClasses
+    .flatMap((c) => listDivindadesParaPersonagem(racaSlug, c, state.config.devocoesAbertas))
+    .filter((d) => !vistos.has(d.id) && vistos.add(d.id));
   const mappedDivindades = divindades.map((d: Divindade) => ({
     id: d.id,
     nome: d.nome,
@@ -47,7 +52,7 @@ export function prepareDivindadeContext(
   }));
 
   const selected = divindades.find((d: Divindade) => d.id === state.divindadeId) ?? null;
-  const quantosPoderes = poderesConcedidosParaEscolher(classeSlug, Boolean(selected));
+  const quantosPoderes = Math.max(...slugsClasses.map((c) => poderesConcedidosParaEscolher(c, Boolean(selected))));
   const escolhidos = (state.escolhasPorItem["divindade_poderes"] as string[] | undefined) ?? [];
 
   const selectedDivindade = selected
@@ -71,7 +76,7 @@ export function prepareDivindadeContext(
 
   return {
     stepTitle: "Divindade",
-    obrigatoria: isDivindadeObrigatoria(classeSlug),
+    obrigatoria: slugsClasses.some(isDivindadeObrigatoria),
     divindades: mappedDivindades,
     selectedDivindade,
     quantosPoderes,

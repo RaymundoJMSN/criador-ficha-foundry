@@ -93,6 +93,20 @@ Verde → Controlar Plantas, Manto de Batalha → Vestimenta da Fé…, a magia 
 fora da cota); **`openRaces` do sistema** ligado — o writer desliga durante o
 embed da raça se for mestre, senão avisa; **criança** não precisa de origem.
 
+### Multiclasse (2026-09-07, noite)
+
+LB p.35: "Zaled é um arcanista de 3º nível, um paladino de 1º nível e um
+personagem de 4º nível." No passo Classe, "Multiclasse" adiciona linhas
+[classe, níveis]; a classe do 1º nível é a **principal** (fica com o resto dos
+níveis, dá perícias, proficiências e o PV inicial — `inicial:true` só nela).
+`rules/multiclasse.ts`: `classesDoPersonagem`, `slotsDePoderTotal`,
+`habilidadesDeTodas`, `niveisPorClasse` (pré-requisito "X níveis de classe"
+compara o nível NA classe), `caminhoDe` (caminho por classe: `classe_caminho`
+na principal, `classe_caminho_<slug>` nas outras). Magias: cota somada por
+classe no nível dela, lista = união das conjuradoras, teto por círculo somado.
+Divindade obrigatória/concedidos: qualquer das classes. Validado: guerreiro 3 /
+arcanista 2 (bruxo) → nível 5, PV 39, PM 21, 3 poderes, 4 magias de 1º.
+
 **Ainda não cobre:** proficiências/perícias das classes só do compêndio (Samurai
 sai com "escolha 2 entre todas"); "Origem em Construção" com origem de um
 benefício só (perícia a menos da classe); "Tipo: X" do Melhor Amigo do Treinador

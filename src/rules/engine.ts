@@ -3,7 +3,8 @@ import { validarAtributos, listMetodos } from "./atributos.js";
 import { pendenciasDeIdade, poderesGeraisExtras, beneficiosDeOrigemPermitidos } from "./idade.js";
 import type { ConfigCriacao } from "../config/config.js";
 import type { AtributosBase } from "./atributos.js";
-import { filterMagias, cotaDeMagias, slugsDosPoderes, escolasAEscolher } from "./magias.js";
+import { filterMagias, cotaDeMagias, slugsDosPoderes, escolasAEscolher, magiasExtrasDosPoderes } from "./magias.js";
+import { classesDoPersonagem, caminhoDe, slotsDePoderTotal, errosMulticlasse } from "./multiclasse.js";
 import { listOrigens, validarBeneficios } from "./origem.js";
 import {
   listDivindadesParaPersonagem,
@@ -20,7 +21,6 @@ import {
 } from "./subescolhas.js";
 import { getClasse, cadeiaSubEscolhas } from "./classe.js";
 
-import { slotsDePoder } from "./progressao.js";
 import { getRaceSkillBonus, pendenciasDeEscolhasRaciais } from "./raca.js";
 import { buildPericiaPlan, computeTrained, type PericiaPicks } from "./pericias.js";
 import type { IndexedMagia, AnyIndexed } from "../compendium/types.js";
@@ -103,6 +103,7 @@ export function validate(step: WizardStep, state: EngineState): ValidationResult
 
     case WizardStep.Classe:
       if (!state.classeId) errors.push("Classe é obrigatória.");
+      errors.push(...errosMulticlasse(state));
       break;
 
     case WizardStep.Pericias: {
@@ -125,15 +126,18 @@ export function validate(step: WizardStep, state: EngineState): ValidationResult
 
     case WizardStep.Divindade: {
       // classeId/racaId são ids de compêndio; a regra compara slug.
-      const classeSlug = toNomeSlug(state.classeNome || "");
+      const slugsClasses = classesDoPersonagem(state).map((c) => c.classeSlug);
       const racaSlug = toNomeSlug(state.racaNome || "");
-      if (isDivindadeObrigatoria(classeSlug) && !state.divindadeId) {
+      if (slugsClasses.some(isDivindadeObrigatoria) && !state.divindadeId) {
         errors.push("Divindade é obrigatória para esta classe.");
       }
-      if (state.divindadeId && !isDivindadeAcessa(state.divindadeId, racaSlug, classeSlug, state.config.devocoesAbertas)) {
+      if (
+        state.divindadeId &&
+        !slugsClasses.some((c) => isDivindadeAcessa(state.divindadeId!, racaSlug, c, state.config.devocoesAbertas))
+      ) {
         errors.push("Esta divindade não aceita personagens com esta raça/classe.");
       }
-      const quantos = poderesConcedidosParaEscolher(classeSlug, Boolean(state.divindadeId));
+      const quantos = Math.max(...slugsClasses.map((c) => poderesConcedidosParaEscolher(c, Boolean(state.divindadeId))));
       const marcados = (state.escolhasPorItem["divindade_poderes"] as string[]) ?? [];
       if (marcados.length !== quantos) {
         errors.push(`Escolha ${quantos} poder(es) concedido(s) da divindade.`);
@@ -186,16 +190,23 @@ export function pendencias(state: EngineState): string[] {
     }
   }
 
-  const classe = getClasse(classeRef);
-  if (classe) {
-    const caminhos = state.nivel >= (classe.caminho_nivel ?? 1) ? (classe.caminhos ?? []) : [];
-    const caminhoEscolhido = (state.escolhasPorItem["classe_caminho"] as string) ?? "";
+  faltando.push(...errosMulticlasse(state));
+  // Caminho de cada classe no nível que ela tem (cavaleiro só no 5º).
+  for (const c of classesDoPersonagem(state)) {
+    const dados = getClasse(c.classeNome || c.classeId);
+    if (!dados) continue;
+    const caminhos = c.niveis >= (dados.caminho_nivel ?? 1) ? (dados.caminhos ?? []) : [];
+    const caminhoEscolhido = caminhoDe(state, c);
     if (caminhos.length > 0 && !caminhoEscolhido) {
-      faltando.push("Escolha o caminho da classe.");
+      faltando.push(`Escolha o caminho de ${c.classeNome}.`);
     } else if (caminhoEscolhido) {
-      const { pendente } = cadeiaSubEscolhas(classeRef, caminhoEscolhido, state.escolhasPorItem);
+      const { pendente } = cadeiaSubEscolhas(c.classeNome || c.classeId, caminhoEscolhido, state.escolhasPorItem);
       if (pendente) faltando.push(`${pendente.label}.`);
     }
+  }
+
+  const classe = getClasse(classeRef);
+  if (classe) {
 
     const intFinal = (state.atributosBase.int ?? 0) + (totaisRaciaisDoEstado(state).int ?? 0);
     const plan = buildPericiaPlan(classe, intFinal, getRaceSkillBonus(racaRef));
@@ -209,7 +220,8 @@ export function pendencias(state: EngineState): string[] {
   }
 
   // Complicação e "Já Vi Coisas" dão poderes gerais a mais (HA p.282/289).
-  const slots = slotsDePoder(classeRef, state.nivel) + poderesGeraisExtras(state);
+  // Multiclasse: vagas de cada classe no seu nível, somadas.
+  const slots = slotsDePoderTotal(state) + poderesGeraisExtras(state);
   if (state.poderes.length < slots) {
     faltando.push(`Escolha ${slots} poder(es) — ${state.poderes.length} escolhido(s).`);
   }
@@ -219,12 +231,10 @@ export function pendencias(state: EngineState): string[] {
   }
 
   const classeSlugPend = toNomeSlug(classeRef);
-  const cotaMagias = cotaDeMagias(
-    classeRef,
-    state.nivel,
-    (state.escolhasPorItem["classe_caminho"] as string) ?? "",
-    slugsDosPoderes(state.poderes)
-  );
+  const classesTodas = classesDoPersonagem(state);
+  const cotaMagias =
+    classesTodas.reduce((n, c) => n + cotaDeMagias(c.classeNome || c.classeId, c.niveis, caminhoDe(state, c), []), 0) +
+    magiasExtrasDosPoderes(slugsDosPoderes(state.poderes));
   if (state.magias.length < cotaMagias) {
     faltando.push(`Escolha ${cotaMagias} magia(s) — ${state.magias.length} escolhida(s).`);
   }
@@ -233,16 +243,19 @@ export function pendencias(state: EngineState): string[] {
   if (state.magias.length > cotaMagias) {
     faltando.push(`Magias a mais: remova ${state.magias.length - cotaMagias}.`);
   }
-  const escolasPrecisa = escolasAEscolher(classeSlugPend);
+  const escolasPrecisa = Math.max(...classesTodas.map((c) => escolasAEscolher(c.classeSlug)));
   const escolasTem = ((state.escolhasPorItem["classe_escolas"] as string[] | undefined) ?? []).length;
   if (escolasPrecisa > 0 && escolasTem < escolasPrecisa) {
     faltando.push(`Escolha ${escolasPrecisa} escolas de magia — ${escolasTem} marcada(s).`);
   }
 
-  if (isDivindadeObrigatoria(classeSlugPend) && !state.divindadeId) {
+  if (classesTodas.some((c) => isDivindadeObrigatoria(c.classeSlug)) && !state.divindadeId) {
     faltando.push("Esta classe exige uma divindade.");
   }
-  const quantosConcedidos = poderesConcedidosParaEscolher(classeSlugPend, Boolean(state.divindadeId));
+  void classeSlugPend;
+  const quantosConcedidos = Math.max(
+    ...classesTodas.map((c) => poderesConcedidosParaEscolher(c.classeSlug, Boolean(state.divindadeId)))
+  );
   const concedidosEscolhidos = (state.escolhasPorItem["divindade_poderes"] as string[]) ?? [];
   if (concedidosEscolhidos.length !== quantosConcedidos) {
     faltando.push(

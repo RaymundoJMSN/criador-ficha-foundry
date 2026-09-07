@@ -5,10 +5,12 @@ import {
   ESCOLAS,
   cotaDeMagias,
   slugsDosPoderes,
+  magiasExtrasDosPoderes,
   tetoPorCirculo,
   excedentesPorCirculo,
 } from "../../rules/magias.js";
 import { toNomeSlug } from "../../compendium/slug.js";
+import { classesDoPersonagem, caminhoDe } from "../../rules/multiclasse.js";
 import type { WizardState } from "../state.js";
 import type { IndexedMagia } from "../../compendium/types.js";
 
@@ -66,14 +68,18 @@ export function prepareMagiasContext(
 ): MagiasContext {
   const classeSlug = toNomeSlug(state.classeNome ?? "");
   const poderSlugs = slugsDosPoderes(state.poderes);
-  const conjurador = isConjurador(classeSlug);
-  const classeCaminho = (state.escolhasPorItem["classe_caminho"] as string | undefined) ?? "";
+  // Multiclasse: cada classe conjuradora no seu nível (LB p.35); as cotas somam.
+  const classes = classesDoPersonagem(state);
+  const conjuradoras = classes.filter((c) => isConjurador(c.classeSlug));
+  const conjurador = conjuradoras.length > 0;
 
   // Quantas magias o personagem conhece: regra da classe (LB cap. 4) mais os
   // poderes que ensinam magia (Orar, Conhecimento Mágico…). Nunca é chute.
-  const magiaLimit = cotaDeMagias(state.classeNome || "", state.nivel, classeCaminho, poderSlugs);
+  const magiaLimit =
+    classes.reduce((n, c) => n + cotaDeMagias(c.classeNome || c.classeId, c.niveis, caminhoDe(state, c), []), 0) +
+    magiasExtrasDosPoderes(poderSlugs);
 
-  const precisaEscolas = escolasAEscolher(classeSlug);
+  const precisaEscolas = Math.max(...classes.map((c) => escolasAEscolher(c.classeSlug)));
   const escolhidas = (state.escolhasPorItem["classe_escolas"] as string[] | undefined) ?? [];
   const escolas = Object.entries(ESCOLAS).map(([abrev, e]) => ({
     abrev,
@@ -83,12 +89,16 @@ export function prepareMagiasContext(
   }));
   const escolasFaltam = Math.max(0, precisaEscolas - escolhidas.length);
 
-  const validas = filterMagias(allMagias, {
-    classeSlug,
-    nivel: state.nivel,
-    escolas: escolhidas,
-    poderSlugs,
-  });
+  const fontes = conjurador ? conjuradoras : classes.slice(0, 1);
+  const vistas = new Set<string>();
+  const validas = fontes.flatMap((c) =>
+    filterMagias(allMagias, {
+      classeSlug: c.classeSlug,
+      nivel: c.niveis,
+      escolas: escolhidas,
+      poderSlugs,
+    }).filter((m) => !vistas.has(m.id) && vistas.add(m.id))
+  );
   const idsValidos = validas.map((m) => m.id);
 
   const magiaSearch = (state.escolhasPorItem["magia_search"] as string) ?? "";
@@ -101,7 +111,13 @@ export function prepareMagiasContext(
 
   // Teto por círculo: a magia de 2º círculo só cabe nas aprendidas depois do nível
   // que abriu o 2º círculo — sem isso um arcanista nv5 punha 7 magias de 2º.
-  const teto = tetoPorCirculo(state.classeNome || "", state.nivel, classeCaminho);
+  // Teto por círculo somado entre as classes (cada uma no seu nível).
+  const teto: Record<number, number> = {};
+  for (const c of classes) {
+    for (const [circ, max] of Object.entries(tetoPorCirculo(c.classeNome || c.classeId, c.niveis, caminhoDe(state, c)))) {
+      teto[Number(circ)] = (teto[Number(circ)] ?? 0) + max;
+    }
+  }
   const circuloDe = new Map(validas.map((m) => [m.id, Number(m.system.circulo) || 0]));
   const escolhidasComCirculo = selecionadas.map((id) => ({ id, circulo: circuloDe.get(id) ?? 0 }));
   const excedentes = new Set(excedentesPorCirculo(escolhidasComCirculo, teto));
@@ -137,7 +153,7 @@ export function prepareMagiasContext(
 
   return {
     stepTitle: "Magias",
-    classeNome: state.classeNome ?? "",
+    classeNome: classes.map((c) => c.classeNome).join(" / ") || (state.classeNome ?? ""),
     isConjurador: conjurador || magiaLimit > 0,
     escolasAEscolher: precisaEscolas,
     escolas,

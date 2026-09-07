@@ -90,11 +90,12 @@ export const STEP_META: Record<WizardStep, StepMeta> = {
  * avançar. O resto vale para todos.
  */
 export function passosAplicaveis(
-  classeSlug: string,
+  classeSlug: string | string[],
   poderSlugs: string[] = [],
   config: ConfigCriacao = CONFIG_PADRAO
 ): WizardStep[] {
-  const conjura = isConjurador(classeSlug) || magiasExtrasDosPoderes(poderSlugs) > 0;
+  const slugs = Array.isArray(classeSlug) ? classeSlug : [classeSlug];
+  const conjura = slugs.some(isConjurador) || magiasExtrasDosPoderes(poderSlugs) > 0;
   return STEP_ORDER.filter((s) => {
     if (s === WizardStep.Magias) return conjura;
     // Idade & Complicações só existe se o mestre ligou alguma das regras (HA cap. 4).
