@@ -74,7 +74,9 @@ export function prepareClasseContext(
 
   return {
     stepTitle: "Classe",
-    classes: classes.map((c) => ({
+    classes: classes
+      .filter((c) => state.config.classesPermitidas.length === 0 || state.config.classesPermitidas.includes(c.name))
+      .map((c) => ({
       id: c.id,
       name: c.name,
       img: c.img,

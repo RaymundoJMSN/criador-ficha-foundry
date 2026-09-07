@@ -2,6 +2,7 @@ import dinheiroDataRaw from "../../data/dinheiro.json";
 import type { IndexedEquipamento } from "../../compendium/types.js";
 import type { WizardState } from "../state.js";
 import { equipamentoInicial, type EquipamentoInicial } from "../../rules/itens-iniciais.js";
+import { beneficiosDeOrigemPermitidos } from "../../rules/idade.js";
 
 const dinheiroData = dinheiroDataRaw as {
   por_nivel: Array<{ nivel: number; valor: number | string; moeda: string }>;
@@ -55,15 +56,20 @@ export function prepareEquipamentoContext(
   errors: string[] = []
 ): EquipamentoContext {
   const isNivel1 = state.nivel === 1;
-  const inicial = equipamentoInicial(state, allItems);
+  // Criança ("Sem Origem", HA p.288) não recebe os itens da origem.
+  const inicial = equipamentoInicial({ ...state, semOrigem: beneficiosDeOrigemPermitidos(state) === 0 }, allItems);
 
   // T$: 4d6 no 1º nível (mais o que a origem der em dado), Tabela 3-1 acima.
   const nivelEntry = dinheiroData.por_nivel.find((e) => e.nivel === state.nivel);
   const dinheiroRolado = state.escolhasPorItem["dinheiro_rolado"] as number | undefined;
-  const formulas = [...(isNivel1 ? ["4d6"] : []), ...inicial.formulasDinheiro];
-  const formulasPendentes = dinheiroRolado === undefined ? formulas : [];
+  // Mestre pode fixar o T$ inicial; aí não há 4d6 nem tabela — só o que a origem der.
+  const fixoDaMesa = state.config.dinheiro === "fixo";
+  const formulas = [...(isNivel1 && !fixoDaMesa ? ["4d6"] : []), ...inicial.formulasDinheiro];
+  const formulasPendentes = dinheiroRolado === undefined && formulas.length ? formulas : [];
   const daTabela = typeof nivelEntry?.valor === "number" ? nivelEntry.valor : 0;
-  const dinheiroInicial = (isNivel1 ? (dinheiroRolado ?? 0) : daTabela) + inicial.dinheiroFixo;
+  const base = fixoDaMesa ? state.config.dinheiroFixo : isNivel1 ? 0 : daTabela;
+  const rolado = fixoDaMesa || !isNivel1 ? (inicial.formulasDinheiro.length ? (dinheiroRolado ?? 0) : 0) : (dinheiroRolado ?? 0);
+  const dinheiroInicial = base + rolado + inicial.dinheiroFixo;
 
   const categoriaAtual = ((state.escolhasPorItem["equip_categoria"] as string) ?? "arma") as ItemCategoria;
   const equipSearch = (state.escolhasPorItem["equip_search"] as string | undefined) ?? "";

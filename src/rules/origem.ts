@@ -109,10 +109,13 @@ function titulo(slug: string): string {
  */
 export function getBeneficiosPlano(
   origemId: string,
-  nomeDoPoder: (slug: string) => string | null = () => null
+  nomeDoPoder: (slug: string) => string | null = () => null,
+  /** 2 normal; 1 adolescente (Origem em Construção); 0 criança (Sem Origem) — HA p.288. */
+  quantidade: number = BENEFICIOS_POR_ORIGEM
 ): BeneficiosPlano {
   const origem = getOrigem(origemId);
-  if (!origem) return { opcoes: [], quantidade: BENEFICIOS_POR_ORIGEM, autoAplicar: false };
+  if (!origem) return { opcoes: [], quantidade, autoAplicar: false };
+  if (quantidade <= 0) return { opcoes: [], quantidade: 0, autoAplicar: true };
 
   const exclusivo = origem.beneficios.poder_unico_id;
   const opcoes: BeneficioOpcao[] = [
@@ -138,8 +141,8 @@ export function getBeneficiosPlano(
 
   return {
     opcoes,
-    quantidade: BENEFICIOS_POR_ORIGEM,
-    autoAplicar: opcoes.length > 0 && opcoes.length <= BENEFICIOS_POR_ORIGEM,
+    quantidade,
+    autoAplicar: opcoes.length > 0 && opcoes.length <= quantidade,
   };
 }
 
@@ -152,8 +155,12 @@ export interface BeneficiosEscolhidos {
 }
 
 /** Valida os tokens escolhidos contra o pool e separa perícias de poderes. */
-export function validarBeneficios(origemId: string, escolhas: string[]): BeneficiosEscolhidos {
-  const plano = getBeneficiosPlano(origemId);
+export function validarBeneficios(
+  origemId: string,
+  escolhas: string[],
+  quantidade: number = BENEFICIOS_POR_ORIGEM
+): BeneficiosEscolhidos {
+  const plano = getBeneficiosPlano(origemId, () => null, quantidade);
   const validos = new Set(plano.opcoes.map((o) => o.token));
 
   const selecionados = plano.autoAplicar ? plano.opcoes.map((o) => o.token) : [...new Set(escolhas)];

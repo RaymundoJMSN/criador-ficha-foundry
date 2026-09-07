@@ -1,9 +1,12 @@
 import { isConjurador, magiasExtrasDosPoderes } from "./magias.js";
+import { temPassoIdade } from "./idade.js";
+import { CONFIG_PADRAO, type ConfigCriacao } from "../config/config.js";
 /** Wizard step identifiers — order matches STEP_ORDER array. */
 export enum WizardStep {
   Nivel = "nivel",
   Atributos = "atributos",
   Raca = "raca",
+  Idade = "idade",
   Origem = "origem",
   Classe = "classe",
   Pericias = "pericias",
@@ -19,6 +22,7 @@ export const STEP_ORDER: WizardStep[] = [
   WizardStep.Nivel,
   WizardStep.Atributos,
   WizardStep.Raca,
+  WizardStep.Idade,
   WizardStep.Origem,
   WizardStep.Classe,
   WizardStep.Pericias,
@@ -47,6 +51,7 @@ export const STEP_META: Record<WizardStep, StepMeta> = {
     labelKey: "T20W.Wizard.Step.Atributos",
   },
   [WizardStep.Raca]: { conditional: false, required: true, labelKey: "T20W.Wizard.Step.Raca" },
+  [WizardStep.Idade]: { conditional: true, required: false, labelKey: "T20W.Wizard.Step.Idade" },
   [WizardStep.Origem]: { conditional: false, required: true, labelKey: "T20W.Wizard.Step.Origem" },
   [WizardStep.Classe]: { conditional: false, required: true, labelKey: "T20W.Wizard.Step.Classe" },
   [WizardStep.Pericias]: {
@@ -84,7 +89,16 @@ export const STEP_META: Record<WizardStep, StepMeta> = {
  * magia (paladino com Orar). Um lutador não deve ver, nem no topo nem ao
  * avançar. O resto vale para todos.
  */
-export function passosAplicaveis(classeSlug: string, poderSlugs: string[] = []): WizardStep[] {
+export function passosAplicaveis(
+  classeSlug: string,
+  poderSlugs: string[] = [],
+  config: ConfigCriacao = CONFIG_PADRAO
+): WizardStep[] {
   const conjura = isConjurador(classeSlug) || magiasExtrasDosPoderes(poderSlugs) > 0;
-  return STEP_ORDER.filter((s) => s !== WizardStep.Magias || conjura);
+  return STEP_ORDER.filter((s) => {
+    if (s === WizardStep.Magias) return conjura;
+    // Idade & Complicações só existe se o mestre ligou alguma das regras (HA cap. 4).
+    if (s === WizardStep.Idade) return temPassoIdade(config);
+    return true;
+  });
 }

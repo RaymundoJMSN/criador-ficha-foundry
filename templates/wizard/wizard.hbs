@@ -5,6 +5,9 @@
     {{/if}}{{/each}}
     <span style="font-size:0.78em;opacity:0.6;">passo {{passoNumero}} de {{passoTotal}}</span>
   </nav>
+  {{#if regrasDaMesa.length}}
+  <div class="t20w-regras" style="font-size:0.78em;opacity:0.75;padding:2px 12px 4px;">Regras da mesa: {{#each regrasDaMesa}}{{this}}{{#unless @last}} · {{/unless}}{{/each}}</div>
+  {{/if}}
 
   <div class="t20w-content" style="flex:1;overflow-y:auto;padding:8px 12px;">
 
@@ -13,7 +16,8 @@
       <h2>{{stepTitle}}</h2>
       <div class="form-group">
         <label for="t20w-nivel">Nível</label>
-        <input id="t20w-nivel" type="number" name="nivel" min="1" max="20" value="{{state.nivel}}" />
+        <input id="t20w-nivel" type="number" name="nivel" min="1" max="20" value="{{nivelGrupo}}" />
+        {{#if nivelExtra}}<span class="t20w-hint">Nível do grupo. Pela faixa etária, o personagem joga no {{state.nivel}}º.</span>{{/if}}
       </div>
       <div class="form-group">
         <label for="t20w-nome">Nome do Personagem</label>
@@ -27,11 +31,15 @@
       <h2>{{stepTitle}}</h2>
       <div class="form-group">
         <label>Método</label>
+        {{#if metodoFixo}}
+        <strong>{{metodoDescricao}}</strong> <span class="t20w-hint">(definido pelo mestre)</span>
+        {{else}}
         <select name="metodoAtributos">
           {{#each metodos}}
             <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.nome}} ({{this.categoria}})</option>
           {{/each}}
         </select>
+        {{/if}}
       </div>
       <p class="t20w-hint" style="margin:6px 0 10px;">{{metodoTexto}}</p>
 
@@ -159,6 +167,21 @@
           {{/each}}
         </div>
         {{/each}}
+        {{#if selectedDetail.racaAberta}}
+        <div style="margin-top:10px;">
+          <strong style="font-size:0.85em;">Raças Abertas — aplique cada modificador da raça no atributo que quiser:</strong>
+          <div style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;">
+            {{#each selectedDetail.racaAberta.slots}}
+            <label style="display:flex;align-items:center;gap:4px;"><span class="t20w-chip">{{this.valor}}</span>
+              <select class="t20w-raca-aberta" data-idx="{{this.idx}}" style="padding:4px;">
+                <option value="">—</option>
+                {{#each this.opcoes}}<option value="{{this.code}}" {{#if this.selected}}selected{{/if}}>{{this.label}}</option>{{/each}}
+              </select></label>
+            {{/each}}
+          </div>
+          {{#each selectedDetail.racaAberta.erros}}<div class="t20w-hint" style="color:#f90;">{{this}}</div>{{/each}}
+        </div>
+        {{/if}}
         {{#each selectedDetail.modGroups}}
         <div style="margin-top:10px;">
           <strong style="font-size:0.85em;">{{this.titulo}}:</strong>
@@ -176,6 +199,49 @@
         </div>
         {{/each}}
       </div>
+      {{/if}}
+    </section>
+    {{/if}}
+
+    {{#if showIdade}}
+    <section class="t20w-step">
+      <h2>{{stepTitle}}</h2>
+      <p class="t20w-hint">Regras opcionais de Heróis de Arton (cap. 4), ligadas pelo mestre.</p>
+
+      {{#if mostraFaixas}}
+      <h3 style="font-size:0.95em;margin:10px 0 4px;">Faixa etária</h3>
+      <div style="display:flex;flex-direction:column;gap:3px;">
+        {{#each faixas}}
+        <label class="t20w-opcao"><input type="radio" name="idade_faixa" value="{{this.id}}" {{#if this.selected}}checked{{/if}} /><span><strong>{{this.nome}}</strong> <small style="opacity:0.7;">({{this.idades}} anos)</small> — {{this.resumo}}</span></label>
+        {{/each}}
+      </div>
+      {{/if}}
+
+      {{#if mostraJaViCoisas}}
+      <h3 style="font-size:0.95em;margin:12px 0 4px;">Já Vi Coisas</h3>
+      <label class="t20w-opcao"><input type="checkbox" name="idade_ja_vi_coisas" {{#if jaViCoisas}}checked{{/if}} /><span>Receber <strong>um poder geral</strong> em troca de <strong>uma complicação de idade</strong> a mais.</span></label>
+      {{/if}}
+
+      {{#if complicacoesIdadeExigidas}}
+      <h3 style="font-size:0.95em;margin:12px 0 4px;">Complicações de idade — escolha {{complicacoesIdadeExigidas}}</h3>
+      <div class="t20w-scroll" style="display:flex;flex-direction:column;gap:3px;max-height:260px;overflow-y:auto;">
+        {{#each complicacoesIdade}}
+        <label class="t20w-opcao"><input type="checkbox" name="compl_idade-{{this.id}}" value="{{this.id}}" {{#if this.selected}}checked{{/if}} {{#if this.bloqueado}}disabled{{/if}} /><span><strong>{{this.nome}}</strong> — {{this.resumo}}</span></label>
+        {{/each}}
+      </div>
+      {{/if}}
+
+      {{#if mostraComplicacao}}
+      <h3 style="font-size:0.95em;margin:12px 0 4px;">Complicação <small style="opacity:0.7;font-weight:normal;">(opcional: uma, em troca de um poder geral)</small></h3>
+      <select name="complicacao" class="t20w-busca-select-alvo" style="width:100%;">
+        <option value="">— nenhuma —</option>
+        {{#each complicacoes}}<option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.name}}{{#if this.classe}} ({{this.classe}}){{/if}}</option>{{/each}}
+      </select>
+      {{#each complicacoes}}{{#if this.selected}}<p class="t20w-hint" style="margin-top:6px;">{{this.descricao}}</p>{{/if}}{{/each}}
+      {{/if}}
+
+      {{#if poderesGeraisExtras}}
+      <p style="margin-top:12px;font-size:0.9em;">Poderes gerais extras no passo Poderes: <strong>+{{poderesGeraisExtras}}</strong></p>
       {{/if}}
     </section>
     {{/if}}
@@ -408,7 +474,7 @@
       <div>
         <h3 style="font-size:0.95em;margin:0 0 6px 0;opacity:0.8;">Escolha de Poderes</h3>
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap;">
-          <span style="font-size:0.9em;">Escolha <strong>{{poderesParaPick}}</strong> — Selecionados: <strong>{{selectedCount}}</strong></span>
+          <span style="font-size:0.9em;">Escolha <strong>{{poderesParaPick}}</strong>{{#if extrasGerais}} <small style="opacity:0.7;">({{extrasGerais}} extra(s) por complicação, só gerais)</small>{{/if}} — Selecionados: <strong>{{selectedCount}}</strong></span>
           <select id="t20w-poder-cat" style="padding:4px 8px;background:rgba(255,255,255,0.08);border:1px solid #555;color:inherit;border-radius:3px;">
             <option value="">Todas as categorias</option>
             {{#each categorias}}<option value="{{this}}">{{this}}</option>{{/each}}
@@ -630,9 +696,10 @@
         <dt>Origem</dt><dd>{{origemNome}}</dd>
         <dt>Classe</dt><dd>{{classeNome}}</dd>
         {{#if divindadeNome}}<dt>Divindade</dt><dd>{{divindadeNome}}</dd>{{/if}}
+        {{#each idadeResumo}}<dt>Idade</dt><dd>{{this}}</dd>{{/each}}
       </dl>
       <table class="t20w-attrs-summary"><tbody>
-        {{#each atributos}}<tr><th>{{this.label}}</th><td><strong>{{this.value}}</strong>{{#if this.racial}} <span style="opacity:0.6;font-size:0.85em;">({{this.base}} {{#if (gt this.racial 0)}}+{{/if}}{{this.racial}} raça)</span>{{/if}}</td></tr>{{/each}}
+        {{#each atributos}}<tr><th>{{this.label}}</th><td><strong>{{this.value}}</strong>{{#if this.racial}} <span style="opacity:0.6;font-size:0.85em;">({{this.base}} {{#if (gt this.racial 0)}}+{{/if}}{{this.racial}} raça{{#if this.idade}} {{this.idade}} idade{{/if}})</span>{{else}}{{#if this.idade}} <span style="opacity:0.6;font-size:0.85em;">({{this.base}} {{this.idade}} idade)</span>{{/if}}{{/if}}</td></tr>{{/each}}
       </tbody></table>
       <ul class="t20w-summary-counts">
         <li>Poderes: {{poderesSelecionados}}</li>

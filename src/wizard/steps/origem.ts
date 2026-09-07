@@ -7,6 +7,7 @@ import {
   type BeneficioOpcao,
 } from "../../rules/origem.js";
 import type { WizardState } from "../state.js";
+import { beneficiosDeOrigemPermitidos } from "../../rules/idade.js";
 import textosRaw from "../../data/textos.json";
 import type { IndexedPoder } from "../../compendium/types.js";
 import { describeUnmet, type PartialWizardState } from "../../rules/poderes.js";
@@ -79,7 +80,7 @@ export function prepareOrigemContext(
     const escolhidos = new Set(
       (state.escolhasPorItem["origem_beneficios"] as string[] | undefined) ?? []
     );
-    const plano = getBeneficiosPlano(selected.id, resolvePoderNome);
+    const plano = getBeneficiosPlano(selected.id, resolvePoderNome, beneficiosDeOrigemPermitidos(state));
     const beneficios: BeneficioRef[] = plano.opcoes.map((o) => ({
       ...o,
       selected: plano.autoAplicar || escolhidos.has(o.token),
@@ -96,7 +97,7 @@ export function prepareOrigemContext(
       beneficiosAuto: plano.autoAplicar,
       poderesLivres: [],
     };
-    const validacao = validarBeneficios(selected.id, [...escolhidos]);
+    const validacao = validarBeneficios(selected.id, [...escolhidos], beneficiosDeOrigemPermitidos(state));
     errors = [...errors, ...validacao.errors];
 
     // Poder livre: qualquer poder da categoria cujo pré-requisito o personagem

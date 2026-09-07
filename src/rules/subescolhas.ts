@@ -87,10 +87,12 @@ export function validateRaceModifiers(
  */
 export function getRaceAttributeTotals(
   idOrName: string,
-  choices: string[][]
+  choices: string[][],
+  /** Raças Abertas: distribuição dos modificadores fixos (índice do valor → atributo). */
+  aberta?: Record<string, string>
 ): Partial<Record<AtributoId, number>> {
   const out: Partial<Record<AtributoId, number>> = {};
-  const fixed = getRaceFixedModifiers(idOrName);
+  const fixed = aberta ? distribuirAbertos(idOrName, aberta).modificadores : getRaceFixedModifiers(idOrName);
   for (const [k, v] of Object.entries(fixed)) {
     if (ATRS.includes(k as AtributoId)) out[k as AtributoId] = (out[k as AtributoId] ?? 0) + (v ?? 0);
   }
@@ -99,4 +101,59 @@ export function getRaceAttributeTotals(
     if (modificadores[k]) out[k] = (out[k] ?? 0) + (modificadores[k] ?? 0);
   }
   return out;
+}
+
+/* ------------------------------------------------------------------ */
+/*  Raças Abertas (HA p.281)                                           */
+/* ------------------------------------------------------------------ */
+
+/** Os modificadores fixos da raça como lista de valores ("+2, +1 e –1" do anão), do maior ao menor. */
+export function valoresFixosDaRaca(idOrName: string): number[] {
+  return Object.values(getRaceFixedModifiers(idOrName))
+    .filter((v): v is number => typeof v === "number" && v !== 0)
+    .sort((a, b) => b - a);
+}
+
+/**
+ * "Você pode usar cada modificador de atributo de sua raça em qualquer
+ * atributo. Você não pode aplicar mais de um modificador no mesmo atributo."
+ * `dist[i]` = atributo que recebe o i-ésimo valor.
+ */
+export function distribuirAbertos(
+  idOrName: string,
+  dist: Record<string, string>
+): { modificadores: Partial<Record<AtributoId, number>>; completo: boolean; erros: string[] } {
+  const valores = valoresFixosDaRaca(idOrName);
+  const modificadores: Partial<Record<AtributoId, number>> = {};
+  const erros: string[] = [];
+  const usados = new Set<string>();
+  let faltam = 0;
+  valores.forEach((v, i) => {
+    const a = dist[String(i)];
+    if (!a || !ATRS.includes(a as AtributoId)) {
+      faltam++;
+      return;
+    }
+    if (usados.has(a)) {
+      erros.push("Não pode aplicar mais de um modificador no mesmo atributo.");
+      return;
+    }
+    usados.add(a);
+    modificadores[a as AtributoId] = v;
+  });
+  if (faltam) erros.push(`Distribua os modificadores da raça (faltam ${faltam}).`);
+  return { modificadores, completo: erros.length === 0, erros };
+}
+
+/** Total racial a partir do estado do wizard — respeita Raças Abertas quando ligada. */
+export function totaisRaciaisDoEstado(s: {
+  racaNome?: string;
+  racaId?: string;
+  escolhasPorItem: Record<string, unknown>;
+  config: { racasAbertas: boolean };
+}): Partial<Record<AtributoId, number>> {
+  const ref = s.racaNome || s.racaId || "";
+  const choices = (s.escolhasPorItem["raca_modificadores"] as string[][] | undefined) ?? [];
+  const aberta = s.config.racasAbertas ? ((s.escolhasPorItem["raca_aberta"] as Record<string, string> | undefined) ?? {}) : undefined;
+  return getRaceAttributeTotals(ref, choices, aberta);
 }

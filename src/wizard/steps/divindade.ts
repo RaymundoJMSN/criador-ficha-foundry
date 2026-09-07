@@ -39,7 +39,7 @@ export function prepareDivindadeContext(
   const classeSlug = toNomeSlug(state.classeNome ?? "");
   const racaSlug = toNomeSlug(state.racaNome ?? "");
 
-  const divindades = listDivindadesParaPersonagem(racaSlug, classeSlug);
+  const divindades = listDivindadesParaPersonagem(racaSlug, classeSlug, state.config.devocoesAbertas);
   const mappedDivindades = divindades.map((d: Divindade) => ({
     id: d.id,
     nome: d.nome,

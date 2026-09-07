@@ -3,13 +3,10 @@ import type { WizardState } from "../wizard/state.js";
 import { toPericiaCode } from "../rules/pericia-slug.js";
 import { getOrigem, validarBeneficios } from "../rules/origem.js";
 import { getDivindade } from "../rules/divindade.js";
-import { validateRaceModifiers } from "../rules/subescolhas.js";
+import { totaisRaciaisDoEstado } from "../rules/subescolhas.js";
+import { beneficiosDeOrigemPermitidos } from "../rules/idade.js";
 import { getClasse } from "../rules/classe.js";
-import {
-  getRaceSkillBonus,
-  getRaceFixedModifiers,
-  periciasDeEscolhasRaciais,
-} from "../rules/raca.js";
+import { getRaceSkillBonus, periciasDeEscolhasRaciais } from "../rules/raca.js";
 import { buildPericiaPlan, computeTrained, type PericiaPicks } from "../rules/pericias.js";
 
 /** Output shape consumed by Actor.create() for tormenta20 system. */
@@ -100,15 +97,12 @@ export function mapStateToActorData(
  */
 export function getTrainedPericaCodes(state: WizardState): Record<string, true> {
   const racaRef = state.racaNome || state.racaId;
-  const choices = (state.escolhasPorItem["raca_modificadores"] as string[][] | undefined) ?? [];
-  const { modificadores } = validateRaceModifiers(racaRef, choices);
 
   const classe = state.classeNome ? getClasse(state.classeNome) : null;
   const picks = state.escolhasPorItem["pericias"] as PericiaPicks | undefined;
   let trainedSlugs: string[];
   if (classe && picks) {
-    const fixedInt = getRaceFixedModifiers(racaRef)["int"] ?? 0;
-    const intFinal = (state.atributosBase.int ?? 0) + fixedInt + (modificadores["int"] ?? 0);
+    const intFinal = (state.atributosBase.int ?? 0) + (totaisRaciaisDoEstado(state).int ?? 0);
     const plan = buildPericiaPlan(classe, intFinal, getRaceSkillBonus(racaRef));
     trainedSlugs = computeTrained(plan, picks).trained;
   } else {
@@ -118,7 +112,8 @@ export function getTrainedPericaCodes(state: WizardState): Record<string, true> 
   const beneficiosOrigem = state.origemId
     ? validarBeneficios(
         state.origemId,
-        (state.escolhasPorItem["origem_beneficios"] as string[]) ?? []
+        (state.escolhasPorItem["origem_beneficios"] as string[]) ?? [],
+        beneficiosDeOrigemPermitidos(state)
       ).pericias
     : [];
 

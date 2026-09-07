@@ -1,6 +1,6 @@
 import type { WizardState } from "../state.js";
 import type { IndexedPoder, IndexedRace } from "../../compendium/types.js";
-import { getRaceModifierGroups } from "../../rules/subescolhas.js";
+import { getRaceModifierGroups, valoresFixosDaRaca, distribuirAbertos } from "../../rules/subescolhas.js";
 import {
   getRaca,
   escolhasDaRaca,
@@ -92,12 +92,44 @@ export interface EscolhaRacialView {
   pickers: PickerRacial[];
 }
 
+export interface RacaAbertaView {
+  slots: Array<{ idx: number; valor: string; opcoes: Array<{ code: string; label: string; selected: boolean }> }>;
+  erros: string[];
+}
+
+function montarRacaAberta(racaNome: string, escolhas: Record<string, unknown>): RacaAbertaView | null {
+  const valores = valoresFixosDaRaca(racaNome);
+  if (valores.length === 0) return null;
+  const dist = (escolhas["raca_aberta"] as Record<string, string> | undefined) ?? {};
+  const slots = valores.map((v, idx) => ({
+    idx,
+    valor: v > 0 ? `+${v}` : String(v),
+    opcoes: (["for", "des", "con", "int", "sab", "car"] as const).map((code) => ({
+      code,
+      label: ATTR_LABELS_ABERTA[code],
+      selected: dist[String(idx)] === code,
+    })),
+  }));
+  return { slots, erros: distribuirAbertos(racaNome, dist).erros };
+}
+
+const ATTR_LABELS_ABERTA: Record<string, string> = {
+  for: "Força",
+  des: "Destreza",
+  con: "Constituição",
+  int: "Inteligência",
+  sab: "Sabedoria",
+  car: "Carisma",
+};
+
 export interface RacaDetail {
   id: string;
   name: string;
   descricao: string;
   atributosTexto: string;
   modGroups: ModGroup[];
+  /** Raças Abertas (HA p.281): um select por modificador fixo da raça. */
+  racaAberta: RacaAbertaView | null;
   poderesRaciais: PoderRacial[];
   periciasBonus: string[];
   tamanho: string;
@@ -209,11 +241,14 @@ export function prepareRacaContext(
   todosPoderes: IndexedPoder[] = [],
   todasMagias: IndexedMagia[] = []
 ): RacaContext {
-  const racaOptions: RacaOption[] = racas.map((r) => ({
-    id: r.id,
-    name: r.name,
-    selected: r.id === state.racaId,
-  }));
+  const permitidas = state.config.racasPermitidas;
+  const racaOptions: RacaOption[] = racas
+    .filter((r) => permitidas.length === 0 || permitidas.includes(r.name))
+    .map((r) => ({
+      id: r.id,
+      name: r.name,
+      selected: r.id === state.racaId,
+    }));
 
   const selecionada = racas.find((r) => r.id === state.racaId);
   let selectedDetail: RacaDetail | null = null;
@@ -236,6 +271,7 @@ export function prepareRacaContext(
       descricao: descricaoFoundry || String(dbRaca?.descricao ?? ""),
       atributosTexto: dbRaca ? formatAtributos(dbRaca) : "—",
       modGroups: dbRaca ? buildModGroups(selecionada.name, choices) : [],
+      racaAberta: state.config.racasAbertas && dbRaca ? montarRacaAberta(selecionada.name, state.escolhasPorItem) : null,
       poderesRaciais: poderesDaRaca(selecionada, todosPoderes),
       periciasBonus: (dbRaca?.bonus_pericias ?? []).map((p) =>
         typeof p === "string" ? p : String((p as { pericia?: string }).pericia ?? "")

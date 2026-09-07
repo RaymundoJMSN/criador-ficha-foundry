@@ -129,6 +129,13 @@ no item, perícias, poderes de origem/raça/classe), bardo nv6 (escolas, teto do
 2º círculo), paladino nv4 com Orar ×2, Frade nv5 e Treinador nv3 (tabela dos
 PDFs), Samurai (aviso), cavaleiro nv1/nv5 (caminho).
 
+## Regras da mesa (2026-09-07)
+
+Setting de mundo + tela do mestre (`src/config/`): método de atributos travado,
+Pontos Variados, T$ fixo, raças/classes liberadas, Complicações, Já Vi Coisas,
+Idades Variadas, Raças Abertas, Devoções Abertas — tudo de Heróis de Arton
+cap. 4, com passo novo "Idade & Complicações". Ver `CLAUDE.md`.
+
 ## Pendente
 
 - Habilidade de classe com opção ("Dádiva da Fé: X / Y" do Frade): oferecer a

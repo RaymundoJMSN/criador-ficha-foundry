@@ -1,5 +1,7 @@
 import { WizardStep } from "./steps.js";
 import { validarAtributos, listMetodos } from "./atributos.js";
+import { pendenciasDeIdade, poderesGeraisExtras, beneficiosDeOrigemPermitidos } from "./idade.js";
+import type { ConfigCriacao } from "../config/config.js";
 import type { AtributosBase } from "./atributos.js";
 import { filterMagias, cotaDeMagias, slugsDosPoderes, escolasAEscolher } from "./magias.js";
 import { listOrigens, validarBeneficios } from "./origem.js";
@@ -13,7 +15,8 @@ import { toNomeSlug } from "../compendium/slug.js";
 import {
   getRaceModifierGroups,
   validateRaceModifiers,
-  getRaceAttributeTotals,
+  distribuirAbertos,
+  totaisRaciaisDoEstado,
 } from "./subescolhas.js";
 import { getClasse, cadeiaSubEscolhas } from "./classe.js";
 
@@ -27,6 +30,7 @@ export interface EngineState {
   nome: string;
   metodoAtributos: string;
   atributosBase: AtributosBase;
+  config: ConfigCriacao;
   racaId: string;
   racaNome?: string;
   origemId: string;
@@ -58,7 +62,9 @@ export function validate(step: WizardStep, state: EngineState): ValidationResult
       break;
 
     case WizardStep.Atributos:
-      errors.push(...validarAtributos(state.metodoAtributos, state.atributosBase, state.escolhasPorItem));
+      errors.push(
+        ...validarAtributos(state.metodoAtributos, state.atributosBase, state.escolhasPorItem, state.config.pontosCompra)
+      );
       break;
 
     case WizardStep.Raca: {
@@ -73,8 +79,16 @@ export function validate(step: WizardStep, state: EngineState): ValidationResult
         if (modErrors.length > 0)
           errors.push("Complete as escolhas de atributo da raça.");
       }
+      if (state.config.racasAbertas) {
+        const dist = (state.escolhasPorItem["raca_aberta"] as Record<string, string> | undefined) ?? {};
+        errors.push(...distribuirAbertos(racaRef, dist).erros);
+      }
       break;
     }
+
+    case WizardStep.Idade:
+      errors.push(...pendenciasDeIdade(state));
+      break;
 
     case WizardStep.Origem: {
       if (!state.origemId) {
@@ -82,7 +96,7 @@ export function validate(step: WizardStep, state: EngineState): ValidationResult
         break;
       }
       const escolhidos = (state.escolhasPorItem["origem_beneficios"] as string[]) ?? [];
-      errors.push(...validarBeneficios(state.origemId, escolhidos).errors);
+      errors.push(...validarBeneficios(state.origemId, escolhidos, beneficiosDeOrigemPermitidos(state)).errors);
       break;
     }
 
@@ -94,9 +108,7 @@ export function validate(step: WizardStep, state: EngineState): ValidationResult
       const classe = getClasse(state.classeNome || state.classeId);
       if (classe) {
         const racaRef = state.racaNome || state.racaId;
-        const choices = (state.escolhasPorItem["raca_modificadores"] as string[][]) ?? [];
-        const totals = getRaceAttributeTotals(racaRef, choices);
-        const intFinal = (state.atributosBase.int ?? 0) + (totals.int ?? 0);
+        const intFinal = (state.atributosBase.int ?? 0) + (totaisRaciaisDoEstado(state).int ?? 0);
         const plan = buildPericiaPlan(classe, intFinal, getRaceSkillBonus(racaRef));
         const picks = (state.escolhasPorItem["pericias"] as PericiaPicks) ?? {
           obrigatorias: [],
@@ -117,7 +129,7 @@ export function validate(step: WizardStep, state: EngineState): ValidationResult
       if (isDivindadeObrigatoria(classeSlug) && !state.divindadeId) {
         errors.push("Divindade é obrigatória para esta classe.");
       }
-      if (state.divindadeId && !isDivindadeAcessa(state.divindadeId, racaSlug, classeSlug)) {
+      if (state.divindadeId && !isDivindadeAcessa(state.divindadeId, racaSlug, classeSlug, state.config.devocoesAbertas)) {
         errors.push("Esta divindade não aceita personagens com esta raça/classe.");
       }
       const quantos = poderesConcedidosParaEscolher(classeSlug, Boolean(state.divindadeId));
@@ -164,7 +176,7 @@ export function pendencias(state: EngineState): string[] {
 
   if (state.origemId) {
     const escolhidos = (state.escolhasPorItem["origem_beneficios"] as string[]) ?? [];
-    const beneficios = validarBeneficios(state.origemId, escolhidos);
+    const beneficios = validarBeneficios(state.origemId, escolhidos, beneficiosDeOrigemPermitidos(state));
     faltando.push(...beneficios.errors);
     for (const categoria of beneficios.livres) {
       if (!state.escolhasPorItem[`origem_poder_livre_${categoria}`]) {
@@ -184,9 +196,7 @@ export function pendencias(state: EngineState): string[] {
       if (pendente) faltando.push(`${pendente.label}.`);
     }
 
-    const choices = (state.escolhasPorItem["raca_modificadores"] as string[][]) ?? [];
-    const intFinal =
-      (state.atributosBase.int ?? 0) + (getRaceAttributeTotals(racaRef, choices).int ?? 0);
+    const intFinal = (state.atributosBase.int ?? 0) + (totaisRaciaisDoEstado(state).int ?? 0);
     const plan = buildPericiaPlan(classe, intFinal, getRaceSkillBonus(racaRef));
     const picks = (state.escolhasPorItem["pericias"] as PericiaPicks) ?? {
       obrigatorias: [],
@@ -197,9 +207,14 @@ export function pendencias(state: EngineState): string[] {
     faltando.push(...computeTrained(plan, picks).errors);
   }
 
-  const slots = slotsDePoder(classeRef, state.nivel);
+  // Complicação e "Já Vi Coisas" dão poderes gerais a mais (HA p.282/289).
+  const slots = slotsDePoder(classeRef, state.nivel) + poderesGeraisExtras(state);
   if (state.poderes.length < slots) {
     faltando.push(`Escolha ${slots} poder(es) — ${state.poderes.length} escolhido(s).`);
+  }
+  faltando.push(...pendenciasDeIdade(state));
+  if (state.config.racasAbertas && racaRef) {
+    faltando.push(...distribuirAbertos(racaRef, (state.escolhasPorItem["raca_aberta"] as Record<string, string>) ?? {}).erros);
   }
 
   const classeSlugPend = toNomeSlug(classeRef);
@@ -252,7 +267,8 @@ export function getOptions(
     case WizardStep.Divindade:
       return listDivindadesParaPersonagem(
         toNomeSlug(state.racaNome || ""),
-        toNomeSlug(state.classeNome || "")
+        toNomeSlug(state.classeNome || ""),
+        state.config.devocoesAbertas
       );
 
     case WizardStep.Magias: {

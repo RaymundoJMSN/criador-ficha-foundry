@@ -11,7 +11,15 @@ import { resolverPoder } from "../compendium/resolver.js";
 import { prepareEquipamentoContext } from "../wizard/steps/equipamento.js";
 import { getOrigem, validarBeneficios } from "../rules/origem.js";
 import { getDivindade } from "../rules/divindade.js";
-import { validateRaceModifiers } from "../rules/subescolhas.js";
+import { validateRaceModifiers, distribuirAbertos } from "../rules/subescolhas.js";
+import {
+  beneficiosDeOrigemPermitidos,
+  complicacaoEscolhida,
+  complicacoesIdadeEscolhidas,
+  getComplicacaoIdade,
+  faixaDoPersonagem,
+  FAIXA_PADRAO,
+} from "../rules/idade.js";
 
 /**
  * Resolves a compendium item id to its full document object.
@@ -107,6 +115,19 @@ export class ActorWriter {
       const escolhas = (state.escolhasPorItem["raca_modificadores"] as string[][] | undefined) ?? [];
       const { modificadores } = validateRaceModifiers(state.racaNome || state.racaId, escolhas);
       const atributos = ((sys["atributos"] ??= {}) as Record<string, number>);
+      // Raças Abertas (HA p.281): os fixos da raça vão para onde o jogador pôs.
+      if (state.config.racasAbertas) {
+        const dist = (state.escolhasPorItem["raca_aberta"] as Record<string, string> | undefined) ?? {};
+        const abertos = distribuirAbertos(state.racaNome || state.racaId, dist).modificadores;
+        for (const k of ["for", "des", "con", "int", "sab", "car"]) atributos[k] = abertos[k as keyof typeof abertos] ?? 0;
+      }
+      // Idades Variadas (HA p.288): o sistema calcula PV/PM só com base + racial
+      // ("Pontos ignoram bônus de Atributo"), então o modificador permanente da
+      // faixa etária vai na coluna racial junto com o da raça — um ancião com
+      // Con −2 tem menos PV, como manda o livro.
+      if (state.config.idadesVariadas) {
+        for (const [k, v] of Object.entries(faixaDoPersonagem(state).atributos)) atributos[k] = (atributos[k] ?? 0) + v;
+      }
       for (const [k, v] of Object.entries(modificadores)) atributos[k] = (atributos[k] ?? 0) + (v ?? 0);
       const din = (sys["atributosDinamicos"] as Record<string, unknown> | undefined) ?? {};
       sys["atributosDinamicos"] = { ...din, value: [] };
@@ -281,7 +302,7 @@ export class ActorWriter {
       // Benefícios escolhidos: DOIS da lista (perícia e/ou poder). O poder
       // exclusivo é uma das opções, não um brinde automático (LB cap. 2).
       const escolhidos = (state.escolhasPorItem["origem_beneficios"] as string[]) ?? [];
-      const beneficios = validarBeneficios(origem.id, escolhidos);
+      const beneficios = validarBeneficios(origem.id, escolhidos, beneficiosDeOrigemPermitidos(state));
       for (const categoria of beneficios.livres) {
         const itemId = state.escolhasPorItem[`origem_poder_livre_${categoria}`] as
           | string
@@ -375,6 +396,58 @@ export class ActorWriter {
             console.warn(`${MODULE_ID} | ActorWriter: falha no bônus de perícia racial:`, err);
           }
         }
+      }
+    }
+
+    // Idade & Complicações (HA cap. 4): complicação do compêndio, complicações
+    // de idade e a faixa etária viram itens; o que é número na ficha vai como
+    // Active Effect (atributos, Defesa, resistências, PM, perícias, deslocamento).
+    const itensIdade: unknown[] = [];
+    const complicacaoId = complicacaoEscolhida(state);
+    if (complicacaoId) {
+      const doc = await resolveItem(complicacaoId);
+      if (doc) itensIdade.push(doc);
+      else console.warn(`${MODULE_ID} | ActorWriter: complicação "${complicacaoId}" não resolveu`);
+    }
+    const ae = (nome: string, efeitos: Array<{ chave: string; valor: number }>) =>
+      efeitos.length
+        ? [{ name: nome, transfer: true, changes: efeitos.map((e) => ({ key: e.chave, mode: 2, value: String(e.valor) })) }]
+        : [];
+    for (const id of complicacoesIdadeEscolhidas(state)) {
+      const c = getComplicacaoIdade(id);
+      if (!c) continue;
+      itensIdade.push({
+        name: c.nome,
+        type: "poder",
+        img: "icons/svg/downgrade.svg",
+        system: { tipo: "complicacao", subtipo: "Idade", description: { value: `<p>${c.resumo}</p>` } },
+        effects: ae(c.nome, c.efeitos),
+      });
+    }
+    const faixa = faixaDoPersonagem(state);
+    if (state.config.idadesVariadas && faixa.id !== FAIXA_PADRAO) {
+      // Atributos da faixa já foram para o item de raça (ver acima); aqui só o resto.
+      const efeitos = faixa.habilidades.flatMap((h) => h.efeitos);
+      const linhas = [
+        ...Object.entries(faixa.atributos).map(([a, v]) => `${a.toUpperCase()} ${v > 0 ? "+" : ""}${v} (aplicado na coluna racial da ficha)`),
+        ...(faixa.niveisExtras ? [`${faixa.niveisExtras} nível(is) a mais que o grupo`] : []),
+        ...(faixa.tamanhoMenor ? ["Tamanho: uma categoria menor"] : []),
+        ...faixa.habilidades.map((h) => `<strong>${h.nome}.</strong> ${h.resumo}`),
+      ];
+      itensIdade.push({
+        name: `Faixa etária: ${faixa.nome}`,
+        type: "poder",
+        img: "icons/svg/clockwork.svg",
+        system: { tipo: "geral", subtipo: "Idade", description: { value: linhas.map((l) => `<p>${l}</p>`).join("") } },
+        effects: ae(`Faixa etária: ${faixa.nome}`, efeitos),
+      });
+    }
+    if (itensIdade.length > 0) {
+      try {
+        await actor.createEmbeddedDocuments("Item", itensIdade);
+        console.log(`${MODULE_ID} | ActorWriter: ${itensIdade.length} item(ns) de idade/complicação`);
+      } catch (err) {
+        console.warn(`${MODULE_ID} | ActorWriter: falha em idade/complicações:`, err);
       }
     }
 

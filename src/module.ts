@@ -4,6 +4,8 @@ import { registrarNomesDePoder } from "./rules/magias.js";
 import { registerLauncher } from "./ui/launcher.js";
 import { defineWizardApp } from "./wizard/app.js";
 import { registrarClassesDoCompendio, classesRegistradas } from "./rules/classe.js";
+import { CONFIG_PADRAO, SETTING_CONFIG } from "./config/config.js";
+import { defineConfigApp } from "./config/app.js";
 
 Hooks.once("init", () => {
   console.log(`${MODULE_ID} | init`);
@@ -90,6 +92,25 @@ Hooks.once("init", () => {
   // are available inside hooks but NOT at module evaluation time.
   defineWizardApp();
   registerLauncher();
+
+  // Regras da mesa: setting de mundo (todo cliente lê) + tela só do mestre.
+  const ConfigApp = defineConfigApp();
+  // @ts-expect-error settings namespace tipado por módulo no fvtt-types
+  game.settings.register(MODULE_ID, SETTING_CONFIG, {
+    scope: "world",
+    config: false,
+    type: Object,
+    default: { ...CONFIG_PADRAO },
+  });
+  // @ts-expect-error settings namespace tipado por módulo no fvtt-types
+  game.settings.registerMenu(MODULE_ID, "regras", {
+    name: "Regras da mesa",
+    label: "Configurar criação de personagem",
+    hint: "Método de atributos, dinheiro inicial, raças/classes liberadas e regras opcionais de Heróis de Arton.",
+    icon: "fas fa-scroll",
+    type: ConfigApp,
+    restricted: true,
+  });
 });
 
 Hooks.once("ready", async () => {

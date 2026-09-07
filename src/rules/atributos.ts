@@ -33,7 +33,7 @@ export interface PointBuyResult {
 /**
  * Validates a full set of 6 attribute values against the point buy rules.
  */
-export function validatePointBuy(attrs: AtributosBase): PointBuyResult {
+export function validatePointBuy(attrs: AtributosBase, pontos: number = POINT_BUY_INITIAL_POINTS): PointBuyResult {
   const errors: string[] = [];
   let spent = 0;
 
@@ -45,7 +45,7 @@ export function validatePointBuy(attrs: AtributosBase): PointBuyResult {
     }
   }
 
-  const remaining = POINT_BUY_INITIAL_POINTS - spent;
+  const remaining = pontos - spent;
   const valid = errors.length === 0 && remaining >= 0;
 
   return { valid, spent, remaining, errors };
@@ -196,10 +196,12 @@ export function atributosValkaria(dados: number[], dist: Array<Atributo | undefi
 export function validarAtributos(
   metodo: string,
   atributosBase: AtributosBase,
-  escolhas: Record<string, unknown>
+  escolhas: Record<string, unknown>,
+  /** Pontos Variados (HA p.281): 5, 10 ou 15 — o mestre decide. */
+  pontos: number = POINT_BUY_INITIAL_POINTS
 ): string[] {
   if (metodo === "compra_pontos") {
-    const r = validatePointBuy(atributosBase);
+    const r = validatePointBuy(atributosBase, pontos);
     const erros = [...r.errors];
     if (r.remaining < 0) erros.push(`Pontos excedidos em ${-r.remaining}.`);
     return erros;

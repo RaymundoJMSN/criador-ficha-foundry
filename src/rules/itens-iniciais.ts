@@ -206,13 +206,13 @@ function kitInicial(
  * kit e T$ da origem só no 1º nível (acima disso a Tabela 3-1 substitui).
  */
 export function equipamentoInicial(
-  state: { nivel: number; origemId: string; classeNome: string; escolhasPorItem: Record<string, unknown> },
+  state: { nivel: number; origemId: string; classeNome: string; escolhasPorItem: Record<string, unknown>; semOrigem?: boolean },
   itens: IndexedEquipamento[]
 ): EquipamentoInicial {
   const out: EquipamentoInicial = { gratis: [], escolhas: [], dinheiroFixo: 0, formulasDinheiro: [] };
   const respostas = (state.escolhasPorItem["itens_iniciais"] as Record<string, string> | undefined) ?? {};
 
-  const origem = state.origemId ? getOrigem(state.origemId) : null;
+  const origem = state.origemId && !state.semOrigem ? getOrigem(state.origemId) : null;
   origem?.itens_iniciais?.forEach((it, idx) => entradaOrigem(idx, it, itens, respostas, out));
 
   if (state.nivel === 1) {

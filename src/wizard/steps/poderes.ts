@@ -1,7 +1,8 @@
 import { toNomeSlug } from "../../compendium/slug.js";
 import { getClasse, respostaSubEscolha } from "../../rules/classe.js";
 import { describeUnmet, type PartialWizardState } from "../../rules/poderes.js";
-import { getRaceAttributeTotals } from "../../rules/subescolhas.js";
+import { totaisRaciaisDoEstado } from "../../rules/subescolhas.js";
+import { poderesGeraisExtras, faixaDoPersonagem } from "../../rules/idade.js";
 import { habilidadesAte, slotsDePoder, getClasseProgressao } from "../../rules/progressao.js";
 import { resolverPoder } from "../../compendium/resolver.js";
 import type { IndexedMagia, IndexedPoder } from "../../compendium/types.js";
@@ -47,6 +48,8 @@ export interface PoderesContext {
   habilidades: Array<{ slug: string; nome: string }>;
   /** How many free picks allowed at this level (0 = none) */
   poderesParaPick: number;
+  /** Dos quais, quantos vêm de complicação/Já Vi Coisas e têm de ser gerais. */
+  extrasGerais: number;
   /** Filtered power list for picking (empty when poderesParaPick === 0) */
   poderes: PoderEntry[];
   /** Classe sem tabela de progressão em nenhuma fonte disponível. */
@@ -91,13 +94,19 @@ export function preparePoderesContext(
 
   // Free picks a character of this level has ACCUMULATED (levels 1..N), not the
   // single pick this level grants — a nv5 guerreiro picks 4 powers, not 1.
-  const poderesParaPick = slotsDePoder(state.classeNome || state.classeId, state.nivel);
+  // Vagas de classe (podem virar geral) + poderes gerais extras de complicação /
+  // Já Vi Coisas (HA p.282/289), que só podem ser gerais.
+  const slotsClasse = slotsDePoder(state.classeNome || state.classeId, state.nivel);
+  const extrasGerais = poderesGeraisExtras(state);
+  const poderesParaPick = slotsClasse + extrasGerais;
+  const faixa = faixaDoPersonagem(state);
 
   if (poderesParaPick === 0) {
     return {
       stepTitle: "Poderes",
       habilidades,
       poderesParaPick: 0,
+      extrasGerais: 0,
       poderes: [],
       semTabela,
       categorias: [],
@@ -117,7 +126,9 @@ export function preparePoderesContext(
   const idParaSlug = new Map<string, string>();
   const nomeClasse = norm(state.classeNome ?? "");
   for (const p of allPoderes) {
-    if (p.system.tipo === "classe" && nomeClasse && norm(p.system.subtipo ?? "") === nomeClasse) {
+    // subtipo "Geral" = poder de classe de toda classe (Aumento de Atributo).
+    const sub = norm(p.system.subtipo ?? "");
+    if (p.system.tipo === "classe" && nomeClasse && (sub === nomeClasse || sub === "geral")) {
       idsDaClasse.add(p.id);
     }
   }
@@ -136,9 +147,7 @@ export function preparePoderesContext(
     .filter((p): p is IndexedPoder => Boolean(p))
     .map(slugDoItem);
 
-  const racaRef = state.racaNome || state.racaId;
-  const escolhasRaca = (state.escolhasPorItem["raca_modificadores"] as string[][]) ?? [];
-  const totaisRaca = getRaceAttributeTotals(racaRef, escolhasRaca);
+  const totaisRaca = totaisRaciaisDoEstado(state);
   const atributos = Object.fromEntries(
     (["for", "des", "con", "int", "sab", "car"] as const).map((a) => [
       a,
@@ -174,6 +183,10 @@ export function preparePoderesContext(
   };
 
   const noLimite = state.poderes.length >= poderesParaPick;
+  const classeEscolhidos = state.poderes.filter((id) => idsDaClasse.has(id)).length;
+  const classeNoLimite = classeEscolhidos >= slotsClasse;
+  // Velho/ancião: "não pode escolher o poder Aumento de Atributo para atributos físicos" (HA p.289).
+  const aumentoFisico = /^aumento de atributo \((força|destreza|constituição)\)/i;
 
   // "Sempre que você recebe um poder de classe, pode trocá-lo por um poder geral"
   // (LB cap. 5) — so every class-power slot may also be spent on a general power.
@@ -199,7 +212,12 @@ export function preparePoderesContext(
         origem: p.system.tipo === "geral" ? ("geral" as const) : ("classe" as const),
         // Elegibilidade é recalculada a cada render: escolher o Poder A libera
         // na hora o Poder B que exigia A.
-        bloqueado: !state.poderes.includes(p.id) && (unmet.length > 0 || noLimite),
+        bloqueado:
+          !state.poderes.includes(p.id) &&
+          (unmet.length > 0 ||
+            noLimite ||
+            (p.system.tipo !== "geral" && classeNoLimite) ||
+            (faixa.bloqueiaAumentoFisico && aumentoFisico.test(p.name))),
         repetivel,
         vezes,
         podeMais: repetivel && vezes > 0 && !noLimite,
@@ -212,6 +230,7 @@ export function preparePoderesContext(
     stepTitle: "Poderes",
     habilidades,
     poderesParaPick,
+    extrasGerais,
     poderes: entries,
     semTabela,
     categorias,

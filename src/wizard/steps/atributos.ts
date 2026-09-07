@@ -5,7 +5,6 @@ import {
   listMetodos,
   validatePointBuy,
   pointBuyCost,
-  POINT_BUY_INITIAL_POINTS,
   valoresFixos,
   VALKARIA,
 } from "../../rules/atributos.js";
@@ -23,7 +22,7 @@ export const ATTR_LABELS: Record<string, string> = {
 /** Resumo de cada método (regra em uma linha; LB p.17 e HA p.280-281). */
 const METODO_TEXTO: Record<string, string> = {
   compra_pontos:
-    "10 pontos para gastar; todos os atributos começam em 0, baixar um para −1 devolve 1 ponto, máximo 4.",
+    "Pontos para gastar; todos os atributos começam em 0, baixar um para −1 devolve 1 ponto, máximo 4.",
   rolagem_padrao:
     "Role 4d6 seis vezes descartando o menor dado de cada, converta pela tabela e distribua os seis valores como quiser. Somando menos de 6, o menor é rolado de novo.",
   classica: "Como a padrão, mas 3d6 sem descarte — personagens mais fracos.",
@@ -62,6 +61,8 @@ export interface AtributosContext {
   pontosRestantes: number;
   pontosNegativo: boolean;
   pontosTotal: number;
+  /** Mestre travou o método: sem select. */
+  metodoFixo: boolean;
   metodoDescricao: string;
   metodoTexto: string;
   errors: string[];
@@ -71,12 +72,17 @@ export function prepareAtributosContext(
   state: WizardState,
   errors: string[] = []
 ): AtributosContext {
-  const metodos = listMetodos().map((m) => ({
-    id: m.id,
-    nome: m.nome,
-    categoria: m.categoria,
-    selected: m.id === state.metodoAtributos,
-  }));
+  // Método travado pelo mestre: só ele aparece, sem select.
+  const fixo = state.config.metodoAtributos !== "livre" ? state.config.metodoAtributos : null;
+  const metodos = listMetodos()
+    .filter((m) => !fixo || m.id === fixo)
+    .map((m) => ({
+      id: m.id,
+      nome: m.nome,
+      categoria: m.categoria,
+      selected: m.id === state.metodoAtributos,
+    }));
+  const pontos = state.config.pontosCompra;
 
   const metodo = state.metodoAtributos;
   const isCompra = metodo === "compra_pontos";
@@ -129,7 +135,7 @@ export function prepareAtributosContext(
         }))
       : [];
 
-  const pbResult = validatePointBuy(state.atributosBase);
+  const pbResult = validatePointBuy(state.atributosBase, pontos);
   const gerado = isValkaria ? dados.length > 0 : pool.length > 0;
 
   return {
@@ -146,7 +152,8 @@ export function prepareAtributosContext(
     valkariaTotais,
     pontosRestantes: pbResult.remaining,
     pontosNegativo: pbResult.remaining < 0,
-    pontosTotal: POINT_BUY_INITIAL_POINTS,
+    pontosTotal: pontos,
+    metodoFixo: Boolean(fixo),
     metodoDescricao: metodos.find((m) => m.selected)?.nome ?? "",
     metodoTexto: METODO_TEXTO[metodo] ?? "",
     errors,

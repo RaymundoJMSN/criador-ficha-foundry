@@ -50,14 +50,28 @@ import { prepareOrigemContext } from "./steps/origem.js";
 import { prepareClasseContext } from "./steps/classe.js";
 import { preparePericiaContext } from "./steps/pericias.js";
 import { getRaceSkillBonus } from "../rules/raca.js";
-import { getRaceAttributeTotals } from "../rules/subescolhas.js";
+import { totaisRaciaisDoEstado, distribuirAbertos, valoresFixosDaRaca } from "../rules/subescolhas.js";
 import { toSlug, toNomeSlug } from "../compendium/slug.js";
+import { lerConfig, resumoConfig } from "../config/config.js";
+import { listMetodos } from "../rules/atributos.js";
+import { nivelEfetivo, faixaDoPersonagem } from "../rules/idade.js";
+import { prepareIdadeContext } from "./steps/idade.js";
+import { openConfigApp } from "../config/app.js";
 
 /** Final Int = base + racial (fixed + chosen). Drives the perícia Int bonus. */
 function finalInt(state: WizardState): number {
-  const choices = (state.escolhasPorItem["raca_modificadores"] as string[][] | undefined) ?? [];
-  const totals = getRaceAttributeTotals(state.racaNome || state.racaId, choices);
-  return (state.atributosBase.int ?? 0) + (totals.int ?? 0);
+  return (state.atributosBase.int ?? 0) + (totaisRaciaisDoEstado(state).int ?? 0);
+}
+
+/** Regras da mesa entram no estado ao abrir; método travado já vai aplicado. */
+function aplicarConfig(state: WizardState): void {
+  const config = lerConfig();
+  const patch: Record<string, unknown> = { config };
+  if (config.metodoAtributos !== "livre" && state.metodoAtributos !== config.metodoAtributos) {
+    patch["metodoAtributos"] = config.metodoAtributos;
+    patch["atributosBase"] = { for: 0, des: 0, con: 0, int: 0, sab: 0, car: 0 };
+  }
+  state.apply(patch as Parameters<WizardState["apply"]>[0]);
 }
 import { prepareDivindadeContext } from "./steps/divindade.js";
 import { preparePoderesContext } from "./steps/poderes.js";
@@ -129,7 +143,11 @@ export function defineWizardApp(): void {
 
     /** Passos válidos para a classe escolhida (lutador não vê Magias). */
     _passos(): WizardStep[] {
-      return passosAplicaveis(toNomeSlug(this._state.classeNome ?? ""), slugsDosPoderes(this._state.poderes));
+      return passosAplicaveis(
+        toNomeSlug(this._state.classeNome ?? ""),
+        slugsDosPoderes(this._state.poderes),
+        this._state.config
+      );
     }
 
     goToStep(step: WizardStep): void {
@@ -267,7 +285,13 @@ export function defineWizardApp(): void {
         };
       }
       if (escolhas) patch["escolhasPorItem"] = escolhas;
-      if (formData.has("nivel")) patch["nivel"] = nivel;
+      if (formData.has("nivel")) {
+        // O campo é o nível do GRUPO; maduro/velho/ancião jogam acima dele (HA p.289).
+        const esc = { ...((patch["escolhasPorItem"] as Record<string, unknown> | undefined) ?? this._state.escolhasPorItem) };
+        esc["nivel_grupo"] = nivel;
+        patch["escolhasPorItem"] = esc;
+        patch["nivel"] = nivelEfetivo(nivel, { config: this._state.config, escolhasPorItem: esc });
+      }
       if (formData.has("nome")) patch["nome"] = nome;
       if (formData.has("metodoAtributos")) patch["metodoAtributos"] = metodoAtributos;
       if (formData.has("racaId")) {
@@ -335,6 +359,9 @@ export function defineWizardApp(): void {
           );
           break;
         }
+        case WizardStep.Idade:
+          stepCtx = prepareIdadeContext(state, CompendiumIndex.getAll("poder") as IndexedPoder[], errors);
+          break;
         case WizardStep.Origem: {
           const poderes = CompendiumIndex.getAll("poder") as IndexedPoder[];
           const resolvePoderNome = (slug: string): string | null =>
@@ -413,7 +440,8 @@ export function defineWizardApp(): void {
             racaItem?.name ?? state.racaId,
             classeItem?.name ?? state.classeId,
             errors,
-            equipRev.dinheiroRestante
+            equipRev.dinheiroRestante,
+            (id) => CompendiumIndex.getById("poder", id)?.name
           );
           break;
         }
@@ -431,6 +459,10 @@ export function defineWizardApp(): void {
         showNivel: step === WizardStep.Nivel,
         showAtributos: step === WizardStep.Atributos,
         showRaca: step === WizardStep.Raca,
+        showIdade: step === WizardStep.Idade,
+        regrasDaMesa: resumoConfig(state.config, (id) => listMetodos().find((m) => m.id === id)?.nome ?? id),
+        nivelGrupo: (state.escolhasPorItem["nivel_grupo"] as number | undefined) ?? state.nivel,
+        nivelExtra: state.nivel - ((state.escolhasPorItem["nivel_grupo"] as number | undefined) ?? state.nivel),
         showOrigem: step === WizardStep.Origem,
         showClasse: step === WizardStep.Classe,
         showPericias: step === WizardStep.Pericias,
@@ -739,6 +771,53 @@ export function defineWizardApp(): void {
         });
       });
 
+      // ── Idade & Complicações (HA cap. 4) ──────────────────────────────────
+      const salvarEscolha = (chave: string, valor: unknown) => {
+        const esc = { ...this._state.escolhasPorItem, [chave]: valor };
+        // Sem nível do grupo gravado (estado antigo), deduz do nível atual menos
+        // os extras da faixa em vigor — senão cada troca de faixa somava de novo.
+        const grupo =
+          (esc["nivel_grupo"] as number | undefined) ??
+          Math.max(1, this._state.nivel - faixaDoPersonagem(this._state).niveisExtras);
+        esc["nivel_grupo"] = grupo;
+        this._state.apply({
+          escolhasPorItem: esc,
+          nivel: nivelEfetivo(grupo, { config: this._state.config, escolhasPorItem: esc }),
+        });
+        this._errors = [];
+        void this.render();
+      };
+      root.querySelectorAll<HTMLInputElement>('input[name="idade_faixa"]').forEach((r) => {
+        r.addEventListener("change", () => salvarEscolha("idade_faixa", r.value));
+      });
+      root.querySelector<HTMLInputElement>('input[name="idade_ja_vi_coisas"]')?.addEventListener("change", (e) => {
+        salvarEscolha("idade_ja_vi_coisas", (e.target as HTMLInputElement).checked);
+      });
+      const caixasCompl = root.querySelectorAll<HTMLInputElement>('input[name^="compl_idade-"]');
+      caixasCompl.forEach((c) => {
+        c.addEventListener("change", () => {
+          salvarEscolha("complicacoes_idade", Array.from(caixasCompl).filter((x) => x.checked).map((x) => x.value));
+        });
+      });
+      root.querySelector<HTMLSelectElement>('select[name="complicacao"]')?.addEventListener("change", (e) => {
+        salvarEscolha("complicacao", (e.target as HTMLSelectElement).value);
+      });
+
+      // ── Raças Abertas: cada modificador fixo vai para um atributo ─────────
+      root.querySelectorAll<HTMLSelectElement>("select.t20w-raca-aberta").forEach((sel) => {
+        sel.addEventListener("change", () => {
+          const idx = sel.dataset["idx"]!;
+          const dist = { ...((this._state.escolhasPorItem["raca_aberta"] as Record<string, string>) ?? {}) };
+          // Atributo já usado por outro valor? Troca em vez de duplicar.
+          const dono = Object.keys(dist).find((k) => k !== idx && sel.value && dist[k] === sel.value);
+          if (dono) dist[dono] = dist[idx] ?? "";
+          dist[idx] = sel.value;
+          this._state.apply({ escolhasPorItem: { ...this._state.escolhasPorItem, raca_aberta: dist } });
+          this._errors = [];
+          void this.render();
+        });
+      });
+
       // ── Sub-escolhas dependentes do caminho (linhagem, tipo de dano) ─────
       root.querySelectorAll<HTMLSelectElement>("select[name='subescolha']").forEach((sel) => {
         sel.addEventListener("change", () => {
@@ -946,6 +1025,8 @@ export function defineWizardApp(): void {
           });
           void this.render();
         }
+      } else if (action === "abrirConfig") {
+        openConfigApp();
       } else if (action === "poderMais" || action === "poderMenos") {
         const id = target.dataset["id"];
         if (!id) return;
@@ -1024,6 +1105,7 @@ export function openWizard(): void {
   if (!inst || !inst.rendered) {
     _instance = new _WizardAppClass();
     restaurarRascunho(_instance);
+    aplicarConfig((_instance as any)._state as WizardState);
   }
   (_instance as any).render(true);
 }

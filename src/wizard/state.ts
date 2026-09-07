@@ -1,4 +1,8 @@
+import { CONFIG_PADRAO, type ConfigCriacao } from "../config/config.js";
+
 export interface WizardStateData {
+  /** Regras da mesa (setting do mundo), copiadas ao abrir o wizard. */
+  config: ConfigCriacao;
   nivel: number;
   nome: string;
   metodoAtributos: string;
@@ -21,6 +25,7 @@ export interface WizardStateData {
 }
 
 const DEFAULT_STATE: WizardStateData = {
+  config: { ...CONFIG_PADRAO },
   nivel: 1,
   nome: "",
   metodoAtributos: "compra_pontos",
@@ -45,6 +50,7 @@ const DEFAULT_STATE: WizardStateData = {
 const REQUIRED_FIELDS: (keyof WizardStateData)[] = ["nome", "racaId", "origemId", "classeId"];
 
 export class WizardState implements WizardStateData {
+  config!: ConfigCriacao;
   nivel!: number;
   nome!: string;
   metodoAtributos!: string;
@@ -83,6 +89,7 @@ export class WizardState implements WizardStateData {
 
   serialize(): string {
     const data: WizardStateData = {
+      config: { ...this.config },
       nivel: this.nivel,
       nome: this.nome,
       metodoAtributos: this.metodoAtributos,

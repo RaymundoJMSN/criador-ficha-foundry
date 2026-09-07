@@ -35,9 +35,16 @@ export function getDivindade(id: string): Divindade | null {
 const RACAS_CORINGA = new Set(["humano"]);
 const CLASSES_CORINGA = new Set(["clerigo"]);
 
-export function isDivindadeAcessa(divindadeSlug: string, racaSlug: string, classeSlug: string): boolean {
+export function isDivindadeAcessa(
+  divindadeSlug: string,
+  racaSlug: string,
+  classeSlug: string,
+  /** Devoções Abertas (HA p.281): qualquer deus, independente de raça ou classe. */
+  abertas = false
+): boolean {
   const div = getDivindade(divindadeSlug);
   if (!div) return false;
+  if (abertas) return true;
 
   if (RACAS_CORINGA.has(racaSlug) || CLASSES_CORINGA.has(classeSlug)) return true;
 
@@ -58,8 +65,8 @@ export function isDivindadeAcessa(divindadeSlug: string, racaSlug: string, class
   return racaListada || classeListada;
 }
 
-export function listDivindadesParaPersonagem(racaId: string, classeId: string): Divindade[] {
-  return divindadesData.filter((d) => isDivindadeAcessa(d.id, racaId, classeId));
+export function listDivindadesParaPersonagem(racaId: string, classeId: string, abertas = false): Divindade[] {
+  return divindadesData.filter((d) => isDivindadeAcessa(d.id, racaId, classeId, abertas));
 }
 
 export function isDivindadeObrigatoria(classeId: string): boolean {

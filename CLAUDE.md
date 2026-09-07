@@ -52,6 +52,39 @@ implementado, testado e criado no Foundry. Achados que mudaram comportamento:
   têm tabela em livro nenhum dos PDFs → aviso no passo.
 - Caminho da classe só no nível certo (cavaleiro: 5º, `caminho_nivel`).
 
+### Regras da mesa (2026-09-07)
+
+O equivalente ao item de configuração do Call of Cthulhu: **setting de mundo**
+`t20-ficha-wizard.configuracao` (`src/config/config.ts`), editado pelo mestre em
+Configurações → Criador de Ficha → "Regras da mesa" ou pelo botão abaixo de
+"Criar Personagem" (só aparece para GM). Todo cliente lê; o wizard copia para
+`state.config` ao abrir (`aplicarConfig`) e mostra o resumo no topo.
+
+| campo | efeito no wizard | fonte |
+|---|---|---|
+| `metodoAtributos` | trava o método (sem select) | LB p.17 / HA p.280 |
+| `pontosCompra` | Pontos Variados (5/10/15…) | HA p.281 |
+| `dinheiro` fixo | substitui 4d6/Tabela 3-1 (T$ da origem ainda soma) | — |
+| `racasPermitidas` / `classesPermitidas` | filtra as listas (vazio = todas) | — |
+| `complicacoes` | passo Idade & Complicações: 1 complicação do compêndio (`tipo:complicacao`, gerais + da classe) ↔ +1 poder geral | HA p.282 |
+| `complicacaoIdade` | "Já Vi Coisas" para qualquer faixa: +1 complicação de idade ↔ +1 poder geral (no livro só o Adulto) | HA p.289 |
+| `idadesVariadas` | faixa etária (Tabela 4-2): atributos, níveis extras, complicações obrigatórias, Sem Origem / Origem em Construção, Protegido dos Deuses, Ímpeto Juvenil, bloqueio de Aumento de Atributo físico | HA p.288 |
+| `racasAbertas` | modificadores fixos da raça distribuídos em atributos distintos | HA p.281 |
+| `devocoesAbertas` | qualquer deus, sem requisito de raça/classe | HA p.281 |
+
+Regras em `src/rules/idade.ts` (faixas e as 19 complicações de idade com os
+efeitos numéricos) e `rules/subescolhas.ts` (`distribuirAbertos`). **Nível**:
+o campo do passo 1 é o nível do GRUPO (`escolhasPorItem.nivel_grupo`);
+`state.nivel` = grupo + extras da faixa (`nivelEfetivo`). Poderes extras só
+podem ser gerais: o passo trava os de classe quando as vagas de classe acabam.
+**PV/PM do sistema ignoram `.bonus` de atributo** ("Pontos ignoram bônus"), por
+isso o modificador da faixa etária vai somado no `system.atributos` do item de
+raça (coluna racial), junto com Raças Abertas; o resto (Defesa, resistências,
+PM, perícias, PV/PM por nível) vai como Active Effect nos itens criados
+(`Faixa etária: X`, complicações de idade como `poder` tipo `complicacao`).
+Validado no Foundry: anão guerreiro ancião com Raças Abertas, Caolho, Já Vi
+Coisas e 5 complicações de idade → nível 4, PV 25, PM 8, atributos certos.
+
 **Ainda não cobre:** habilidade de classe com opção (Frade "Dádiva da Fé: Cólera
 Divina / Proteção Sagrada" — o item não resolve, o writer avisa); Raças Abertas
 (setting `openRaces` do sistema reabre o diálogo); proficiências/perícias das
