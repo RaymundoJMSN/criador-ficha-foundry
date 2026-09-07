@@ -28,7 +28,9 @@ const SLUG_MAP = slugMapRaw as Record<string, string>;
 
 export interface Nomeavel {
   name: string;
-  system?: { descricao?: string; tipo?: string };
+  system?: { descricao?: string; tipo?: string; subtipo?: string };
+  /** Pasta no compêndio ("Classe / Clérigo"), quando o índice traz. */
+  pasta?: string;
 }
 
 /** Como o slug foi resolvido — útil no log e na auditoria. */
@@ -89,37 +91,52 @@ function escada<T extends Nomeavel>(
 ): Resolucao<T> | null {
   const comSlug = itens.map((item) => ({ item, slug: toNomeSlug(item.name) }));
   const porSlug = (alvo: string): T[] => comSlug.filter((c) => c.slug === alvo).map((c) => c.item);
+  // Entre itens de mesmo nome, quem é da classe pedida (subtipo ou pasta
+  // "Classe / Clérigo") vence. O "Magias" solto do Místico (subtipo vazio) roubava
+  // o "Magias (Clérigo)" do clérigo porque o nome exato vinha antes da classe.
+  const daClasse = (i: T): boolean =>
+    Boolean(classeSlug) &&
+    (toNomeSlug(i.system?.subtipo ?? "") === classeSlug || toNomeSlug(i.pasta ?? "").includes(classeSlug));
+  const escolher = (cands: T[]): T | null =>
+    melhor([...cands].sort((a, b) => Number(daClasse(b)) - Number(daClasse(a))));
 
   const override = SLUG_MAP[slug];
   if (override) {
-    const achado = melhor(porSlug(override));
+    const achado = escolher(porSlug(override));
     if (achado) return { item: achado, via: "override" };
   }
 
-  const exato = melhor(porSlug(slug));
-  if (exato) return { item: exato, via: "exato" };
-
+  // "Nome (Classe)" antes do nome cru: é o item feito para esta classe.
   if (classeSlug) {
     const comClasse = melhor(porSlug(`${slug}_${classeSlug}`));
     if (comClasse) return { item: comClasse, via: "classe" };
   }
 
-  // Habilidade parametrizada: o slug carrega o valor do nível (`furia_+2`), o item não.
-  let maiorPrefixo: { item: T; slug: string } | null = null;
-  for (const c of comSlug) {
-    if (!c.slug || !slug.startsWith(c.slug + "_")) continue;
-    if (!maiorPrefixo || c.slug.length > maiorPrefixo.slug.length) maiorPrefixo = c;
-  }
-  if (maiorPrefixo) return { item: maiorPrefixo.item, via: "prefixo" };
+  const exato = escolher(porSlug(slug));
+  if (exato) return { item: exato, via: "exato" };
 
   const partes = slug.split("_").filter(Boolean);
 
+  // Habilidade parametrizada com classe: `magias_2_circulo` + clerigo → "Magias (Clérigo)".
   if (classeSlug) {
     for (let n = partes.length - 1; n >= 1; n--) {
       const achado = melhor(porSlug(`${partes.slice(0, n).join("_")}_${classeSlug}`));
       if (achado) return { item: achado, via: "prefixo+classe" };
     }
   }
+
+  // Habilidade parametrizada: o slug carrega o valor do nível (`furia_+2`), o item não.
+  let maiorPrefixo: { item: T; slug: string } | null = null;
+  for (const c of comSlug) {
+    if (!c.slug || !slug.startsWith(c.slug + "_")) continue;
+    if (
+      !maiorPrefixo ||
+      c.slug.length > maiorPrefixo.slug.length ||
+      (c.slug.length === maiorPrefixo.slug.length && daClasse(c.item) && !daClasse(maiorPrefixo.item))
+    )
+      maiorPrefixo = c;
+  }
+  if (maiorPrefixo) return { item: maiorPrefixo.item, via: "prefixo" };
 
   // Grupo com dois-pontos: "virtude_temperanca" ↔ "Virtude Paladinesca: Temperança".
   const cabeca = partes[0];

@@ -140,11 +140,16 @@ function walkDir(dir) {
     if (!f.endsWith(".json")) continue;
     const d = readJson(f);
     for (const ef of d.efeitos ?? []) {
+      // Centelha Mágica (Wynna): `lancar_magia` com `escolha: {tipo: "magia",
+      // filtro: {circulo: 1, tradicao: [arcana, divina]}}` — uma magia a mais,
+      // de qualquer das duas tradições, mesmo para quem só conjura uma.
+      const escolheMagia =
+        (ef.tipo === "lancar_magia" || ef.tipo === "aprender_magia") && ef.escolha?.tipo === "magia" && !ef.magia;
       const aprende = ef.tipo === "aprender_magia" || ef.subtipo === "aprender_magia" || ef.subtipo === "aprender_magias";
-      if (!aprende || ef.magia) continue;
-      const q = ef.quantidade ?? ef.valor?.quantidade ?? 1;
+      if ((!aprende && !escolheMagia) || ef.magia) continue;
+      const q = ef.quantidade ?? ef.valor?.quantidade ?? ef.escolha?.quantidade ?? 1;
       if (typeof q !== "number") continue;
-      const tradicao = ef.tradicao ?? ef.tipo_magia ?? ef.valor?.tradicao ?? null;
+      const tradicao = ef.tradicao ?? ef.tipo_magia ?? ef.valor?.tradicao ?? ef.escolha?.filtro?.tradicao ?? null;
       magiasPorPoder[d.id] = {
         quantidade: q,
         tradicao: Array.isArray(tradicao) ? tradicao : tradicao ? [tradicao] : [],

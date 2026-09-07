@@ -24,6 +24,8 @@ export interface TreinarPericia {
 export interface RacaData {
   id: string;
   nome: string;
+  /** Aggelus/Sulfure → "suraggel": poderes "(Suraggel)" valem para as duas. */
+  raca_base?: string | null;
   descricao: string | null;
   tamanho: string;
   deslocamento: number;
@@ -167,6 +169,8 @@ export interface PedidoRacial {
   filtro?: string | null;
   categoria?: string;
   circulo?: number;
+  /** Magia: só desta escola (abreviação do compêndio: "adv"). */
+  escola?: string;
   excluir?: string[];
   opcoes?: Array<{ id: string; rotulo: string }>;
   partes?: PedidoRacial[];

@@ -6,6 +6,8 @@ export interface IndexedBase {
   img: string;
   packId: string; // e.g. "tormenta20.racas"
   type: ItemType;
+  /** Pasta dentro do pack ("Classe / Clérigo"): desempata itens de mesmo nome. */
+  pasta?: string;
 }
 
 export interface IndexedRace extends IndexedBase {

@@ -66,5 +66,12 @@
     "tradicao": [
       "divina"
     ]
+  },
+  "centelha_magica": {
+    "quantidade": 1,
+    "tradicao": [
+      "arcana",
+      "divina"
+    ]
   }
 }

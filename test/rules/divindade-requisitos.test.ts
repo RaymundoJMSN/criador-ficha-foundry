@@ -15,14 +15,17 @@ describe("requisitos de devoto (LB cap. 2)", () => {
     expect(isDivindadeAcessa("allihanna", "anao", "arcanista")).toBe(false);
   });
 
-  it("humano pode ser devoto de qualquer divindade", () => {
+  it("humano pode ser devoto de qualquer divindade (menos o Panteão, que é regra de clérigo/frade)", () => {
     const todas = listDivindades();
     const paraHumano = listDivindadesParaPersonagem("humano", "arcanista");
-    expect(paraHumano.length).toBe(todas.length);
+    expect(paraHumano.length).toBe(todas.length - 1);
+    expect(paraHumano.map((d) => d.id)).not.toContain("panteao");
   });
 
-  it("clérigo pode ser devoto de qualquer divindade", () => {
-    expect(listDivindadesParaPersonagem("goblin", "clerigo").length).toBe(listDivindades().length);
+  it("clérigo pode ser devoto de qualquer divindade, Panteão incluído", () => {
+    const lista = listDivindadesParaPersonagem("goblin", "clerigo");
+    expect(lista.length).toBe(listDivindades().length);
+    expect(lista.map((d) => d.id)).toContain("panteao");
   });
 
   it("arcanista élfico vê mais que só os deuses 'qualquer'", () => {

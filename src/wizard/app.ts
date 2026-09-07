@@ -47,6 +47,16 @@ import { prepareNivelContext } from "./steps/nivel.js";
 import { prepareAtributosContext } from "./steps/atributos.js";
 import { prepareRacaContext, nomeDaRaca } from "./steps/raca.js";
 import { montarCombo } from "./combo.js";
+import { temNomes, sortearNome } from "../rules/nomes.js";
+import { poderesAdquiridos, pendenciasDeSubEscolhas } from "../rules/subescolhas-poder.js";
+
+/** Sub-escolhas de poder ainda em branco (Aspirante a Herói sem atributo…). */
+function pendenciasDosPoderes(state: WizardState): string[] {
+  return pendenciasDeSubEscolhas(
+    poderesAdquiridos(state, CompendiumIndex.getAll("poder") as IndexedPoder[], CompendiumIndex.getAll("race") as IndexedRace[]),
+    state.escolhasPorItem
+  );
+}
 import { prepareOrigemContext } from "./steps/origem.js";
 import { prepareClasseContext } from "./steps/classe.js";
 import { preparePericiaContext } from "./steps/pericias.js";
@@ -97,6 +107,7 @@ import type {
   IndexedClasse,
   IndexedRace,
   IndexedPoder,
+  IndexedEquipamento,
   IndexedMagia,
 } from "../compendium/types.js";
 
@@ -416,7 +427,8 @@ export function defineWizardApp(): void {
             poderes,
             errors,
             resolvePoderNomePoderes,
-            CompendiumIndex.getAll("magia")
+            CompendiumIndex.getAll("magia"),
+            { racas: CompendiumIndex.getAll("race") as IndexedRace[], armas: CompendiumIndex.getAll("arma") as IndexedEquipamento[] }
           );
           break;
         }
@@ -477,7 +489,7 @@ export function defineWizardApp(): void {
               pericias: Object.keys(getTrainedPericaCodes(state)),
             }
           );
-          const habPend = pendenciasDeHabilidades(state, CompendiumIndex.getAll("poder") as IndexedPoder[]);
+          const habPend = [...pendenciasDeHabilidades(state, CompendiumIndex.getAll("poder") as IndexedPoder[]), ...pendenciasDosPoderes(state)];
           stepCtx = { ...rev, pendencias: [...rev.pendencias, ...habPend], isComplete: rev.isComplete && habPend.length === 0 };
           break;
         }
@@ -499,6 +511,7 @@ export function defineWizardApp(): void {
         showIdade: step === WizardStep.Idade,
         regrasDaMesa: resumoConfig(state.config, (id) => listMetodos().find((m) => m.id === id)?.nome ?? id),
         nivelGrupo: (state.escolhasPorItem["nivel_grupo"] as number | undefined) ?? state.nivel,
+        temNomes: temNomes(),
         nivelTravado: state.config.nivelTravado,
         nivelExtra: state.nivel - ((state.escolhasPorItem["nivel_grupo"] as number | undefined) ?? state.nivel),
         showOrigem: step === WizardStep.Origem,
@@ -726,6 +739,16 @@ export function defineWizardApp(): void {
         montarCombo(sel);
       });
 
+      // ── Sub-escolhas de poder (Aspirante a Herói: atributo; Foco em Arma: arma…) ──
+      root.querySelectorAll<HTMLSelectElement>("select[name^='sp-']").forEach((sel) => {
+        sel.addEventListener("change", () => {
+          const chave = sel.name.replace(/-/g, "_");
+          this._state.apply({ escolhasPorItem: { ...this._state.escolhasPorItem, [chave]: sel.value } });
+          this._errors = [];
+          void this.render();
+        });
+      });
+
       // ── Montagem da raça (Duende, Kallyanach, Golem Desperto…) ───────────
       // Qualquer mudança relê os passos inteiros do DOM: marcadas e sub-escolhas.
       root.querySelectorAll<HTMLElement>("[name^='mont-']").forEach((el) => {
@@ -775,8 +798,10 @@ export function defineWizardApp(): void {
             // Poder repetível (Orar ×2) tem o id N vezes no estado; a caixa
             // marcada mantém as cópias, desmarcar tira todas.
             const atual = this._state[campo] as string[];
+            // Marcada fora do filtro (magia escondida pelo filtro de escola) vem
+            // como input hidden: conta como marcada, senão sumia ao clicar em outra.
             const marcados = Array.from(caixas)
-              .filter((c) => c.checked)
+              .filter((c) => c.type === "hidden" || c.checked)
               .flatMap((c) => {
                 const n = atual.filter((id) => id === c.value).length;
                 return Array(Math.max(1, n)).fill(c.value) as string[];
@@ -981,6 +1006,16 @@ export function defineWizardApp(): void {
         });
       }
 
+      // ── Magia: filtros de escola e tradição ─────────────────────────────
+      for (const [id, chave] of [["#t20w-magia-escola", "magia_filtro_escola"], ["#t20w-magia-tradicao", "magia_filtro_tradicao"]] as const) {
+        root.querySelector<HTMLSelectElement>(id)?.addEventListener("change", (e) => {
+          this._state.apply({
+            escolhasPorItem: { ...this._state.escolhasPorItem, [chave]: (e.target as HTMLSelectElement).value },
+          });
+          void this.render();
+        });
+      }
+
       // ── Magia search ───────────────────────────────────────────────────
       const magiaSearch = root.querySelector<HTMLInputElement>("#t20w-magia-search");
       if (magiaSearch) {
@@ -1078,6 +1113,7 @@ export function defineWizardApp(): void {
         const faltando = [
           ...pendencias(this._state as unknown as EngineState),
           ...pendenciasDeHabilidades(this._state, CompendiumIndex.getAll("poder") as IndexedPoder[]),
+          ...pendenciasDosPoderes(this._state),
         ];
         if (faltando.length > 0) {
           this._errors = faltando;
@@ -1134,6 +1170,12 @@ export function defineWizardApp(): void {
           this._errors = [];
           void this.render();
         });
+      } else if (action === "nomeAleatorio") {
+        const nome = sortearNome(this._state.racaNome);
+        if (nome) {
+          this._state.apply({ nome });
+          void this.render();
+        }
       } else if (action === "abrirConfig") {
         openConfigApp();
       } else if (action === "mcAdd" || action === "mcRemove") {

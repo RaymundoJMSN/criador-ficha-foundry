@@ -1,0 +1,66 @@
+{
+  "_comentario": "Poder que pede uma escolha ao ser adquirido (Aspirante a Herói: +1 em um atributo; Foco em Arma: qual arma…). Chave = slug do nome do item no compêndio. Só estrutura: o texto vem do item.",
+  "aspirante_a_heroi": { "tipo": "atributo", "rotulo": "Atributo que recebe +1", "valor": 1 },
+  "treinamento_em_pericia": { "tipo": "pericia", "rotulo": "Perícia em que se torna treinado", "treinar": true },
+  "conhecimento_enciclopedico": { "tipo": "pericia", "rotulo": "Perícia de Inteligência em que se torna treinado", "treinar": true, "quantidade": 2, "atributo": "Int" },
+  "foco_em_arma": { "tipo": "arma", "rotulo": "Arma (+2 nos ataques)" },
+  "arma_amada": { "tipo": "arma", "rotulo": "Arma amada" },
+  "proficiencia": {
+    "tipo": "lista",
+    "rotulo": "Proficiência",
+    "opcoes": [
+      { "id": "armas_marciais", "rotulo": "Armas marciais" },
+      { "id": "armas_de_fogo", "rotulo": "Armas de fogo" },
+      { "id": "armaduras_pesadas", "rotulo": "Armaduras pesadas" },
+      { "id": "escudos", "rotulo": "Escudos" },
+      { "id": "armas_exoticas", "rotulo": "Armas exóticas (só se já for proficiente em marciais)" }
+    ]
+  },
+  "foco_em_magia": { "tipo": "magia_conhecida", "rotulo": "Magia que você conhece (–1 PM)" },
+  "especializacao_em_magia": { "tipo": "magia_conhecida", "rotulo": "Magia (precisa ter Foco em Magia nela)" },
+  "especialista_em_escola": { "tipo": "escola", "rotulo": "Escola de magia (+2 na CD)" },
+  "explorador": {
+    "tipo": "lista",
+    "rotulo": "Tipo de terreno",
+    "opcoes": [
+      { "id": "aquatico", "rotulo": "Aquático" },
+      { "id": "artico", "rotulo": "Ártico" },
+      { "id": "colina", "rotulo": "Colina" },
+      { "id": "deserto", "rotulo": "Deserto" },
+      { "id": "floresta", "rotulo": "Floresta" },
+      { "id": "montanha", "rotulo": "Montanha" },
+      { "id": "pantano", "rotulo": "Pântano" },
+      { "id": "planicie", "rotulo": "Planície" },
+      { "id": "subterraneo", "rotulo": "Subterrâneo" },
+      { "id": "urbano", "rotulo": "Urbano" },
+      { "id": "area_de_tormenta", "rotulo": "Área de Tormenta (a partir do 11º nível)" }
+    ]
+  },
+  "inimigo_de": {
+    "tipo": "lista",
+    "rotulo": "Inimigo",
+    "opcoes": [
+      { "id": "animal", "rotulo": "Animais" },
+      { "id": "construto", "rotulo": "Construtos" },
+      { "id": "espirito", "rotulo": "Espíritos" },
+      { "id": "monstro", "rotulo": "Monstros" },
+      { "id": "morto_vivo", "rotulo": "Mortos-vivos" },
+      { "id": "humanoides", "rotulo": "Duas raças humanoides (anote quais com o mestre)" }
+    ]
+  },
+  "baforada_draconica": {
+    "tipo": "lista",
+    "rotulo": "Elemento do sopro",
+    "opcoes": [
+      { "id": "acido", "rotulo": "Ácido" },
+      { "id": "eletricidade", "rotulo": "Eletricidade" },
+      { "id": "fogo", "rotulo": "Fogo" },
+      { "id": "frio", "rotulo": "Frio" },
+      { "id": "luz", "rotulo": "Luz" },
+      { "id": "trevas", "rotulo": "Trevas" }
+    ]
+  },
+  "de_outro_mundo": { "tipo": "magia", "rotulo": "Magia de 1º círculo (a habilidade ou tecnologia do seu mundo)", "circulo": 1 },
+  "espiao": { "tipo": "pericia", "rotulo": "Perícia que passa a usar Carisma (exceto Luta e Pontaria)", "excluir": ["luta", "pontaria"] },
+  "caminho_da_perfeicao": { "tipo": "pericia", "rotulo": "Perícia treinada que recebe +2", "bonus": 2 }
+}

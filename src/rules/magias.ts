@@ -49,6 +49,18 @@ export function slugsDosPoderes(ids: string[]): string[] {
   return ids.map((id) => toNomeSlug(nomeDoPoder(id) ?? "")).filter((s) => s.length > 0);
 }
 
+/**
+ * Poderes que podem trazer magia: os escolhidos (ids do compêndio) e os
+ * concedidos da divindade (já são slugs). Centelha Mágica vem de Wynna — sem
+ * isto ela não abria a outra tradição nem somava na cota.
+ */
+export function slugsDePoderesComMagia(state: { poderes: string[]; escolhasPorItem: Record<string, unknown> }): string[] {
+  return [
+    ...slugsDosPoderes(state.poderes),
+    ...((state.escolhasPorItem["divindade_poderes"] as string[] | undefined) ?? []),
+  ];
+}
+
 /** Magias a mais que os poderes escolhidos dão (repetição conta: Orar 2× = 2). */
 export function magiasExtrasDosPoderes(poderSlugs: string[]): number {
   return poderSlugs.reduce((n, s) => n + (magiasPorPoder[s]?.quantidade ?? 0), 0);
@@ -90,12 +102,21 @@ export interface FiltroMagias {
  * (ou dos poderes) mais as universais, e — para bardo/druida — só as escolas
  * escolhidas. Sem as escolas marcadas a lista fica vazia de propósito.
  */
+const abrev = (t: Tradicao): string => (t === "arcana" ? "arc" : "div");
+
+/** Tradições que o personagem alcança: a da classe e as abertas por poderes (Orar, Centelha Mágica). */
+export function tradicoesDoPersonagem(classeSlug: string, poderSlugs: string[] = []): { classe: Tradicao | null; poderes: Tradicao[] } {
+  return { classe: tradicaoDaClasse(classeSlug), poderes: tradicoesDosPoderes(poderSlugs) };
+}
+
 export function filterMagias(magias: IndexedMagia[], f: FiltroMagias): IndexedMagia[] {
   const circles = new Set(getCirculosDesbloqueados(f.classeSlug, f.nivel));
-  const tradicao = tradicaoDaClasse(f.classeSlug);
-  const tradicoes = tradicao ? [tradicao] : tradicoesDosPoderes(f.poderSlugs ?? []);
-  if (tradicoes.length === 0) return [];
-  const tipos = new Set<string>(["uni", ...tradicoes.map((t) => (t === "arcana" ? "arc" : "div"))]);
+  const { classe: tradicao, poderes: dosPoderes } = tradicoesDoPersonagem(f.classeSlug, f.poderSlugs ?? []);
+  if (!tradicao && dosPoderes.length === 0) return [];
+  const daClasse = tradicao ? abrev(tradicao) : "";
+  // Centelha Mágica num clérigo abre as arcanas — mas o poder dá "uma magia de
+  // 1º círculo": a outra tradição só aparece no 1º círculo.
+  const porPoder = new Set(dosPoderes.map(abrev));
 
   const precisaEscolas = escolasAEscolher(f.classeSlug);
   const escolas = new Set(f.escolas ?? []);
@@ -105,7 +126,9 @@ export function filterMagias(magias: IndexedMagia[], f: FiltroMagias): IndexedMa
     // Coerce circulo to number — getIndex may return string from Foundry
     const circulo = Number(m.system.circulo);
     if (!circulo || !circles.has(circulo)) return false;
-    if (m.system.tipo && !tipos.has(m.system.tipo)) return false;
+    const tipo = m.system.tipo ?? "";
+    const tradicaoOk = !tipo || tipo === "uni" || tipo === daClasse || (porPoder.has(tipo) && circulo === 1);
+    if (!tradicaoOk) return false;
     if (precisaEscolas > 0 && m.system.escola && !escolas.has(m.system.escola)) return false;
     return true;
   });

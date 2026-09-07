@@ -3,7 +3,7 @@ import { validarAtributos, listMetodos } from "./atributos.js";
 import { pendenciasDeIdade, poderesGeraisExtras, beneficiosDeOrigemPermitidos } from "./idade.js";
 import type { ConfigCriacao } from "../config/config.js";
 import type { AtributosBase } from "./atributos.js";
-import { filterMagias, cotaDeMagias, slugsDosPoderes, escolasAEscolher, magiasExtrasDosPoderes } from "./magias.js";
+import { filterMagias, cotaDeMagias, slugsDePoderesComMagia, escolasAEscolher, magiasExtrasDosPoderes } from "./magias.js";
 import { classesDoPersonagem, caminhoDe, slotsDePoderTotal, errosMulticlasse } from "./multiclasse.js";
 import { listOrigens, validarBeneficios } from "./origem.js";
 import {
@@ -242,7 +242,7 @@ export function pendencias(state: EngineState): string[] {
   const classesTodas = classesDoPersonagem(state);
   const cotaMagias =
     classesTodas.reduce((n, c) => n + cotaDeMagias(c.classeNome || c.classeId, c.niveis, caminhoDe(state, c), []), 0) +
-    magiasExtrasDosPoderes(slugsDosPoderes(state.poderes));
+    magiasExtrasDosPoderes(slugsDePoderesComMagia(state));
   if (state.magias.length < cotaMagias) {
     faltando.push(`Escolha ${cotaMagias} magia(s) — ${state.magias.length} escolhida(s).`);
   }
@@ -301,7 +301,7 @@ export function getOptions(
         classeSlug: toNomeSlug(state.classeNome || ""),
         nivel: state.nivel,
         escolas: (state.escolhasPorItem["classe_escolas"] as string[] | undefined) ?? [],
-        poderSlugs: slugsDosPoderes(state.poderes),
+        poderSlugs: slugsDePoderesComMagia(state),
       });
     }
 

@@ -31,11 +31,25 @@ export interface Divindade {
 
 const CLASSES_OBRIGATORIAS = new Set(["clerigo", "paladino", "druida"]);
 
+/**
+ * "Você pode cultuar o Panteão como um todo. Não recebe nenhum Poder Concedido,
+ * mas sua única obrigação e restrição é não usar armas cortantes ou perfurantes"
+ * (LB p.103, Clérigo; Deuses de Arton, Frade). Só essas duas classes.
+ */
+export const PANTEAO: Divindade = {
+  id: "panteao",
+  nome: "Panteão (como um todo)",
+  devotos_aceitos: { regra: "lista_restrita", classes_aceitas: ["clerigo", "frade"] },
+  poderes_concedidos: [],
+};
+const CLASSES_DO_PANTEAO = new Set(["clerigo", "frade"]);
+
 export function listDivindades(): Divindade[] {
   return [...divindadesData, ...deusesMenores];
 }
 
 export function getDivindade(id: string): Divindade | null {
+  if (id === PANTEAO.id) return PANTEAO;
   return divindadesData.find((d) => d.id === id) ?? deusesMenores.find((d) => d.id === id) ?? null;
 }
 
@@ -121,6 +135,8 @@ export function isDivindadeAcessa(
 ): boolean {
   const div = getDivindade(divindadeSlug);
   if (!div) return false;
+  // Regra de classe, não de devoção: nem Devoções Abertas nem humano abrem o Panteão.
+  if (div.id === PANTEAO.id) return CLASSES_DO_PANTEAO.has(classeSlug);
   if (abertas) return true;
 
   // Coringa (humano/clérigo) é regra do Panteão maior; deus menor diz quem aceita.
@@ -144,7 +160,10 @@ export function isDivindadeAcessa(
 }
 
 export function listDivindadesParaPersonagem(racaId: string, classeId: string, abertas = false): Divindade[] {
-  return listDivindades().filter((d) => isDivindadeAcessa(d.id, racaId, classeId, abertas));
+  // O T20-DB também traz um "panteao"; vale o daqui (com a regra de classe).
+  return [...listDivindades().filter((d) => d.id !== PANTEAO.id), PANTEAO].filter((d) =>
+    isDivindadeAcessa(d.id, racaId, classeId, abertas)
+  );
 }
 
 export function isDivindadeObrigatoria(classeId: string): boolean {

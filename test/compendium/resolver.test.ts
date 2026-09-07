@@ -55,6 +55,20 @@ describe("resolverPoder", () => {
     expect(via("magias_2_circulo", "clerigo")).toBe("prefixo+classe");
   });
 
+  it("um 'Magias' solto de outra classe (Místico, subtipo vazio) não rouba o da classe pedida", () => {
+    const itens = [
+      { name: "Magias", system: { tipo: "ability", subtipo: "" }, pasta: "Novas Classes / Poderes de Classe (Místico)" },
+      { name: "Magias (Clérigo)", system: { tipo: "ability", subtipo: "Clérigo" }, pasta: "Classe / Clérigo" },
+      { name: "Magias", system: { tipo: "racial" } },
+    ];
+    expect(resolverPoder("magias", "clerigo", itens, "ability")?.item.name).toBe("Magias (Clérigo)");
+    expect(resolverPoder("magias_2_circulo", "clerigo", itens, "ability")?.item.name).toBe("Magias (Clérigo)");
+    // Místico: o nome exato é o dele, pela pasta.
+    expect(resolverPoder("magias", "mistico", itens, "ability")?.item.pasta).toContain("Místico");
+    // Sem classe, dois "Magias" empatam: fica o que tem texto/o primeiro — nunca o racial quando o tipo é ability.
+    expect(resolverPoder("magias", "", itens, "ability")?.item.system?.tipo).toBe("ability");
+  });
+
   it("resolve grupo com dois-pontos", () => {
     expect(nome("virtude_temperanca", "paladino")).toBe("Virtude Paladinesca: Temperança");
     expect(nome("postura_torre_inabalavel", "cavaleiro")).toBe(
@@ -98,8 +112,8 @@ describe("resolverPoder — tipo esperado desempata entre módulos", () => {
     { name: "Magias (Arcanista)", system: { tipo: "ability" } },
   ];
 
-  it("sem tipo, o prefixo racial rouba o casamento", () => {
-    expect(resolverPoder("magias_1_circulo", "arcanista", COM_COLISAO)?.item.name).toBe("Magias");
+  it("mesmo sem tipo, o prefixo COM a classe vence o prefixo racial solto", () => {
+    expect(resolverPoder("magias_1_circulo", "arcanista", COM_COLISAO)?.item.name).toBe("Magias (Arcanista)");
   });
 
   it("com tipo 'ability', acha a habilidade da classe", () => {
@@ -110,8 +124,10 @@ describe("resolverPoder — tipo esperado desempata entre módulos", () => {
 
   it("tipo sem candidato cai de volta na lista inteira", () => {
     expect(resolverPoder("magias_1_circulo", "arcanista", COM_COLISAO, "origem")?.item.name).toBe(
-      "Magias"
+      "Magias (Arcanista)"
     );
+    // Sem classe nenhuma, sobra só o prefixo cru.
+    expect(resolverPoder("magias_1_circulo", "", COM_COLISAO, "origem")?.item.name).toBe("Magias");
   });
 });
 

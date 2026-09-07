@@ -32,7 +32,7 @@ export interface PericiaContext {
   errors: string[];
 }
 
-const PERICIA_NOMES: Record<string, string> = {
+export const PERICIA_NOMES: Record<string, string> = {
   acrobacia: "Acrobacia",
   adestramento: "Adestramento",
   atletismo: "Atletismo",
@@ -65,7 +65,7 @@ const PERICIA_NOMES: Record<string, string> = {
 };
 
 /** Atributo-chave de cada perícia (LB cap. 2, Tabela 2-1). */
-const PERICIA_ATRIBUTO: Record<string, string> = {
+export const PERICIA_ATRIBUTO: Record<string, string> = {
   acrobacia: "Des", adestramento: "Car", atletismo: "For", atuacao: "Car", cavalgar: "Des",
   conhecimento: "Int", cura: "Sab", diplomacia: "Car", enganacao: "Car", fortitude: "Con",
   furtividade: "Des", guerra: "Int", iniciativa: "Des", intimidacao: "Car", intuicao: "Sab",

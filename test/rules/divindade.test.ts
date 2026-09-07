@@ -4,6 +4,7 @@ import {
   isDivindadeAcessa,
   isDivindadeObrigatoria,
   listDivindadesParaPersonagem,
+  getDivindade,
 } from "../../src/rules/divindade.js";
 
 describe("listDivindades", () => {
@@ -71,5 +72,17 @@ describe("listDivindadesParaPersonagem", () => {
   it("anão guerreiro NÃO vê allihanna", () => {
     const list = listDivindadesParaPersonagem("anao", "guerreiro");
     expect(list.some((d) => d.id === "allihanna")).toBe(false);
+  });
+});
+
+describe("Panteão como um todo (LB p.103)", () => {
+  it("só clérigo e frade veem o Panteão; paladino e humano não; sem poder concedido", () => {
+    const nomes = (raca: string, classe: string, abertas = false) => listDivindadesParaPersonagem(raca, classe, abertas).map((d) => d.id);
+    expect(nomes("anao", "clerigo")).toContain("panteao");
+    expect(nomes("anao", "frade")).toContain("panteao");
+    expect(nomes("humano", "paladino")).not.toContain("panteao");
+    expect(nomes("humano", "guerreiro", true)).not.toContain("panteao");
+    expect(getDivindade("panteao")?.poderes_concedidos).toEqual([]);
+    expect(isDivindadeObrigatoria("clerigo")).toBe(true);
   });
 });

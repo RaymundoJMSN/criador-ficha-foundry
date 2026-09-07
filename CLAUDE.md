@@ -107,6 +107,56 @@ classe no nível dela, lista = união das conjuradoras, teto por círculo somado
 Divindade obrigatória/concedidos: qualquer das classes. Validado: guerreiro 3 /
 arcanista 2 (bruxo) → nível 5, PV 39, PM 21, 3 poderes, 4 magias de 1º.
 
+### Pedidos do Ray de 2026-09-07 (tarde)
+
+- **"Magias (Clérigo)" errado**: a escada do resolver tentava o nome exato antes
+  do "Nome (Classe)", e o "Magias" solto do Místico (`ability`, subtipo vazio,
+  pack guia-de-npcs) roubava o casamento. Agora: override → `slug_classe` →
+  exato (quem é da classe pelo `subtipo` ou pela **pasta** vence o empate) →
+  prefixo+classe → prefixo → grupo → tokens. O índice passou a carregar
+  `pasta` ("Classe / Clérigo") lida de `pack.folders` — é a organização em
+  pastas dos compêndios que o Ray apontou.
+- **Poderes gerais só da categoria certa** (`geralDaLista`): `tipo:"geral"` no
+  compêndio inclui poderes de raça ("Glamour (Duende)", subtipo Duende),
+  complicações ("Desvantagem"), montaria, parceiros, grupo, distinção… Entram
+  só Combate/Destino/Magia/Tormenta (ou subtipo vazio) e os da própria raça
+  (tokens do subtipo ⊆ tokens da raça + raça-base + escolhas `raca_*`: qareen de
+  Luz vê "Qareen de Luz"; Aggelus vê "(Suraggel)").
+- **Pré-requisito lido do texto** (`prereqsDoTexto`): poder fora do T20-DB tem
+  "Pré-requisitos: Sab 2, treinado em Vontade, 5º nível de nobre, Duas Cabeças."
+  no item — vira `atributo`/`pericia`/`nivel_classe`/`habilidade_classe`
+  ("Fúria ou Fúria Divina" = OR), `divindade_druida` ("druida de Tenebra"),
+  `habilidade_classe: magias` ("lançar magias"). O que não dá para ler (asas,
+  arma natural, familiar) não bloqueia. `describeUnmet(slug, state, descricao)`.
+- **Magias**: filtro por escola e (quando há as duas) por tradição; badge
+  "Arcana/Divina/Universal". Tradição aberta por poder só vale no 1º círculo
+  (Centelha Mágica: "uma magia arcana ou divina de 1º círculo"). O port passou a
+  contar `lancar_magia` com `escolha.tipo === "magia"` em `magias_por_poder`
+  (Centelha, aspectos do druida, truques). `slugsDePoderesComMagia(state)` =
+  poderes escolhidos + `divindade_poderes` — o concedido de Wynna não entrava.
+  **Marcada fora do filtro vai como input escondido** (`selecionadasOcultas`):
+  o FormData só vê o que está na tela e derrubava as outras ao clicar.
+- **Sub-escolhas de poder** (`data/subescolhas_poder.json` +
+  `rules/subescolhas-poder.ts`): Aspirante a Herói (atributo), Treinamento em
+  Perícia, Conhecimento Enciclopédico (2 de Int), Foco em Arma/Arma Amada,
+  Proficiência, Foco/Especialização em Magia (magia conhecida), Especialista em
+  Escola, Explorador, Inimigo de, Baforada Dracônica, De Outro Mundo, Espião,
+  Caminho da Perfeição. `poderesAdquiridos(state)` junta habilidades, poderes,
+  origem, divindade, montagem e concedidos da raça; bloco "Escolhas dos seus
+  poderes" no passo Poderes (`sp-<slug>-<i>` → `sp_<slug>_<i>`); pendência na
+  Revisão. Writer: atributo = AE no ator (`system.atributos.X.bonus`), perícia
+  treinada = `treinado`, bônus = AE `outros`, magia = item, e o nome do item
+  ganha a escolha ("Aspirante a herói (Sabedoria)"). Sapiência (Moreau da
+  Coruja) = escolha racial `magia` com `escola: "adv"` em `montagem.json`.
+- **Panteão como um todo** (LB p.103 clérigo; Deuses de Arton frade):
+  `PANTEAO` em `divindade.ts`, listado só para clérigo/frade (regra de classe:
+  nem humano nem Devoções Abertas), sem concedido; item "Devoto do Panteão" na
+  ficha com a restrição. O T20-DB também tem um `panteao` — o daqui substitui.
+- **Nome aleatório**: botão 🎲 no passo Nível sorteia da Tabela 1-24 de Heróis
+  de Arton (`textos.nomes`, gerado em `gerar-textos.mjs`, gitignorado): coluna
+  da raça escolhida (humano, anão, dahllan, elfo, goblin, hynne, minotauro,
+  qareen), senão qualquer.
+
 ### Pedidos do Ray de 2026-09-07 (manhã)
 
 - **Listas em ordem alfabética** (`localeCompare` pt-BR) em raças, origens,

@@ -11,13 +11,17 @@ import { classesDoPersonagem, habilidadesDeTodas, caminhoDe } from "../rules/mul
 import { distincaoEscolhida } from "../rules/distincoes.js";
 import { resolverPoder, opcoesDaHabilidade, chaveHabilidade } from "../compendium/resolver.js";
 import { prepareEquipamentoContext } from "../wizard/steps/equipamento.js";
-import { getOrigem, validarBeneficios } from "../rules/origem.js";
-import { getDivindade } from "../rules/divindade.js";
+import { getOrigem, validarBeneficios, slugsDoPoderDaOrigem } from "../rules/origem.js";
+import { getDivindade, PANTEAO } from "../rules/divindade.js";
 import { slugsDosPoderes } from "../rules/magias.js";
 import magiaPorPoderRaw from "../data/magia_por_poder.json";
 const magiaPorPoder = magiaPorPoderRaw as Record<string, string>;
 import { validateRaceModifiers, distribuirAbertos } from "../rules/subescolhas.js";
 import { opcoesDaMontagem, anotacoesDaMontagem } from "../rules/montagem.js";
+import { poderesAdquiridos, respostasDeSubEscolhas } from "../rules/subescolhas-poder.js";
+import { PERICIA_NOMES } from "../wizard/steps/pericias.js";
+import { ESCOLAS } from "../rules/magias.js";
+import type { IndexedRace } from "../compendium/types.js";
 import { escolhasDaRaca, pedidoAtivo, partesDoPedido } from "../rules/raca.js";
 import {
   beneficiosDeOrigemPermitidos,
@@ -91,6 +95,105 @@ async function resolverMontagem(state: WizardState): Promise<MontagemResolvida> 
     if (opcao.deslocamento && !chaves.has("system.attributes.movement.walk")) out.deslocamento = opcao.deslocamento;
   }
   return out;
+}
+
+const ATRIBUTO_NOME: Record<string, string> = { for: "Força", des: "Destreza", con: "Constituição", int: "Inteligência", sab: "Sabedoria", car: "Carisma" };
+
+interface ItemNaFicha {
+  name: string;
+  uuid: string;
+  update(d: Record<string, unknown>): Promise<unknown>;
+}
+interface AtorMinimo {
+  items: { filter(fn: (i: ItemNaFicha) => boolean): ItemNaFicha[] };
+  createEmbeddedDocuments(type: string, data: unknown[]): Promise<unknown>;
+  update(data: Record<string, unknown>): Promise<unknown>;
+}
+
+/**
+ * Sub-escolhas de poder (data/subescolhas_poder.json) aplicadas na ficha pronta:
+ * atributo vira Active Effect no ator (origem = o item), perícia treinada vira
+ * `treinado`, bônus em perícia vira AE, magia escolhida entra como item, e a
+ * escolha sempre fica registrada no nome do item ("Foco em Arma (Espada longa)").
+ */
+async function aplicarSubEscolhasDePoder(actorBruto: unknown, state: WizardState): Promise<void> {
+  const actor = actorBruto as AtorMinimo;
+  const allPoderes = CompendiumIndex.getAll("poder") as IndexedPoder[];
+  const respostas = respostasDeSubEscolhas(
+    poderesAdquiridos(state, allPoderes, CompendiumIndex.getAll("race") as IndexedRace[]),
+    state.escolhasPorItem
+  );
+  if (respostas.length === 0) return;
+
+  const sufixos = new Map<ItemNaFicha, string[]>();
+  const efeitos: unknown[] = [];
+  const update: Record<string, unknown> = {};
+  const magias: unknown[] = [];
+
+  for (const r of respostas) {
+    const itens = actor.items.filter((i) => {
+      const s = toNomeSlug(i.name);
+      return s === r.slug || s.startsWith(`${r.slug}_`);
+    });
+    const alvo = itens[Math.floor(r.i / (r.sub.quantidade ?? 1))] ?? itens[0];
+    let rotulo = r.valor;
+    switch (r.sub.tipo) {
+      case "atributo": {
+        rotulo = ATRIBUTO_NOME[r.valor] ?? r.valor;
+        efeitos.push({
+          name: `${r.nome} (${rotulo})`,
+          transfer: false,
+          origin: alvo?.uuid,
+          changes: [{ key: `system.atributos.${r.valor}.bonus`, mode: 2, value: String(r.sub.valor ?? 1) }],
+        });
+        break;
+      }
+      case "pericia": {
+        rotulo = PERICIA_NOMES[r.valor] ?? r.valor;
+        const code = toPericiaCode(r.valor);
+        if (code && r.sub.treinar) update[`system.pericias.${code}.treinado`] = true;
+        if (code && r.sub.bonus) {
+          efeitos.push({
+            name: `${r.nome} (${rotulo})`,
+            transfer: false,
+            origin: alvo?.uuid,
+            changes: [{ key: `system.pericias.${code}.outros`, mode: 2, value: String(r.sub.bonus) }],
+          });
+        }
+        break;
+      }
+      case "magia": {
+        const doc = await resolveItem(r.valor);
+        if (doc) magias.push(doc);
+        rotulo = CompendiumIndex.getById("magia", r.valor)?.name ?? r.valor;
+        break;
+      }
+      case "magia_conhecida":
+        rotulo = CompendiumIndex.getById("magia", r.valor)?.name ?? r.valor;
+        break;
+      case "arma":
+        rotulo = CompendiumIndex.getById("arma", r.valor)?.name ?? r.valor;
+        break;
+      case "lista":
+        rotulo = r.sub.opcoes?.find((o) => o.id === r.valor)?.rotulo ?? r.valor;
+        break;
+      case "escola":
+        rotulo = ESCOLAS[r.valor]?.nome ?? r.valor;
+        break;
+    }
+    if (alvo) sufixos.set(alvo, [...(sufixos.get(alvo) ?? []), rotulo]);
+    else console.warn(`${MODULE_ID} | ActorWriter: poder "${r.nome}" não achado na ficha para registrar "${rotulo}"`);
+  }
+
+  try {
+    for (const [item, lista] of sufixos) await item.update({ name: `${item.name} (${lista.join(", ")})` });
+    if (efeitos.length) await actor.createEmbeddedDocuments("ActiveEffect", efeitos);
+    if (Object.keys(update).length) await actor.update(update);
+    if (magias.length) await actor.createEmbeddedDocuments("Item", magias);
+    console.log(`${MODULE_ID} | ActorWriter: ${respostas.length} sub-escolha(s) de poder aplicada(s)`);
+  } catch (err) {
+    console.warn(`${MODULE_ID} | ActorWriter: falha nas sub-escolhas de poder:`, err);
+  }
 }
 
 /**
@@ -439,7 +542,9 @@ export class ActorWriter {
         else console.warn(`${MODULE_ID} | ActorWriter: poder livre "${itemId}" não resolveu`);
       }
       for (const slug of beneficios.poderes) {
-        const match = resolverPoder(slug, classeSlug, allPoderes)?.item;
+        const match = slugsDoPoderDaOrigem(origem.id, slug)
+          .map((s) => resolverPoder(s, classeSlug, allPoderes)?.item)
+          .find(Boolean);
         if (match) {
           const doc = await resolveItem(match.id);
           if (doc) origemItems.push(doc);
@@ -461,7 +566,25 @@ export class ActorWriter {
 
     // Add divindade conceded powers
     const divindade = state.divindadeId ? getDivindade(state.divindadeId) : null;
-    if (divindade) {
+    if (divindade?.id === PANTEAO.id) {
+      // Sem concedido; a restrição fica registrada como um poder na ficha.
+      try {
+        await actor.createEmbeddedDocuments("Item", [
+          {
+            name: "Devoto do Panteão",
+            type: "poder",
+            img: "icons/svg/holy-symbol.svg",
+            system: {
+              tipo: "concedido",
+              subtipo: "Panteão",
+              description: { value: "<p>Cultua o Panteão como um todo (LB p.103). Não recebe poder concedido; não pode usar armas cortantes ou perfurantes.</p>" },
+            },
+          },
+        ]);
+      } catch (err) {
+        console.warn(`${MODULE_ID} | ActorWriter: falha no Devoto do Panteão:`, err);
+      }
+    } else if (divindade) {
       const allPoderes = CompendiumIndex.getAll("poder");
       // O devoto ESCOLHE (1, ou 2 se clérigo/druida/paladino) — não recebe todos.
       const escolhidos = (state.escolhasPorItem["divindade_poderes"] as string[]) ?? [];
@@ -681,6 +804,8 @@ export class ActorWriter {
         console.warn(`${MODULE_ID} | ActorWriter: failed to update pericias:`, err);
       }
     }
+
+    await aplicarSubEscolhasDePoder(actor, state);
 
     actor.sheet?.render(true);
     console.log(`${MODULE_ID} | ActorWriter: created actor "${actor.name}" (${actor.id})`);

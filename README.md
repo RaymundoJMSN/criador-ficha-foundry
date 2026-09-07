@@ -25,10 +25,16 @@ livros — nada é chutado.
 - **Divindades** do Panteão e os **deuses menores** do Guia, com a lista de
   devotos aceitos e os poderes concedidos.
 - **Poderes** com pré-requisitos conferidos (atributo, perícia, nível, poder,
-  habilidade, devoção…), poderes repetíveis, habilidades com opção ("Bênção da
-  Justiça: Égide/Montaria") e **distinções** (HA cap. 2).
+  habilidade, devoção…), inclusive os lidos do texto do item para os poderes
+  dos suplementos; só entram os gerais e os da própria classe e raça; poderes
+  repetíveis, habilidades com opção ("Bênção da Justiça: Égide/Montaria"),
+  **sub-escolhas** (Aspirante a Herói: qual atributo; Foco em Arma: qual arma)
+  e **distinções** (HA cap. 2).
 - **Magias** por tradição e círculo, escolas do bardo/druida, teto por círculo,
-  magias vindas de poderes (Orar, Dedo Verde…).
+  filtros por escola e tradição, magias vindas de poderes (Orar, Dedo Verde,
+  Centelha Mágica abrindo a outra tradição…).
+- **Divindades** incluem o Panteão como um todo (clérigo e frade) e um botão
+  sorteia o nome pela tabela de Heróis de Arton.
 - **Equipamento**: kit do 1º nível (LB p.146), loja com quantidade, T$ pela
   Tabela 3-1.
 - **Regras da mesa** (só o mestre): nível inicial, método de atributos travado,

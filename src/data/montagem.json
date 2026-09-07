@@ -164,6 +164,17 @@
       }
     ]
   },
+  "moreau_heranca_da_coruja": {
+    "escolhas": [
+      {
+        "chave": "raca_sapiencia",
+        "habilidade": "Sapiência",
+        "label": "Sapiência",
+        "ramos": [],
+        "direto": { "tipo": "magia", "quantidade": 1, "circulo": 1, "escola": "adv" }
+      }
+    ]
+  },
   "vampiro": {
     "escolhas": [
       {

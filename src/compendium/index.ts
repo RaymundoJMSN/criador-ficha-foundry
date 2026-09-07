@@ -99,8 +99,21 @@ class CompendiumIndexClass {
       if (pack.documentName !== "Item") continue;
 
       const index: Collection<Record<string, unknown>> = await pack.getIndex({
-        fields: INDEX_FIELDS,
+        fields: [...INDEX_FIELDS, "folder"],
       });
+      // "Classe / Clérigo", "HdA - Classes Variantes / Usurpador / Habilidades de Classe"…
+      const pastas = (pack as unknown as { folders?: { get(id: string): { name: string; folder?: { id?: string } | string | null } | undefined } }).folders;
+      const pastaDe = (folderId: unknown): string => {
+        const partes: string[] = [];
+        let f = typeof folderId === "string" && folderId ? pastas?.get(folderId) : undefined;
+        for (let i = 0; f && i < 10; i++) {
+          partes.unshift(f.name);
+          const pai = f.folder;
+          const paiId = typeof pai === "string" ? pai : pai?.id;
+          f = paiId ? pastas?.get(paiId) : undefined;
+        }
+        return partes.join(" / ");
+      };
 
       for (const entry of index) {
         const type = entry["type"] as string | undefined;
@@ -120,6 +133,7 @@ class CompendiumIndexClass {
           img: (entry["img"] as string) ?? "",
           packId: pack.collection,
           type: itemType,
+          pasta: pastaDe(entry["folder"]),
           system: { ...system, descricao: semHtml(bruto) },
         } as AnyIndexed);
       }

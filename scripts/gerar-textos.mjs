@@ -17,7 +17,7 @@
 import { readFileSync, writeFileSync, existsSync, readdirSync } from "fs";
 import { resolve, dirname, join } from "path";
 import { fileURLToPath } from "url";
-import { livrosDisponiveis, racasDosLivros, classesDosLivros, origensDosLivros } from "./livros.mjs";
+import { livrosDisponiveis, racasDosLivros, classesDosLivros, origensDosLivros, LIVROS } from "./livros.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const DATA = resolve(HERE, "../src/data");
@@ -37,7 +37,7 @@ function primeirasFrases(texto, limite = 420) {
   return (out || frases[0] || "").trim();
 }
 
-const textos = { origens: {}, racas: {}, classes: {} };
+const textos = { origens: {}, racas: {}, classes: {}, nomes: {} };
 
 /* --- Origens: do markdown, inteiras (descrição + Benefício + Itens) -------- */
 
@@ -167,6 +167,33 @@ if (existsSync(CACHE) && readdirSync(CACHE).length > 0) {
   console.log("  (sem cache de PDF: origens ficam sem descrição — rode extrair-pdfs.py)");
 }
 
+/* --- Nomes de personagem: Heróis de Arton, Tabela 1-24 (uma coluna por raça) --- */
+
+if (livrosDisponiveis()) {
+  const arq = join(LIVROS, "herois-arton/01-campeoes-arton/tabelas-personagens.md");
+  if (existsSync(arq)) {
+    const md = readFileSync(arq, "utf-8");
+    const ini = md.indexOf("Tabela 1-24");
+    const fim = md.indexOf("## Tabela 1-25");
+    const trecho = ini >= 0 ? md.slice(ini, fim > ini ? fim : undefined) : "";
+    let colunas = [];
+    for (const linha of trecho.split(/\r?\n/)) {
+      const celulas = linha.split("|").slice(1, -1).map((c) => c.trim());
+      if (celulas.length < 2) continue;
+      if (celulas[0] === "d%") {
+        colunas = celulas.slice(1).map((c) => c.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "_"));
+        continue;
+      }
+      if (/^-+$/.test(celulas[0]) || !/^\d/.test(celulas[0])) continue;
+      celulas.slice(1).forEach((nome, i) => {
+        const raca = colunas[i];
+        if (!raca || !nome) return;
+        (textos.nomes[raca] ??= []).push(nome);
+      });
+    }
+  }
+}
+
 /* --- Raças e classes: do markdown, que tem "## Descrição" ----------------- */
 
 if (livrosDisponiveis()) {
@@ -196,5 +223,6 @@ if (livrosDisponiveis()) {
 writeFileSync(join(DATA, "textos.json"), JSON.stringify(textos, null, 2) + "\n", "utf-8");
 console.log(
   `textos.json: ${Object.keys(textos.origens).length} origens, ` +
-    `${Object.keys(textos.racas).length} raças, ${Object.keys(textos.classes).length} classes`
+    `${Object.keys(textos.racas).length} raças, ${Object.keys(textos.classes).length} classes, ` +
+    `nomes de ${Object.keys(textos.nomes).length} raças`
 );

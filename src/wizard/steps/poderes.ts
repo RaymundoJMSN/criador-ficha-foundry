@@ -1,13 +1,17 @@
 import { toNomeSlug } from "../../compendium/slug.js";
 import { getClasse, respostaSubEscolha } from "../../rules/classe.js";
-import { describeUnmet, temPrereqsConhecidos, prereqDoTexto, type PartialWizardState } from "../../rules/poderes.js";
+import { getRaca } from "../../rules/raca.js";
+import { describeUnmet, temPrereqsConhecidos, prereqDoTexto, prereqsDoTexto, type PartialWizardState } from "../../rules/poderes.js";
 import { totaisRaciaisDoEstado } from "../../rules/subescolhas.js";
 import { poderesGeraisExtras, faixaDoPersonagem } from "../../rules/idade.js";
 import { distincaoEscolhida, podeTerDistincao, listDistincoes } from "../../rules/distincoes.js";
 import { habilidadesAte, getClasseProgressao } from "../../rules/progressao.js";
 import { classesDoPersonagem, habilidadesDeTodas, slotsDePoderTotal, niveisPorClasse } from "../../rules/multiclasse.js";
 import { resolverPoder, opcoesDaHabilidade, chaveHabilidade } from "../../compendium/resolver.js";
-import type { IndexedMagia, IndexedPoder } from "../../compendium/types.js";
+import type { IndexedEquipamento, IndexedMagia, IndexedPoder, IndexedRace } from "../../compendium/types.js";
+import { poderesAdquiridos, subEscolhaDoPoder, respostasEsperadas, chaveSubPoder, type SubEscolhaPoder } from "../../rules/subescolhas-poder.js";
+import { PERICIA_SLUGS } from "../../rules/pericia-slug.js";
+import { PERICIA_NOMES, PERICIA_ATRIBUTO } from "./pericias.js";
 import type { WizardState } from "../state.js";
 import { ESCOLAS } from "../../rules/magias.js";
 import repetiveisRaw from "../../data/poderes_repetiveis.json";
@@ -75,7 +79,127 @@ export interface PoderesContext {
   inelegiveis: number;
   categorias: string[];
   selectedCount: number;
+  /** Poderes adquiridos que pedem uma decisão (Aspirante a Herói: qual atributo). */
+  subEscolhas: SubEscolhaView[];
   errors: string[];
+}
+
+export interface SubEscolhaView {
+  name: string;
+  poder: string;
+  rotulo: string;
+  opcoes: Array<{ id: string; nome: string; selected: boolean }>;
+}
+
+const ATRIBUTOS_OPCOES = [
+  { id: "for", nome: "Força" },
+  { id: "des", nome: "Destreza" },
+  { id: "con", nome: "Constituição" },
+  { id: "int", nome: "Inteligência" },
+  { id: "sab", nome: "Sabedoria" },
+  { id: "car", nome: "Carisma" },
+];
+
+function opcoesDaSub(
+  sub: SubEscolhaPoder,
+  state: WizardState,
+  allMagias: IndexedMagia[],
+  armas: IndexedEquipamento[]
+): Array<{ id: string; nome: string }> {
+  const porNome = (a: { nome: string }, b: { nome: string }) => a.nome.localeCompare(b.nome, "pt-BR");
+  switch (sub.tipo) {
+    case "atributo":
+      return ATRIBUTOS_OPCOES;
+    case "pericia":
+      return PERICIA_SLUGS.filter((p) => !sub.atributo || PERICIA_ATRIBUTO[p] === sub.atributo)
+        .filter((p) => !(sub.excluir ?? []).includes(p))
+        .map((p) => ({ id: p, nome: PERICIA_NOMES[p] ?? p }))
+        .sort(porNome);
+    case "magia":
+      return allMagias
+        .filter((m) => !sub.circulo || Number(m.system.circulo) === sub.circulo)
+        .filter((m) => !sub.tradicao || sub.tradicao.includes(m.system.tipo ?? "") || m.system.tipo === "uni")
+        .filter((m) => !sub.escola || m.system.escola === sub.escola)
+        .map((m) => ({ id: m.id, nome: m.name }))
+        .sort(porNome);
+    case "magia_conhecida":
+      return [...new Set(state.magias)]
+        .map((id) => allMagias.find((m) => m.id === id))
+        .filter((m): m is IndexedMagia => Boolean(m))
+        .map((m) => ({ id: m.id, nome: m.name }))
+        .sort(porNome);
+    case "arma": {
+      const vistos = new Set<string>();
+      return armas
+        .filter((a) => a.type === "arma" && !vistos.has(a.name) && vistos.add(a.name))
+        .map((a) => ({ id: a.id, nome: a.name }))
+        .sort(porNome);
+    }
+    case "lista":
+      return (sub.opcoes ?? []).map((o) => ({ id: o.id, nome: o.rotulo }));
+    case "escola":
+      return Object.entries(ESCOLAS).map(([abrev, e]) => ({ id: abrev, nome: e.nome })).sort(porNome);
+    default:
+      return [];
+  }
+}
+
+export function montarSubEscolhas(
+  state: WizardState,
+  allPoderes: IndexedPoder[],
+  allMagias: IndexedMagia[],
+  racas: IndexedRace[],
+  armas: IndexedEquipamento[]
+): SubEscolhaView[] {
+  const out: SubEscolhaView[] = [];
+  for (const p of poderesAdquiridos(state, allPoderes, racas)) {
+    const sub = subEscolhaDoPoder(p.slug);
+    if (!sub) continue;
+    const opcoes = opcoesDaSub(sub, state, allMagias, armas);
+    const total = respostasEsperadas(sub, p.vezes);
+    for (let i = 0; i < total; i++) {
+      const atual = (state.escolhasPorItem[chaveSubPoder(p.slug, i)] as string | undefined) ?? "";
+      out.push({
+        name: `sp-${p.slug}-${i}`,
+        poder: total > 1 ? `${p.nome} (${i + 1}/${total})` : p.nome,
+        rotulo: sub.rotulo,
+        opcoes: opcoes.map((o) => ({ ...o, selected: o.id === atual })),
+      });
+    }
+  }
+  return out;
+}
+
+/**
+ * Poder geral (`tipo:"geral"`) que o personagem pode escolher. No compêndio o
+ * subtipo é a categoria do livro (Combate, Destino, Magia, Tormenta) — mas os
+ * módulos também guardam como "geral" poderes de raça ("Glamour (Duende)",
+ * subtipo Duende), complicações ("Desvantagem"), poderes de montaria, de
+ * parceiro, de grupo, de distinção… Só entram as categorias do livro e os da
+ * própria raça (com a raça-base: Aggelus recebe os "(Suraggel)"; a escolha da
+ * raça também conta: qareen de Luz vê "Qareen de Luz").
+ */
+const CATEGORIAS_GERAIS = new Set(["", "combate", "destino", "magia", "tormenta"]);
+const IGNORAR_TOKENS = new Set(["de", "do", "da", "dos", "das", "heranca"]);
+const tokensDe = (s: string): string[] =>
+  toNomeSlug(s)
+    .split("_")
+    .filter((t) => t && !IGNORAR_TOKENS.has(t));
+
+export function geralDaLista(state: WizardState): (subtipo: string) => boolean {
+  const raca = getRaca(state.racaNome || state.racaId);
+  const extras = Object.entries(state.escolhasPorItem)
+    .filter(([k, v]) => k.startsWith("raca_") && typeof v === "string")
+    .flatMap(([, v]) => tokensDe(String(v)));
+  const racas = [state.racaNome, raca?.nome, raca?.raca_base ?? ""]
+    .filter((x): x is string => Boolean(x))
+    .map((r) => new Set([...tokensDe(r.split(" (")[0]!), ...extras]));
+  return (subtipo: string) => {
+    const s = toNomeSlug(subtipo);
+    if (CATEGORIAS_GERAIS.has(s)) return true;
+    const t = tokensDe(subtipo);
+    return t.length > 0 && racas.some((rt) => t.every((x) => rt.has(x)));
+  };
 }
 
 function prettifySlug(slug: string): string {
@@ -91,8 +215,10 @@ export function preparePoderesContext(
   allPoderes: IndexedPoder[],
   errors: string[] = [],
   resolvePoderNome: (slug: string) => string | null = () => null,
-  allMagias: IndexedMagia[] = []
+  allMagias: IndexedMagia[] = [],
+  extras: { racas?: IndexedRace[]; armas?: IndexedEquipamento[] } = {}
 ): PoderesContext {
+  const subEscolhas = montarSubEscolhas(state, allPoderes, allMagias, extras.racas ?? [], extras.armas ?? []);
   const classeSlug = toNomeSlug(state.classeNome ?? "");
   const classeData = getClasse(classeSlug);
 
@@ -152,6 +278,7 @@ export function preparePoderesContext(
       soElegiveis: false,
       inelegiveis: 0,
       selectedCount: state.poderes.length,
+      subEscolhas,
       errors,
     };
   }
@@ -239,15 +366,19 @@ export function preparePoderesContext(
   const distincao = distincaoEscolhida(state);
   const idsDaDistincao = new Set(distincao?.poderes.map((p) => p.id) ?? []);
   const nomesVistos = new Set<string>();
+  const geralDisponivel = geralDaLista(state);
   const entries: PoderEntry[] = allPoderes
-    .filter((p) => idsDaClasse.has(p.id) || p.system.tipo === "geral" || idsDaDistincao.has(p.id))
+    .filter((p) => idsDaClasse.has(p.id) || (p.system.tipo === "geral" && geralDisponivel(p.system.subtipo ?? "")) || idsDaDistincao.has(p.id))
     .filter((p) => !nomesVistos.has(p.name) && nomesVistos.add(p.name))
     .map((p) => {
-      const unmet = describeUnmet(slugDoItem(p), stateForEligibility);
+      const unmet = describeUnmet(slugDoItem(p), stateForEligibility, p.system.descricao ?? "");
       const vezes = state.poderes.filter((id) => id === p.id).length;
       const repetivel = REPETIVEIS.has(slugDoItem(p));
-      // Sem regra no T20-DB, mostra o pré-requisito do texto (não confere).
-      const requerTexto = temPrereqsConhecidos(slugDoItem(p)) ? "" : prereqDoTexto(p.system.descricao ?? "");
+      // Pré-requisito que nem o T20-DB nem o leitor de texto entenderam: só mostra.
+      const requerTexto =
+        temPrereqsConhecidos(slugDoItem(p)) || prereqsDoTexto(p.system.descricao ?? "").length > 0
+          ? ""
+          : prereqDoTexto(p.system.descricao ?? "");
       return {
         id: p.id,
         name: p.name,
@@ -298,6 +429,7 @@ export function preparePoderesContext(
     distincoes: distincoesView,
     soElegiveis: Boolean(state.escolhasPorItem["poder_so_elegiveis"]),
     inelegiveis: entries.filter((e) => !e.eligible && !e.selected).length,
+    subEscolhas,
     selectedCount: state.poderes.length,
     errors,
   };

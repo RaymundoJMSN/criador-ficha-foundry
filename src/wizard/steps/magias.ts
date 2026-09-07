@@ -4,7 +4,7 @@ import {
   escolasAEscolher,
   ESCOLAS,
   cotaDeMagias,
-  slugsDosPoderes,
+  slugsDePoderesComMagia,
   magiasExtrasDosPoderes,
   tetoPorCirculo,
   excedentesPorCirculo,
@@ -50,12 +50,20 @@ export interface MagiasContext {
   /** Escolhidas a mais (nível ou caminho mudaram depois). */
   excesso: number;
   magiaSearch: string;
+  filtroEscolas: Array<{ abrev: string; nome: string; selected: boolean }>;
+  filtroEscola: string;
+  filtroTradicoes: Array<{ id: string; nome: string; selected: boolean }>;
+  filtroTradicao: string;
+  /** Ids marcados que o filtro/busca tirou da tela (vão como input escondido). */
+  selecionadasOcultas: string[];
   magiasByCirculo: MagiasByCirculo[];
   selectedCount: number;
   /** Ids que continuam válidos para esta classe/nível — o app poda o resto. */
   idsValidos: string[];
   errors: string[];
 }
+
+const TRADICAO_NOME: Record<string, string> = { arc: "Arcana", div: "Divina", uni: "Universal" };
 
 function circuloLabel(n: number): string {
   const ordinals = ["1º", "2º", "3º", "4º", "5º"];
@@ -68,7 +76,7 @@ export function prepareMagiasContext(
   errors: string[] = []
 ): MagiasContext {
   const classeSlug = toNomeSlug(state.classeNome ?? "");
-  const poderSlugs = slugsDosPoderes(state.poderes);
+  const poderSlugs = slugsDePoderesComMagia(state);
   // Multiclasse: cada classe conjuradora no seu nível (LB p.35); as cotas somam.
   const classes = classesDoPersonagem(state);
   const conjuradoras = classes.filter((c) => isConjurador(c.classeSlug));
@@ -104,9 +112,20 @@ export function prepareMagiasContext(
 
   const magiaSearch = (state.escolhasPorItem["magia_search"] as string) ?? "";
   const q = magiaSearch.toLowerCase();
-  const filtered = q ? validas.filter((m) => m.name.toLowerCase().includes(q)) : validas;
+  // Filtros de tela (não mudam o que é permitido): escola e tradição.
+  const filtroEscola = (state.escolhasPorItem["magia_filtro_escola"] as string) ?? "";
+  const filtroTradicao = (state.escolhasPorItem["magia_filtro_tradicao"] as string) ?? "";
+  const tradicoesPresentes = [...new Set(validas.map((m) => m.system.tipo ?? ""))].filter((t) => t === "arc" || t === "div");
+  const filtered = validas
+    .filter((m) => !q || m.name.toLowerCase().includes(q))
+    .filter((m) => !filtroEscola || m.system.escola === filtroEscola)
+    .filter((m) => !filtroTradicao || m.system.tipo === filtroTradicao || m.system.tipo === "uni");
 
   const selecionadas = state.magias.filter((id) => idsValidos.includes(id));
+  // Marcada mas fora do filtro/busca: continua no formulário como input escondido,
+  // senão o FormData (que só vê o que está na tela) a derrubava ao clicar em outra.
+  const visiveis = new Set(filtered.map((m) => m.id));
+  const selecionadasOcultas = selecionadas.filter((id) => !visiveis.has(id));
   const noLimite = selecionadas.length >= magiaLimit;
   const excesso = Math.max(0, selecionadas.length - magiaLimit);
 
@@ -136,7 +155,7 @@ export function prepareMagiasContext(
       img: m.img,
       circulo,
       escola: ESCOLAS[m.system.escola ?? ""]?.nome ?? (m.system.escola ?? ""),
-      tipo: m.system.tipo ?? "",
+      tipo: TRADICAO_NOME[m.system.tipo ?? ""] ?? (m.system.tipo ?? ""),
       descricao: m.system.descricao ?? "",
       selected,
       bloqueado: !selected && (noLimite || !caberia(circulo)),
@@ -164,6 +183,12 @@ export function prepareMagiasContext(
     atMaxLimit: noLimite,
     excesso,
     magiaSearch,
+    filtroEscolas: Object.entries(ESCOLAS).map(([abrev, e]) => ({ abrev, nome: e.nome, selected: abrev === filtroEscola })),
+    filtroEscola,
+    // Só aparece quando há magias das duas tradições para escolher (classe + poder).
+    filtroTradicoes: tradicoesPresentes.length > 1 ? tradicoesPresentes.map((t) => ({ id: t, nome: TRADICAO_NOME[t] ?? t, selected: t === filtroTradicao })) : [],
+    filtroTradicao,
+    selecionadasOcultas,
     magiasByCirculo,
     selectedCount: selecionadas.length,
     idsValidos,

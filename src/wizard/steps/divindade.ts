@@ -2,6 +2,7 @@ import {
   listDivindadesParaPersonagem,
   isDivindadeObrigatoria,
   poderesConcedidosParaEscolher,
+  PANTEAO,
   type Divindade,
 } from "../../rules/divindade.js";
 import { toNomeSlug } from "../../compendium/slug.js";
@@ -25,6 +26,8 @@ export interface DivindadeContext {
   selectedDivindade: {
     id: string;
     nome: string;
+    /** Panteão: o que a escolha implica (sem concedido, sem arma cortante/perfurante). */
+    nota: string;
     /** Lista do deus, para o jogador escolher entre eles. */
     poderes: Array<{ slug: string; nome: string; descricao: string; selected: boolean }>;
   } | null;
@@ -68,6 +71,10 @@ export function prepareDivindadeContext(
     ? {
         id: selected.id,
         nome: selected.nome,
+        nota:
+          selected.id === PANTEAO.id
+            ? "Cultua o Panteão como um todo: não recebe poder concedido e não pode usar armas cortantes ou perfurantes (LB p.103)."
+            : "",
         poderes: selected.poderes_concedidos
           .map((slug) => {
             const p = resolvePoder(slug);

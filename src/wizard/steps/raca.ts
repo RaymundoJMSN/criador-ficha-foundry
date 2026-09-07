@@ -486,13 +486,14 @@ function opcoesDoPedido(
             ? p.system.tipo === "geral"
             : p.system.subtipo === pedido.categoria
         )
-        .filter((p) => describeUnmet(toNomeSlug(p.name), ctx.elegibilidade).length === 0)
+        .filter((p) => describeUnmet(toNomeSlug(p.name), ctx.elegibilidade, p.system.descricao ?? "").length === 0)
         .map((p) => marcar(p.id, p.name))
         .sort((a, b) => a.nome.localeCompare(b.nome));
 
     case "magia":
       return ctx.magias
         .filter((m) => Number(m.system.circulo) === (pedido.circulo ?? 1))
+        .filter((m) => !pedido.escola || m.system.escola === pedido.escola)
         .map((m) => marcar(m.id, m.name))
         .sort((a, b) => a.nome.localeCompare(b.nome));
 

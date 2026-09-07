@@ -29,7 +29,10 @@
       </div>
       <div class="form-group">
         <label for="t20w-nome">Nome do Personagem</label>
-        <input id="t20w-nome" type="text" name="nome" value="{{state.nome}}" placeholder="Nome..." />
+        <div class="t20w-row">
+          <input id="t20w-nome" type="text" name="nome" value="{{state.nome}}" placeholder="Nome..." style="flex:1;" />
+          {{#if temNomes}}<button type="button" class="t20w-btn-sm" data-action="nomeAleatorio" title="Nome aleatório (Heróis de Arton, Tabela 1-24 — da raça escolhida, se houver)">🎲 Sortear</button>{{/if}}
+        </div>
       </div>
     </section>
     {{/if}}
@@ -505,9 +508,12 @@
       {{#if selectedDivindade}}
       <div class="t20w-card">
         <h3 style="margin:0 0 6px;">{{selectedDivindade.nome}}</h3>
+        {{#if selectedDivindade.nota}}<p class="t20w-hint" style="margin:0 0 6px;">{{selectedDivindade.nota}}</p>{{/if}}
+        {{#if quantosPoderes}}
         <p style="font-size:0.85em;margin:0 0 6px;">
           <strong>Escolha {{quantosPoderes}} poder(es) concedido(s):</strong>
         </p>
+        {{/if}}
         <div style="display:flex;flex-direction:column;gap:4px;">
           {{#each selectedDivindade.poderes}}
           <label for="div-poder-{{@index}}" class="t20w-opcao">
@@ -541,6 +547,22 @@
               {{#each this.opcoes}}<option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.nome}}</option>{{/each}}
             </select>{{/if}}{{#if this.descricao}}<details class="t20w-mais"><summary>descrição</summary><div class="t20w-desc">{{this.descricao}}</div></details>{{/if}}</li>{{/each}}
         </ul>
+      </div>
+      {{/if}}
+
+      {{#if subEscolhas.length}}
+      <div class="t20w-card" style="margin:0 0 12px;">
+        <h3>Escolhas dos seus poderes</h3>
+        <p class="t20w-hint" style="margin:0 0 6px 0;">Poderes que pedem uma decisão ao serem adquiridos.</p>
+        {{#each subEscolhas}}
+        <div class="form-group" style="margin-top:6px;">
+          <label for="{{this.name}}"><strong>{{this.poder}}</strong> — {{this.rotulo}}</label>
+          <select id="{{this.name}}" name="{{this.name}}" style="width:100%;padding:5px;">
+            <option value="">— escolha —</option>
+            {{#each this.opcoes}}<option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.nome}}</option>{{/each}}
+          </select>
+        </div>
+        {{/each}}
       </div>
       {{/if}}
 
@@ -615,6 +637,7 @@
     <section class="t20w-step">
       <h2>{{stepTitle}}</h2>
       <input type="hidden" name="passo_magias" value="1" />
+      {{#each selecionadasOcultas}}<input type="hidden" name="magia-{{this}}" value="{{this}}" />{{/each}}
       {{#if isConjurador}}
       {{#if escolasAEscolher}}
       <div class="t20w-card" style="margin:0 0 10px;">
@@ -633,6 +656,16 @@
         <input type="text" id="t20w-magia-search" placeholder="Buscar magia..."
                value="{{magiaSearch}}"
                style="flex:1;min-width:120px;padding:4px 8px;background:rgba(255,255,255,0.08);border:1px solid #555;color:inherit;border-radius:3px;" />
+        <select id="t20w-magia-escola" title="Filtrar por escola">
+          <option value="">Todas as escolas</option>
+          {{#each filtroEscolas}}<option value="{{this.abrev}}" {{#if this.selected}}selected{{/if}}>{{this.nome}}</option>{{/each}}
+        </select>
+        {{#if filtroTradicoes.length}}
+        <select id="t20w-magia-tradicao" title="Filtrar por tradição">
+          <option value="">Arcanas e divinas</option>
+          {{#each filtroTradicoes}}<option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.nome}}</option>{{/each}}
+        </select>
+        {{/if}}
       </div>
       {{#each magiasByCirculo}}
       <div style="margin-bottom:14px;">

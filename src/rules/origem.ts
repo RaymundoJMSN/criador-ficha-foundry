@@ -1,4 +1,5 @@
 import origensDataRaw from "../data/origens.json";
+import { toNomeSlug } from "../compendium/slug.js";
 const origensData = origensDataRaw as unknown as Origem[];
 
 export interface OrigensBeneficio {
@@ -118,16 +119,21 @@ export function getBeneficiosPlano(
   if (quantidade <= 0) return { opcoes: [], quantidade: 0, autoAplicar: true };
 
   const exclusivo = origem.beneficios.poder_unico_id;
+  // Origem especial (Heróis de Arton, Atlas/Dragão Brasil): "fornecem um
+  // benefício único" — perícias E o poder da origem, tudo fixo, sem "escolha
+  // dois". No T20-DB ela vem sem lista de poderes, só com o poder único.
+  const especial = origemEspecial(origem);
+  const poderesIds = especial && exclusivo ? [exclusivo] : origem.beneficios.poderes;
   const opcoes: BeneficioOpcao[] = [
     ...origem.beneficios.pericias.map((nome) => {
       const id = slugPericia(nome);
       return { token: `pericia:${id}`, tipo: "pericia" as const, id, nome, exclusivo: false };
     }),
-    ...origem.beneficios.poderes.map((id) => ({
+    ...poderesIds.map((id) => ({
       token: `poder:${id}`,
       tipo: "poder" as const,
       id,
-      nome: nomeDoPoder(id) ?? titulo(id),
+      nome: nomeDoPoder(id) ?? (id === exclusivo ? nomeDoPoder(toNomeSlug(origem.nome)) : null) ?? titulo(id),
       exclusivo: id === exclusivo,
     })),
     ...(origem.beneficios.poderes_categoria_livre ?? []).map((cat) => ({
@@ -142,8 +148,25 @@ export function getBeneficiosPlano(
   return {
     opcoes,
     quantidade,
-    autoAplicar: opcoes.length > 0 && opcoes.length <= quantidade,
+    autoAplicar: especial || (opcoes.length > 0 && opcoes.length <= quantidade),
   };
+}
+
+/** Sem lista de poderes e com poder único: origem especial (benefício fixo). */
+export function origemEspecial(origem: Origem): boolean {
+  return origem.beneficios.poderes.length === 0 && Boolean(origem.beneficios.poder_unico_id);
+}
+
+/**
+ * Nomes pelos quais o poder da origem pode estar no compêndio: o slug do T20-DB
+ * ("membro_da_igreja") e, para o poder único, o nome da própria origem — o
+ * Atlas e Heróis de Arton guardam a origem inteira como um poder "Aspirante a
+ * herói" (tipo origem).
+ */
+export function slugsDoPoderDaOrigem(origemId: string, slug: string): string[] {
+  const origem = getOrigem(origemId);
+  if (!origem) return [slug];
+  return slug === origem.beneficios.poder_unico_id ? [slug, toNomeSlug(origem.nome)] : [slug];
 }
 
 export interface BeneficiosEscolhidos {

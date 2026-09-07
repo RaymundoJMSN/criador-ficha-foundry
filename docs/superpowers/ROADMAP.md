@@ -142,6 +142,13 @@ Multiclasse, UI nova (CSS próprio, progresso, cartões, Revisão completa),
 raças só do compêndio, deuses menores, distinções, proficiências das classes
 de Heróis de Arton pelo PDF, retrato da raça, chat ao criar. Ver `CLAUDE.md`.
 
+## Tarde de 2026-09-07 (pedidos do Ray)
+
+Resolver com pasta do compêndio ("Magias (Clérigo)" certo), poderes gerais só
+da categoria/raça, pré-requisito lido do texto do item, filtros de magia
+(escola/tradição) e Centelha Mágica cruzando tradição, sub-escolhas de poder
+(Aspirante a Herói…), Panteão como um todo, nome aleatório. Ver `CLAUDE.md`.
+
 ## Manhã de 2026-09-07 (pedidos do Ray)
 
 Listas alfabéticas, combobox único (busca + escolha), "diferentes" só quando o
@@ -151,6 +158,9 @@ poderes concedidos, fonte maior. Ver `CLAUDE.md`.
 
 ## Pendente
 
+- Sub-escolhas de poder ainda sem regra: Duplo Feérico, Cosmopolita, Futura
+  Lenda (escolher habilidade/poder de outra classe), Totem Espiritual (animal →
+  magia), Ushultt/Poder da Amizade (aliado), Citadino Abastado (Ofício).
 - Montagem: Sátiro/Finntroll não têm escolha (pool do compêndio é variante);
   outras raças com passos, se aparecerem em módulo novo, entram em
   `montagem.json`. Bênçãos vampíricas não existem no compêndio.

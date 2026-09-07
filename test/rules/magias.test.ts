@@ -143,3 +143,14 @@ describe("excedentesPorCirculo", () => {
     expect(excedentesPorCirculo([{ id: "a", circulo: 1 }], {})).toEqual([]);
   });
 });
+
+describe("tradição aberta por poder (Centelha Mágica)", () => {
+  const mg = (id: string, tipo: string, circulo: number) => ({ id, name: id, img: "", type: "magia", packId: "p", system: { tipo, circulo } }) as never;
+  const magias = [mg("arc1", "arc", 1), mg("arc2", "arc", 2), mg("div1", "div", 1), mg("div2", "div", 2), mg("uni1", "uni", 1)];
+  it("clérigo nv5 com Centelha vê as arcanas de 1º círculo, não as de 2º", () => {
+    const sem = filterMagias(magias, { classeSlug: "clerigo", nivel: 5 }).map((m: { id: string }) => m.id);
+    expect(sem).toEqual(["div1", "div2", "uni1"]);
+    const com = filterMagias(magias, { classeSlug: "clerigo", nivel: 5, poderSlugs: ["centelha_magica"] }).map((m: { id: string }) => m.id);
+    expect(com).toEqual(["arc1", "div1", "div2", "uni1"]);
+  });
+});

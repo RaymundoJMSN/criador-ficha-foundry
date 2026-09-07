@@ -239,7 +239,7 @@ export function formatPrereq(req: Prereq): string {
     case "treinamento_pericia":
       return `Treinado em ${titleCase(String(req["pericia"] ?? req["valor"]))}`;
     case "habilidade_classe":
-      return `Habilidade de classe: ${listaLegivel(req["id"] ?? req["valor"])}`;
+      return `Ter ${listaLegivel(req["id"] ?? req["valor"])}`;
     case "habilidade_racial":
       return `Habilidade racial: ${titleCase(String(req["valor"] ?? req["id"]))}`;
     case "raca":
@@ -290,8 +290,51 @@ export function prereqDoTexto(descricao: string): string {
   return m ? m[1].trim() : "";
 }
 
-export function describeUnmet(poderSlug: string, state: PartialWizardState): string[] {
-  const prereqs = prereqsData[poderSlug];
-  if (!prereqs) return [];
+/**
+ * "Pré-requisitos: Sab 2, treinado em Vontade, 5º nível de nobre." → regras
+ * conferíveis. Vale para poder que só existe no compêndio (Heróis de Arton,
+ * Ameaças, distinções): o T20-DB não o conhece, mas o texto diz o que exige.
+ * O que não dá para ler ("possuir asas", "arma natural fornecida por uma
+ * habilidade de raça") não vira regra — e portanto não bloqueia, como o `outro`
+ * do motor.
+ */
+export function prereqsDoTexto(descricao: string): Prereq[] {
+  const bruto = prereqDoTexto(descricao);
+  if (!bruto) return [];
+  const out: Prereq[] = [];
+  for (const parte of bruto.split(/[,;]/).map((p) => p.trim()).filter(Boolean)) {
+    let m: RegExpExecArray | null;
+    if ((m = /^(for|des|con|int|sab|car)\s+(-?\d+)$/i.exec(parte))) {
+      out.push({ tipo: "atributo", atributo: m[1]!.toLowerCase(), valor: Number(m[2]) });
+    } else if ((m = /^treinad[oa] em (.+)$/i.exec(parte))) {
+      out.push({ tipo: "pericia", pericia: norm(m[1]) });
+    } else if ((m = /^(\d+)[ºo°] n[ií]vel de personagem$/i.exec(parte)) || (m = /^n[ií]vel (\d+)$/i.exec(parte))) {
+      out.push({ tipo: "nivel", valor: Number(m[1]) });
+    } else if ((m = /^(\d+)[ºo°] n[ií]vel de (.+)$/i.exec(parte)) || (m = /^(\d+) n[ií]veis de (.+)$/i.exec(parte))) {
+      out.push({ tipo: "nivel_classe", classe: norm(m[2]), valor: Number(m[1]) });
+    } else if (/^lan[çc]ar magias/i.test(parte)) {
+      out.push({ tipo: "habilidade_classe", id: "magias" });
+    } else if ((m = /^(?:devot[oa]|cl[ée]rig[oa]|druida|paladin[oa]|frade) de (.+)$/i.exec(parte))) {
+      out.push({ tipo: "divindade_druida", divindade: norm(m[1]) });
+    } else if (
+      /^[A-ZÀ-Ý]/.test(parte) &&
+      parte.length < 60 &&
+      !/possuir|fornecid|outros poderes|arma natural|asas|familiar|ou mais|qualquer|a critério|aprovação/i.test(parte)
+    ) {
+      // Nome de poder ou habilidade ("Fúria ou Fúria Divina" = qualquer um dos dois).
+      out.push({ tipo: "habilidade_classe", id: parte.split(/\s+ou\s+/i).map(norm) });
+    }
+  }
+  return out;
+}
+
+/** Regras do T20-DB quando há; senão as lidas do texto do item. */
+export function prereqsDoPoder(poderSlug: string, descricao = ""): Prereq[] {
+  return prereqsData[poderSlug] ?? (descricao ? prereqsDoTexto(descricao) : []);
+}
+
+export function describeUnmet(poderSlug: string, state: PartialWizardState, descricao = ""): string[] {
+  const prereqs = prereqsDoPoder(poderSlug, descricao);
+  if (prereqs.length === 0) return [];
   return checkPrereqs(prereqs, state).unmet.map(formatPrereq);
 }

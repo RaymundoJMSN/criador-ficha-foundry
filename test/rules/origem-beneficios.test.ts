@@ -3,6 +3,7 @@ import {
   getBeneficiosPlano,
   validarBeneficios,
   formatItensIniciais,
+  slugsDoPoderDaOrigem,
 } from "../../src/rules/origem.js";
 
 describe("benefícios de origem — escolha dois (LB cap. 2)", () => {
@@ -82,5 +83,21 @@ describe("poder de categoria livre", () => {
 
   it("item de origem que vem como texto solto não some mais", () => {
     expect(formatItensIniciais("aristocrata")).toContain("traje da corte");
+  });
+});
+
+describe("origem especial (HA / Atlas): benefício fixo, poder único pelo nome da origem", () => {
+  it("Aspirante a Herói concede o poder único sem escolha; Bacharel dá as três perícias e a habilidade", () => {
+    const plano = getBeneficiosPlano("aspirante_a_heroi", (slug) => (slug === "aspirante_a_heroi" ? "Aspirante a herói" : null));
+    expect(plano.autoAplicar).toBe(true);
+    expect(plano.opcoes.map((o) => [o.tipo, o.id, o.nome])).toEqual([["poder", "aspirante_atributo", "Aspirante a herói"]]);
+    const bacharel = getBeneficiosPlano("bacharel");
+    expect(bacharel.autoAplicar).toBe(true);
+    expect(bacharel.opcoes).toHaveLength(4);
+    expect(validarBeneficios("bacharel", []).pericias).toHaveLength(3);
+    // Acólito (Livro Básico) segue "escolha dois" com o exclusivo entre as opções.
+    expect(getBeneficiosPlano("acolito").autoAplicar).toBe(false);
+    expect(slugsDoPoderDaOrigem("aspirante_a_heroi", "aspirante_atributo")).toEqual(["aspirante_atributo", "aspirante_a_heroi"]);
+    expect(slugsDoPoderDaOrigem("acolito", "medicina")).toEqual(["medicina"]);
   });
 });
