@@ -136,9 +136,16 @@ Pontos Variados, T$ fixo, raças/classes liberadas, Complicações, Já Vi Coisa
 Idades Variadas, Raças Abertas, Devoções Abertas — tudo de Heróis de Arton
 cap. 4, com passo novo "Idade & Complicações". Ver `CLAUDE.md`.
 
+## Noite de 2026-09-07
+
+Multiclasse, UI nova (CSS próprio, progresso, cartões, Revisão completa),
+raças só do compêndio, deuses menores, distinções, proficiências das classes
+de Heróis de Arton pelo PDF, retrato da raça, chat ao criar. Ver `CLAUDE.md`.
+
 ## Pendente
 
-- Proficiências e perícias das classes fora do T20-DB (ler do PDF, como a tabela).
+- Samurai/Místico/Miragem: sem tabela nem perícias em livro disponível.
 - "Tipo: X" do Melhor Amigo (Treinador) e "Origem em Construção" com origem de
-  um benefício só.
+  um benefício só; Ofício com especialidade.
+- Level-up de ator existente (fora de escopo desde o início).
 - i18n `en`.

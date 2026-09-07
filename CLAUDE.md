@@ -107,6 +107,36 @@ classe no nível dela, lista = união das conjuradoras, teto por círculo somado
 Divindade obrigatória/concedidos: qualquer das classes. Validado: guerreiro 3 /
 arcanista 2 (bruxo) → nível 5, PV 39, PM 21, 3 poderes, 4 magias de 1º.
 
+### Noite de 2026-09-07 (autônomo, solo)
+
+- **UI**: `styles/wizard.css` (declarado no `module.json`; link de fallback no
+  init porque o servidor só relê o manifesto ao reiniciar). Cabeçalho com
+  título + barra de progresso (passos feitos clicáveis), cartões, itens de lista
+  com seleção destacada, descrições recolhíveis (`<details>`) em poderes,
+  habilidades e magias, Revisão com atributos em cartões e tags de tudo que vai
+  para a ficha, janela 840×720 redimensionável, botão ⟲ recomeçar, rascunho e
+  recomeçar via `DialogV2` (window.confirm travava o cliente).
+- **Raças só do compêndio** (`registrarRacasDoCompendio`): Moreau, Kallyanach,
+  Vampiro… atributos fixos e escolha lidos do item; "+2 em um OU +1 em dois"
+  vira modo com radio (`alternativa` no `AtributoEscolhaDef`).
+- **Deuses menores** (`scripts/port-pdf-deuses-menores.mjs` → `deuses_menores.json`
+  + `registrarDeusesMenores`): 59 do Guia com a linha "Devotos" (sem coringa
+  humano/clérigo) + os que só existem no compêndio (Mauziell, Tibar; subtipo
+  precisa parecer nome de deus). Select com optgroups; cota de concedidos
+  limitada ao que o deus tem.
+- **Distinções** (regra da mesa; `rules/distincoes.ts`): nível ≥ 5, 76 do
+  compêndio (`tipo:distincao` + `subtipo`), marca "(Marca)" automática, poderes
+  entram como gerais. Poderes: ordem marcados/elegíveis/resto + "só elegíveis".
+- **Classes de Heróis de Arton**: `port-pdf-classes.mjs` guarda
+  `proficiencias_texto`/`pericias_texto` (com "Como o X básico" resolvido) em
+  duas passadas por causa das duas colunas; ambíguo (Machado de Pedra) fica
+  no padrão. Tabela não engole mais a página seguinte.
+- Retrato/token = ícone da raça; aviso sem permissão ACTOR_CREATE; mensagem no
+  chat ao criar (link do ator); T$ com milhar; `getClasse("")` não cai em
+  arcanista.
+- Ferramentas de conferência: `npm run port:pdf` (classes, com `--conferir`),
+  `npm run port:deuses`.
+
 **Ainda não cobre:** proficiências/perícias das classes só do compêndio (Samurai
 sai com "escolha 2 entre todas"); "Origem em Construção" com origem de um
 benefício só (perícia a menos da classe); "Tipo: X" do Melhor Amigo do Treinador
