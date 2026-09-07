@@ -197,11 +197,16 @@ function walkDir(dir) {
   function fixosDe(lista) {
     return (lista ?? []).map((b) => ({ atributo: b.atributo, valor: b.valor }));
   }
-  function escolhasDe(lista) {
+  // O T20-DB marca "atributos_diferentes" em raças cujo texto NÃO tem a palavra.
+  // "+1 em dois atributos" sem "diferentes" deixa pôr os dois no mesmo atributo
+  // (Mashin e Minauro em Dragão Brasil, Kallyanach em Ameaças p.151, Meio-Elfo
+  // em HA p.45: "Int +1, +1 em dois atributos, exceto Constituição").
+  const SEM_DIFERENTES = new Set(["mashin", "minauro", "kallyanach", "meio_elfo"]);
+  function escolhasDe(lista, racaId = "") {
     return (lista ?? []).map((e) => ({
       valor: e.valor,
       quantidade: e.quantidade,
-      atributos_diferentes: e.atributos_diferentes ?? false,
+      atributos_diferentes: SEM_DIFERENTES.has(racaId) ? false : (e.atributos_diferentes ?? false),
       // Sem isto, Lefou aceitaria +1 em Carisma — que é justamente o proibido.
       atributos_disponiveis: e.atributos_disponiveis ?? null,
       observacao: e.observacao ?? null,
@@ -368,17 +373,44 @@ function walkDir(dir) {
     };
 
     if (mod.tipo === "alternativo") {
-      for (const alt of mod.alternativas ?? []) {
-        racas.push({
-          id: alt.id,
-          nome: alt.nome ?? alt.id.charAt(0).toUpperCase() + alt.id.slice(1),
-          raca_base: r.id,
-          ...comum,
-          descricao: alt.descricao ?? comum.descricao,
-          atributos_fixos: fixosDe(alt.fixos),
-          atributos_escolha: escolhasDe(alt.escolhas),
-        });
+      const alts = mod.alternativas ?? [];
+      // Suraggel: cada alternativa tem fixos próprios e é um item de raça no
+      // compêndio (Aggelus, Sulfure). Kallyanach: as alternativas são só dois
+      // MODOS de distribuir atributo ("+2 em um ou +1 em dois") da MESMA raça —
+      // virar duas raças "alt_um_atributo"/"alt_dois_atributos" escondia a
+      // Herança Dracônica, presa a ids que item nenhum tem. Duende e Moreau vêm
+      // sem alternativas (construtor por passos / 12 heranças no compêndio) e
+      // entram só com o comum.
+      const soModos = alts.length > 0 && alts.every((a) => !a.fixos?.length && a.escolhas?.length);
+      if (alts.length > 0 && !soModos) {
+        for (const alt of alts) {
+          racas.push({
+            id: alt.id,
+            nome: alt.nome ?? alt.id.charAt(0).toUpperCase() + alt.id.slice(1),
+            raca_base: r.id,
+            ...comum,
+            descricao: alt.descricao ?? comum.descricao,
+            atributos_fixos: fixosDe(alt.fixos),
+            atributos_escolha: escolhasDe(alt.escolhas, r.id),
+          });
+        }
+        continue;
       }
+      const modos = alts
+        .map((a) => escolhasDe(a.escolhas, r.id)[0])
+        .filter(Boolean)
+        .sort((a, b) => b.quantidade - a.quantidade);
+      const principal = modos[0];
+      racas.push({
+        id: r.id,
+        nome: r.nome,
+        raca_base: null,
+        ...comum,
+        atributos_fixos: [],
+        atributos_escolha: principal
+          ? [{ ...principal, ...(modos[1] ? { alternativa: { valor: modos[1].valor, quantidade: modos[1].quantidade } } : {}) }]
+          : [],
+      });
       continue;
     }
 
@@ -389,7 +421,7 @@ function walkDir(dir) {
       ...comum,
       atributos_fixos: mod.tipo === "fixo" || mod.tipo === "misto" ? fixosDe(mod.fixos) : [],
       atributos_escolha:
-        mod.tipo === "escolha" || mod.tipo === "misto" ? escolhasDe(mod.escolhas) : [],
+        mod.tipo === "escolha" || mod.tipo === "misto" ? escolhasDe(mod.escolhas, r.id) : [],
     });
   }
 

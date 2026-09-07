@@ -1,4 +1,5 @@
 import racasDataRaw from "../data/racas.json";
+import { chaveDaRaca, montagemDaRaca, periciasTrocadasNaMontagem } from "./montagem.js";
 
 export interface AtributoFixo {
   atributo: string;
@@ -48,7 +49,8 @@ const racasDoCompendio: RacaData[] = [];
 
 /** Find a race by its db id or by a display name (slug-matched). */
 export function getRaca(idOrName: string): RacaData | null {
-  const s = slug(idOrName);
+  // "Golem (Ameaças de Arton)" → golem_desperto; "Kobolds" → kobold.
+  const s = chaveDaRaca(idOrName);
   return (
     racasData.find((r) => r.id === s || slug(r.nome) === s) ??
     racasDoCompendio.find((r) => r.id === s || slug(r.nome) === s) ??
@@ -62,6 +64,10 @@ const NUMERO: Record<string, number> = { um: 1, uma: 1, dois: 2, duas: 2, tres: 
  * "+1 em dois atributos", "+2 em um atributo a sua escolha ou +1 em dois
  * atributos a sua escolha", "+1 em Dois Atributos Diferentes" → grupo(s) de
  * escolha. Texto do campo `atributosDinamicos.description` do item de raça.
+ *
+ * "Diferentes" só quando o livro escreve a palavra: "+1 em dois atributos"
+ * (Moreau, Minauro, Kallyanach) deixa pôr os dois no mesmo atributo; "+1 em
+ * dois atributos diferentes" (Vampiro, Duende) não.
  */
 export function escolhasDaDescricao(descricao: string, disponiveis: string[] | null): AtributoEscolhaDef[] {
   const t = descricao
@@ -81,7 +87,7 @@ export function escolhasDaDescricao(descricao: string, disponiveis: string[] | n
     {
       valor: principal.valor,
       quantidade: principal.quantidade,
-      atributos_diferentes: true,
+      atributos_diferentes: /diferente/.test(t),
       atributos_disponiveis: disponiveis && disponiveis.length < 6 ? disponiveis : null,
       observacao: descricao,
       ...(modos.length > 1 ? { alternativa: modos[1]! } : {}),
@@ -131,10 +137,12 @@ export function registrarRacasDoCompendio(
  * (sum of `treinar_pericias` quantities). Used in the perícia count:
  * treináveis = classe.numero + max(0, Int) + raça.
  */
-export function getRaceSkillBonus(idOrName: string): number {
+export function getRaceSkillBonus(idOrName: string, escolhas: Record<string, unknown> = {}): number {
   const raca = getRaca(idOrName);
   if (!raca) return 0;
-  return (raca.treinar_pericias ?? []).reduce((sum, t) => sum + (t.quantidade ?? 0), 0);
+  const total = (raca.treinar_pericias ?? []).reduce((sum, t) => sum + (t.quantidade ?? 0), 0);
+  // Mashin: uma maravilha mecânica no lugar de uma das perícias.
+  return Math.max(0, total - periciasTrocadasNaMontagem(idOrName, escolhas));
 }
 
 /** Fixed (non-choosable) racial attribute modifiers, e.g. anão +2 con +1 sab -1 des. */
@@ -174,7 +182,11 @@ export interface EscolhaRacial {
 
 /** Escolhas que as habilidades da raça impõem (Memória Póstuma, Deformidade…). */
 export function escolhasDaRaca(idOrName: string): EscolhaRacial[] {
-  return ((getRaca(idOrName) as unknown as { escolhas?: EscolhaRacial[] })?.escolhas ?? []);
+  return [
+    ...((getRaca(idOrName) as unknown as { escolhas?: EscolhaRacial[] })?.escolhas ?? []),
+    // Raça que o T20-DB não tem (Vampiro): a escolha vem de montagem.json.
+    ...(montagemDaRaca(idOrName)?.escolhas ?? []),
+  ];
 }
 
 /** O pedido em vigor: o do ramo escolhido, ou o direto quando não há ramos. */

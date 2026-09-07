@@ -122,7 +122,7 @@ export function origensDosLivros() {
         id: slug(s.titulo),
         itens,
         beneficios,
-        descricao: primeiroParagrafo(s.corpo),
+        descricao: descricaoCompleta(s.corpo),
       });
     }
   }
@@ -138,7 +138,7 @@ export function origensDosLivros() {
         id: slug(s.titulo),
         itens,
         beneficios,
-        descricao: primeiroParagrafo(s.corpo),
+        descricao: descricaoCompleta(s.corpo),
       });
     }
   }
@@ -178,6 +178,23 @@ export function dividirForaDeParenteses(texto) {
   }
   partes.push(atual);
   return partes;
+}
+
+/**
+ * Todos os parágrafos de prosa da seção — sem tabela, imagem, campo
+ * ("Itens.", "Benefício.") nem link de navegação. O wizard mostra a origem
+ * inteira, como no livro.
+ */
+function descricaoCompleta(corpo) {
+  const ps = [];
+  for (const bruto of corpo.split(/\r?\n\r?\n/)) {
+    const p = limpar(bruto);
+    if (!p || p.startsWith("|") || p.startsWith(">") || p.startsWith("#")) continue;
+    if (/^(Itens|Benefícios?|Descrição|Perícias?)\b/i.test(p)) continue;
+    if (/^(←|→|Próximo|\[|---)/.test(p)) continue;
+    ps.push(p);
+  }
+  return ps.length > 0 ? ps.join("\n\n") : null;
 }
 
 function primeiroParagrafo(corpo) {

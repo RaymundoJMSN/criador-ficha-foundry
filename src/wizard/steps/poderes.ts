@@ -110,7 +110,9 @@ export function preparePoderesContext(
           slug,
           nome: opcoes[0]!.name.split(":")[0]!.trim(),
           descricao: item?.system.descricao ?? "",
-          opcoes: opcoes.map((o) => ({ id: o.id, nome: o.name.split(":").slice(1).join(":").trim(), selected: o.id === escolhido })),
+          opcoes: opcoes
+            .map((o) => ({ id: o.id, nome: o.name.split(":").slice(1).join(":").trim(), selected: o.id === escolhido }))
+            .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR")),
           pendente: !opcoes.some((o) => o.id === escolhido),
         };
       }

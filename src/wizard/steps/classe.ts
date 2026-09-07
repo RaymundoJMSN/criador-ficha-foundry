@@ -89,7 +89,9 @@ export function prepareClasseContext(
         chave: sub.chave,
         label: sub.label,
         escolhido: resp,
-        opcoes: sub.opcoes.map((o) => ({ id: o.id, nome: o.nome, selected: o.id === resp })),
+        opcoes: sub.opcoes
+          .map((o) => ({ id: o.id, nome: o.nome, selected: o.id === resp }))
+          .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR")),
       });
       sub = sub.opcoes.find((o) => o.id === resp)?.sub ?? null;
     }
@@ -112,7 +114,8 @@ export function prepareClasseContext(
       niveis: Math.max(1, Number(e.niveis) || 1),
       opcoes: permitidas
         .filter((c) => c.id !== state.classeId)
-        .map((c) => ({ id: c.id, name: c.name, selected: c.id === e.classeId })),
+        .map((c) => ({ id: c.id, name: c.name, selected: c.id === e.classeId }))
+        .sort((a, b) => a.name.localeCompare(b.name, "pt-BR")),
     })),
     principalNiveis: classesDoPersonagem(state)[0]?.niveis ?? state.nivel,
     podeAdicionar: Boolean(state.classeId) && state.nivel >= 2 && extras.length < 3,
@@ -130,7 +133,8 @@ export function prepareClasseContext(
       pvPorNivel: c.system.pvPorNivel ?? 0,
       pmPorNivel: c.system.pmPorNivel ?? 0,
       selected: c.id === state.classeId,
-    })),
+    }))
+      .sort((a, b) => a.name.localeCompare(b.name, "pt-BR")),
     selectedClasse,
     descricao:
       (selectedClasse?.system.descricao ?? "") || (classeSlug ? (textos.classes?.[classeSlug] ?? "") : ""),

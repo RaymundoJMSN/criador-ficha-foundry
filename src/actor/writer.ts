@@ -1,6 +1,7 @@
 import { MODULE_ID } from "../constants.js";
 import { mapStateToActorData, getTrainedPericaCodes } from "./mapper.js";
 import type { WizardState } from "../wizard/state.js";
+import type { IndexedPoder } from "../compendium/types.js";
 import { CompendiumIndex } from "../compendium/index.js";
 import { toNomeSlug } from "../compendium/slug.js";
 import { getClasse, respostaSubEscolha } from "../rules/classe.js";
@@ -16,6 +17,8 @@ import { slugsDosPoderes } from "../rules/magias.js";
 import magiaPorPoderRaw from "../data/magia_por_poder.json";
 const magiaPorPoder = magiaPorPoderRaw as Record<string, string>;
 import { validateRaceModifiers, distribuirAbertos } from "../rules/subescolhas.js";
+import { opcoesDaMontagem, anotacoesDaMontagem } from "../rules/montagem.js";
+import { escolhasDaRaca, pedidoAtivo, partesDoPedido } from "../rules/raca.js";
 import {
   beneficiosDeOrigemPermitidos,
   complicacaoEscolhida,
@@ -24,6 +27,71 @@ import {
   faixaDoPersonagem,
   FAIXA_PADRAO,
 } from "../rules/idade.js";
+
+/** Active Effect (transfer) com as mudanças ADD — o mesmo formato das complicações de idade. */
+const aeDe = (nome: string, efeitos: Array<{ chave: string; valor: number }>) =>
+  efeitos.length
+    ? [{ name: nome, transfer: true, changes: efeitos.map((e) => ({ key: e.chave, mode: 2, value: String(e.valor) })) }]
+    : [];
+
+interface MontagemResolvida {
+  /** Itens de poder (e magias de sub-escolha) prontos para embutir. */
+  docs: unknown[];
+  /** O que o item do compêndio NÃO aplica sozinho e o wizard precisa aplicar. */
+  atributos: Record<string, number>;
+  tamanho: string | null;
+  deslocamento: number | null;
+}
+
+/**
+ * Montagem da raça (Duende, Kallyanach, Golem Desperto…): resolve o item de
+ * cada opção marcada e olha os Active Effects que ele já traz. O item do
+ * compêndio é a fonte dos efeitos mecânicos ("Duende Minúsculo" já põe For –1,
+ * tamanho e deslocamento); o wizard só aplica por fora o que o item não tem —
+ * senão o For –1 entrava duas vezes.
+ */
+async function resolverMontagem(state: WizardState): Promise<MontagemResolvida> {
+  const racaRef = state.racaNome || state.racaId;
+  const out: MontagemResolvida = { docs: [], atributos: {}, tamanho: null, deslocamento: null };
+  const marcadas = opcoesDaMontagem(racaRef, state.escolhasPorItem);
+  if (marcadas.length === 0) return out;
+  const todosPoderes = CompendiumIndex.getAll("poder") as IndexedPoder[];
+  const racaSlug = toNomeSlug(racaRef.split(" (")[0]!);
+  for (const { opcao, sufixo, magiaId } of marcadas) {
+    const chaves = new Set<string>();
+    if (opcao.poder) {
+      const alvo = toNomeSlug(opcao.poder);
+      const cands = todosPoderes.filter((p) => toNomeSlug(p.name) === alvo || toNomeSlug(p.name).startsWith(alvo));
+      const item =
+        cands.find((p) => toNomeSlug(p.system.subtipo ?? "").startsWith(racaSlug)) ??
+        cands.find((p) => p.system.tipo === "racial") ??
+        cands[0];
+      const doc = item
+        ? ((await resolveItem(item.id)) as { name: string; effects?: Array<{ changes?: Array<{ key: string }> }> } | null)
+        : null;
+      if (doc) {
+        for (const ef of doc.effects ?? []) for (const c of ef.changes ?? []) chaves.add(c.key);
+        if (sufixo) doc.name = `${doc.name} (${sufixo})`;
+        const faltam = (opcao.efeitos ?? []).filter((e) => !chaves.has(e.chave));
+        if (faltam.length) doc.effects = [...(doc.effects ?? []), ...aeDe(doc.name, faltam)];
+        out.docs.push(doc);
+        if (magiaId) {
+          const magia = await resolveItem(magiaId);
+          if (magia) out.docs.push(magia);
+        }
+      } else {
+        console.warn(`${MODULE_ID} | ActorWriter: poder da montagem "${opcao.poder}" não resolveu`);
+      }
+    }
+    for (const [k, v] of Object.entries(opcao.atributos ?? {})) {
+      if (chaves.has(`system.atributos.${k}.value`) || chaves.has(`system.atributos.${k}.bonus`)) continue;
+      out.atributos[k] = (out.atributos[k] ?? 0) + v;
+    }
+    if (opcao.tamanho && !chaves.has("system.tracos.tamanho")) out.tamanho = opcao.tamanho;
+    if (opcao.deslocamento && !chaves.has("system.attributes.movement.walk")) out.deslocamento = opcao.deslocamento;
+  }
+  return out;
+}
 
 /**
  * Resolves a compendium item id to its full document object.
@@ -114,11 +182,18 @@ export class ActorWriter {
     // jogador — a criação travava aí. A escolha já foi feita no wizard: soma
     // no `system.atributos` do item (vira `.racial` na ficha) e zera a lista
     // dinâmica para o diálogo não abrir.
+    const montagem = await resolverMontagem(state);
     if (raceItemData) {
       const sys = (((raceItemData as Record<string, unknown>)["system"] ??= {}) as Record<string, unknown>);
       const escolhas = (state.escolhasPorItem["raca_modificadores"] as string[][] | undefined) ?? [];
-      const { modificadores } = validateRaceModifiers(state.racaNome || state.racaId, escolhas);
+      const racaRef = state.racaNome || state.racaId;
+      const { modificadores } = validateRaceModifiers(racaRef, escolhas, state.escolhasPorItem);
       const atributos = ((sys["atributos"] ??= {}) as Record<string, number>);
+      // Montagem: só o que o item da opção não aplica sozinho (ver resolverMontagem).
+      for (const [k, v] of Object.entries(montagem.atributos)) atributos[k] = (atributos[k] ?? 0) + v;
+      if (montagem.deslocamento) {
+        sys["movement"] = { ...((sys["movement"] as Record<string, unknown> | undefined) ?? {}), walk: montagem.deslocamento };
+      }
       // Raças Abertas (HA p.281): os fixos da raça vão para onde o jogador pôs.
       if (state.config.racasAbertas) {
         const dist = (state.escolhasPorItem["raca_aberta"] as Record<string, string> | undefined) ?? {};
@@ -458,6 +533,61 @@ export class ActorWriter {
           console.log(`${MODULE_ID} | ActorWriter: ${docs.length} escolha(s) racial(is)`);
         } catch (err) {
           console.warn(`${MODULE_ID} | ActorWriter: falha nas escolhas raciais:`, err);
+        }
+      }
+
+      // Montagem: poderes escolhidos (presentes, bênçãos, chassi…), com a
+      // sub-escolha no nome e a magia da sub-escolha como item.
+      if (montagem.docs.length > 0) {
+        try {
+          await actor.createEmbeddedDocuments("Item", montagem.docs);
+          console.log(`${MODULE_ID} | ActorWriter: ${montagem.docs.length} item(ns) da montagem da raça`);
+        } catch (err) {
+          console.warn(`${MODULE_ID} | ActorWriter: falha na montagem da raça:`, err);
+        }
+      }
+      // Tamanho vai direto no ator (o item de raça não tem esse campo) — só
+      // quando o item da opção não o define por Active Effect.
+      if (montagem.tamanho) {
+        try {
+          await actor.update({ "system.tracos.tamanho": montagem.tamanho });
+        } catch (err) {
+          console.warn(`${MODULE_ID} | ActorWriter: falha ao gravar o tamanho:`, err);
+        }
+      }
+
+      // Escolha registrada no item que a raça já concedeu: "Fonte Elemental (Fogo)",
+      // "Tabu (Diplomacia)" com o –5. Sem isto a escolha ficava só no wizard.
+      const anotacoes = [...anotacoesDaMontagem(racaRef, state.escolhasPorItem)];
+      for (const escolha of escolhasDaRaca(racaRef)) {
+        partesDoPedido(pedidoAtivo(escolha, state.escolhasPorItem)).forEach((pedido, pi) => {
+          if (pedido.tipo !== "lista") return;
+          const valor = state.escolhasPorItem[`${escolha.chave}_${pi}_0`] as string | undefined;
+          const rotulo = pedido.opcoes?.find((o) => o.id === valor)?.rotulo;
+          if (rotulo) anotacoes.push({ item: escolha.habilidade, sufixo: rotulo, efeitos: [] });
+        });
+      }
+      for (const a of anotacoes) {
+        const itens = (actor as unknown as { items: { find(fn: (i: { name: string }) => boolean): unknown } }).items;
+        const alvo = itens.find((i) => i.name === a.item) as
+          | { name: string; uuid: string; update(d: Record<string, unknown>): Promise<unknown> }
+          | undefined;
+        if (!alvo) {
+          console.warn(`${MODULE_ID} | ActorWriter: item "${a.item}" não achado na ficha para anotar "${a.sufixo}"`);
+          continue;
+        }
+        try {
+          if (a.sufixo) await alvo.update({ name: `${a.item} (${a.sufixo})` });
+          // No ATOR, não no item: efeito posto num item que já existe não é
+          // transferido (só os que nascem junto do item são).
+          if (a.efeitos.length) {
+            await actor.createEmbeddedDocuments(
+              "ActiveEffect",
+              aeDe(`${a.item} (${a.sufixo ?? ""})`, a.efeitos).map((e) => ({ ...e, transfer: false, origin: alvo.uuid }))
+            );
+          }
+        } catch (err) {
+          console.warn(`${MODULE_ID} | ActorWriter: falha ao anotar "${a.item}":`, err);
         }
       }
 

@@ -26,7 +26,7 @@ export interface DivindadeContext {
     id: string;
     nome: string;
     /** Lista do deus, para o jogador escolher entre eles. */
-    poderes: Array<{ slug: string; nome: string; selected: boolean }>;
+    poderes: Array<{ slug: string; nome: string; descricao: string; selected: boolean }>;
   } | null;
   /** Quantos escolher: 1 para devoto comum, 2 para clérigo/druida/paladino. */
   quantosPoderes: number;
@@ -37,7 +37,8 @@ export interface DivindadeContext {
 export function prepareDivindadeContext(
   state: WizardState,
   errors: string[] = [],
-  resolvePoderNome: (slug: string) => string | null = () => null
+  /** slug → nome e texto do item no compêndio (sem ele, o nome sai do slug). */
+  resolvePoder: (slug: string) => { nome: string; descricao: string } | null = () => null
 ): DivindadeContext {
   const slugsClasses = classesDoPersonagem(state).map((c) => c.classeSlug);
   const racaSlug = toNomeSlug(state.racaNome ?? "");
@@ -53,8 +54,9 @@ export function prepareDivindadeContext(
     selected: d.id === state.divindadeId,
     menor: Boolean(d.menor),
   }));
-  const maiores = mappedDivindades.filter((d) => !d.menor);
-  const menores = mappedDivindades.filter((d) => d.menor);
+  const porNome = (a: { nome: string }, b: { nome: string }) => a.nome.localeCompare(b.nome, "pt-BR");
+  const maiores = mappedDivindades.filter((d) => !d.menor).sort(porNome);
+  const menores = mappedDivindades.filter((d) => d.menor).sort(porNome);
 
   const selected = divindades.find((d: Divindade) => d.id === state.divindadeId) ?? null;
   // Deus menor costuma ter um poder só: a cota não passa do que existe.
@@ -66,11 +68,17 @@ export function prepareDivindadeContext(
     ? {
         id: selected.id,
         nome: selected.nome,
-        poderes: selected.poderes_concedidos.map((slug) => ({
-          slug,
-          nome: resolvePoderNome(slug) ?? prettifySlug(slug),
-          selected: escolhidos.includes(slug),
-        })),
+        poderes: selected.poderes_concedidos
+          .map((slug) => {
+            const p = resolvePoder(slug);
+            return {
+              slug,
+              nome: p?.nome ?? prettifySlug(slug),
+              descricao: p?.descricao ?? "",
+              selected: escolhidos.includes(slug),
+            };
+          })
+          .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR")),
       }
     : null;
 

@@ -66,7 +66,7 @@ export function prepareOrigemContext(
   resolvePoderNome: (slug: string) => string | null = () => null,
   todosPoderes: IndexedPoder[] = []
 ): OrigemContext {
-  const origens = listOrigens();
+  const origens = [...listOrigens()].sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
   const origemOptions: OrigemOption[] = origens.map((o) => ({
     id: o.id,
     nome: o.nome,

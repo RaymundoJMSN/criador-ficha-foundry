@@ -107,6 +107,59 @@ classe no nível dela, lista = união das conjuradoras, teto por círculo somado
 Divindade obrigatória/concedidos: qualquer das classes. Validado: guerreiro 3 /
 arcanista 2 (bruxo) → nível 5, PV 39, PM 21, 3 poderes, 4 magias de 1º.
 
+### Pedidos do Ray de 2026-09-07 (manhã)
+
+- **Listas em ordem alfabética** (`localeCompare` pt-BR) em raças, origens,
+  classes, multiclasse, subescolhas de classe, divindades, perícias, magias,
+  opções de habilidade e listas raciais. Poderes já eram (marcados/elegíveis/resto).
+- **Combobox** (`src/wizard/combo.ts`): todo `<select>` com 8+ opções vira UM
+  campo — o select fica escondido (`display:none`, o FormData continua lendo
+  dele) e o input por cima filtra sem acento, abre a lista no foco, setas/Enter
+  escolhem, Esc restaura; escolher dispara `change` no select, então os
+  listeners existentes não mudaram. Optgroup vira cabeçalho da lista.
+- **Semântica "diferentes"**: "+1 em dois atributos" SEM a palavra deixa pôr os
+  dois no mesmo atributo; "+1 em dois atributos diferentes" não. Vale para o
+  texto do item (`escolhasDaDescricao`) e para o T20-DB (`SEM_DIFERENTES` no
+  port: mashin, minauro, kallyanach, meio_elfo — o T20-DB marcava errado).
+- **Port `alternativo`**: Kallyanach tinha virado duas raças
+  `alt_um_atributo`/`alt_dois_atributos` (e a Herança Dracônica ficava presa a
+  ids sem item). Agora alternativa sem `fixos` = MODO de atributo da mesma raça
+  (`alternativa` no grupo); Suraggel segue como Aggelus/Sulfure; Duende e Moreau
+  (sem alternativas) entram só com o comum.
+- **Montagem de raça** (`src/data/montagem.json` + `rules/montagem.ts`,
+  escrito à mão a partir dos livros): Duende (natureza, tamanho, 3 presentes,
+  tabu), Kallyanach (2 bênçãos; Armamento pede arma natural, Prática Arcana
+  pede magia arcana de 1º), Golens Despertos (chassi, fonte de energia com
+  elemento/magia divina, tamanho), Mashin (maravilha mecânica opcional que troca
+  uma perícia — `getRaceSkillBonus(ref, escolhas)`), Kobolds (2 talentos com
+  `requer`), Vampiro (Resquícios da Outra Vida como escolha racial, igual à
+  Memória Póstuma). Estado: `mont_<passo>` = ids marcados,
+  `mont_<passo>_<opção>_sub`. Grupos de atributo das opções (Natureza Animal,
+  chassi de Bronze) entram em `getRaceModifierGroups(ref, escolhas)`.
+  **O item do compêndio é a fonte dos efeitos**: `resolverMontagem` no writer lê
+  os Active Effects do item ("Duende Minúsculo" já traz For –1, tamanho e
+  deslocamento) e só aplica por fora o que o item não tem — sem isso o For –1
+  entrava duas vezes. Sub-escolha vai no nome do item ("Herança Dracônica
+  (Fogo)", "Armamento Kallyanach (Cauda (impacto))"), inclusive para as escolhas
+  `lista` antigas (Fonte Elemental do golem) que antes ficavam só no wizard.
+  Efeito em item que a raça já concedeu (Tabu –5 na perícia) vai como AE no
+  ATOR com `origin` — AE posto num item já existente não é transferido.
+- **Dois "Golem"** no compêndio (Livro Básico e Golens Despertos de Ameaças):
+  `nomeDaRaca` põe o pack no nome repetido, `racaNome` guarda esse nome e o
+  `ALIAS` em `montagem.ts` leva "golem_ameacas_de_arton" → `golem_desperto`
+  (e "kobolds" → `kobold`).
+- **Origens com texto inteiro** (`gerar-textos.mjs`): descrição completa +
+  "Benefício." + "Itens." do markdown (`descricaoCompleta` em `livros.mjs`),
+  PDF só como reserva. O T20-DB usa os nomes do Atlas e o Dragão Brasil renomeou
+  ("Aspirante a Herói" = "Nascido Para Ser Herói"): tabela `ALIAS_ORIGEM` casada
+  por itens + benefício. 130/131 (`um_com_os_kami` não está em livro nenhum).
+  Template usa `.t20w-texto-livro` (`white-space: pre-line`).
+- Poder concedido da divindade mostra a descrição; habilidades de classe em
+  fonte normal (o `li` 0.85em × `.t20w-desc` 0.8em dava 8,8 px); base 14px.
+- **Cuidado com heredoc no Bash tool**: `\n`/`\r` viram quebra de linha real
+  dentro de `<<'EOF'`; patch com barra invertida vai por arquivo (Write) e
+  `python arquivo.py`.
+
 ### Noite de 2026-09-07 (autônomo, solo)
 
 - **UI**: `styles/wizard.css` (declarado no `module.json`; link de fallback no

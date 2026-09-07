@@ -63,11 +63,17 @@ describe("raças só do compêndio (Moreau, Kallyanach, Vampiro)", () => {
       { name: "Vampiro", system: { atributos: { con: -1, car: 1 }, atributosDinamicos: { value: ["for", "des", "int", "sab"], description: "+1 em Dois Atributos Diferentes" } } },
       { name: "Anão", system: { atributos: { con: 2 } } },
     ]);
-    expect(n).toBe(3);
+    // Kallyanach agora vem do T20-DB (racas.json): só Moreau e Vampiro são do compêndio.
+    expect(n).toBe(2);
     expect(getRaceFixedModifiers("Moreau - Herança do Lobo")).toEqual({ car: 1 });
     expect(getRaceModifierGroups("Moreau - Herança do Lobo")).toEqual([
-      expect.objectContaining({ valor: 1, quantidade: 2, atributos_diferentes: true, atributos_disponiveis: null }),
+      // "+1 em dois atributos" sem "diferentes": pode pôr os dois no mesmo (regra da mesa do Ray, e o texto do livro).
+      expect.objectContaining({ valor: 1, quantidade: 2, atributos_diferentes: false, atributos_disponiveis: null }),
     ]);
+    // "+1 em Dois Atributos Diferentes": aí sim, não repete.
+    expect(getRaceModifierGroups("Vampiro")[0]!.atributos_diferentes).toBe(true);
+    expect(validateRaceModifiers("Vampiro", [["for", "for"]]).errors.length).toBeGreaterThan(0);
+    expect(validateRaceModifiers("Moreau - Herança do Lobo", [["for", "for"]]).modificadores).toEqual({ for: 2 });
     const k = getRaceModifierGroups("Kallyanach")[0]!;
     expect(k).toMatchObject({ valor: 1, quantidade: 2, alternativa: { valor: 2, quantidade: 1 } });
     expect(getRaceModifierGroups("Vampiro")[0]!.atributos_disponiveis).toEqual(["for", "des", "int", "sab"]);

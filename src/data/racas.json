@@ -22,122 +22,6 @@
     "atributos_escolha": []
   },
   {
-    "id": "alt_dois_atributos",
-    "nome": "Alt_dois_atributos",
-    "raca_base": "kallyanach",
-    "escolhas": [
-      {
-        "chave": "raca_heranca_draconica",
-        "habilidade": "Herança Dracônica",
-        "label": "Herança Dracônica",
-        "ramos": [],
-        "direto": {
-          "tipo": "lista",
-          "quantidade": 1,
-          "opcoes": [
-            {
-              "id": "acido",
-              "rotulo": "Acido"
-            },
-            {
-              "id": "eletricidade",
-              "rotulo": "Eletricidade"
-            },
-            {
-              "id": "fogo",
-              "rotulo": "Fogo"
-            },
-            {
-              "id": "frio",
-              "rotulo": "Frio"
-            },
-            {
-              "id": "luz",
-              "rotulo": "Luz"
-            },
-            {
-              "id": "trevas",
-              "rotulo": "Trevas"
-            }
-          ]
-        }
-      }
-    ],
-    "descricao": "+1 em dois atributos a sua escolha",
-    "tamanho": "medio",
-    "deslocamento": 9,
-    "bonus_pericias": [],
-    "treinar_pericias": [],
-    "atributos_fixos": [],
-    "atributos_escolha": [
-      {
-        "valor": 1,
-        "quantidade": 2,
-        "atributos_diferentes": true,
-        "atributos_disponiveis": null,
-        "observacao": null
-      }
-    ]
-  },
-  {
-    "id": "alt_um_atributo",
-    "nome": "Alt_um_atributo",
-    "raca_base": "kallyanach",
-    "escolhas": [
-      {
-        "chave": "raca_heranca_draconica",
-        "habilidade": "Herança Dracônica",
-        "label": "Herança Dracônica",
-        "ramos": [],
-        "direto": {
-          "tipo": "lista",
-          "quantidade": 1,
-          "opcoes": [
-            {
-              "id": "acido",
-              "rotulo": "Acido"
-            },
-            {
-              "id": "eletricidade",
-              "rotulo": "Eletricidade"
-            },
-            {
-              "id": "fogo",
-              "rotulo": "Fogo"
-            },
-            {
-              "id": "frio",
-              "rotulo": "Frio"
-            },
-            {
-              "id": "luz",
-              "rotulo": "Luz"
-            },
-            {
-              "id": "trevas",
-              "rotulo": "Trevas"
-            }
-          ]
-        }
-      }
-    ],
-    "descricao": "+2 em um atributo a sua escolha",
-    "tamanho": "medio",
-    "deslocamento": 9,
-    "bonus_pericias": [],
-    "treinar_pericias": [],
-    "atributos_fixos": [],
-    "atributos_escolha": [
-      {
-        "valor": 2,
-        "quantidade": 1,
-        "atributos_diferentes": false,
-        "atributos_disponiveis": null,
-        "observacao": null
-      }
-    ]
-  },
-  {
     "id": "anao",
     "nome": "Anão",
     "raca_base": null,
@@ -274,6 +158,19 @@
         "valor": -1
       }
     ],
+    "atributos_escolha": []
+  },
+  {
+    "id": "duende",
+    "nome": "Duende",
+    "raca_base": null,
+    "escolhas": [],
+    "descricao": null,
+    "tamanho": "variavel",
+    "deslocamento": 9,
+    "bonus_pericias": [],
+    "treinar_pericias": [],
+    "atributos_fixos": [],
     "atributos_escolha": []
   },
   {
@@ -721,6 +618,68 @@
     "atributos_escolha": []
   },
   {
+    "id": "kallyanach",
+    "nome": "Kallyanach",
+    "raca_base": null,
+    "escolhas": [
+      {
+        "chave": "raca_heranca_draconica",
+        "habilidade": "Herança Dracônica",
+        "label": "Herança Dracônica",
+        "ramos": [],
+        "direto": {
+          "tipo": "lista",
+          "quantidade": 1,
+          "opcoes": [
+            {
+              "id": "acido",
+              "rotulo": "Acido"
+            },
+            {
+              "id": "eletricidade",
+              "rotulo": "Eletricidade"
+            },
+            {
+              "id": "fogo",
+              "rotulo": "Fogo"
+            },
+            {
+              "id": "frio",
+              "rotulo": "Frio"
+            },
+            {
+              "id": "luz",
+              "rotulo": "Luz"
+            },
+            {
+              "id": "trevas",
+              "rotulo": "Trevas"
+            }
+          ]
+        }
+      }
+    ],
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "bonus_pericias": [],
+    "treinar_pericias": [],
+    "atributos_fixos": [],
+    "atributos_escolha": [
+      {
+        "valor": 1,
+        "quantidade": 2,
+        "atributos_diferentes": false,
+        "atributos_disponiveis": null,
+        "observacao": null,
+        "alternativa": {
+          "valor": 2,
+          "quantidade": 1
+        }
+      }
+    ]
+  },
+  {
     "id": "kappa",
     "nome": "Kappa",
     "raca_base": null,
@@ -906,7 +865,7 @@
       {
         "valor": 1,
         "quantidade": 2,
-        "atributos_diferentes": true,
+        "atributos_diferentes": false,
         "atributos_disponiveis": null,
         "observacao": "+1 em dois atributos a sua escolha"
       }
@@ -954,7 +913,7 @@
       {
         "valor": 1,
         "quantidade": 2,
-        "atributos_diferentes": true,
+        "atributos_diferentes": false,
         "atributos_disponiveis": [
           "for",
           "des",
@@ -1036,7 +995,7 @@
       {
         "valor": 1,
         "quantidade": 2,
-        "atributos_diferentes": true,
+        "atributos_diferentes": false,
         "atributos_disponiveis": null,
         "observacao": "+1 em dois atributos a sua escolha (slots devem ser diferentes entre si; podem coincidir com Força)"
       }
@@ -1066,6 +1025,19 @@
         "valor": -1
       }
     ],
+    "atributos_escolha": []
+  },
+  {
+    "id": "moreau",
+    "nome": "Moreau",
+    "raca_base": null,
+    "escolhas": [],
+    "descricao": null,
+    "tamanho": "medio",
+    "deslocamento": 9,
+    "bonus_pericias": [],
+    "treinar_pericias": [],
+    "atributos_fixos": [],
     "atributos_escolha": []
   },
   {

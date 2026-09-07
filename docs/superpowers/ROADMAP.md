@@ -142,7 +142,18 @@ Multiclasse, UI nova (CSS próprio, progresso, cartões, Revisão completa),
 raças só do compêndio, deuses menores, distinções, proficiências das classes
 de Heróis de Arton pelo PDF, retrato da raça, chat ao criar. Ver `CLAUDE.md`.
 
+## Manhã de 2026-09-07 (pedidos do Ray)
+
+Listas alfabéticas, combobox único (busca + escolha), "diferentes" só quando o
+livro diz, montagem de raça por passos (Duende, Kallyanach, Golens Despertos,
+Mashin, Kobolds, Vampiro), origens com texto inteiro (130/131), descrição dos
+poderes concedidos, fonte maior. Ver `CLAUDE.md`.
+
 ## Pendente
+
+- Montagem: Sátiro/Finntroll não têm escolha (pool do compêndio é variante);
+  outras raças com passos, se aparecerem em módulo novo, entram em
+  `montagem.json`. Bênçãos vampíricas não existem no compêndio.
 
 - Samurai/Místico/Miragem: sem tabela nem perícias em livro disponível.
 - "Tipo: X" do Melhor Amigo (Treinador) e "Origem em Construção" com origem de

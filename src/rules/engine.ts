@@ -23,6 +23,7 @@ import {
 import { getClasse, cadeiaSubEscolhas } from "./classe.js";
 
 import { getRaceSkillBonus, pendenciasDeEscolhasRaciais } from "./raca.js";
+import { pendenciasDaMontagem } from "./montagem.js";
 import { buildPericiaPlan, computeTrained, type PericiaPicks } from "./pericias.js";
 import type { IndexedMagia, AnyIndexed } from "../compendium/types.js";
 
@@ -74,12 +75,13 @@ export function validate(step: WizardStep, state: EngineState): ValidationResult
         break;
       }
       const racaRef = state.racaNome || state.racaId;
-      if (getRaceModifierGroups(racaRef).length > 0) {
+      if (getRaceModifierGroups(racaRef, state.escolhasPorItem).length > 0) {
         const choices = (state.escolhasPorItem["raca_modificadores"] as string[][]) ?? [];
-        const { errors: modErrors } = validateRaceModifiers(racaRef, choices);
+        const { errors: modErrors } = validateRaceModifiers(racaRef, choices, state.escolhasPorItem);
         if (modErrors.length > 0)
           errors.push("Complete as escolhas de atributo da raça.");
       }
+      errors.push(...pendenciasDaMontagem(racaRef, state.escolhasPorItem));
       if (state.config.racasAbertas) {
         const dist = (state.escolhasPorItem["raca_aberta"] as Record<string, string> | undefined) ?? {};
         errors.push(...distribuirAbertos(racaRef, dist).erros);
@@ -112,7 +114,7 @@ export function validate(step: WizardStep, state: EngineState): ValidationResult
       if (classe) {
         const racaRef = state.racaNome || state.racaId;
         const intFinal = (state.atributosBase.int ?? 0) + (totaisRaciaisDoEstado(state).int ?? 0);
-        const plan = buildPericiaPlan(classe, intFinal, getRaceSkillBonus(racaRef));
+        const plan = buildPericiaPlan(classe, intFinal, getRaceSkillBonus(racaRef, state.escolhasPorItem));
         const picks = (state.escolhasPorItem["pericias"] as PericiaPicks) ?? {
           obrigatorias: [],
           escolhas: [],
@@ -173,15 +175,16 @@ export function pendencias(state: EngineState): string[] {
   const classeRef = state.classeNome || state.classeId;
   const racaRef = state.racaNome || state.racaId;
 
-  if (state.racaId && getRaceModifierGroups(racaRef).length > 0) {
+  if (state.racaId && getRaceModifierGroups(racaRef, state.escolhasPorItem).length > 0) {
     const choices = (state.escolhasPorItem["raca_modificadores"] as string[][]) ?? [];
-    if (validateRaceModifiers(racaRef, choices).errors.length > 0) {
+    if (validateRaceModifiers(racaRef, choices, state.escolhasPorItem).errors.length > 0) {
       faltando.push("Complete as escolhas de atributo da raça.");
     }
   }
 
   if (state.racaId) {
     faltando.push(...pendenciasDeEscolhasRaciais(racaRef, state.escolhasPorItem));
+    faltando.push(...pendenciasDaMontagem(racaRef, state.escolhasPorItem));
   }
 
   if (state.origemId) {
@@ -214,7 +217,7 @@ export function pendencias(state: EngineState): string[] {
   if (classe) {
 
     const intFinal = (state.atributosBase.int ?? 0) + (totaisRaciaisDoEstado(state).int ?? 0);
-    const plan = buildPericiaPlan(classe, intFinal, getRaceSkillBonus(racaRef));
+    const plan = buildPericiaPlan(classe, intFinal, getRaceSkillBonus(racaRef, state.escolhasPorItem));
     const picks = (state.escolhasPorItem["pericias"] as PericiaPicks) ?? {
       obrigatorias: [],
       escolhas: [],

@@ -103,7 +103,7 @@ export function getTrainedPericaCodes(state: WizardState): Record<string, true> 
   let trainedSlugs: string[];
   if (classe && picks) {
     const intFinal = (state.atributosBase.int ?? 0) + (totaisRaciaisDoEstado(state).int ?? 0);
-    const plan = buildPericiaPlan(classe, intFinal, getRaceSkillBonus(racaRef));
+    const plan = buildPericiaPlan(classe, intFinal, getRaceSkillBonus(racaRef, state.escolhasPorItem));
     trainedSlugs = computeTrained(plan, picks).trained;
   } else {
     trainedSlugs = state.periciasTreinadas;

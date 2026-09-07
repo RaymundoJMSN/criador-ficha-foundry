@@ -8,8 +8,10 @@ import {
   partesDoPedido,
   type PedidoRacial,
   type RacaData,
+  type AtributoEscolhaDef,
 } from "../../rules/raca.js";
 import { PERICIA_SLUGS } from "../../rules/pericia-slug.js";
+import { montagemDaRaca, opcoesMarcadas, subMarcada, pendenciasDaMontagem, type OpcaoMontagem } from "../../rules/montagem.js";
 import textosRaw from "../../data/textos.json";
 import { describeUnmet, type PartialWizardState } from "../../rules/poderes.js";
 import { toNomeSlug } from "../../compendium/slug.js";
@@ -48,6 +50,7 @@ const TAMANHO_LABEL: Record<string, string> = {
   enorme: "Enorme",
   col: "Colossal",
   colossal: "Colossal",
+  variavel: "Variável (escolhido na montagem)",
 };
 
 export interface ModSlot {
@@ -138,6 +141,103 @@ export interface RacaDetail {
   deslocamento: string;
   /** Memória Póstuma, Deformidade, Fonte Elemental… */
   escolhasRaciais: EscolhaRacialView[];
+  /** Duende, Kallyanach, Golem Desperto…: passos com N opções cada. */
+  montagem: PassoView[];
+}
+
+export interface OpcaoView {
+  id: string;
+  nome: string;
+  descricao: string;
+  resumo: string;
+  nota: string;
+  selected: boolean;
+  bloqueada: boolean;
+  sub: { name: string; rotulo: string; opcoes: PickerOpcao[] } | null;
+}
+
+export interface PassoView {
+  id: string;
+  nome: string;
+  titulo: string;
+  nota: string;
+  /** radio (uma) ou checkbox (várias / opcional). */
+  radio: boolean;
+  inputName: string;
+  opcoes: OpcaoView[];
+  erros: string[];
+}
+
+function resumoDaOpcao(o: OpcaoMontagem): string {
+  const partes: string[] = [];
+  for (const [k, v] of Object.entries(o.atributos ?? {})) partes.push(`${ATRIBUTO_LABEL[k] ?? k} ${v > 0 ? "+" : ""}${v}`);
+  if (o.atributos_escolha) partes.push(`+${o.atributos_escolha.valor} em ${o.atributos_escolha.quantidade} atributo${o.atributos_escolha.quantidade > 1 ? "s" : ""} à escolha`);
+  if (o.tamanho) partes.push(TAMANHO_LABEL[o.tamanho] ?? o.tamanho);
+  if (o.deslocamento) partes.push(`deslocamento ${o.deslocamento} m`);
+  return partes.join(" · ");
+}
+
+/** Descrição do poder no compêndio: prefere o item do subtipo da raça ("Voo" é magia e presente do duende). */
+function descricaoDoPoder(nomePoder: string, racaRef: string, poderes: IndexedPoder[]): string {
+  const alvo = toNomeSlug(nomePoder);
+  const raca = toNomeSlug(racaRef.split(" (")[0]!);
+  const candidatos = poderes.filter((p) => toNomeSlug(p.name).startsWith(alvo) || toNomeSlug(p.name) === alvo);
+  const item =
+    candidatos.find((p) => toNomeSlug(p.system.subtipo ?? "").startsWith(raca)) ??
+    candidatos.find((p) => p.system.tipo === "racial") ??
+    candidatos[0];
+  return item?.system.descricao ?? "";
+}
+
+function montarMontagem(
+  racaRef: string,
+  escolhas: Record<string, unknown>,
+  poderes: IndexedPoder[],
+  magias: IndexedMagia[]
+): PassoView[] {
+  const m = montagemDaRaca(racaRef);
+  if (!m?.passos) return [];
+  const erros = pendenciasDaMontagem(racaRef, escolhas);
+  return m.passos.map((passo) => {
+    const marc = opcoesMarcadas(passo, escolhas);
+    const ids = new Set(marc.map((o) => o.id));
+    const cheio = marc.length >= passo.escolher;
+    return {
+      id: passo.id,
+      nome: passo.nome,
+      titulo: `${passo.nome} — ${passo.opcional ? "opcional, até" : "escolha"} ${passo.escolher}`,
+      nota: passo.nota ?? "",
+      radio: passo.escolher === 1 && !passo.opcional,
+      inputName: `mont-${passo.id}`,
+      erros: erros.filter((e) => e.startsWith(`${passo.nome}:`) || passo.opcoes.some((o) => e.startsWith(`${o.nome}`))),
+      opcoes: passo.opcoes.map((o) => {
+        const selected = ids.has(o.id);
+        const sub = o.sub && selected ? montarSub(passo.id, o, escolhas, magias) : null;
+        return {
+          id: o.id,
+          nome: o.nome,
+          descricao: o.poder ? descricaoDoPoder(o.poder, racaRef, poderes) : "",
+          resumo: resumoDaOpcao(o),
+          nota: o.nota ?? "",
+          selected,
+          bloqueada: !selected && cheio && passo.escolher > 1,
+          sub,
+        };
+      }),
+    };
+  });
+}
+
+function montarSub(passoId: string, o: OpcaoMontagem, escolhas: Record<string, unknown>, magias: IndexedMagia[]) {
+  const atual = subMarcada(passoId, o.id, escolhas);
+  const opcoes: PickerOpcao[] = o.sub?.opcoes
+    ? o.sub.opcoes.map((x) => ({ id: x.id, nome: x.rotulo, selected: x.id === atual }))
+    : magias
+        .filter((mg) => Number(mg.system.circulo) === (o.sub?.magia?.circulo ?? 1))
+        .filter((mg) => !o.sub?.magia?.tradicao || mg.system.tipo === o.sub.magia.tradicao)
+        .map((mg) => ({ id: mg.id, nome: mg.name, selected: mg.id === atual }))
+        .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
+  return { name: `mont-${passoId}-${o.id}-sub`, rotulo: o.sub?.rotulo ?? "Escolha", opcoes };
 }
 
 export interface RacaContext {
@@ -147,17 +247,40 @@ export interface RacaContext {
   errors: string[];
 }
 
+const PACK_ROTULO: Record<string, string> = {
+  racas: "Livro Básico",
+  "ameacas-de-arton": "Ameaças de Arton",
+  "herois-de-arton": "Heróis de Arton",
+  "deuses-de-arton": "Deuses de Arton",
+  "guia-de-npcs-and-dbs": "Guia de NPCs",
+};
+function nomeDoPack(packId: string): string {
+  const k = packId.split(".").pop() ?? packId;
+  return PACK_ROTULO[k] ?? k;
+}
+
+/**
+ * Nome exibido (e guardado em `racaNome`). Dois "Golem" no compêndio — Livro
+ * Básico e Golens Despertos de Ameaças — ganham o pack no nome; é por esse
+ * nome que `getRaca` acha o golem_desperto (alias em rules/montagem.ts).
+ */
+export function nomeDaRaca(r: IndexedRace, todas: IndexedRace[]): string {
+  const repetido = todas.some((o) => o.id !== r.id && o.name === r.name);
+  return repetido ? `${r.name} (${nomeDoPack(r.packId)})` : r.name;
+}
+
 function listar(nomes: string[]): string {
   if (nomes.length <= 1) return nomes[0] ?? "";
   return `${nomes.slice(0, -1).join(", ")} e ${nomes[nomes.length - 1]}`;
 }
 
-function formatAtributos(raca: RacaData): string {
+function formatAtributos(raca: RacaData, extras: AtributoEscolhaDef[] = []): string {
   const partes = raca.atributos_fixos
     .filter((f) => f.valor !== 0)
     .map((f) => `${f.valor > 0 ? "+" : ""}${f.valor} ${ATRIBUTO_LABEL[f.atributo] ?? f.atributo}`);
-  for (const e of raca.atributos_escolha) {
-    partes.push(`+${e.valor} em ${e.quantidade} atributo(s) à escolha`);
+  for (const e of [...raca.atributos_escolha, ...extras]) {
+    const modo = e.alternativa ? ` ou +${e.alternativa.valor} em ${e.alternativa.quantidade}` : "";
+    partes.push(`+${e.valor} em ${e.quantidade} atributo${e.quantidade > 1 ? "s" : ""}${e.atributos_diferentes && e.quantidade > 1 ? " diferentes" : ""}${modo} à escolha`);
   }
   return partes.join(", ") || "—";
 }
@@ -172,7 +295,7 @@ function formatAtributos(raca: RacaData): string {
  *   Carisma. Antes os seis apareciam sempre, sem dizer nada.
  */
 function buildModGroups(racaRef: string, choices: string[][], escolhas: Record<string, unknown> = {}): ModGroup[] {
-  return getRaceModifierGroups(racaRef).map((def, gi) => {
+  return getRaceModifierGroups(racaRef, escolhas).map((def, gi) => {
     // Kallyanach: "+2 em um atributo ou +1 em dois" — radio escolhe o modo.
     const modoAlt = Boolean(def.alternativa) && escolhas[`raca_mod_modo-${gi}`] === "alt";
     const qtd = modoAlt ? def.alternativa!.quantidade : (def.quantidade ?? 1);
@@ -256,15 +379,17 @@ export function prepareRacaContext(
     .filter((r) => permitidas.length === 0 || permitidas.includes(r.name))
     .map((r) => ({
       id: r.id,
-      name: r.name,
+      name: nomeDaRaca(r, racas),
       selected: r.id === state.racaId,
-    }));
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name, "pt-BR"));
 
   const selecionada = racas.find((r) => r.id === state.racaId);
   let selectedDetail: RacaDetail | null = null;
 
   if (selecionada) {
-    const dbRaca = getRaca(selecionada.name);
+    const nome = nomeDaRaca(selecionada, racas);
+    const dbRaca = getRaca(nome);
     const choices = (state.escolhasPorItem["raca_modificadores"] as string[][] | undefined) ?? [];
 
     // O item de raça do compêndio vem com description vazia, então o texto sai
@@ -277,11 +402,13 @@ export function prepareRacaContext(
 
     selectedDetail = {
       id: selecionada.id,
-      name: selecionada.name,
+      name: nome,
       descricao: descricaoFoundry || String(dbRaca?.descricao ?? ""),
-      atributosTexto: dbRaca ? formatAtributos(dbRaca) : "—",
-      modGroups: dbRaca ? buildModGroups(selecionada.name, choices, state.escolhasPorItem) : [],
-      racaAberta: state.config.racasAbertas && dbRaca ? montarRacaAberta(selecionada.name, state.escolhasPorItem) : null,
+      // Duende: os Dons vêm da montagem, não do T20-DB.
+      atributosTexto: dbRaca ? formatAtributos(dbRaca, montagemDaRaca(nome)?.atributos_escolha ?? []) : "—",
+      modGroups: dbRaca ? buildModGroups(nome, choices, state.escolhasPorItem) : [],
+      racaAberta: state.config.racasAbertas && dbRaca ? montarRacaAberta(nome, state.escolhasPorItem) : null,
+      montagem: montarMontagem(nome, state.escolhasPorItem, todosPoderes, todasMagias),
       poderesRaciais: poderesDaRaca(selecionada, todosPoderes),
       periciasBonus: (dbRaca?.bonus_pericias ?? []).map((p) =>
         typeof p === "string" ? p : String((p as { pericia?: string }).pericia ?? "")
@@ -289,7 +416,7 @@ export function prepareRacaContext(
       tamanho: TAMANHO_LABEL[tamanhoBruto.toLowerCase()] ?? tamanhoBruto,
       deslocamento: `${deslocamento} ${unidade}`,
       escolhasRaciais: montarEscolhasRaciais(
-        selecionada.name,
+        nome,
         state.escolhasPorItem,
         todosPoderes,
         todasMagias,
@@ -345,7 +472,7 @@ function opcoesDoPedido(
 
   switch (pedido.tipo) {
     case "lista":
-      return (pedido.opcoes ?? []).map((o) => marcar(o.id, o.rotulo));
+      return (pedido.opcoes ?? []).map((o) => marcar(o.id, o.rotulo)).sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
 
     case "pericia": {
       const slugs = pedido.filtro === "oficio" ? ["oficio"] : PERICIA_SLUGS;

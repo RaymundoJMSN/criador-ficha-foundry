@@ -45,7 +45,8 @@ import {
 } from "../rules/atributos.js";
 import { prepareNivelContext } from "./steps/nivel.js";
 import { prepareAtributosContext } from "./steps/atributos.js";
-import { prepareRacaContext } from "./steps/raca.js";
+import { prepareRacaContext, nomeDaRaca } from "./steps/raca.js";
+import { montarCombo } from "./combo.js";
 import { prepareOrigemContext } from "./steps/origem.js";
 import { prepareClasseContext } from "./steps/classe.js";
 import { preparePericiaContext } from "./steps/pericias.js";
@@ -308,8 +309,9 @@ export function defineWizardApp(): void {
       if (formData.has("metodoAtributos")) patch["metodoAtributos"] = metodoAtributos;
       if (formData.has("racaId")) {
         patch["racaId"] = racaId;
-        const racaItem = CompendiumIndex.getAll("race").find((r) => r.id === racaId);
-        patch["racaNome"] = racaItem?.name ?? "";
+        const todasRacas = CompendiumIndex.getAll("race") as IndexedRace[];
+        const racaItem = todasRacas.find((r) => r.id === racaId);
+        patch["racaNome"] = racaItem ? nomeDaRaca(racaItem, todasRacas) : "";
       }
       if (formData.has("origemId")) patch["origemId"] = origemId;
       if (formData.has("classeId")) {
@@ -398,9 +400,11 @@ export function defineWizardApp(): void {
         }
         case WizardStep.Divindade: {
           const divPoderes = CompendiumIndex.getAll("poder") as IndexedPoder[];
-          const resolvePoderNome = (slug: string): string | null =>
-            divPoderes.find((p) => toNomeSlug(p.name) === slug)?.name ?? null;
-          stepCtx = prepareDivindadeContext(state, errors, resolvePoderNome);
+          const resolvePoder = (slug: string) => {
+            const p = divPoderes.find((x) => toNomeSlug(x.name) === slug);
+            return p ? { nome: p.name, descricao: p.system.descricao ?? "" } : null;
+          };
+          stepCtx = prepareDivindadeContext(state, errors, resolvePoder);
           break;
         }
         case WizardStep.Poderes: {
@@ -715,47 +719,30 @@ export function defineWizardApp(): void {
         });
       });
 
-      // ── Campo de busca em cima de cada dropdown longo ───────────────────
+      // ── Dropdown longo vira um campo só: digita para buscar, escolhe na lista ──
       root.querySelectorAll<HTMLSelectElement>("select").forEach((sel) => {
         if (sel.options.length < 8 || sel.dataset["busca"] === "pronto") return;
         sel.dataset["busca"] = "pronto";
+        montarCombo(sel);
+      });
 
-        const todas = Array.from(sel.options).map((o) => ({
-          value: o.value,
-          text: o.text,
-          selected: o.selected,
-        }));
-
-        const busca = document.createElement("input");
-        busca.type = "text";
-        busca.placeholder = "Filtrar…";
-        busca.className = "t20w-busca-select";
-        sel.parentElement?.insertBefore(busca, sel);
-
-        busca.addEventListener("input", () => {
-          const termo = busca.value
-            .toLowerCase()
-            .normalize("NFD")
-            .replace(/[̀-ͯ]/g, "");
-          const atual = sel.value;
-          sel.replaceChildren();
-          for (const o of todas) {
-            const limpo = o.text
-              .toLowerCase()
-              .normalize("NFD")
-              .replace(/[̀-ͯ]/g, "");
-            // A opção vazia e a escolhida ficam sempre, senão o select perde o valor.
-            if (termo && o.value && o.value !== atual && !limpo.includes(termo)) continue;
-            const opt = document.createElement("option");
-            opt.value = o.value;
-            opt.text = o.text;
-            opt.selected = o.value === atual;
-            sel.appendChild(opt);
-          }
-        });
-        // Enter no filtro não deve submeter o formulário do wizard.
-        busca.addEventListener("keydown", (e) => {
-          if (e.key === "Enter") e.preventDefault();
+      // ── Montagem da raça (Duende, Kallyanach, Golem Desperto…) ───────────
+      // Qualquer mudança relê os passos inteiros do DOM: marcadas e sub-escolhas.
+      root.querySelectorAll<HTMLElement>("[name^='mont-']").forEach((el) => {
+        el.addEventListener("change", () => {
+          const novas = { ...this._state.escolhasPorItem };
+          root.querySelectorAll<HTMLElement>(".t20w-montagem-passo").forEach((p) => {
+            const id = p.dataset["passo"] ?? "";
+            novas[`mont_${id}`] = Array.from(
+              p.querySelectorAll<HTMLInputElement>(`input[name='mont-${id}']:checked`)
+            ).map((i) => i.value);
+            p.querySelectorAll<HTMLSelectElement>("select[name^='mont-']").forEach((sel) => {
+              novas[sel.name.replace(/^mont-/, "mont_").replace(/-/g, "_")] = sel.value;
+            });
+          });
+          this._state.apply({ escolhasPorItem: novas });
+          this._errors = [];
+          void this.render();
         });
       });
 

@@ -10,13 +10,18 @@
  * sorcerer lineage, specialist school, familiar, duende/golem constructor.
  */
 import { getRaca, getRaceFixedModifiers, type AtributoEscolhaDef } from "./raca.js";
+import { gruposDeAtributoDaMontagem, atributosFixosDaMontagem } from "./montagem.js";
 
 export type AtributoId = "for" | "des" | "con" | "int" | "sab" | "car";
 const ATRS: readonly AtributoId[] = ["for", "des", "con", "int", "sab", "car"];
 
-/** Choosable attribute-modifier groups a race offers (empty when none). */
-export function getRaceModifierGroups(idOrName: string): AtributoEscolhaDef[] {
-  return getRaca(idOrName)?.atributos_escolha ?? [];
+/**
+ * Choosable attribute-modifier groups a race offers (empty when none).
+ * Raça montada por passos (Duende, Golem Desperto) soma os grupos das opções
+ * marcadas: Dons, Natureza Animal, chassi de Bronze.
+ */
+export function getRaceModifierGroups(idOrName: string, escolhas: Record<string, unknown> = {}): AtributoEscolhaDef[] {
+  return [...(getRaca(idOrName)?.atributos_escolha ?? []), ...gruposDeAtributoDaMontagem(idOrName, escolhas)];
 }
 
 export interface ModifierValidation {
@@ -32,9 +37,10 @@ export interface ModifierValidation {
  */
 export function validateRaceModifiers(
   idOrName: string,
-  choices: string[][]
+  choices: string[][],
+  escolhas: Record<string, unknown> = {}
 ): ModifierValidation {
-  const groups = getRaceModifierGroups(idOrName);
+  const groups = getRaceModifierGroups(idOrName, escolhas);
   const errors: string[] = [];
   const modificadores: Partial<Record<AtributoId, number>> = {};
 
@@ -92,14 +98,19 @@ export function getRaceAttributeTotals(
   idOrName: string,
   choices: string[][],
   /** Raças Abertas: distribuição dos modificadores fixos (índice do valor → atributo). */
-  aberta?: Record<string, string>
+  aberta?: Record<string, string>,
+  escolhas: Record<string, unknown> = {}
 ): Partial<Record<AtributoId, number>> {
   const out: Partial<Record<AtributoId, number>> = {};
   const fixed = aberta ? distribuirAbertos(idOrName, aberta).modificadores : getRaceFixedModifiers(idOrName);
   for (const [k, v] of Object.entries(fixed)) {
     if (ATRS.includes(k as AtributoId)) out[k as AtributoId] = (out[k as AtributoId] ?? 0) + (v ?? 0);
   }
-  const { modificadores } = validateRaceModifiers(idOrName, choices);
+  // Tamanho/chassi da montagem (Minúsculo For –1, Barro Con +2) é fixo também.
+  for (const [k, v] of Object.entries(atributosFixosDaMontagem(idOrName, escolhas))) {
+    if (ATRS.includes(k as AtributoId)) out[k as AtributoId] = (out[k as AtributoId] ?? 0) + v;
+  }
+  const { modificadores } = validateRaceModifiers(idOrName, choices, escolhas);
   for (const k of ATRS) {
     if (modificadores[k]) out[k] = (out[k] ?? 0) + (modificadores[k] ?? 0);
   }
@@ -158,5 +169,5 @@ export function totaisRaciaisDoEstado(s: {
   const ref = s.racaNome || s.racaId || "";
   const choices = (s.escolhasPorItem["raca_modificadores"] as string[][] | undefined) ?? [];
   const aberta = s.config.racasAbertas ? ((s.escolhasPorItem["raca_aberta"] as Record<string, string> | undefined) ?? {}) : undefined;
-  return getRaceAttributeTotals(ref, choices, aberta);
+  return getRaceAttributeTotals(ref, choices, aberta, s.escolhasPorItem);
 }

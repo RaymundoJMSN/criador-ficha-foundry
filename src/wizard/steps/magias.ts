@@ -126,7 +126,7 @@ export function prepareMagiasContext(
     !excedentesPorCirculo([...escolhidasComCirculo, { id: "?", circulo }], teto).includes("?");
 
   const byCirculo = new Map<number, MagiaEntry[]>();
-  for (const m of filtered) {
+  for (const m of [...filtered].sort((a, b) => a.name.localeCompare(b.name, "pt-BR"))) {
     const circulo = Number(m.system.circulo) || 0;
     if (!byCirculo.has(circulo)) byCirculo.set(circulo, []);
     const selected = selecionadas.includes(m.id);

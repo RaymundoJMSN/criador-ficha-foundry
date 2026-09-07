@@ -121,6 +121,8 @@ export function preparePericiaContext(
   // Build the "already committed" set for each bucket so we can dedup across sublists.
   // Skills in fixas are always committed. Skills picked in one bucket should not appear
   // as available (unchecked) in other buckets.
+  const porNome = <T extends { nome: string }>(lista: T[]): T[] =>
+    lista.sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
   const fixasSet = new Set(plan.fixas);
   const obrigPicksFlat = (picks.obrigatorias ?? []).flat();
   const escPicks = picks.escolhas ?? [];
@@ -150,30 +152,36 @@ export function preparePericiaContext(
     return {
       groupIndex: i,
       quantidade: g.quantidade,
-      opcoes: g.opcoes.map((id) => ({
-        id,
-        nome: nome(id),
-        checked: (picks.obrigatorias[i] ?? []).includes(id),
-        // Disable if committed by another bucket (but not this one's own picks)
-        disabled: committedByObrig.has(id) && !(picks.obrigatorias[i] ?? []).includes(id),
-      })),
+      opcoes: porNome(
+        g.opcoes.map((id) => ({
+          id,
+          nome: nome(id),
+          checked: (picks.obrigatorias[i] ?? []).includes(id),
+          // Disable if committed by another bucket (but not this one's own picks)
+          disabled: committedByObrig.has(id) && !(picks.obrigatorias[i] ?? []).includes(id),
+        }))
+      ),
     };
   });
 
-  const escolhasOpcoes: PericiaOpt[] = plan.escolhas.opcoes.map((id) => ({
-    id,
-    nome: nome(id),
-    checked: escPicks.includes(id),
-    disabled: committedByEsc.has(id) && !escPicks.includes(id),
-  }));
-
-  const todasOpcoes = (selected: string[], committedByOthers: Set<string>): PericiaOpt[] =>
-    plan.todas.map((id) => ({
+  const escolhasOpcoes: PericiaOpt[] = porNome(
+    plan.escolhas.opcoes.map((id) => ({
       id,
       nome: nome(id),
-      checked: selected.includes(id),
-      disabled: committedByOthers.has(id) && !selected.includes(id),
-    }));
+      checked: escPicks.includes(id),
+      disabled: committedByEsc.has(id) && !escPicks.includes(id),
+    }))
+  );
+
+  const todasOpcoes = (selected: string[], committedByOthers: Set<string>): PericiaOpt[] =>
+    porNome(
+      plan.todas.map((id) => ({
+        id,
+        nome: nome(id),
+        checked: selected.includes(id),
+        disabled: committedByOthers.has(id) && !selected.includes(id),
+      }))
+    );
 
   return {
     stepTitle: "Perícias",

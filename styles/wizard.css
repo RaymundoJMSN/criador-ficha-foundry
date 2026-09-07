@@ -20,8 +20,8 @@
   flex-direction: column;
   height: 100%;
   overflow: hidden;
-  font-size: 13px;
-  line-height: 1.4;
+  font-size: 14px;
+  line-height: 1.45;
 }
 
 /* ── Cabeçalho: título do passo + barra de progresso ─────────────────── */
@@ -294,9 +294,15 @@
   color: var(--t20w-ok);
 }
 .t20w-desc {
-  font-size: 0.8em;
-  opacity: 0.75;
+  font-size: 0.9em;
+  opacity: 0.8;
   margin-top: 2px;
+  font-weight: normal;
+}
+.t20w-texto-livro {
+  white-space: pre-line;
+  opacity: 0.85;
+  margin: 0 0 8px;
 }
 .t20w-requer {
   color: #f9a;
@@ -342,14 +348,69 @@ details.t20w-mais > summary:hover {
 .t20w-mini td {
   padding: 2px 8px;
 }
-.t20w-busca-select {
+/* Combobox: input de busca por cima do <select> (que fica escondido, mas no formulário) */
+.t20w-combo {
+  position: relative;
+}
+.t20w-combo-select {
+  display: none !important;
+}
+.t20w-combo-input {
   width: 100%;
-  padding: 4px 8px;
-  margin-bottom: 4px;
+  padding: 6px 28px 6px 8px;
   background: rgba(0, 0, 0, 0.3);
   border: 1px solid rgba(255, 255, 255, 0.16);
   color: inherit;
   border-radius: 4px;
+  font: inherit;
+}
+.t20w-combo::after {
+  content: "▾";
+  position: absolute;
+  right: 10px;
+  top: 6px;
+  opacity: 0.6;
+  pointer-events: none;
+}
+.t20w-combo-input:focus {
+  outline: none;
+  border-color: var(--t20w-accent);
+  box-shadow: 0 0 0 2px var(--t20w-accent-soft);
+}
+.t20w-combo-lista {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 100%;
+  z-index: 40;
+  max-height: 280px;
+  overflow-y: auto;
+  background: #211f20;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  border-radius: 0 0 4px 4px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
+}
+.t20w-combo-grupo {
+  padding: 5px 8px 2px;
+  font-size: 0.75em;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.55;
+}
+.t20w-combo-item {
+  padding: 5px 10px;
+  cursor: pointer;
+}
+.t20w-combo-item:hover,
+.t20w-combo-ativo {
+  background: var(--t20w-accent-soft);
+}
+.t20w-combo-atual {
+  color: var(--t20w-accent);
+}
+.t20w-combo-vazio {
+  opacity: 0.6;
+  font-style: italic;
 }
 .t20w-disabled {
   opacity: 0.4;

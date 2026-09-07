@@ -16,9 +16,12 @@ livros — nada é chutado.
   Khalmyr e Nimb (Heróis de Arton p.280–281), com distribuição pelo jogador.
 - **Raças** do Livro Básico, Heróis de Arton e as que só existem no compêndio
   (Moreau, Kallyanach, Vampiro…), com escolhas raciais (Versátil, Memória
-  Póstuma, Deformidade…).
-- **Origens** com os dois benefícios e itens iniciais de verdade ("estojo de
-  disfarces ou gazua", ração ×10, T$ em dado).
+  Póstuma, Deformidade…) e **montagem por passos** para as raças que se
+  constroem: Duende (natureza, tamanho, presentes, tabu), Kallyanach (bênçãos),
+  Golens Despertos (chassi, fonte de energia, tamanho), Mashin, Kobolds.
+- Listas em ordem alfabética e um campo só para buscar e escolher.
+- **Origens** com o texto inteiro do livro, os dois benefícios e itens iniciais
+  de verdade ("estojo de disfarces ou gazua", ração ×10, T$ em dado).
 - **Divindades** do Panteão e os **deuses menores** do Guia, com a lista de
   devotos aceitos e os poderes concedidos.
 - **Poderes** com pré-requisitos conferidos (atributo, perícia, nível, poder,
