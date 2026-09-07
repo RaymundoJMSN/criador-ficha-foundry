@@ -9,7 +9,7 @@ import {
   tetoPorCirculo,
   excedentesPorCirculo,
 } from "../../rules/magias.js";
-import { toNomeSlug } from "../../compendium/slug.js";
+import { toNomeSlug, uuidDe } from "../../compendium/slug.js";
 import { classesDoPersonagem, caminhoDe } from "../../rules/multiclasse.js";
 import type { WizardState } from "../state.js";
 import type { IndexedMagia } from "../../compendium/types.js";
@@ -22,6 +22,7 @@ export interface MagiaEntry {
   escola: string;
   tipo: string;
   descricao: string;
+  uuid: string;
   selected: boolean;
   /** No limite (total ou do círculo), as não escolhidas ficam travadas. */
   bloqueado: boolean;
@@ -157,6 +158,7 @@ export function prepareMagiasContext(
       escola: ESCOLAS[m.system.escola ?? ""]?.nome ?? (m.system.escola ?? ""),
       tipo: TRADICAO_NOME[m.system.tipo ?? ""] ?? (m.system.tipo ?? ""),
       descricao: m.system.descricao ?? "",
+      uuid: uuidDe(m),
       selected,
       bloqueado: !selected && (noLimite || !caberia(circulo)),
       excedente: selected && excedentes.has(m.id),

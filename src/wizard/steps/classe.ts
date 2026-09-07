@@ -1,7 +1,10 @@
 import type { WizardState } from "../state.js";
 import type { IndexedClasse } from "../../compendium/types.js";
 import { getClasse } from "../../rules/classe.js";
-import { toNomeSlug } from "../../compendium/slug.js";
+import { toNomeSlug, uuidDe } from "../../compendium/slug.js";
+import { resolverPoder } from "../../compendium/resolver.js";
+import { PERICIA_NOMES } from "./pericias.js";
+import type { IndexedPoder } from "../../compendium/types.js";
 import { classesDoPersonagem, caminhoDe, errosMulticlasse } from "../../rules/multiclasse.js";
 import textosRaw from "../../data/textos.json";
 
@@ -20,9 +23,11 @@ export interface ClasseContext {
   selectedClasse: IndexedClasse | null;
   /** Descrição do livro; vazia quando textos.json não foi gerado. */
   descricao: string;
+  periciasTexto: string;
+  proficienciasTexto: string;
   errors: string[];
   // Caminho sub-choice
-  caminhos: Array<{ slug: string; nome: string; selected: boolean }>;
+  caminhos: Array<{ slug: string; nome: string; descricao: string; uuid: string; selected: boolean }>;
   classeCaminho: string | null;
   requiresCaminho: boolean;
   /** Escolhas dependentes do caminho, na ordem em que devem ser respondidas. */
@@ -37,7 +42,7 @@ export interface CaminhosDeClasse {
   /** Nome do radio: `classe_caminho` (principal) ou `classe_caminho_<slug>`. */
   chave: string;
   principal: boolean;
-  caminhos: Array<{ slug: string; nome: string; selected: boolean }>;
+  caminhos: Array<{ slug: string; nome: string; descricao: string; uuid: string; selected: boolean }>;
   subEscolhas: SubEscolhaView[];
 }
 
@@ -55,11 +60,32 @@ export interface SubEscolhaView {
   opcoes: Array<{ id: string; nome: string; selected: boolean }>;
 }
 
+const nomePericia = (id: string): string => PERICIA_NOMES[id] ?? id;
+const listar = (nomes: string[]): string =>
+  nomes.length <= 1 ? (nomes[0] ?? "") : `${nomes.slice(0, -1).join(", ")} e ${nomes[nomes.length - 1]}`;
+
+/** "Fortitude; 1 entre Luta ou Pontaria; mais 2 entre Adestramento, Atletismo…" (LB cap. 4). */
+export function periciasDaClasse(classeSlug: string): string {
+  const per = getClasse(classeSlug)?.pericias;
+  if (!per) return "";
+  const partes: string[] = [];
+  if (per.fixas?.length) partes.push(listar(per.fixas.map(nomePericia)));
+  for (const ob of per.escolhas_obrigatorias ?? []) partes.push(`${ob.quantidade} entre ${ob.opcoes.map(nomePericia).join(" ou ")}`);
+  if (per.escolhas?.quantidade) partes.push(`mais ${per.escolhas.quantidade} entre ${per.escolhas.opcoes.map(nomePericia).join(", ")}`);
+  return partes.join("; ");
+}
+
+export function proficienciasDaClasse(classeSlug: string): string {
+  const prof = getClasse(classeSlug)?.proficiencias ?? [];
+  return listar(prof.map((p) => p.replace(/_/g, " ")));
+}
+
 export function prepareClasseContext(
   state: WizardState,
   classes: IndexedClasse[],
   errors: string[] = [],
-  resolvePoderNome: (slug: string) => string | null = () => null
+  resolvePoderNome: (slug: string) => string | null = () => null,
+  allPoderes: IndexedPoder[] = []
 ): ClasseContext {
   const selectedClasse = classes.find((c) => c.id === state.classeId) ?? null;
 
@@ -73,11 +99,16 @@ export function prepareClasseContext(
     const defs = c.niveis >= (dados?.caminho_nivel ?? 1) ? (dados?.caminhos ?? []) : [];
     if (defs.length === 0) continue;
     const escolhido = caminhoDe(state, c) || null;
-    const caminhos = defs.map((d) => ({
-      slug: d.slug,
-      nome: resolvePoderNome(d.slug) ?? d.nome,
-      selected: d.slug === escolhido,
-    }));
+    const caminhos = defs.map((d) => {
+      const item = resolverPoder(d.slug, c.classeSlug, allPoderes, "ability")?.item;
+      return {
+        slug: d.slug,
+        nome: item?.name ?? resolvePoderNome(d.slug) ?? d.nome,
+        descricao: item?.system.descricao ?? "",
+        uuid: item ? uuidDe(item) : "",
+        selected: d.slug === escolhido,
+      };
+    });
     // Caminho escolhido pode abrir uma escolha, que pode abrir outra
     // (Feiticeiro -> linhagem -> Draconica -> tipo de dano). Só mostra o próximo
     // nível depois que o anterior foi respondido.
@@ -138,6 +169,8 @@ export function prepareClasseContext(
     selectedClasse,
     descricao:
       (selectedClasse?.system.descricao ?? "") || (classeSlug ? (textos.classes?.[classeSlug] ?? "") : ""),
+    periciasTexto: periciasDaClasse(classeSlug),
+    proficienciasTexto: proficienciasDaClasse(classeSlug),
     errors,
     caminhos,
     classeCaminho,

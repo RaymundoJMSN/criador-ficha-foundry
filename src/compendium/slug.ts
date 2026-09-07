@@ -32,3 +32,8 @@ export function toNomeSlug(nome: string): string {
     .replace(/[^a-z0-9]+/g, "_")
     .replace(/^_+|_+$/g, "");
 }
+
+/** UUID de um item indexado do compêndio ("Compendium.tormenta20.poderes.Item.abc"). */
+export function uuidDe(item: { packId?: string; id: string }): string {
+  return item.packId ? `Compendium.${item.packId}.Item.${item.id}` : "";
+}

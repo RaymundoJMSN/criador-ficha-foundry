@@ -1,4 +1,4 @@
-import { toNomeSlug } from "../../compendium/slug.js";
+import { toNomeSlug, uuidDe } from "../../compendium/slug.js";
 import { getClasse, respostaSubEscolha } from "../../rules/classe.js";
 import { getRaca } from "../../rules/raca.js";
 import { describeUnmet, temPrereqsConhecidos, prereqDoTexto, prereqsDoTexto, type PartialWizardState } from "../../rules/poderes.js";
@@ -31,6 +31,7 @@ export interface PoderEntry {
   id: string;
   name: string;
   img: string;
+  uuid: string;
   eligible: boolean;
   unmet: string[];
   /** Pré-requisito só do texto do livro (poder fora do T20-DB); não é conferido. */
@@ -58,6 +59,7 @@ export interface PoderesContext {
     slug: string;
     nome: string;
     descricao: string;
+    uuid: string;
     opcoes: Array<{ id: string; nome: string; selected: boolean }>;
     pendente: boolean;
   }>;
@@ -284,6 +286,7 @@ export function preparePoderesContext(
           slug,
           nome: opcoes[0]!.name.split(":")[0]!.trim(),
           descricao: item?.system.descricao ?? "",
+          uuid: item ? uuidDe(item) : "",
           opcoes: opcoes
             .map((o) => ({ id: o.id, nome: o.name.split(":").slice(1).join(":").trim(), selected: o.id === escolhido }))
             .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR")),
@@ -295,6 +298,7 @@ export function preparePoderesContext(
         slug,
         nome: item?.name ?? resolvePoderNome(slug) ?? prettifySlug(slug),
         descricao: item?.system.descricao ?? "",
+        uuid: item ? uuidDe(item) : "",
         opcoes: [] as Array<{ id: string; nome: string; selected: boolean }>,
         pendente: false,
       };
@@ -435,6 +439,7 @@ export function preparePoderesContext(
         id: p.id,
         name: p.name,
         img: p.img,
+        uuid: uuidDe(p),
         eligible: unmet.length === 0,
         unmet,
         requerTexto,

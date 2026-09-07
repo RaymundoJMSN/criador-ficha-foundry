@@ -6,8 +6,23 @@ import {
   type Divindade,
 } from "../../rules/divindade.js";
 import { toNomeSlug } from "../../compendium/slug.js";
+import textosRaw from "../../data/textos.json";
 import type { WizardState } from "../state.js";
 import { classesDoPersonagem } from "../../rules/multiclasse.js";
+
+const textos = textosRaw as { divindades?: Record<string, Record<string, string>> };
+const CAMPOS_DEUS: Array<[string, string]> = [
+  ["crencas", "Crenças e Objetivos"],
+  ["simbolo", "Símbolo Sagrado"],
+  ["canalizar", "Canalizar Energia"],
+  ["arma", "Arma Preferida"],
+  ["obrigacoes", "Obrigações & Restrições"],
+];
+function fichaDoDeus(id: string): Array<{ rotulo: string; texto: string }> | null {
+  const f = textos.divindades?.[id];
+  if (!f) return null;
+  return CAMPOS_DEUS.filter(([k]) => f[k]).map(([k, rotulo]) => ({ rotulo, texto: f[k]! }));
+}
 
 function prettifySlug(slug: string): string {
   return slug
@@ -29,7 +44,9 @@ export interface DivindadeContext {
     /** Panteão: o que a escolha implica (sem concedido, sem arma cortante/perfurante). */
     nota: string;
     /** Lista do deus, para o jogador escolher entre eles. */
-    poderes: Array<{ slug: string; nome: string; descricao: string; selected: boolean }>;
+    poderes: Array<{ slug: string; nome: string; descricao: string; uuid: string; selected: boolean }>;
+    /** Crenças, símbolo, canalizar, arma, obrigações — do livro (textos.json). */
+    ficha: Array<{ rotulo: string; texto: string }> | null;
   } | null;
   /** Quantos escolher: 1 para devoto comum, 2 para clérigo/druida/paladino. */
   quantosPoderes: number;
@@ -41,7 +58,7 @@ export function prepareDivindadeContext(
   state: WizardState,
   errors: string[] = [],
   /** slug → nome e texto do item no compêndio (sem ele, o nome sai do slug). */
-  resolvePoder: (slug: string) => { nome: string; descricao: string } | null = () => null
+  resolvePoder: (slug: string) => { nome: string; descricao: string; uuid?: string } | null = () => null
 ): DivindadeContext {
   const slugsClasses = classesDoPersonagem(state).map((c) => c.classeSlug);
   const racaSlug = toNomeSlug(state.racaNome ?? "");
@@ -71,6 +88,7 @@ export function prepareDivindadeContext(
     ? {
         id: selected.id,
         nome: selected.nome,
+        ficha: fichaDoDeus(selected.id),
         nota:
           selected.id === PANTEAO.id
             ? "Cultua o Panteão como um todo: não recebe poder concedido e não pode usar armas cortantes ou perfurantes (LB p.103)."
@@ -82,6 +100,7 @@ export function prepareDivindadeContext(
               slug,
               nome: p?.nome ?? prettifySlug(slug),
               descricao: p?.descricao ?? "",
+              uuid: p?.uuid ?? "",
               selected: escolhidos.includes(slug),
             };
           })

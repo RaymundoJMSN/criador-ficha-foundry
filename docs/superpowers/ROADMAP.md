@@ -142,6 +142,13 @@ Multiclasse, UI nova (CSS próprio, progresso, cartões, Revisão completa),
 raças só do compêndio, deuses menores, distinções, proficiências das classes
 de Heróis de Arton pelo PDF, retrato da raça, chat ao criar. Ver `CLAUDE.md`.
 
+## Noite de 2026-09-07 (pedidos do Ray)
+
+Cabeçalho sem contador, rolagem preservada, botão 📖 para abrir o item do
+compêndio em toda lista, caixas quadradas iguais, perícias/proficiências e
+caminhos com descrição no passo Classe, ficha do deus, flags do T20 Nível dos
+Poderes. Ver `CLAUDE.md`.
+
 ## Tarde de 2026-09-07 (pedidos do Ray)
 
 Resolver com pasta do compêndio ("Magias (Clérigo)" certo), poderes gerais só

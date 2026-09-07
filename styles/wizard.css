@@ -136,15 +136,72 @@
   background: #1c1a1b;
   color: #e6e1d8;
 }
+/* Radio e checkbox iguais: quadrado, sempre visível (o círculo do tema do
+   Foundry só aparecia depois de marcar). */
 .t20w-step input[type="radio"],
 .t20w-step input[type="checkbox"] {
-  accent-color: var(--t20w-accent);
-  width: 15px;
-  height: 15px;
-  min-width: 15px;
-  margin: 0;
+  appearance: none;
+  -webkit-appearance: none;
+  width: 16px;
+  height: 16px;
+  min-width: 16px;
+  margin: 2px 0 0;
+  padding: 0;
   cursor: pointer;
   flex-shrink: 0;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 3px;
+  background: rgba(0, 0, 0, 0.3);
+  display: inline-grid;
+  place-content: center;
+  vertical-align: middle;
+}
+.t20w-step input[type="radio"]::before,
+.t20w-step input[type="checkbox"]::before {
+  content: "" !important;
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  background: var(--t20w-accent);
+  transform: scale(0);
+  transition: transform 80ms ease-in-out;
+}
+.t20w-step input[type="radio"]:checked,
+.t20w-step input[type="checkbox"]:checked {
+  border-color: var(--t20w-accent);
+}
+.t20w-step input[type="radio"]:checked::before,
+.t20w-step input[type="checkbox"]:checked::before {
+  transform: scale(1);
+}
+.t20w-abrir {
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  padding: 0 4px;
+  font-size: 0.85em;
+  line-height: 1.4;
+  cursor: pointer;
+  opacity: 0.55;
+  vertical-align: middle;
+}
+.t20w-abrir:hover {
+  opacity: 1;
+  border-color: var(--t20w-line);
+}
+.t20w-ficha-deus {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  gap: 4px 12px;
+  margin: 0 0 10px;
+  font-size: 0.9em;
+}
+.t20w-ficha-deus dt {
+  font-weight: 600;
+  opacity: 0.8;
+}
+.t20w-ficha-deus dd {
+  margin: 0;
 }
 .t20w-step input:disabled,
 .t20w-step input:disabled + span,

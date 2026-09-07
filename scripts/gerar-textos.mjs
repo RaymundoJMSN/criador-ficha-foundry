@@ -37,7 +37,7 @@ function primeirasFrases(texto, limite = 420) {
   return (out || frases[0] || "").trim();
 }
 
-const textos = { origens: {}, racas: {}, classes: {}, nomes: {} };
+const textos = { origens: {}, racas: {}, classes: {}, nomes: {}, divindades: {} };
 
 /* --- Origens: do markdown, inteiras (descrição + Benefício + Itens) -------- */
 
@@ -194,6 +194,33 @@ if (livrosDisponiveis()) {
   }
 }
 
+/* --- Deuses do Panteão: Crenças, Símbolo, Canalizar, Arma, Obrigações (LB cap. 2) --- */
+
+if (livrosDisponiveis()) {
+  const arq = join(LIVROS, "tormenta20-core/02-criacao-personagens/06-deuses.md");
+  if (existsSync(arq)) {
+    const md = readFileSync(arq, "utf-8");
+    const campo = (corpo, nome) => {
+      const m = new RegExp("\\*\\*" + nome + ":?\\*\\*:?\\s*(.+)").exec(corpo);
+      return m ? m[1].replace(/\*\*/g, "").trim() : null;
+    };
+    const blocos = md.split(/^### /m).slice(1);
+    for (const b of blocos) {
+      const titulo = b.split(/\r?\n/)[0] ?? "";
+      const nome = titulo.split("•")[0].trim();
+      const id = nome.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+      const ficha = {
+        crencas: campo(b, "Crenças e Objetivos"),
+        simbolo: campo(b, "Símbolo Sagrado"),
+        canalizar: campo(b, "Canalizar Energia"),
+        arma: campo(b, "Arma Preferida"),
+        obrigacoes: campo(b, "Obrigações & Restrições"),
+      };
+      if (ficha.crencas && ficha.simbolo) textos.divindades[id] = ficha;
+    }
+  }
+}
+
 /* --- Raças e classes: do markdown, que tem "## Descrição" ----------------- */
 
 if (livrosDisponiveis()) {
@@ -224,5 +251,5 @@ writeFileSync(join(DATA, "textos.json"), JSON.stringify(textos, null, 2) + "\n",
 console.log(
   `textos.json: ${Object.keys(textos.origens).length} origens, ` +
     `${Object.keys(textos.racas).length} raças, ${Object.keys(textos.classes).length} classes, ` +
-    `nomes de ${Object.keys(textos.nomes).length} raças`
+    `nomes de ${Object.keys(textos.nomes).length} raças, ${Object.keys(textos.divindades).length} deuses`
 );

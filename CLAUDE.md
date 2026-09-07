@@ -107,6 +107,32 @@ classe no nível dela, lista = união das conjuradoras, teto por círculo somado
 Divindade obrigatória/concedidos: qualquer das classes. Validado: guerreiro 3 /
 arcanista 2 (bruxo) → nível 5, PV 39, PM 21, 3 poderes, 4 magias de 1º.
 
+### Pedidos do Ray de 2026-09-07 (noite)
+
+- **Sem contador de passos** nem barra de pontos no cabeçalho (o jogador só
+  avança); botão e janela chamam "Criar Personagem".
+- **Rolagem preservada**: `PARTS.wizard.scrollable` inclui `.t20w-content`
+  (o rolo principal) — sem isso todo re-render voltava ao topo.
+- **📖 Abrir no compêndio** (`data-action="abrirItem"` + `data-uuid`; botão
+  direito no nome também): poderes, magias, habilidades de classe, caminhos,
+  benefícios de origem, poderes concedidos, habilidades e montagem da raça.
+  `uuidDe(item)` em `compendium/slug.ts` monta o UUID a partir de `packId`.
+- **Caixas iguais**: radio e checkbox com `appearance: none` e quadrado próprio
+  (`::before` com `content: ""` vence o glifo do tema do Foundry, que só
+  desenhava o círculo depois de marcar).
+- **Classe** mostra perícias (fixas; "1 entre Luta ou Pontaria"; "mais 2
+  entre…") e proficiências, de `classes.json`; caminhos com descrição e 📖.
+- **Divindade**: Crenças e Objetivos, Símbolo Sagrado, Canalizar Energia, Arma
+  Preferida, Obrigações & Restrições, lidos de `06-deuses.md` para
+  `textos.divindades` (só o Panteão; deuses menores não têm esses campos no
+  markdown).
+- **Compatibilidade — T20 Nível dos Poderes**: `marcarNiveisDosPoderes` grava
+  `flags.t20-nivel-poderes.nivelObtido` (1–20 ou "bonus") em todo poder da
+  ficha nova quando o módulo está ativo: habilidade = nível da tabela; poder
+  escolhido ocupa, na ordem, os níveis com vaga de poder; origem/raça/
+  divindade/distinção/idade = "bonus". Loja (t20-hayd-loja) só precisa do T$
+  em `dinheiro.tp`, que já gravamos; GMTools e Zapera não tocam na criação.
+
 ### Pedidos do Ray de 2026-09-07 (tarde)
 
 - **"Magias (Clérigo)" errado**: a escada do resolver tentava o nome exato antes

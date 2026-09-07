@@ -4,6 +4,7 @@ import {
   getBeneficiosPlano,
   validarBeneficios,
   formatItensIniciais,
+  slugsDoPoderDaOrigem,
   type BeneficioOpcao,
 } from "../../rules/origem.js";
 import type { WizardState } from "../state.js";
@@ -11,7 +12,8 @@ import { beneficiosDeOrigemPermitidos } from "../../rules/idade.js";
 import textosRaw from "../../data/textos.json";
 import type { IndexedPoder } from "../../compendium/types.js";
 import { describeUnmet, type PartialWizardState } from "../../rules/poderes.js";
-import { toNomeSlug } from "../../compendium/slug.js";
+import { toNomeSlug, uuidDe } from "../../compendium/slug.js";
+import { resolverPoder } from "../../compendium/resolver.js";
 
 export interface OrigemOption {
   id: string;
@@ -21,6 +23,8 @@ export interface OrigemOption {
 
 export interface BeneficioRef extends BeneficioOpcao {
   selected: boolean;
+  /** Item do compêndio (poder), para abrir a descrição. */
+  uuid: string;
 }
 
 export interface PoderLivre {
@@ -81,10 +85,15 @@ export function prepareOrigemContext(
       (state.escolhasPorItem["origem_beneficios"] as string[] | undefined) ?? []
     );
     const plano = getBeneficiosPlano(selected.id, resolvePoderNome, beneficiosDeOrigemPermitidos(state));
-    const beneficios: BeneficioRef[] = plano.opcoes.map((o) => ({
-      ...o,
-      selected: plano.autoAplicar || escolhidos.has(o.token),
-    }));
+    const beneficios: BeneficioRef[] = plano.opcoes.map((o) => {
+      const item =
+        o.tipo === "poder"
+          ? slugsDoPoderDaOrigem(selected.id, o.id)
+              .map((s) => resolverPoder(s, "", todosPoderes)?.item)
+              .find(Boolean)
+          : undefined;
+      return { ...o, uuid: item ? uuidDe(item) : "", selected: plano.autoAplicar || escolhidos.has(o.token) };
+    });
     selectedDetail = {
       id: selected.id,
       nome: selected.nome,

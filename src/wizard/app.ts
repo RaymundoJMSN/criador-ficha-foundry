@@ -62,7 +62,16 @@ import { prepareClasseContext } from "./steps/classe.js";
 import { preparePericiaContext } from "./steps/pericias.js";
 import { getRaceSkillBonus } from "../rules/raca.js";
 import { totaisRaciaisDoEstado, distribuirAbertos, valoresFixosDaRaca } from "../rules/subescolhas.js";
-import { toNomeSlug } from "../compendium/slug.js";
+import { toNomeSlug, uuidDe } from "../compendium/slug.js";
+
+/** Abre a ficha do item do compêndio: o jogador lê os detalhes no próprio item. */
+function abrirNoCompendio(uuid: string): void {
+  if (!uuid) return;
+  void (globalThis as unknown as { fromUuid(u: string): Promise<{ sheet?: { render(f: boolean): void } } | null> })
+    .fromUuid(uuid)
+    .then((doc) => doc?.sheet?.render(true))
+    .catch((err: unknown) => console.warn(`${MODULE_ID} | não abriu ${uuid}:`, err));
+}
 import { lerConfig, resumoConfig } from "../config/config.js";
 import { listMetodos } from "../rules/atributos.js";
 import { nivelEfetivo, faixaDoPersonagem } from "../rules/idade.js";
@@ -138,7 +147,7 @@ export function defineWizardApp(): void {
   _WizardAppClass = class WizardApp extends HbsMixin(AppV2) {
     static DEFAULT_OPTIONS = {
       id: "t20w-wizard",
-      window: { title: "Criar Personagem — Tormenta20", icon: "fas fa-hat-wizard", resizable: true },
+      window: { title: "Criar Personagem", icon: "fas fa-hat-wizard", resizable: true },
       position: { width: 840, height: 720 },
     };
 
@@ -146,7 +155,9 @@ export function defineWizardApp(): void {
     static PARTS = {
       // Listas longas guardam o scroll entre renders — marcar uma magia no fim
       // da lista devolvia a lista ao topo a cada clique.
-      wizard: { template: TPL("wizard"), scrollable: [".t20w-scroll"] },
+      // `.t20w-content` é o rolo principal: sem ele aqui, marcar qualquer coisa
+      // (re-render) devolvia a tela ao topo.
+      wizard: { template: TPL("wizard"), scrollable: [".t20w-content", ".t20w-scroll"] },
     };
 
     _state = new WizardState();
@@ -400,7 +411,7 @@ export function defineWizardApp(): void {
           const allPoderesClasse = CompendiumIndex.getAll("poder");
           const resolvePoderNomeClasse = (slug: string): string | null =>
             allPoderesClasse.find((p) => toNomeSlug(p.name) === slug)?.name ?? null;
-          stepCtx = prepareClasseContext(state, classes, errors, resolvePoderNomeClasse);
+          stepCtx = prepareClasseContext(state, classes, errors, resolvePoderNomeClasse, allPoderesClasse as IndexedPoder[]);
           break;
         }
         case WizardStep.Pericias: {
@@ -413,7 +424,7 @@ export function defineWizardApp(): void {
           const divPoderes = CompendiumIndex.getAll("poder") as IndexedPoder[];
           const resolvePoder = (slug: string) => {
             const p = divPoderes.find((x) => toNomeSlug(x.name) === slug);
-            return p ? { nome: p.name, descricao: p.system.descricao ?? "" } : null;
+            return p ? { nome: p.name, descricao: p.system.descricao ?? "", uuid: uuidDe(p) } : null;
           };
           stepCtx = prepareDivindadeContext(state, errors, resolvePoder);
           break;
@@ -737,6 +748,15 @@ export function defineWizardApp(): void {
         if (sel.options.length < 8 || sel.dataset["busca"] === "pronto") return;
         sel.dataset["busca"] = "pronto";
         montarCombo(sel);
+      });
+
+      // ── Botão direito num nome com data-uuid abre o item do compêndio ────
+      root.querySelectorAll<HTMLElement>("[data-uuid]").forEach((el) => {
+        if (!el.dataset["uuid"] || el.tagName === "BUTTON") return;
+        el.addEventListener("contextmenu", (e) => {
+          e.preventDefault();
+          abrirNoCompendio(el.dataset["uuid"] ?? "");
+        });
       });
 
       // ── Sub-escolhas de poder (Aspirante a Herói: atributo; Foco em Arma: arma…) ──
@@ -1171,6 +1191,11 @@ export function defineWizardApp(): void {
           this._errors = [];
           void this.render();
         });
+      } else if (action === "abrirItem") {
+        event.preventDefault();
+        event.stopPropagation();
+        abrirNoCompendio(target.dataset["uuid"] ?? "");
+        return;
       } else if (action === "nomeAleatorio") {
         const nome = sortearNome(this._state.racaNome);
         if (nome) {

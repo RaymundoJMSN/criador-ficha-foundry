@@ -14,7 +14,7 @@ import { PERICIA_SLUGS } from "../../rules/pericia-slug.js";
 import { montagemDaRaca, opcoesMarcadas, subMarcada, pendenciasDaMontagem, type OpcaoMontagem } from "../../rules/montagem.js";
 import textosRaw from "../../data/textos.json";
 import { describeUnmet, type PartialWizardState } from "../../rules/poderes.js";
-import { toNomeSlug } from "../../compendium/slug.js";
+import { toNomeSlug, uuidDe } from "../../compendium/slug.js";
 import type { IndexedMagia } from "../../compendium/types.js";
 
 export interface RacaOption {
@@ -76,6 +76,7 @@ export interface ModGroup {
 export interface PoderRacial {
   nome: string;
   descricao: string;
+  uuid: string;
 }
 
 export interface PickerOpcao {
@@ -149,6 +150,7 @@ export interface OpcaoView {
   id: string;
   nome: string;
   descricao: string;
+  uuid: string;
   resumo: string;
   nota: string;
   selected: boolean;
@@ -178,7 +180,7 @@ function resumoDaOpcao(o: OpcaoMontagem): string {
 }
 
 /** Descrição do poder no compêndio: prefere o item do subtipo da raça ("Voo" é magia e presente do duende). */
-function descricaoDoPoder(nomePoder: string, racaRef: string, poderes: IndexedPoder[]): string {
+function itemDoPoder(nomePoder: string, racaRef: string, poderes: IndexedPoder[]): IndexedPoder | undefined {
   const alvo = toNomeSlug(nomePoder);
   const raca = toNomeSlug(racaRef.split(" (")[0]!);
   const candidatos = poderes.filter((p) => toNomeSlug(p.name).startsWith(alvo) || toNomeSlug(p.name) === alvo);
@@ -186,7 +188,7 @@ function descricaoDoPoder(nomePoder: string, racaRef: string, poderes: IndexedPo
     candidatos.find((p) => toNomeSlug(p.system.subtipo ?? "").startsWith(raca)) ??
     candidatos.find((p) => p.system.tipo === "racial") ??
     candidatos[0];
-  return item?.system.descricao ?? "";
+  return item;
 }
 
 function montarMontagem(
@@ -216,7 +218,8 @@ function montarMontagem(
         return {
           id: o.id,
           nome: o.nome,
-          descricao: o.poder ? descricaoDoPoder(o.poder, racaRef, poderes) : "",
+          descricao: (o.poder && itemDoPoder(o.poder, racaRef, poderes)?.system.descricao) || "",
+          uuid: o.poder ? uuidDe(itemDoPoder(o.poder, racaRef, poderes) ?? { id: "" }) : "",
           resumo: resumoDaOpcao(o),
           nota: o.nota ?? "",
           selected,
@@ -361,7 +364,7 @@ function poderesDaRaca(raca: IndexedRace, todosPoderes: IndexedPoder[]): PoderRa
     for (const escolha of grant.choices ?? []) {
       const id = String(escolha.uuid ?? "").split(".").pop();
       const poder = id ? porId.get(id) : undefined;
-      if (poder) out.push({ nome: poder.name, descricao: poder.system.descricao ?? "" });
+      if (poder) out.push({ nome: poder.name, descricao: poder.system.descricao ?? "", uuid: uuidDe(poder) });
     }
   }
   return out;

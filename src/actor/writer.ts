@@ -8,6 +8,7 @@ import { getClasse, respostaSubEscolha } from "../rules/classe.js";
 import { itensDeEscolhasRaciais, periciasDeEscolhasRaciais } from "../rules/raca.js";
 import { toPericiaCode } from "../rules/pericia-slug.js";
 import { classesDoPersonagem, habilidadesDeTodas, caminhoDe } from "../rules/multiclasse.js";
+import { getClasseProgressao } from "../rules/progressao.js";
 import { distincaoEscolhida } from "../rules/distincoes.js";
 import { resolverPoder, opcoesDaHabilidade, chaveHabilidade } from "../compendium/resolver.js";
 import { prepareEquipamentoContext } from "../wizard/steps/equipamento.js";
@@ -212,6 +213,53 @@ async function aplicarSubEscolhasDePoder(actorBruto: unknown, state: WizardState
     console.log(`${MODULE_ID} | ActorWriter: ${respostas.length} sub-escolha(s) de poder aplicada(s)`);
   } catch (err) {
     console.warn(`${MODULE_ID} | ActorWriter: falha nas sub-escolhas de poder:`, err);
+  }
+}
+
+/**
+ * Compatibilidade com o módulo T20 Nível dos Poderes (`flags.t20-nivel-poderes.
+ * nivelObtido`: 1–20 ou "bonus"). Habilidade de classe leva o nível da tabela;
+ * poder escolhido ocupa, na ordem, os níveis que dão poder; o resto (origem,
+ * raça, divindade, distinção, idade) é "bonus" — obtido fora de nível.
+ */
+async function marcarNiveisDosPoderes(actorBruto: unknown, state: WizardState): Promise<void> {
+  const g = (globalThis as unknown as { game?: { modules?: { get(id: string): { active?: boolean } | undefined } } }).game;
+  if (!g?.modules?.get("t20-nivel-poderes")?.active) return;
+  const actor = actorBruto as {
+    items: { filter(fn: (i: { id: string; type: string; name: string }) => boolean): Array<{ id: string; type: string; name: string }> };
+    updateEmbeddedDocuments(type: string, data: unknown[]): Promise<unknown>;
+  };
+  const allPoderes = CompendiumIndex.getAll("poder") as IndexedPoder[];
+  const nivelPorSlug = new Map<string, number | "bonus">();
+  const slots: number[] = [];
+  for (const c of classesDoPersonagem(state)) {
+    const tabela = (getClasseProgressao(c.classeNome || c.classeId)?.tabela ?? {}) as Record<string, { automaticos?: string[]; escolhas?: number }>;
+    for (let n = 1; n <= c.niveis; n++) {
+      const linha = tabela[String(n)];
+      for (const slug of linha?.automaticos ?? []) {
+        const item = resolverPoder(slug, c.classeSlug, allPoderes, "ability")?.item;
+        if (item) nivelPorSlug.set(toNomeSlug(item.name), n);
+      }
+      for (let k = 0; k < (linha?.escolhas ?? 0); k++) slots.push(n);
+    }
+  }
+  for (const id of state.poderes) {
+    const p = allPoderes.find((x) => x.id === id);
+    if (p) nivelPorSlug.set(toNomeSlug(p.name), slots.shift() ?? "bonus");
+  }
+  const updates = actor.items
+    .filter((i) => i.type === "poder")
+    .map((i) => {
+      const slug = toNomeSlug(i.name);
+      const achado = [...nivelPorSlug.entries()].find(([s]) => slug === s || slug.startsWith(`${s}_`));
+      return { _id: i.id, "flags.t20-nivel-poderes.nivelObtido": achado?.[1] ?? "bonus" };
+    });
+  if (updates.length === 0) return;
+  try {
+    await actor.updateEmbeddedDocuments("Item", updates);
+    console.log(`${MODULE_ID} | ActorWriter: nível dos poderes marcado em ${updates.length} item(ns)`);
+  } catch (err) {
+    console.warn(`${MODULE_ID} | ActorWriter: falha ao marcar nível dos poderes:`, err);
   }
 }
 
@@ -825,6 +873,7 @@ export class ActorWriter {
     }
 
     await aplicarSubEscolhasDePoder(actor, state);
+    await marcarNiveisDosPoderes(actor, state);
 
     actor.sheet?.render(true);
     console.log(`${MODULE_ID} | ActorWriter: created actor "${actor.name}" (${actor.id})`);
