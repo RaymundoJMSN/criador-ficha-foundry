@@ -64,7 +64,18 @@ const PERICIA_NOMES: Record<string, string> = {
   vontade: "Vontade",
 };
 
-const nome = (id: string): string => PERICIA_NOMES[id] ?? id;
+/** Atributo-chave de cada perícia (LB cap. 2, Tabela 2-1). */
+const PERICIA_ATRIBUTO: Record<string, string> = {
+  acrobacia: "Des", adestramento: "Car", atletismo: "For", atuacao: "Car", cavalgar: "Des",
+  conhecimento: "Int", cura: "Sab", diplomacia: "Car", enganacao: "Car", fortitude: "Con",
+  furtividade: "Des", guerra: "Int", iniciativa: "Des", intimidacao: "Car", intuicao: "Sab",
+  investigacao: "Int", jogatina: "Car", ladinagem: "Des", luta: "For", misticismo: "Int",
+  nobreza: "Int", oficio: "Int", percepcao: "Sab", pilotagem: "Des", pontaria: "Des",
+  reflexos: "Des", religiao: "Sab", sobrevivencia: "Sab", vontade: "Sab",
+};
+
+const nome = (id: string): string =>
+  PERICIA_ATRIBUTO[id] ? `${PERICIA_NOMES[id] ?? id} (${PERICIA_ATRIBUTO[id]})` : (PERICIA_NOMES[id] ?? id);
 
 function emptyContext(errors: string[]): PericiaContext {
   return {

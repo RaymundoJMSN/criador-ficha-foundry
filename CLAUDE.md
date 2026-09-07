@@ -239,6 +239,14 @@ A correção está em `scripts/port-t20db.mjs`, citada — o T20-DB não foi alt
 
 ---
 
+## Como lançar
+
+`git tag v0.2.1 && git push origin v0.2.1` → `.github/workflows/release.yml`
+testa, builda, zipa (`module.json`, `dist`, `templates`, `lang`, `styles`,
+`assets`) e publica a release; o `module.json` do repo aponta para
+`releases/latest/download/…`, então o manifesto de instalação é fixo. Só o
+mestre da mesa (Ray) cria tag — release é ato público.
+
 ## 🔥 FLUXO GIT — REGRA ABSOLUTA
 
 Branch padrão = **`master`**. Único fluxo: mudança → `git commit` direto em `master` → `git push origin master`.
