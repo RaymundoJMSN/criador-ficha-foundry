@@ -1,18 +1,33 @@
 {
   "id": "t20-ficha-wizard",
-  "title": "T20 Ficha Wizard",
-  "description": "Wizard de criação de personagem para Tormenta 20",
-  "version": "0.1.0",
+  "title": "Criador de Ficha — Tormenta20",
+  "description": "Cria personagens de Tormenta20 (nível 1–20, multiclasse, regras opcionais de Heróis de Arton) a partir dos compêndios instalados.",
+  "version": "0.2.0",
+  "url": "https://github.com/RaymundoJMSN/criador-ficha-foundry",
+  "manifest": "https://github.com/RaymundoJMSN/criador-ficha-foundry/releases/latest/download/module.json",
+  "download": "https://github.com/RaymundoJMSN/criador-ficha-foundry/releases/latest/download/module.zip",
   "compatibility": {
     "minimum": "13",
     "verified": "13",
     "maximum": "13"
   },
   "relationships": {
-    "requires": [{ "id": "tormenta20", "type": "system" }]
+    "requires": [
+      {
+        "id": "tormenta20",
+        "type": "system",
+        "compatibility": {
+          "minimum": "1.5.0"
+        }
+      }
+    ]
   },
-  "esmodules": ["dist/module.js"],
-  "styles": ["styles/wizard.css"],
+  "esmodules": [
+    "dist/module.js"
+  ],
+  "styles": [
+    "styles/wizard.css"
+  ],
   "languages": [
     {
       "lang": "pt-BR",
@@ -20,6 +35,11 @@
       "path": "lang/pt-BR.json"
     }
   ],
-  "authors": [{ "name": "RaymundoJMSN", "email": "raimundojmdsn@gmail.com" }],
+  "authors": [
+    {
+      "name": "RaymundoJMSN",
+      "email": "raimundojmdsn@gmail.com"
+    }
+  ],
   "license": "MIT"
 }

@@ -1,0 +1,51 @@
+name: release
+
+# Tag v* → build, zip do módulo e release com module.json + module.zip.
+# O module.json do repositório aponta para .../releases/latest/download/…,
+# então instalar pelo manifesto sempre pega a última versão.
+on:
+  push:
+    tags: ["v*"]
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+      # textos.json (descrições dos livros) é gerado local e fica fora do git;
+      # o build importa o arquivo, então entra vazio.
+      - run: '[ -f src/data/textos.json ] || echo "{}" > src/data/textos.json'
+      - run: npm test
+      - run: npm run build
+
+      - name: Versão do manifesto = tag
+        run: |
+          VERSION="${GITHUB_REF_NAME#v}"
+          node -e '
+            const fs = require("fs");
+            const m = JSON.parse(fs.readFileSync("module.json", "utf8"));
+            m.version = process.argv[1];
+            fs.writeFileSync("module.json", JSON.stringify(m, null, 2) + "\n");
+          ' "$VERSION"
+
+      - name: Zip do módulo
+        run: |
+          zip -r module.zip module.json dist templates lang styles assets \
+            -x "dist/*.map" "**/.DS_Store"
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            module.json
+            module.zip
+          generate_release_notes: true
