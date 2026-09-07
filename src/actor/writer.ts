@@ -173,6 +173,13 @@ export class ActorWriter {
       }
     }
     const data = mapStateToActorData(state, otherItems, equip.dinheiroRestante);
+    // Retrato e token: ícone da raça, em vez do "mystery man" padrão.
+    const imgRaca = CompendiumIndex.getAll("race").find((r) => r.id === state.racaId)?.img;
+    if (imgRaca && !imgRaca.includes("mystery-man")) {
+      const extra = data as unknown as Record<string, unknown>;
+      extra["img"] = imgRaca;
+      extra["prototypeToken"] = { texture: { src: imgRaca }, name: data.name };
+    }
 
     const actor = (await Actor.create(data as unknown as Parameters<typeof Actor.create>[0])) as
       | {

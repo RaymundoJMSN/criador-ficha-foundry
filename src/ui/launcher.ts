@@ -12,6 +12,11 @@ export function registerLauncher(): void {
     btn.style.cssText = "width: 100%; margin-top: 4px;";
     btn.innerHTML = `<i class="fas fa-hat-wizard"></i> ${game.i18n!.localize("T20W.OpenWizard")}`;
     btn.addEventListener("click", () => {
+      // Sem a permissão "Criar novos Atores" o Actor.create falha lá no fim.
+      if (!game.user?.can("ACTOR_CREATE")) {
+        ui.notifications?.warn("Você não tem permissão para criar atores neste mundo. Peça ao mestre (Configurações → Permissões → Criar novos Atores).");
+        return;
+      }
       openWizard();
     });
 
