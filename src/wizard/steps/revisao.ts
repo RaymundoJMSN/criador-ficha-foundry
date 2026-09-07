@@ -6,7 +6,27 @@ import { classesDoPersonagem, temMulticlasse } from "../../rules/multiclasse.js"
 import { totaisRaciaisDoEstado } from "../../rules/subescolhas.js";
 import { faixaDoPersonagem, complicacaoEscolhida, complicacoesIdadeEscolhidas, getComplicacaoIdade } from "../../rules/idade.js";
 
+export interface ResumoNomes {
+  habilidades: string[];
+  poderes: string[];
+  magias: string[];
+  itens: string[];
+  pericias: string[];
+}
+
+/** Código de 4 letras do sistema → nome. */
+const PERICIA_POR_CODIGO: Record<string, string> = {
+  acro: "Acrobacia", ades: "Adestramento", atle: "Atletismo", atua: "Atuação", cava: "Cavalgar",
+  conh: "Conhecimento", cura: "Cura", dipl: "Diplomacia", enga: "Enganação", fort: "Fortitude",
+  furt: "Furtividade", guer: "Guerra", inic: "Iniciativa", inti: "Intimidação", intu: "Intuição",
+  inve: "Investigação", jogo: "Jogatina", ladi: "Ladinagem", luta: "Luta", mist: "Misticismo",
+  nobr: "Nobreza", ofic: "Ofício", perc: "Percepção", pilo: "Pilotagem", pont: "Pontaria",
+  refl: "Reflexos", reli: "Religião", sobr: "Sobrevivência", vont: "Vontade",
+};
+
 export interface RevisaoContext {
+  /** Nomes do que vai para a ficha (habilidades, poderes, magias, itens, perícias). */
+  resumo: ResumoNomes;
   stepTitle: string;
   nome: string;
   nivel: number;
@@ -45,7 +65,8 @@ export function prepareRevisaoContext(
   classeNome: string,
   errors: string[] = [],
   dinheiroRestante: number = state.dinheiroRestante,
-  nomeDoPoder: (id: string) => string | undefined = () => undefined
+  nomeDoPoder: (id: string) => string | undefined = () => undefined,
+  nomes: ResumoNomes = { habilidades: [], poderes: [], magias: [], itens: [], pericias: [] }
 ): RevisaoContext {
   const origem = getOrigem(state.origemId);
   const divindade = state.divindadeId ? getDivindade(state.divindadeId) : null;
@@ -75,16 +96,19 @@ export function prepareRevisaoContext(
     .map((c) => (c.principal ? classeNome : c.classeNome) + (temMulticlasse(state) ? ` ${c.niveis}` : ""))
     .join(" / ");
 
+  const pericias = nomes.pericias.map((code) => PERICIA_POR_CODIGO[code] ?? code).sort((a, b) => a.localeCompare(b));
+
   return {
     stepTitle: "Revisão",
     idadeResumo,
     classesTexto,
+    resumo: { ...nomes, pericias },
     nome: state.nome,
     nivel: state.nivel,
     racaNome,
     origemNome: origem?.nome ?? state.origemId,
     classeNome,
-    divindadeNome: divindade?.nome ?? "—",
+    divindadeNome: divindade?.nome ?? "",
     atributos,
     poderesSelecionados: state.poderes.length,
     magiasSelecionadas: state.magias.length,

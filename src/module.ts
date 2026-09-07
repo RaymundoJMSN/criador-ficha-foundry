@@ -10,82 +10,14 @@ import { defineConfigApp } from "./config/app.js";
 Hooks.once("init", () => {
   console.log(`${MODULE_ID} | init`);
 
-  if (!document.getElementById("t20w-wizard-styles")) {
-    const style = document.createElement("style");
-    style.id = "t20w-wizard-styles";
-    style.textContent = `
-  /* Radios desenhados à mão viravam rosquinha (o inset comia o miolo) e ficavam
-     de tamanhos diferentes dos checkboxes. accent-color faz o nativo, certo. */
-  .t20w-step input[type="radio"],
-  .t20w-step input[type="checkbox"] {
-    accent-color: #f90;
-    width: 15px;
-    height: 15px;
-    min-width: 15px;
-    margin: 0;
-    cursor: pointer;
-    flex-shrink: 0;
-  }
-  .t20w-step input:disabled,
-  .t20w-step input:disabled + span,
-  .t20w-step label:has(input:disabled) {
-    cursor: not-allowed;
-  }
-  .t20w-step label:has(input:disabled) {
-    opacity: 0.45;
-  }
-  /* Opção de escolha: o texto quebra linha em vez de estourar a caixa.
-     <option> de <select> não quebra — por isso opção longa (a alternativa da
-     Memória Póstuma tem 130 caracteres) vazava para fora do quadro. */
-  .t20w-opcao {
-    display: flex;
-    align-items: flex-start;
-    gap: 8px;
-    padding: 6px 8px;
-    background: rgba(255,255,255,0.04);
-    border-radius: 3px;
-    font-size: 0.88em;
-    line-height: 1.35;
-    cursor: pointer;
-  }
-  .t20w-opcao span {
-    flex: 1;
-    min-width: 0;
-    overflow-wrap: anywhere;
-  }
-  .t20w-opcao input {
-    margin-top: 2px;
-  }
-  .t20w-opcao:hover {
-    background: rgba(255,255,255,0.08);
-  }
-  .t20w-over { color: #f55; font-weight: bold; }
-  .t20w-chip {
-    display: inline-block;
-    min-width: 26px;
-    padding: 2px 6px;
-    margin-right: 4px;
-    border: 1px solid rgba(255,255,255,0.25);
-    border-radius: 3px;
-    text-align: center;
-    font-weight: bold;
-  }
-  .t20w-mini th, .t20w-mini td { padding: 2px 8px; }
-  .t20w-busca-select {
-    width: 100%;
-    padding: 4px 8px;
-    margin-bottom: 4px;
-    background: rgba(255,255,255,0.08);
-    border: 1px solid #555;
-    color: inherit;
-    border-radius: 3px;
-  }
-  .t20w-disabled {
-    opacity: 0.4;
-    pointer-events: none;
-  }
-`;
-    document.head.appendChild(style);
+  // module.json declara styles/wizard.css, mas o servidor só relê o manifesto
+  // ao reiniciar; em dev garante o link na mão.
+  const href = `modules/${MODULE_ID}/styles/wizard.css`;
+  if (!document.querySelector(`link[href$="${href}"]`)) {
+    const link = document.createElement("link");
+    link.rel = "stylesheet";
+    link.href = href;
+    document.head.appendChild(link);
   }
 
   // Define WizardApp here — Foundry globals (ApplicationV2, HandlebarsApplicationMixin)

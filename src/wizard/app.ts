@@ -81,6 +81,7 @@ import { prepareMagiasContext } from "./steps/magias.js";
 import { prepareEquipamentoContext } from "./steps/equipamento.js";
 import { prepareRevisaoContext } from "./steps/revisao.js";
 import { ActorWriter } from "../actor/writer.js";
+import { getTrainedPericaCodes } from "../actor/mapper.js";
 import { pendencias, type EngineState } from "../rules/engine.js";
 import type {
   IndexedClasse,
@@ -116,8 +117,8 @@ export function defineWizardApp(): void {
   _WizardAppClass = class WizardApp extends HbsMixin(AppV2) {
     static DEFAULT_OPTIONS = {
       id: "t20w-wizard",
-      window: { title: "T20W: Criar Personagem" },
-      position: { width: 720, height: 600 },
+      window: { title: "Criar Personagem — Tormenta20", icon: "fas fa-hat-wizard", resizable: true },
+      position: { width: 840, height: 720 },
     };
 
     // Single PART — avoids @partial-block / sibling-PART layout issues
@@ -340,6 +341,7 @@ export function defineWizardApp(): void {
         done: i < stepIdx,
         reachable: i <= stepIdx,
       }));
+      const stepTitulo = game.i18n?.localize(STEP_META[step].labelKey) ?? step;
 
       let stepCtx: unknown = {};
       switch (step) {
@@ -437,13 +439,30 @@ export function defineWizardApp(): void {
           const racaItem = CompendiumIndex.getAll("race").find((r) => r.id === state.racaId);
           const classeItem = CompendiumIndex.getAll("classe").find((c) => c.id === state.classeId);
           const equipRev = prepareEquipamentoContext(state, CompendiumIndex.equipamentos());
+          const nomeDoPoder = (id: string) => CompendiumIndex.getById("poder", id)?.name;
+          const poderesTodos = CompendiumIndex.getAll("poder") as IndexedPoder[];
+          const ctxPoderes = preparePoderesContext(state, poderesTodos, [], () => null, CompendiumIndex.getAll("magia") as IndexedMagia[]);
+          const contagem = new Map<string, number>();
+          for (const id of state.poderes) contagem.set(id, (contagem.get(id) ?? 0) + 1);
           const rev = prepareRevisaoContext(
             state,
             racaItem?.name ?? state.racaId,
             classeItem?.name ?? state.classeId,
             errors,
             equipRev.dinheiroRestante,
-            (id) => CompendiumIndex.getById("poder", id)?.name
+            nomeDoPoder,
+            {
+              habilidades: ctxPoderes.habilidades.map((h) =>
+                h.opcoes.length ? `${h.nome}: ${h.opcoes.find((o) => o.selected)?.nome ?? "?"}` : h.nome
+              ),
+              poderes: [...contagem.entries()].map(([id, n]) => (nomeDoPoder(id) ?? id) + (n > 1 ? ` ×${n}` : "")),
+              magias: state.magias.map((id) => CompendiumIndex.getById("magia", id)?.name ?? id),
+              itens: [
+                ...equipRev.gratis.map((g) => g.label + (g.qtd > 1 ? ` ×${g.qtd}` : "")),
+                ...equipRev.carrinho.map((c) => c.name + (c.qty > 1 ? ` ×${c.qty}` : "")),
+              ],
+              pericias: Object.keys(getTrainedPericaCodes(state)),
+            }
           );
           const habPend = pendenciasDeHabilidades(state, CompendiumIndex.getAll("poder") as IndexedPoder[]);
           stepCtx = { ...rev, pendencias: [...rev.pendencias, ...habPend], isComplete: rev.isComplete && habPend.length === 0 };
@@ -463,6 +482,7 @@ export function defineWizardApp(): void {
         showNivel: step === WizardStep.Nivel,
         showAtributos: step === WizardStep.Atributos,
         showRaca: step === WizardStep.Raca,
+        stepTitulo,
         showIdade: step === WizardStep.Idade,
         regrasDaMesa: resumoConfig(state.config, (id) => listMetodos().find((m) => m.id === id)?.nome ?? id),
         nivelGrupo: (state.escolhasPorItem["nivel_grupo"] as number | undefined) ?? state.nivel,
@@ -1182,15 +1202,22 @@ function restaurarRascunho(app: any): void {
   }
 
   const nome = estado.nome?.trim() || "sem nome";
-  const retomar = window.confirm(
-    `Você tem uma ficha em andamento ("${nome}"). Retomar de onde parou?
-
-Cancelar começa do zero.`
-  );
-  if (!retomar) {
-    rascunho.apagar();
-    return;
-  }
-  app._state = estado;
-  if (salvo.passo && STEP_ORDER.includes(salvo.passo)) app._currentStep = salvo.passo;
+  // Diálogo nativo do Foundry (window.confirm travava o cliente inteiro).
+  const passo = salvo.passo;
+  void (foundry as any).applications.api.DialogV2.confirm({
+    window: { title: "Ficha em andamento" },
+    content: `<p>Você tem uma ficha em andamento (<strong>${nome}</strong>). Retomar de onde parou?</p><p class="hint">"Não" começa do zero.</p>`,
+    yes: { label: "Retomar", icon: "fas fa-play" },
+    no: { label: "Começar do zero", icon: "fas fa-trash" },
+    rejectClose: false,
+  }).then((retomar: boolean | null) => {
+    if (!retomar) {
+      rascunho.apagar();
+      return;
+    }
+    app._state = estado;
+    aplicarConfig(app._state as WizardState);
+    if (passo && STEP_ORDER.includes(passo)) app._currentStep = passo;
+    app.render();
+  });
 }

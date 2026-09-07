@@ -12,6 +12,7 @@
     "requires": [{ "id": "tormenta20", "type": "system" }]
   },
   "esmodules": ["dist/module.js"],
+  "styles": ["styles/wizard.css"],
   "languages": [
     {
       "lang": "pt-BR",
