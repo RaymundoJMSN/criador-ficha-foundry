@@ -67,15 +67,18 @@ function linhasDaTabela(texto) {
     }
   }
   const linhas = {};
+  let fim = 0;
   marcas.forEach((mk, i) => {
-    let celula = t.slice(mk.fim, i + 1 < marcas.length ? marcas[i + 1].ini : undefined).trim();
+    let celula = t.slice(mk.fim, i + 1 < marcas.length ? marcas[i + 1].ini : mk.fim + 120).trim();
     if (i === marcas.length - 1) {
-      // Última linha: corta o que vier depois da tabela (número da página, texto corrido).
-      celula = celula.split(/\s[•]\s|\.\s/)[0].replace(/\s\d+$/, "").trim();
+      // Última linha: corta no número da página, num "•" ou no primeiro ponto —
+      // o texto agora é o livro inteiro emendado, não só a página.
+      celula = celula.split(/\s\d{1,3}(?=\s|$)|\s[•]\s|\.\s|\.$/)[0].trim();
+      fim = mk.fim + celula.length;
     }
     linhas[mk.nv] = celula;
   });
-  return linhas;
+  return { linhas, fim };
 }
 
 /** Uma célula da tabela → {automaticos, escolhas, circulo}. */
@@ -138,40 +141,79 @@ export function portarClassesDosPdfs() {
   for (const arquivo of readdirSync(CACHE)) {
     if (!LIVROS[arquivo]) continue;
     const pags = paginas(arquivo);
-    pags.forEach((pg, idx) => {
-      const texto = pg.texto ?? "";
-      let m;
-      TITULO.lastIndex = 0;
-      while ((m = TITULO.exec(texto))) {
-        const nome = m[1].trim();
-        const classeSlug = slug(nome);
-        const depois = texto.slice(m.index + m[0].length);
-        const linhas = linhasDaTabela(depois);
-        if (Object.keys(linhas).length < 20) {
-          console.warn(`  ! ${nome} (${arquivo} p.${pg.pagina}): só ${Object.keys(linhas).length} níveis lidos`);
-        }
-        const tabela = {};
-        const circulos = {};
-        for (const [nv, celula] of Object.entries(linhas)) {
-          const c = classificar(celula, classeSlug);
-          if (c.automaticos.length || c.escolhas) tabela[nv] = { automaticos: c.automaticos, escolhas: c.escolhas };
-          if (c.circulo) circulos[nv] = c.circulo;
-        }
-        // Texto da classe: a tabela costuma vir logo depois da descrição.
-        const janela = [idx - 3, idx - 2, idx - 1, idx, idx + 1]
-          .filter((i) => i >= 0 && i < pags.length)
-          .map((i) => pags[i].texto ?? "")
-          .join(" ");
-        const magias = Object.keys(circulos).length ? magiasDoTexto(janela) : null;
-        result[classeSlug] = {
-          nome,
-          fonte: { livro: LIVROS[arquivo], pagina: pg.pagina },
-          tabela,
-          circulos,
-          magias,
-        };
+    // Um texto só, com o offset de cada página, para achar a seção de cada classe
+    // (o que vem entre a tabela anterior e a tabela desta).
+    let texto = "";
+    const inicioPagina = [];
+    for (const pg of pags) {
+      inicioPagina.push({ pos: texto.length, pagina: pg.pagina });
+      texto += (pg.texto ?? "") + "\n";
+    }
+    const paginaDe = (pos) => [...inicioPagina].reverse().find((p) => p.pos <= pos)?.pagina;
+
+    const tabelas = [];
+    TITULO.lastIndex = 0;
+    let m;
+    while ((m = TITULO.exec(texto))) tabelas.push({ nome: m[1].trim(), inicio: m.index, fim: m.index + m[0].length });
+
+    tabelas.forEach((tb, i) => {
+      const classeSlug = slug(tb.nome);
+      const depois = texto.slice(tb.fim);
+      const { linhas, fim: fimTabela } = linhasDaTabela(depois);
+      tb.fimTabela = tb.fim + fimTabela;
+      if (Object.keys(linhas).length < 20) {
+        console.warn(`  ! ${tb.nome} (${arquivo} p.${paginaDe(tb.inicio)}): só ${Object.keys(linhas).length} níveis lidos`);
       }
+      const tabela = {};
+      const circulos = {};
+      for (const [nv, celula] of Object.entries(linhas)) {
+        const c = classificar(celula, classeSlug);
+        if (c.automaticos.length || c.escolhas) tabela[nv] = { automaticos: c.automaticos, escolhas: c.escolhas };
+        if (c.circulo) circulos[nv] = c.circulo;
+      }
+      // Seção da classe: do fim da tabela anterior (≈2.000 caracteres depois do
+      // título dela) até o título desta. Sem tabela anterior, 3 páginas atrás.
+      const inicioSecao = i > 0 ? tabelas[i - 1].fimTabela : Math.max(0, tb.inicio - 12000);
+      const secao = texto.slice(Math.min(inicioSecao, tb.inicio), tb.inicio).replace(/\s+/g, " ");
+      tb.secao = secao;
+      const magias = Object.keys(circulos).length ? magiasDoTexto(secao + " " + depois.slice(0, 4000)) : null;
+      result[classeSlug] = {
+        nome: tb.nome,
+        fonte: { livro: LIVROS[arquivo], pagina: paginaDe(tb.inicio) },
+        tabela,
+        circulos,
+        magias,
+      };
+      tb.slug = classeSlug;
     });
+
+    // "Proficiências. Armas marciais e escudos." / "Perícias. Como o cavaleiro básico."
+    // 1ª passada: última ocorrência entre o fim da tabela anterior e esta tabela.
+    // 2ª passada (quem ficou sem): primeira ocorrência depois da própria tabela,
+    // desde que a classe seguinte não a tenha reclamado como sua (duas colunas).
+    for (const campo of [
+      { chave: "proficiencias_texto", re: /Profici[êe]ncias\. ([^.]{2,120})\./g },
+      { chave: "pericias_texto", re: /Per[íi]cias\. ([^.]{2,320})\./g },
+    ]) {
+      const achados = tabelas.map((tb) => {
+        let ultimo = null;
+        const inicio = tabelas.indexOf(tb) > 0 ? tabelas[tabelas.indexOf(tb) - 1].fimTabela : Math.max(0, tb.inicio - 12000);
+        const janela = texto.slice(Math.min(inicio, tb.inicio), tb.inicio);
+        for (const x of janela.matchAll(campo.re)) ultimo = { valor: x[1].replace(/\s+/g, " ").trim(), pos: inicio + x.index };
+        return ultimo;
+      });
+      tabelas.forEach((tb, i) => {
+        let achado = achados[i];
+        if (!achado) {
+          const limite = achados[i + 1]?.pos ?? tabelas[i + 1]?.inicio ?? tb.fimTabela + 6000;
+          const janela = texto.slice(tb.fimTabela, Math.min(limite, tb.fimTabela + 6000));
+          const x = campo.re.exec(janela);
+          campo.re.lastIndex = 0;
+          if (x) achado = { valor: x[1].replace(/\s+/g, " ").trim(), pos: tb.fimTabela + x.index };
+        }
+        result[tb.slug][campo.chave] = achado?.valor ?? null;
+      });
+    }
   }
   return result;
 }

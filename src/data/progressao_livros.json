@@ -92,7 +92,7 @@
       },
       "20": {
         "automaticos": [
-          "solo_santificado"
+          "solo_santificado_campeoes_dos_deuses"
         ],
         "escolhas": 1
       }
@@ -111,7 +111,9 @@
       "por_nivel_impar": 0,
       "tradicao": "divina",
       "escolas": 0
-    }
+    },
+    "proficiencias_texto": "Nenhuma",
+    "pericias_texto": "Religião (Sab) e Vontade (Sab), mais 4 a sua escolha entre Adestramento (Car), Atuação (Car), Conhecimento (Int), Cura (Sab), Diplomacia (Car), Fortitude (Con), Guerra (Int), Iniciativa (Des), Intimidação (Car), Intuição (Sab), Investigação (Int), Misticismo (Int), Ofício (Int), Percepção (Sab) e Nobreza (Int)"
   },
   "treinador": {
     "nome": "Treinador",
@@ -234,7 +236,9 @@
       }
     },
     "circulos": {},
-    "magias": null
+    "magias": null,
+    "proficiencias_texto": "Nenhuma",
+    "pericias_texto": "Adestramento (Car) e Vontade (Sab), mais 4 a sua escolha entre Atletismo (For), Cavalgar (Des), Diplomacia (Car), Guerra (Int), Iniciativa (Des), Intimidação (Car), Intuição (Sab), Luta (For), Ofício (Int), Percepção (Sab), Pontaria (Des), Reflexos (Des), Religião (Sab) e Sobrevivência (Sab)"
   },
   "alquimista": {
     "nome": "Alquimista",
@@ -352,7 +356,9 @@
       }
     },
     "circulos": {},
-    "magias": null
+    "magias": null,
+    "proficiencias_texto": "Nenhuma",
+    "pericias_texto": "Como o inventor básico, mas seu Ofício inicial é alquimista"
   },
   "atleta": {
     "nome": "Atleta",
@@ -466,14 +472,15 @@
       "20": {
         "automaticos": [
           "corpo_ideal",
-          "mas_voce_soma_seu_nivel_de_atleta_no_total_de_rodadas_para_prender_sua_respiracao_veja_tormenta20",
-          "p"
+          "mas_voce_soma_seu_nivel_de_atleta"
         ],
         "escolhas": 1
       }
     },
     "circulos": {},
-    "magias": null
+    "magias": null,
+    "proficiencias_texto": "Nenhuma",
+    "pericias_texto": "Atletismo (For) e Luta (For), mais 4 a sua escolha entre Acrobacia (Des), Adestramento (Car), Cavalgar (Des), Cura (Sab), Fortitude (Con), Iniciativa (Des), Intimidação (Car), Ofício (Int), Percepção (Sab), Pilotagem (Des), Pontaria (Des) e Reflexos (Des)"
   },
   "burgues": {
     "nome": "Burguês",
@@ -584,13 +591,15 @@
         "automaticos": [
           "magnata_james",
           "o_aventureiro_james",
-          "o_aventureiro_esta_sem_mana_e_nao_esta_sem_mana_e_nao_temos_essencias_temos_essencias"
+          "o_aventureiro_esta_sem_mana_e_nao_esta_sem_mana_e_nao_temos_essencias_temos_ess"
         ],
         "escolhas": 0
       }
     },
     "circulos": {},
-    "magias": null
+    "magias": null,
+    "proficiencias_texto": "Nenhuma",
+    "pericias_texto": null
   },
   "duelista": {
     "nome": "Duelista",
@@ -707,7 +716,9 @@
       }
     },
     "circulos": {},
-    "magias": null
+    "magias": null,
+    "proficiencias_texto": "Como o bucaneiro básico",
+    "pericias_texto": "Luta (For) ou Pontaria (Des) e Reflexos (Des), mais 2 a sua escolha entre Acrobacia (Des), Atletismo (For), Atuação (Car), Diplomacia (Car), Fortitude (Con), Iniciativa (Des), Intimidação (Car), Luta (For), Ofício (Int), Percepção (Sab), Pilotagem (Des) e Pontaria (Des)"
   },
   "ermitao": {
     "nome": "Ermitão",
@@ -815,7 +826,9 @@
       "10": 3,
       "14": 4
     },
-    "magias": null
+    "magias": null,
+    "proficiencias_texto": "Nenhuma",
+    "pericias_texto": "Sobrevivência (Sab) e Vontade (Sab), mais 2 a sua escolha entre Adestramento (Car), Atletismo (For), Cavalgar (Des), Conhecimento (Int), Cura (Sab), Fortitude (Con), Iniciativa (Des), Intuição (Sab), Luta (For), Misticismo (Int), Ofício (Int), Percepção (Sab) e Religião (Sab)"
   },
   "inovador": {
     "nome": "Inovador",
@@ -927,7 +940,9 @@
       }
     },
     "circulos": {},
-    "magias": null
+    "magias": null,
+    "proficiencias_texto": "Como o guerreiro básico",
+    "pericias_texto": "Luta (For) ou Pontaria (Des) e Acrobacia (Des), mais 2 a sua escolha entre Adestramento (Car), Atletismo (For), Conhecimento (Int), Fortitude (Con), Guerra (Int), Iniciativa (Des), Intimidação (Car), Investigação (Int), Luta (For), Ofício (Int), Pontaria (Des) e Reflexos (Des)"
   },
   "machado_de_pedra": {
     "nome": "Machado de Pedra",
@@ -1055,7 +1070,9 @@
       }
     },
     "circulos": {},
-    "magias": null
+    "magias": null,
+    "proficiencias_texto": null,
+    "pericias_texto": null
   },
   "magimarcialista": {
     "nome": "Magimarcialista",
@@ -1169,7 +1186,9 @@
       }
     },
     "circulos": {},
-    "magias": null
+    "magias": null,
+    "proficiencias_texto": "Escudos",
+    "pericias_texto": "Fortitude (Con) e Luta (For), mais 2 a sua escolha entre Adestramento (Car), Atletismo (For), Cavalgar (Des), Iniciativa (Des), Intimidação (Car), Ofício (Int), Percepção (Sab), Pontaria (Des), Sobrevivência (Sab) e Vontade (Sab)"
   },
   "necromante": {
     "nome": "Necromante",
@@ -1286,7 +1305,9 @@
       }
     },
     "circulos": {},
-    "magias": null
+    "magias": null,
+    "proficiencias_texto": "Como o bardo básico",
+    "pericias_texto": "Atuação (Car) e Luta (For), mais 6 a sua escolha entre Acrobacia (Des), Atletismo (For), Cavalgar (Des), Conhecimento (Int), Diplomacia (Car), Enganação (Car), Fortitude (Con), Guerra (Int), Iniciativa (Des), Jogatina (Car), Misticismo (Int) e Reflexos (Des)"
   },
   "santo": {
     "nome": "Santo",
@@ -1399,7 +1420,9 @@
       }
     },
     "circulos": {},
-    "magias": null
+    "magias": null,
+    "proficiencias_texto": "Como o paladino básico",
+    "pericias_texto": "Religião (Sab) e Vontade (Sab), mais 2 a sua escolha entre Adestramento (Car), Atletismo (For), Conhecimento (Int), Cura (Sab), Diplomacia (Car), Fortitude (Con), Guerra (Int), Iniciativa (Des), Intuição (Sab), Luta (For) Ofício (Int) e Percepção (Sab)"
   },
   "seteiro": {
     "nome": "Seteiro",
@@ -1512,7 +1535,9 @@
       }
     },
     "circulos": {},
-    "magias": null
+    "magias": null,
+    "proficiencias_texto": "Armas marciais",
+    "pericias_texto": "Pontaria (Des) e Sobrevivência (Sab), mais 6 a sua escolha entre Adestramento (Car), Atletismo (For), Cavalgar (Des), Cura (Sab), Fortitude (Con), Furtividade (Des), Iniciativa (Des), Investigação (Int), Luta (For), Ofício (Int), Percepção (Sab) e Reflexos (Des)"
   },
   "usurpador": {
     "nome": "Usurpador",
@@ -1625,7 +1650,9 @@
       "13": 4,
       "17": 5
     },
-    "magias": null
+    "magias": null,
+    "proficiencias_texto": "Nenhuma",
+    "pericias_texto": "Enganação (Car) e Vontade (Sab), mais 2 a sua escolha entre Atuação (Car), Conhecimento (Int), Cura (Sab), Diplomacia (Car), Furtividade (Des), Iniciativa (Des), Intimidação (Car), Intuição (Sab), Misticismo (Int), Nobreza (Int), Ofício (Int), Percepção (Sab), Reflexos (Des) e Religião (Sab)"
   },
   "vassalo": {
     "nome": "Vassalo",
@@ -1763,7 +1790,9 @@
       }
     },
     "circulos": {},
-    "magias": null
+    "magias": null,
+    "proficiencias_texto": "Armas marciais e escudos",
+    "pericias_texto": "Como o cavaleiro básico"
   },
   "ventanista": {
     "nome": "Ventanista",
@@ -1877,6 +1906,8 @@
       }
     },
     "circulos": {},
-    "magias": null
+    "magias": null,
+    "proficiencias_texto": "Como o ladino básico",
+    "pericias_texto": null
   }
 }

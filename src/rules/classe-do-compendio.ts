@@ -17,6 +17,41 @@
 import type { ClasseData } from "./classe.js";
 import type { IndexedClasse } from "../compendium/types.js";
 import { PERICIA_SLUGS } from "./pericia-slug.js";
+import classesRaw from "../data/classes.json";
+import livrosRaw from "../data/progressao_livros.json";
+
+const classesT20DB = classesRaw as unknown as Record<string, ClasseData>;
+const livros = livrosRaw as unknown as Record<string, { proficiencias_texto?: string | null; pericias_texto?: string | null }>;
+
+const slugClasse = (nome: string) =>
+  nome
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[̀-ͯ]/g, "")
+    .replace(/[^a-z0-9]+/g, "_")
+    .replace(/^_+|_+$/g, "");
+
+/** "Como o guerreiro básico" → a classe base do Livro Básico (T20-DB). */
+function classeBase(texto: string | null | undefined): ClasseData | null {
+  const m = /como [oa] (\w+(?: \w+)?) b[áa]sic[oa]/i.exec(texto ?? "");
+  return m ? (classesT20DB[slugClasse(m[1]!)] ?? null) : null;
+}
+
+/**
+ * "Proficiências. Armas marciais e escudos." (texto da classe no PDF, lido por
+ * scripts/port-pdf-classes.mjs). Todo personagem sabe armas simples e armaduras
+ * leves (LB p.38), então "Nenhuma" ainda dá essas duas.
+ */
+export function lerProficiencias(texto: string | null | undefined): string[] {
+  const base = classeBase(texto);
+  if (base) return [...base.proficiencias];
+  const t = (texto ?? "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+  const out = ["armas_simples", "armaduras_leves"];
+  if (/armas marciais/.test(t)) out.push("armas_marciais");
+  if (/armaduras pesadas/.test(t)) out.push("armaduras_pesadas");
+  if (/escudos?/.test(t)) out.push("escudos");
+  return out;
+}
 
 function slugPericia(nome: string): string {
   return nome
@@ -112,8 +147,15 @@ export function lerPericiasDaFrase(frase: string, numero = 0): PericiasDaFrase {
  */
 export function classeDoCompendio(item: IndexedClasse): ClasseData {
   const spec = item.system.pericias ?? {};
-  const frase = typeof spec.inatas === "string" ? spec.inatas : "";
-  const pericias = lerPericiasDaFrase(frase, Number(spec.numero) || 0);
+  const doLivro = livros[slugClasse(item.name)];
+  // Frase do item do compêndio; se vazia, a do PDF ("Como o cavaleiro básico" copia a base).
+  const fraseItem = typeof spec.inatas === "string" ? spec.inatas : "";
+  const basePericias = fraseItem ? null : classeBase(doLivro?.pericias_texto);
+  const frase = fraseItem || (basePericias ? "" : (doLivro?.pericias_texto ?? ""));
+  const numeroDaFrase = Number(/mais (\d+) a sua escolha/.exec(frase)?.[1] ?? 0);
+  const pericias = basePericias
+    ? { ...basePericias.pericias }
+    : lerPericiasDaFrase(frase, Number(spec.numero) || numeroDaFrase);
 
   return {
     nome: item.name,
@@ -125,7 +167,7 @@ export function classeDoCompendio(item: IndexedClasse): ClasseData {
       soma_atributo_por_nivel: "con",
     },
     pm: { por_nivel: item.system.pmPorNivel ?? 0 },
-    proficiencias: [],
+    proficiencias: doLivro ? lerProficiencias(doLivro.proficiencias_texto) : [],
     habilidades_classe_ids: [],
     poderes_classe_ids: [],
     caminhos: [],
