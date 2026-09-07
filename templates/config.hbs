@@ -2,6 +2,12 @@
   <p style="margin:0;opacity:0.8;">O que vale para todo personagem criado neste mundo. Só o mestre edita; o jogador vê um resumo no topo do criador.</p>
 
   <fieldset style="border:1px solid rgba(255,255,255,0.2);border-radius:4px;padding:8px 10px;">
+    <legend style="font-weight:600;">Nível inicial</legend>
+    <label>Os personagens começam no nível <input type="number" name="nivelPadrao" value="{{c.nivelPadrao}}" min="1" max="20" style="width:60px;" /></label>
+    <label style="margin-left:16px;"><input type="checkbox" name="nivelTravado" {{#if c.nivelTravado}}checked{{/if}} /> jogador não pode mudar</label>
+  </fieldset>
+
+  <fieldset style="border:1px solid rgba(255,255,255,0.2);border-radius:4px;padding:8px 10px;">
     <legend style="font-weight:600;">Atributos</legend>
     <div style="display:flex;gap:16px;flex-wrap:wrap;align-items:center;">
       <label>Método <select name="metodoAtributos">{{#each metodos}}<option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.nome}}</option>{{/each}}</select></label>

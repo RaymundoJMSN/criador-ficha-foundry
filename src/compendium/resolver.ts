@@ -151,11 +151,14 @@ function escada<T extends Nomeavel>(
  * Proteção Sagrada; Escola de Duelo: …). O T20-DB e a tabela do livro trazem um
  * slug só — sem isto a escada pegava a primeira opção em silêncio.
  */
+/** Habilidade cujo grupo de opções no compêndio tem outro prefixo: Melhor Amigo → "Tipo: Animal". */
+const PREFIXO_DAS_OPCOES: Record<string, string> = { melhor_amigo: "tipo" };
+
 export function opcoesDaHabilidade<T extends Nomeavel>(
   slug: string,
   itens: T[]
 ): T[] {
-  const alvo = toNomeSlug(slug);
+  const alvo = PREFIXO_DAS_OPCOES[toNomeSlug(slug)] ?? toNomeSlug(slug);
   if (!alvo) return [];
   const grupo = itens.filter((i) => {
     if (i.system?.tipo !== "ability") return false;

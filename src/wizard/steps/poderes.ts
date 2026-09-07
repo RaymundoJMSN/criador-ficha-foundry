@@ -1,6 +1,6 @@
 import { toNomeSlug } from "../../compendium/slug.js";
 import { getClasse, respostaSubEscolha } from "../../rules/classe.js";
-import { describeUnmet, type PartialWizardState } from "../../rules/poderes.js";
+import { describeUnmet, temPrereqsConhecidos, prereqDoTexto, type PartialWizardState } from "../../rules/poderes.js";
 import { totaisRaciaisDoEstado } from "../../rules/subescolhas.js";
 import { poderesGeraisExtras, faixaDoPersonagem } from "../../rules/idade.js";
 import { distincaoEscolhida, podeTerDistincao, listDistincoes } from "../../rules/distincoes.js";
@@ -28,6 +28,8 @@ export interface PoderEntry {
   img: string;
   eligible: boolean;
   unmet: string[];
+  /** Pré-requisito só do texto do livro (poder fora do T20-DB); não é conferido. */
+  requerTexto: string;
   selected: boolean;
   tipo: string;
   subtipo: string;
@@ -242,12 +244,15 @@ export function preparePoderesContext(
       const unmet = describeUnmet(slugDoItem(p), stateForEligibility);
       const vezes = state.poderes.filter((id) => id === p.id).length;
       const repetivel = REPETIVEIS.has(slugDoItem(p));
+      // Sem regra no T20-DB, mostra o pré-requisito do texto (não confere).
+      const requerTexto = temPrereqsConhecidos(slugDoItem(p)) ? "" : prereqDoTexto(p.system.descricao ?? "");
       return {
         id: p.id,
         name: p.name,
         img: p.img,
         eligible: unmet.length === 0,
         unmet,
+        requerTexto,
         selected: state.poderes.includes(p.id),
         tipo: idsDaDistincao.has(p.id) ? "distinção" : (p.system.tipo ?? ""),
         subtipo: p.system.subtipo ?? "",

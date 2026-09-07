@@ -20,7 +20,11 @@
       <h2>{{stepTitle}}</h2>
       <div class="form-group">
         <label for="t20w-nivel">Nível</label>
+        {{#if nivelTravado}}
+        <strong>{{nivelGrupo}}</strong> <span class="t20w-hint">(definido pelo mestre)</span>
+        {{else}}
         <input id="t20w-nivel" type="number" name="nivel" min="1" max="20" value="{{nivelGrupo}}" />
+        {{/if}}
         {{#if nivelExtra}}<span class="t20w-hint">Nível do grupo. Pela faixa etária, o personagem joga no {{state.nivel}}º.</span>{{/if}}
       </div>
       <div class="form-group">
@@ -564,6 +568,7 @@
               {{#unless this.eligible}}
                 <div class="t20w-requer">Requer: {{#each this.unmet}}{{this}}{{#unless @last}}; {{/unless}}{{/each}}</div>
               {{/unless}}
+              {{#if this.requerTexto}}<div class="t20w-requer" style="opacity:0.7;">Pré-requisito (do livro, confira): {{this.requerTexto}}</div>{{/if}}
             </div>
           </label>
           {{/each}}

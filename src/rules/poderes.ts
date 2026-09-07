@@ -275,6 +275,21 @@ export function formatPrereq(req: Prereq): string {
 }
 
 /** Pré-requisitos não atendidos, em português (vazio quando o poder está liberado). */
+/** O T20-DB conhece os pré-requisitos deste poder? (senão só o texto do livro pode avisar) */
+export function temPrereqsConhecidos(poderSlug: string): boolean {
+  return Array.isArray(prereqsData[poderSlug]) && prereqsData[poderSlug]!.length > 0;
+}
+
+/**
+ * Poder que só existe no compêndio (Heróis de Arton, distinções…) carrega o
+ * pré-requisito no próprio texto: "Pré-requisito: Treinado em Luta." Não dá
+ * para conferir, mas dá para mostrar.
+ */
+export function prereqDoTexto(descricao: string): string {
+  const m = /Pr[ée]-?requisitos?\s*[:.]\s*([^.]{2,160})\./i.exec(descricao ?? "");
+  return m ? m[1].trim() : "";
+}
+
 export function describeUnmet(poderSlug: string, state: PartialWizardState): string[] {
   const prereqs = prereqsData[poderSlug];
   if (!prereqs) return [];

@@ -10,6 +10,10 @@ import { MODULE_ID } from "../constants.js";
  * "Já Vi Coisas" (HA p.288-289).
  */
 export interface ConfigCriacao {
+  /** Nível com que os personagens começam (o campo do passo 1 abre com ele). */
+  nivelPadrao: number;
+  /** Jogador não pode mudar o nível. */
+  nivelTravado: boolean;
   /** "livre" deixa o jogador escolher; qualquer outro valor trava o método. */
   metodoAtributos: string;
   /** Pontos da compra (Pontos Variados: 5 pé no chão, 10 padrão, 15 épico). */
@@ -39,6 +43,8 @@ export interface ConfigCriacao {
 }
 
 export const CONFIG_PADRAO: ConfigCriacao = {
+  nivelPadrao: 1,
+  nivelTravado: false,
   metodoAtributos: "livre",
   pontosCompra: 10,
   dinheiro: "padrao",
@@ -61,6 +67,7 @@ export function normalizarConfig(bruto: unknown): ConfigCriacao {
   return {
     ...CONFIG_PADRAO,
     ...c,
+    nivelPadrao: Math.min(20, Math.max(1, Math.floor(Number(c.nivelPadrao) || 1))),
     pontosCompra: Number(c.pontosCompra) > 0 ? Number(c.pontosCompra) : CONFIG_PADRAO.pontosCompra,
     dinheiroFixo: Math.max(0, Number(c.dinheiroFixo) || 0),
     racasPermitidas: Array.isArray(c.racasPermitidas) ? c.racasPermitidas.filter(Boolean) : [],
@@ -85,6 +92,7 @@ export async function gravarConfig(config: ConfigCriacao): Promise<void> {
 /** Resumo em uma linha para o topo do wizard ("Regras da mesa: …"). */
 export function resumoConfig(c: ConfigCriacao, nomeMetodo: (id: string) => string): string[] {
   const partes: string[] = [];
+  if (c.nivelPadrao !== 1 || c.nivelTravado) partes.push(`nível ${c.nivelPadrao}${c.nivelTravado ? " (travado)" : ""}`);
   if (c.metodoAtributos !== "livre") partes.push(`atributos por ${nomeMetodo(c.metodoAtributos)}`);
   if (c.pontosCompra !== 10) partes.push(`${c.pontosCompra} pontos na compra`);
   if (c.dinheiro === "fixo") partes.push(`T$ ${c.dinheiroFixo} iniciais`);

@@ -1,5 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
+  prereqDoTexto,
+  temPrereqsConhecidos,
   checkPrereqs,
   isEligible,
   formatPrereq,
@@ -182,5 +184,15 @@ describe("describeUnmet", () => {
   it("explica o que falta, em português", () => {
     const motivos = describeUnmet("ambidestria", com({ atributos: { des: 0 } }));
     expect(motivos).toEqual(["Destreza 2"]);
+  });
+});
+
+describe("pré-requisito só no texto do compêndio", () => {
+  it("extrai 'Pré-requisito: …' da descrição; poder do T20-DB não precisa", () => {
+    expect(prereqDoTexto("Você luta bem. Pré-requisito: treinado em Luta. Além disso…")).toBe("treinado em Luta");
+    expect(prereqDoTexto("Pré-requisitos. Nível 5, Foco em Arma.")).toBe("Nível 5, Foco em Arma");
+    expect(prereqDoTexto("Sem nada aqui.")).toBe("");
+    expect(temPrereqsConhecidos("ambidestria")).toBe(true);
+    expect(temPrereqsConhecidos("poder_inventado_xyz")).toBe(false);
   });
 });

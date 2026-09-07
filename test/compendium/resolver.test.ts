@@ -124,6 +124,8 @@ describe("opcoesDaHabilidade — habilidade que é várias opções 'Nome: X'", 
       "Bênção da Justiça: Montaria Sagrada",
     ]);
     expect(opcoesDaHabilidade("durao", itens)).toEqual([]);
+    // Melhor Amigo (Treinador): as opções no compêndio são "Tipo: Animal / Monstro…"
+    expect(opcoesDaHabilidade("melhor_amigo", [ab("Tipo: Animal"), ab("Tipo: Monstro")]).map((i) => i.name)).toEqual(["Tipo: Animal", "Tipo: Monstro"]);
     expect(chaveHabilidade("Dádiva da Fé")).toBe("habilidade_dadiva_da_fe");
   });
 });

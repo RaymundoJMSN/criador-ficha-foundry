@@ -69,6 +69,14 @@ function finalInt(state: WizardState): number {
 function aplicarConfig(state: WizardState): void {
   const config = lerConfig();
   const patch: Record<string, unknown> = { config };
+  // Nível inicial da mesa: vale para ficha nova (rascunho retomado mantém o dele)
+  // e sempre que o mestre travou.
+  const grupo = state.escolhasPorItem["nivel_grupo"] as number | undefined;
+  if (grupo === undefined || config.nivelTravado) {
+    const esc = { ...state.escolhasPorItem, nivel_grupo: config.nivelPadrao };
+    patch["escolhasPorItem"] = esc;
+    patch["nivel"] = nivelEfetivo(config.nivelPadrao, { config, escolhasPorItem: esc });
+  }
   if (config.metodoAtributos !== "livre" && state.metodoAtributos !== config.metodoAtributos) {
     patch["metodoAtributos"] = config.metodoAtributos;
     patch["atributosBase"] = { for: 0, des: 0, con: 0, int: 0, sab: 0, car: 0 };
@@ -487,6 +495,7 @@ export function defineWizardApp(): void {
         showIdade: step === WizardStep.Idade,
         regrasDaMesa: resumoConfig(state.config, (id) => listMetodos().find((m) => m.id === id)?.nome ?? id),
         nivelGrupo: (state.escolhasPorItem["nivel_grupo"] as number | undefined) ?? state.nivel,
+        nivelTravado: state.config.nivelTravado,
         nivelExtra: state.nivel - ((state.escolhasPorItem["nivel_grupo"] as number | undefined) ?? state.nivel),
         showOrigem: step === WizardStep.Origem,
         showClasse: step === WizardStep.Classe,

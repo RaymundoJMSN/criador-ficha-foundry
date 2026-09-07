@@ -53,6 +53,8 @@ async function ConfigApp_onSubmit(_event: Event, form: HTMLFormElement, formData
       .map(([k]) => k.slice(prefixo.length));
   const config: ConfigCriacao = {
     ...CONFIG_PADRAO,
+    nivelPadrao: Number(o["nivelPadrao"]) || 1,
+    nivelTravado: o["nivelTravado"] === true,
     metodoAtributos: String(o["metodoAtributos"] ?? "livre"),
     pontosCompra: Number(o["pontosCompra"]) || 10,
     dinheiro: o["dinheiro"] === "fixo" ? "fixo" : "padrao",

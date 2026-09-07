@@ -28,6 +28,8 @@ const est = (config: Partial<ConfigCriacao>, escolhasPorItem: Record<string, unk
 describe("config — normalização e resumo", () => {
   it("setting velho/vazio vira padrão; lixo é limpo", () => {
     expect(normalizarConfig(undefined)).toEqual(CONFIG_PADRAO);
+    expect(normalizarConfig({ nivelPadrao: 40 }).nivelPadrao).toBe(20);
+    expect(normalizarConfig({ nivelPadrao: "3" }).nivelPadrao).toBe(3);
     const c = normalizarConfig({ pontosCompra: "15", dinheiroFixo: -3, racasPermitidas: ["Anão", ""], complicacoes: true });
     expect(c.pontosCompra).toBe(15);
     expect(c.dinheiroFixo).toBe(0);
