@@ -740,12 +740,13 @@ export function defineWizardApp(): void {
       });
 
       // ── Sub-escolhas de poder (Aspirante a Herói: atributo; Foco em Arma: arma…) ──
-      root.querySelectorAll<HTMLSelectElement>("select[name^='sp-']").forEach((sel) => {
+      root.querySelectorAll<HTMLSelectElement | HTMLInputElement>("select[name^='sp-'], input[name^='sp-']").forEach((sel) => {
         sel.addEventListener("change", () => {
           const chave = sel.name.replace(/-/g, "_");
           this._state.apply({ escolhasPorItem: { ...this._state.escolhasPorItem, [chave]: sel.value } });
           this._errors = [];
-          void this.render();
+          // Texto livre: guardar basta; re-render tiraria o foco a cada letra.
+          if (sel instanceof HTMLSelectElement) void this.render();
         });
       });
 

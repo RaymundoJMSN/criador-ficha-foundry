@@ -148,6 +148,21 @@ arcanista 2 (bruxo) → nível 5, PV 39, PM 21, 3 poderes, 4 magias de 1º.
   treinada = `treinado`, bônus = AE `outros`, magia = item, e o nome do item
   ganha a escolha ("Aspirante a herói (Sabedoria)"). Sapiência (Moreau da
   Coruja) = escolha racial `magia` com `escola: "adv"` em `montagem.json`.
+- **Sub-escolha genérica**: poder cujo texto tem "escolha um/uma…" ou "à sua
+  escolha" e não está no JSON ganha um campo de texto OPCIONAL (vai para o
+  nome do item, não trava a Revisão). Estruturados novos: Duplo Feérico
+  (habilidade de 1º nível de outra classe, via `habilidadesAte(classe, 1)`),
+  Cosmopolita (geral Combate/Destino/Magia ou de classe com 2+ níveis,
+  filtrado pela elegibilidade), Futura Lenda (poder da própria classe), Totem
+  Espiritual (animal → magia da tabela do T20-DB, embutida), Foco em Perícia,
+  Especialização/Mestre em Arma, Mestre em Escola, Ushultt/Poder da
+  Amizade/Citadino (texto). Chave é o slug do NOME do item: "Inimigo de
+  (Criatura)" → `inimigo_de_criatura`, "Arma Amada (Anão)" → `arma_amada_anao`.
+- **Origem especial** (HA "Sobre Origens Especiais"; Atlas/DB): "fornecem um
+  benefício único" — perícias + poder da origem, tudo fixo (`origemEspecial`:
+  sem lista de poderes e com `poder_unico_id`). O poder único resolve também
+  pelo nome da origem (`slugsDoPoderDaOrigem`), que é como o compêndio guarda
+  ("Aspirante a herói", tipo origem). Antes não ia para a ficha.
 - **Panteão como um todo** (LB p.103 clérigo; Deuses de Arton frade):
   `PANTEAO` em `divindade.ts`, listado só para clérigo/frade (regra de classe:
   nem humano nem Devoções Abertas), sem concedido; item "Devoto do Panteão" na

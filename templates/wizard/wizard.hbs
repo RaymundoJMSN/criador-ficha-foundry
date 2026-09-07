@@ -556,11 +556,15 @@
         <p class="t20w-hint" style="margin:0 0 6px 0;">Poderes que pedem uma decisão ao serem adquiridos.</p>
         {{#each subEscolhas}}
         <div class="form-group" style="margin-top:6px;">
-          <label for="{{this.name}}"><strong>{{this.poder}}</strong> — {{this.rotulo}}</label>
+          <label for="{{this.name}}"><strong>{{this.poder}}</strong> — {{this.rotulo}}{{#if this.opcional}} <span class="t20w-hint">(opcional; vai para o nome do item)</span>{{/if}}</label>
+          {{#if this.texto}}
+          <input type="text" id="{{this.name}}" name="{{this.name}}" value="{{this.valor}}" placeholder="Anote a escolha…" style="width:100%;padding:5px;" />
+          {{else}}
           <select id="{{this.name}}" name="{{this.name}}" style="width:100%;padding:5px;">
             <option value="">— escolha —</option>
             {{#each this.opcoes}}<option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.nome}}</option>{{/each}}
           </select>
+          {{/if}}
         </div>
         {{/each}}
       </div>

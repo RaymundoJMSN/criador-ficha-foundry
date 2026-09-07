@@ -158,9 +158,11 @@ poderes concedidos, fonte maior. Ver `CLAUDE.md`.
 
 ## Pendente
 
-- Sub-escolhas de poder ainda sem regra: Duplo Feérico, Cosmopolita, Futura
-  Lenda (escolher habilidade/poder de outra classe), Totem Espiritual (animal →
-  magia), Ushultt/Poder da Amizade (aliado), Citadino Abastado (Ofício).
+- Sub-escolhas só com campo de texto (sem opções estruturadas): Fúria
+  Elemental, Companheiro Animal/Aberrante/Elemental, Golpe Pessoal, Glamour,
+  Herança Erudita, Arma Natural Aprimorada/Hábil, Alma Livre, Apostador,
+  Etiqueta, Maestria em Perícia, Engenhoqueiro, Oficina de Campo — entram em
+  `subescolhas_poder.json` quando alguém ler o texto de cada um.
 - Montagem: Sátiro/Finntroll não têm escolha (pool do compêndio é variante);
   outras raças com passos, se aparecerem em módulo novo, entram em
   `montagem.json`. Bênçãos vampíricas não existem no compêndio.

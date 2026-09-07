@@ -174,11 +174,30 @@ async function aplicarSubEscolhasDePoder(actorBruto: unknown, state: WizardState
       case "arma":
         rotulo = CompendiumIndex.getById("arma", r.valor)?.name ?? r.valor;
         break;
-      case "lista":
-        rotulo = r.sub.opcoes?.find((o) => o.id === r.valor)?.rotulo ?? r.valor;
+      case "lista": {
+        const op = r.sub.opcoes?.find((o) => o.id === r.valor);
+        rotulo = op?.rotulo ?? r.valor;
+        // Totem Espiritual: o animal define a magia, que entra como item.
+        if (op?.magia) {
+          const m = CompendiumIndex.getAll("magia").find((x) => toNomeSlug(x.name) === op.magia);
+          const doc = m ? await resolveItem(m.id) : null;
+          if (doc) magias.push(doc);
+        }
         break;
+      }
       case "escola":
         rotulo = ESCOLAS[r.valor]?.nome ?? r.valor;
+        break;
+      case "habilidade_outra_classe":
+      case "poder_da_classe":
+      case "poder_classe_ou_geral": {
+        const doc = await resolveItem(r.valor);
+        if (doc) magias.push(doc);
+        rotulo = CompendiumIndex.getById("poder", r.valor)?.name ?? r.valor;
+        break;
+      }
+      case "texto":
+        rotulo = r.valor.trim();
         break;
     }
     if (alvo) sufixos.set(alvo, [...(sufixos.get(alvo) ?? []), rotulo]);
