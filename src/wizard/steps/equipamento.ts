@@ -21,9 +21,15 @@ export interface EquipItem {
   selected: boolean;
 }
 
+/** 2000 → "2.000" (T$ da tabela vai a 260.000). */
+const fmt = (n: number): string => n.toLocaleString("pt-BR");
+
 export interface EquipamentoContext extends EquipamentoInicial {
   stepTitle: string;
   dinheiroInicial: number;
+  dinheiroInicialFmt: string;
+  dinheiroGastoFmt: string;
+  dinheiroRestanteFmt: string;
   /** Fórmulas ainda não roladas (4d6 do 1º nível + T$ em dado da origem). */
   formulasPendentes: string[];
   dinheiroRolado: number | undefined;
@@ -106,6 +112,9 @@ export function prepareEquipamentoContext(
     stepTitle: "Equipamentos",
     ...inicial,
     dinheiroInicial,
+    dinheiroInicialFmt: fmt(dinheiroInicial),
+    dinheiroGastoFmt: fmt(dinheiroGasto),
+    dinheiroRestanteFmt: fmt(dinheiroRestante),
     formulasPendentes,
     dinheiroRolado,
     dinheiroGasto,

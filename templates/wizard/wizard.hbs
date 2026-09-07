@@ -3,6 +3,7 @@
     <div class="t20w-titulo">
       <h2>{{stepTitulo}}</h2>
       <span class="t20w-passo">passo {{passoNumero}} de {{passoTotal}}</span>
+      <button type="button" class="t20w-btn-sm t20w-recomecar" data-action="recomecar" title="Apagar tudo e começar do zero" style="margin-left:auto;">⟲ recomeçar</button>
     </div>
     <div class="t20w-dots" title="Clique num passo já feito para voltar a ele">
       {{#each steps}}{{#if this.done}}<button type="button" data-action="goStep" data-step="{{this.id}}" title="{{localize this.label}}"></button>{{else}}<span class="{{#if this.active}}ativo{{/if}}" title="{{localize this.label}}"></span>{{/if}}{{/each}}
@@ -506,7 +507,7 @@
             <select class="t20w-habilidade" data-slug="{{this.slug}}" style="margin-left:4px;padding:2px 4px;">
               <option value="">— escolha —</option>
               {{#each this.opcoes}}<option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.nome}}</option>{{/each}}
-            </select>{{/if}}</li>{{/each}}
+            </select>{{/if}}{{#if this.descricao}}<details class="t20w-mais"><summary>descrição</summary><div class="t20w-desc">{{this.descricao}}</div></details>{{/if}}</li>{{/each}}
         </ul>
       </div>
       {{/if}}
@@ -611,6 +612,7 @@
             <div class="t20w-corpo">
               <span class="t20w-nome">{{this.name}}</span>
               <span class="t20w-badge">{{this.escola}}</span>{{#if this.tipo}}<span class="t20w-badge">{{this.tipo}}</span>{{/if}}
+              {{#if this.descricao}}<details class="t20w-mais"><summary>descrição</summary><div class="t20w-desc">{{this.descricao}}</div></details>{{/if}}
             </div>
           </label>
           {{/each}}
@@ -630,11 +632,11 @@
       <h2>{{stepTitle}}</h2>
 
       <div class="t20w-money-bar t20w-barra">
-        <span>Dinheiro inicial: <strong>{{dinheiroInicial}} T$</strong>{{#if isNivel1}} <span style="opacity:0.6;font-size:0.85em;">(4d6{{#if dinheiroFixo}} + origem{{/if}})</span>{{/if}}</span>
+        <span>Dinheiro inicial: <strong>T$ {{dinheiroInicialFmt}}</strong>{{#if isNivel1}} <span style="opacity:0.6;font-size:0.85em;">(4d6{{#if dinheiroFixo}} + origem{{/if}})</span>{{/if}}</span>
         <span style="opacity:0.5;">|</span>
-        <span>Gasto: {{dinheiroGasto}} T$</span>
+        <span>Gasto: T$ {{dinheiroGastoFmt}}</span>
         <span style="opacity:0.5;">|</span>
-        <span class="{{#if dinheiroOk}}t20w-money-ok{{else}}t20w-over{{/if}}" style="font-weight:600;">Restante: {{dinheiroRestante}} T$</span>
+        <span class="{{#if dinheiroOk}}t20w-money-ok{{else}}t20w-over{{/if}}" style="font-weight:600;">Restante: T$ {{dinheiroRestanteFmt}}</span>
         {{#unless dinheiroOk}}<span style="color:#f55;font-size:0.85em;">⚠ Excedeu o orçamento!</span>{{/unless}}
       </div>
 

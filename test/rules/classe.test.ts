@@ -23,3 +23,9 @@ describe("getClasse", () => {
     expect(getClasse("xyzzy")).toBeNull();
   });
 });
+
+describe("getClasse sem classe", () => {
+  it("string vazia não devolve arcanista", () => {
+    expect(getClasse("")).toBeNull();
+  });
+});

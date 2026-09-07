@@ -546,3 +546,17 @@ details.t20w-mais > summary:hover {
   background: #1c1a1b;
   color: #e6e1d8;
 }
+
+.t20w-recomecar {
+  background: transparent;
+  border: 1px solid transparent;
+  opacity: 0.55;
+  font-size: 0.8em;
+  padding: 2px 8px;
+  color: inherit;
+  cursor: pointer;
+}
+.t20w-recomecar:hover {
+  opacity: 1;
+  border-color: var(--t20w-line);
+}

@@ -68,6 +68,9 @@ function slug(value: string): string {
  */
 export function getClasse(idOrName: string): ClasseData | null {
   const s = slug(idOrName);
+  // Sem classe ainda: "" casava com qualquer id no startsWith e devolvia
+  // arcanista — o passo Classe mostrava o Caminho do Arcanista antes da escolha.
+  if (!s) return null;
   if (classesData[s]) return classesData[s];
   for (const [id, data] of Object.entries(classesData)) {
     if (slug(data.nome) === s || s.startsWith(id) || id.startsWith(s)) return data;

@@ -554,5 +554,19 @@ export class ActorWriter {
 
     actor.sheet?.render(true);
     console.log(`${MODULE_ID} | ActorWriter: created actor "${actor.name}" (${actor.id})`);
+
+    // Aviso na mesa: quem criou, o quê. Link do ator para o mestre abrir.
+    try {
+      const classes = classesDoPersonagem(state)
+        .map((c) => `${c.classeNome}${classesDoPersonagem(state).length > 1 ? ` ${c.niveis}` : ""}`)
+        .join(" / ");
+      const linha = [state.racaNome, classes, `nível ${state.nivel}`].filter(Boolean).join(" · ");
+      await (globalThis as any).ChatMessage.create({
+        content: `<p><strong>Ficha criada:</strong> @UUID[Actor.${actor.id}]{${actor.name}}<br/><small>${linha}</small></p>`,
+        speaker: { alias: "Criador de Ficha" },
+      });
+    } catch (err) {
+      console.warn(`${MODULE_ID} | ActorWriter: sem mensagem no chat:`, err);
+    }
   }
 }

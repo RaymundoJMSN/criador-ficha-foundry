@@ -21,6 +21,7 @@ export interface MagiaEntry {
   circulo: number;
   escola: string;
   tipo: string;
+  descricao: string;
   selected: boolean;
   /** No limite (total ou do círculo), as não escolhidas ficam travadas. */
   bloqueado: boolean;
@@ -136,6 +137,7 @@ export function prepareMagiasContext(
       circulo,
       escola: ESCOLAS[m.system.escola ?? ""]?.nome ?? (m.system.escola ?? ""),
       tipo: m.system.tipo ?? "",
+      descricao: m.system.descricao ?? "",
       selected,
       bloqueado: !selected && (noLimite || !caberia(circulo)),
       excedente: selected && excedentes.has(m.id),

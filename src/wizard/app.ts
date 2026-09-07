@@ -1124,6 +1124,20 @@ export function defineWizardApp(): void {
           });
           void this.render();
         }
+      } else if (action === "recomecar") {
+        void (foundry as any).applications.api.DialogV2.confirm({
+          window: { title: "Recomeçar" },
+          content: "<p>Apagar tudo o que foi preenchido e voltar ao primeiro passo?</p>",
+          rejectClose: false,
+        }).then((sim: boolean | null) => {
+          if (!sim) return;
+          rascunho.apagar();
+          this._state = new WizardState();
+          aplicarConfig(this._state);
+          this._currentStep = WizardStep.Nivel;
+          this._errors = [];
+          void this.render();
+        });
       } else if (action === "abrirConfig") {
         openConfigApp();
       } else if (action === "mcAdd" || action === "mcRemove") {

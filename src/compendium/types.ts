@@ -55,6 +55,8 @@ export interface IndexedMagia extends IndexedBase {
     circulo?: number; // 1–5
     escola?: string; // "abj"|"adv"|"con"|"enc"|"evo"|"ilu"|"nec"|"tra"
     tipo?: string; // "arc" | "div"
+    /** Texto puro da descrição (o índice decodifica o HTML). */
+    descricao?: string;
   };
 }
 

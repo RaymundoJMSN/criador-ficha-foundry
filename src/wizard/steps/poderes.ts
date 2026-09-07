@@ -50,6 +50,7 @@ export interface PoderesContext {
   habilidades: Array<{
     slug: string;
     nome: string;
+    descricao: string;
     opcoes: Array<{ id: string; nome: string; selected: boolean }>;
     pendente: boolean;
   }>;
@@ -102,19 +103,20 @@ export function preparePoderesContext(
       const opcoes = opcoesDaHabilidade(slug, allPoderes);
       if (opcoes.length > 0) {
         const escolhido = state.escolhasPorItem[chaveHabilidade(slug)] as string | undefined;
+        const item = opcoes.find((o) => o.id === escolhido);
         return {
           slug,
           nome: opcoes[0]!.name.split(":")[0]!.trim(),
+          descricao: item?.system.descricao ?? "",
           opcoes: opcoes.map((o) => ({ id: o.id, nome: o.name.split(":").slice(1).join(":").trim(), selected: o.id === escolhido })),
           pendente: !opcoes.some((o) => o.id === escolhido),
         };
       }
+      const item = resolverPoder(slug, classe.classeSlug, allPoderes, "ability")?.item;
       return {
         slug,
-        nome:
-          resolverPoder(slug, classe.classeSlug, allPoderes, "ability")?.item.name ??
-          resolvePoderNome(slug) ??
-          prettifySlug(slug),
+        nome: item?.name ?? resolvePoderNome(slug) ?? prettifySlug(slug),
+        descricao: item?.system.descricao ?? "",
         opcoes: [] as Array<{ id: string; nome: string; selected: boolean }>,
         pendente: false,
       };
