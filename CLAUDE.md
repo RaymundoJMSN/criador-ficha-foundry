@@ -927,3 +927,11 @@ controle (`.t20w-item`, `.t20w-pcheck-group[data-max]`, `montarCombo`).
   "Classe Variante", título "Variante de X" ou "poder de X" na tabela) +
   `classeBaseDaVariante`. Vale para a lista de poderes e para pré-requisito de
   nível de classe.
+
+- **Raça sem origem** (golem, "Propósito de Criação"): `src/data/racas_sem_origem.json`
+  + `racaSemOrigem` (aceita o nome do compêndio pelo alias da montagem, ex.
+  "Golem (Ameaças de Arton)"). `beneficiosDeOrigemPermitidos` devolve 0 — some
+  a pendência "Escolha uma origem" em todo lugar de uma vez — e
+  `fontesDePoderExtra` ganha `sem_origem` (poder geral escolhido no passo Raça,
+  como o Versátil). O passo Origem explica por que não há origem (serve também
+  para a criança das Idades Variadas).

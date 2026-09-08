@@ -621,6 +621,11 @@ export function defineWizardApp(): void {
             CompendiumIndex.getAll("magia")
           ),
             racaPericias: prepareRacaPericias(state, getRaceSkillBonus(state.racaNome || state.racaId, state.escolhasPorItem), poderesGerais),
+            // Poder geral que a raça dá (golem: Propósito de Criação). O Versátil
+            // tem card próprio, então fica de fora daqui.
+            poderesExtras: fontesDePoderExtra(state)
+              .filter((f) => f.passo === "raca" && f.fonte !== "versatil")
+              .map((f) => ({ ...f, opcoes: this._opcoesPoderGeral(f.fonte) })),
           };
           break;
         }

@@ -1,5 +1,9 @@
 import racasDataRaw from "../data/racas.json";
+import racasSemOrigemRaw from "../data/racas_sem_origem.json";
 import { chaveDaRaca, montagemDaRaca, periciasTrocadasNaMontagem } from "./montagem.js";
+import { toNomeSlug } from "../compendium/slug.js";
+
+const racasSemOrigem = racasSemOrigemRaw as string[];
 
 export interface AtributoFixo {
   atributo: string;
@@ -139,6 +143,19 @@ export function registrarRacasDoCompendio(
  * (sum of `treinar_pericias` quantities). Used in the perícia count:
  * treináveis = classe.numero + max(0, Int) + raça.
  */
+/**
+ * Raça sem origem: "Propósito de Criação" do golem — construído pronto, sem
+ * infância. Não escolhe origem e recebe um poder geral no lugar (DB, Golens
+ * Despertos).
+ */
+export function racaSemOrigem(idOrName: string): boolean {
+  if (!idOrName) return false;
+  // O nome do compêndio ("Golem (Ameaças de Arton)") passa pelo mesmo alias da
+  // montagem, senão só o id do T20-DB seria reconhecido.
+  const chaves = [toNomeSlug(getRaca(idOrName)?.id ?? ""), chaveDaRaca(idOrName), toNomeSlug(idOrName)];
+  return chaves.some((c) => c && racasSemOrigem.includes(c));
+}
+
 export function getRaceSkillBonus(idOrName: string, escolhas: Record<string, unknown> = {}): number {
   const raca = getRaca(idOrName);
   if (!raca) return 0;

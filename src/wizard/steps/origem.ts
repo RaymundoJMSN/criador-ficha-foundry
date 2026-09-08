@@ -9,6 +9,7 @@ import {
 } from "../../rules/origem.js";
 import type { WizardState } from "../state.js";
 import { beneficiosDeOrigemPermitidos } from "../../rules/idade.js";
+import { racaSemOrigem } from "../../rules/raca.js";
 import textosRaw from "../../data/textos.json";
 import type { IndexedPoder } from "../../compendium/types.js";
 import { describeUnmet, type PartialWizardState } from "../../rules/poderes.js";
@@ -55,6 +56,8 @@ export interface OrigemDetail {
 
 export interface OrigemContext {
   stepTitle: string;
+  /** Criança ou golem: a ficha não tem origem, e o passo explica por quê. */
+  semOrigem: string;
   origemOptions: OrigemOption[];
   selectedDetail: OrigemDetail | null;
   errors: string[];
@@ -142,6 +145,11 @@ export function prepareOrigemContext(
 
   return {
     stepTitle: "Origem",
+    semOrigem: racaSemOrigem(state.racaNome || state.racaId)
+      ? "Sua raça não escolhe origem (Propósito de Criação): você recebe um poder geral no lugar, escolhido no passo Raça."
+      : beneficiosDeOrigemPermitidos(state) === 0
+        ? "Nesta faixa etária o personagem ainda não tem origem (Sem Origem)."
+        : "",
     origemOptions,
     selectedDetail,
     errors,

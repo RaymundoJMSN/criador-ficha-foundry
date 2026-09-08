@@ -1,4 +1,5 @@
 import type { ConfigCriacao } from "../config/config.js";
+import { racaSemOrigem } from "./raca.js";
 
 /**
  * Idades Variadas — Heróis de Arton p.288-291 (Tabela 4-2) — e Complicações
@@ -256,6 +257,9 @@ export function getComplicacaoIdade(id: string): ComplicacaoIdade | undefined {
 export interface EstadoIdade {
   config: ConfigCriacao;
   escolhasPorItem: Record<string, unknown>;
+  /** Só para a regra do golem (sem origem); ausente = a raça não importa. */
+  racaNome?: string;
+  racaId?: string;
 }
 
 /** Faixa em vigor: só existe se Idades Variadas estiver ligada. */
@@ -316,6 +320,10 @@ export interface FontePoderExtra {
 export function fontesDePoderExtra(s: EstadoIdade): FontePoderExtra[] {
   const out: FontePoderExtra[] = [];
   if (s.escolhasPorItem["versatil_poder"]) out.push({ fonte: "versatil", rotulo: "Poder geral (Versátil)", passo: "raca" });
+  // Golem: "não tem direito a escolher uma origem, mas recebe um poder geral".
+  if (racaSemOrigem(s.racaNome || s.racaId || "")) {
+    out.push({ fonte: "sem_origem", rotulo: "Poder geral (Propósito de Criação)", passo: "raca" });
+  }
   if (complicacaoEscolhida(s)) out.push({ fonte: "complicacao", rotulo: "Poder geral pela complicação", passo: "idade" });
   if (jaViCoisas(s)) out.push({ fonte: "ja_vi_coisas", rotulo: "Poder geral por Já Vi Coisas", passo: "idade" });
   return out;
@@ -336,6 +344,8 @@ export function idsDePoderesExtras(s: EstadoIdade): string[] {
 
 /** Benefícios de origem que a faixa deixa (2, 1 ou 0). */
 export function beneficiosDeOrigemPermitidos(s: EstadoIdade): number {
+  // Golem ("Propósito de Criação") não escolhe origem.
+  if (racaSemOrigem(s.racaNome || s.racaId || "")) return 0;
   return faixaDoPersonagem(s).beneficiosOrigem;
 }
 

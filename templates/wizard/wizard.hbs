@@ -203,6 +203,15 @@
           {{#each this.erros}}<div class="t20w-hint" style="color:#f90;">{{this}}</div>{{/each}}
         </div>
         {{/each}}
+        {{#each poderesExtras}}
+        <div class="t20w-card" style="margin-top:8px;">
+          <strong style="font-size:0.95em;">{{this.rotulo}}</strong>
+          <select name="poder_extra-{{this.fonte}}" style="width:100%;padding:6px;margin-top:6px;">
+            <option value="">— escolha um poder —</option>
+            {{#each this.opcoes}}<option value="{{this.id}}" {{#if this.selected}}selected{{/if}} {{#unless this.eligible}}disabled{{/unless}}>{{this.nome}}{{#unless this.eligible}} — requer {{this.requer}}{{/unless}}</option>{{/each}}
+          </select>
+        </div>
+        {{/each}}
         {{#if racaPericias.versatilPossivel}}
         <div class="t20w-card" style="margin-top:8px;">
           <strong style="font-size:0.95em;">Versátil <small style="opacity:0.75;font-weight:normal;">(humano)</small></strong>
@@ -317,6 +326,7 @@
     {{#if showOrigem}}
     <section class="t20w-step">
       <h2>{{stepTitle}}</h2>
+      {{#if semOrigem}}<p class="t20w-hint">{{semOrigem}}</p>{{/if}}
       <div class="form-group">
         <label for="t20w-origem-sel">Origem</label>
         <select id="t20w-origem-sel" name="origemId" style="width:100%;padding:6px;">
