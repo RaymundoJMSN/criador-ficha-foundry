@@ -11,7 +11,16 @@ import {
   type AtributoEscolhaDef,
 } from "../../rules/raca.js";
 import { PERICIA_SLUGS } from "../../rules/pericia-slug.js";
-import { montagemDaRaca, opcoesMarcadas, opcaoBloqueada, subMarcada, pendenciasDaMontagem, type OpcaoMontagem } from "../../rules/montagem.js";
+import {
+  montagemDaRaca,
+  opcoesMarcadas,
+  opcaoBloqueada,
+  ehRadio,
+  introRepetida,
+  subMarcada,
+  pendenciasDaMontagem,
+  type OpcaoMontagem,
+} from "../../rules/montagem.js";
 import textosRaw from "../../data/textos.json";
 import { describeUnmet, type PartialWizardState } from "../../rules/poderes.js";
 import { toNomeSlug, uuidDe } from "../../compendium/slug.js";
@@ -163,6 +172,8 @@ export interface PassoView {
   nome: string;
   titulo: string;
   nota: string;
+  /** Texto que o livro repete em toda opção do passo, mostrado uma vez. */
+  explicacao: string;
   /** radio (uma) ou checkbox (várias / opcional). */
   radio: boolean;
   inputName: string;
@@ -203,12 +214,16 @@ function montarMontagem(
   return m.passos.map((passo) => {
     const marc = opcoesMarcadas(passo, escolhas);
     const ids = new Set(marc.map((o) => o.id));
+    const descricaoDaOpcao = (o: OpcaoMontagem): string =>
+      (o.poder && itemDoPoder(o.poder, racaRef, poderes)?.system.descricao) || "";
+    const intro = introRepetida(passo.opcoes.map(descricaoDaOpcao));
     return {
       id: passo.id,
       nome: passo.nome,
       titulo: `${passo.nome} — ${passo.opcional ? "opcional, até" : "escolha"} ${passo.escolher}`,
       nota: passo.nota ?? "",
-      radio: passo.escolher === 1 && !passo.opcional,
+      explicacao: intro,
+      radio: ehRadio(passo),
       inputName: `mont-${passo.id}`,
       erros: erros.filter((e) => e.startsWith(`${passo.nome}:`) || passo.opcoes.some((o) => e.startsWith(`${o.nome}`))),
       opcoes: passo.opcoes.map((o) => {
@@ -217,7 +232,7 @@ function montarMontagem(
         return {
           id: o.id,
           nome: o.nome,
-          descricao: (o.poder && itemDoPoder(o.poder, racaRef, poderes)?.system.descricao) || "",
+          descricao: semIntro(descricaoDaOpcao(o), intro),
           uuid: o.poder ? uuidDe(itemDoPoder(o.poder, racaRef, poderes) ?? { id: "" }) : "",
           resumo: resumoDaOpcao(o),
           nota: o.nota ?? "",
@@ -228,6 +243,13 @@ function montarMontagem(
       }),
     };
   });
+}
+
+/** Tira do começo da descrição a introdução que já está no cabeçalho do passo. */
+function semIntro(descricao: string, intro: string): string {
+  const texto = descricao.trim();
+  if (!intro || !texto.startsWith(intro)) return descricao;
+  return texto.slice(intro.length).trim();
 }
 
 function montarSub(passoId: string, o: OpcaoMontagem, escolhas: Record<string, unknown>, magias: IndexedMagia[]) {

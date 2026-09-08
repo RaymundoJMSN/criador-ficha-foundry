@@ -862,3 +862,9 @@ controle (`.t20w-item`, `.t20w-pcheck-group[data-max]`, `montarCombo`).
 - **Pendências no rodapé**, à esquerda do "Próximo" (`.t20w-pendencias-rodape`),
   e os erros do passo entram na MESMA lista: antes a origem mostrava a mesma
   frase duas vezes (bloco de erros no corpo + pendências).
+
+- **Montagem de raça**: `opcaoBloqueada` trava a cota cheia também no passo
+  opcional de uma escolha (Maravilha Mecânica do mashin era só aviso).
+  `introRepetida` tira das opções a introdução que o pacote repete em cada uma
+  e mostra no cabeçalho do passo (`explicacao`). Testes em
+  `test/rules/montagem-bloqueio.test.ts`.

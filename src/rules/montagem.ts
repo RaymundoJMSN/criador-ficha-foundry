@@ -98,6 +98,48 @@ export function opcoesMarcadas(passo: PassoMontagem, escolhas: Record<string, un
   return passo.opcoes.filter((o) => lista.includes(o.id));
 }
 
+/** Passo de uma escolha obrigatória vira radio; o resto é checkbox. */
+export function ehRadio(passo: PassoMontagem): boolean {
+  return passo.escolher === 1 && !passo.opcional;
+}
+
+/**
+ * Introdução que o pacote repete nas opções do passo ("Se escolher uma
+ * maravilha mecânica, você recebe um dos poderes a seguir…"): aparece uma vez
+ * no cabeçalho e sai das descrições. Nem toda opção a repete (Arma Elemental
+ * não tem), então vale a frase que abre a MAIORIA delas.
+ */
+export function introRepetida(descricoes: string[]): string {
+  const textos = descricoes.map((d) => d.trim()).filter((d) => d.length > 0);
+  if (textos.length < 3) return "";
+  const frases = (t: string): string[] => t.split(/(?<=[.!?])\s+/).filter(Boolean);
+
+  const contagem = new Map<string, number>();
+  for (const t of textos) {
+    const primeira = frases(t)[0] ?? "";
+    if (primeira.length >= 30) contagem.set(primeira, (contagem.get(primeira) ?? 0) + 1);
+  }
+  let abertura = "";
+  let vezes = 0;
+  for (const [frase, n] of contagem) {
+    if (n > vezes) {
+      abertura = frase;
+      vezes = n;
+    }
+  }
+  if (vezes < 2 || vezes * 2 < textos.length) return "";
+
+  // Estende enquanto as descrições que abrem assim seguirem iguais.
+  const grupo = textos.filter((t) => t.startsWith(abertura)).map(frases);
+  const intro = [abertura];
+  for (let i = 1; ; i++) {
+    const frase = grupo[0]?.[i];
+    if (!frase || !grupo.every((f) => f[i] === frase)) break;
+    intro.push(frase);
+  }
+  return intro.join(" ");
+}
+
 /**
  * Opção que o jogador não pode marcar agora: o passo já encheu, outra opção do
  * mesmo grupo exclusivo está marcada (as três Afinidades Elementais) ou falta o
@@ -109,7 +151,9 @@ export function opcaoBloqueada(
   marcadas: OpcaoMontagem[]
 ): boolean {
   if (marcadas.some((o) => o.id === opcao.id)) return false;
-  if (marcadas.length >= passo.escolher && passo.escolher > 1) return true;
+  // Radio (uma escolha obrigatória) troca sozinho; checkbox precisa travar ao
+  // encher a cota, senão "no máximo 1" vira aviso ("Maravilha Mecânica").
+  if (!ehRadio(passo) && marcadas.length >= passo.escolher) return true;
   if (opcao.exclusivo && marcadas.some((o) => o.exclusivo === opcao.exclusivo)) return true;
   const ids = new Set(marcadas.map((o) => o.id));
   return (opcao.requer ?? []).some((req) => !ids.has(req));

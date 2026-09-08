@@ -178,6 +178,7 @@
         <div class="t20w-card t20w-montagem-passo" data-passo="{{this.id}}">
           <strong>{{this.titulo}}</strong>
           {{#if this.nota}}<div class="t20w-hint">{{this.nota}}</div>{{/if}}
+          {{#if this.explicacao}}<div class="t20w-desc" style="margin-top:4px;">{{this.explicacao}}</div>{{/if}}
           <div style="display:flex;flex-direction:column;gap:4px;margin-top:6px;">
             {{#each this.opcoes}}
             <label class="t20w-opcao {{#if this.bloqueada}}t20w-disabled{{/if}}">

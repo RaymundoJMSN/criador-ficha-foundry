@@ -58,13 +58,21 @@ no `title`. Nada de mensagem "você errou" depois do fato.
 - Compra de pontos: `podeSubir` por atributo — o "+" morre quando o próximo
   ponto não cabe (o saldo nunca fica negativo).
 - Loja: `naoCabe` desabilita o "+" do item mais caro que o dinheiro restante.
-- Cota cheia (`.t20w-pcheck-group[data-max]`): o resto desabilita.
+- Cota cheia: o resto desabilita. Nos grupos de checkbox é
+  `.t20w-pcheck-group[data-max]`; na montagem de raça é `opcaoBloqueada`, que
+  trava assim que `marcadas.length >= passo.escolher` — inclusive no passo
+  opcional de uma escolha ("Maravilha Mecânica: no máximo 1"). Radio (uma
+  escolha obrigatória) nunca trava, senão o jogador não troca de opção.
 
 O que ainda falta aparece **no passo onde se resolve**, não no fim:
 `pendenciasComPasso` (engine) marca cada pendência com o `WizardStep`; o app
 soma as do passo (sub-escolhas, habilidades, dinheiro, pontos) em
 `_pendenciasDoPasso` e o "Próximo" fica travado até a lista esvaziar. A
 Revisão só mostra o que sobrar — no fluxo normal, nada.
+
+Texto que o pacote repete em toda opção de um passo ("Se escolher uma maravilha
+mecânica…") aparece UMA vez, no cabeçalho: `introRepetida` acha a frase que abre
+a maioria das opções e o passo mostra em `explicacao`.
 
 ## 4. UI: um padrão por tipo de controle
 
