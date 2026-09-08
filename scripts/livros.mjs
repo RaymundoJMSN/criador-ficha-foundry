@@ -333,8 +333,7 @@ export function classesDosLivros() {
         })(),
         niveis,
         // HdA: "**Classe Variante:** Bucaneiro" abre a descrição.
-        variante: /\*\*Classe Variante:\*\*\s*([^
-]+)/.exec(arq.texto)?.[1]?.trim() ?? null,
+        variante: /\*\*Classe Variante:\*\*\s*([^\n]+)/.exec(arq.texto)?.[1]?.trim() ?? null,
         descricao: primeiroParagrafo(
           seccionar(arq.texto, 2).find((s) => /Descrição/i.test(s.titulo))?.corpo ?? arq.texto
         ),
