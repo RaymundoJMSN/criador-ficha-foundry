@@ -25,7 +25,7 @@ const rascunho = {
 };
 import { WizardState } from "./state.js";
 import { WizardStep, STEP_ORDER, STEP_META, passosAplicaveis } from "../rules/steps.js";
-import { slugsDosPoderes } from "../rules/magias.js";
+import { slugsDosPoderes, slugsDePoderesComMagia } from "../rules/magias.js";
 import { CompendiumIndex } from "../compendium/index.js";
 import { validate } from "../rules/engine.js";
 import {
@@ -59,7 +59,8 @@ function pendenciasDosPoderes(state: WizardState): string[] {
 }
 import { prepareOrigemContext } from "./steps/origem.js";
 import { prepareClasseContext } from "./steps/classe.js";
-import { preparePericiaContext } from "./steps/pericias.js";
+import { preparePericiaContext, prepareRacaPericias, type PoderGeralOpt } from "./steps/pericias.js";
+type PericiaPicksParciais = { obrigatorias?: string[][]; escolhas?: string[]; extras_int?: string[]; raca?: string[] };
 import { getRaceSkillBonus } from "../rules/raca.js";
 import { totaisRaciaisDoEstado, distribuirAbertos, valoresFixosDaRaca } from "../rules/subescolhas.js";
 import { toNomeSlug, uuidDe } from "../compendium/slug.js";
@@ -180,7 +181,7 @@ export function defineWizardApp(): void {
     _passos(): WizardStep[] {
       return passosAplicaveis(
         classesDoPersonagem(this._state).map((c) => c.classeSlug),
-        slugsDosPoderes(this._state.poderes),
+        slugsDePoderesComMagia(this._state),
         this._state.config
       );
     }
@@ -309,15 +310,19 @@ export function defineWizardApp(): void {
         escolhas = { ...(escolhas ?? this._state.escolhasPorItem), raca_modificadores: normalized };
       }
       if (sawPericia) {
+        // Só os grupos presentes na tela: as perícias de raça ficam no passo Raça.
+        const base = escolhas ?? this._state.escolhasPorItem;
+        const atual = (base["pericias"] as PericiaPicksParciais | undefined) ?? {};
+        const tem = (prefixo: string) => Boolean(this.element?.querySelector(`input[name^="${prefixo}"]`));
         escolhas = {
-          ...(escolhas ?? this._state.escolhasPorItem),
+          ...base,
           pericias: {
-            obrigatorias: perObrig.map((g) => (g ?? []).filter(Boolean)),
-            escolhas: perEsc,
-            extras_int: perInt,
-            raca: perRaca,
+            obrigatorias: tem("per_obrig-") ? perObrig.map((g) => (g ?? []).filter(Boolean)) : (atual.obrigatorias ?? []),
+            escolhas: tem("per_esc-") ? perEsc : (atual.escolhas ?? []),
+            extras_int: tem("per_int-") ? perInt : (atual.extras_int ?? []),
+            raca: tem("per_raca-") ? perRaca : (atual.raca ?? []),
           },
-          versatil_poder: formData.has("versatil_poder"),
+          versatil_poder: tem("versatil_poder") ? formData.has("versatil_poder") : Boolean(base["versatil_poder"]),
         };
       }
       if (escolhas) patch["escolhasPorItem"] = escolhas;
@@ -388,13 +393,29 @@ export function defineWizardApp(): void {
         case WizardStep.Raca: {
           const racas = CompendiumIndex.getAll("race") as IndexedRace[];
           const poderesRaca = CompendiumIndex.getAll("poder") as IndexedPoder[];
-          stepCtx = prepareRacaContext(
+          // Versátil: lista de poderes gerais com a elegibilidade do passo Poderes.
+          const versatilId = String(state.escolhasPorItem["versatil_poder_id"] ?? "");
+          let poderesGerais: PoderGeralOpt[] = [];
+          if (state.escolhasPorItem["versatil_poder"]) {
+            try {
+              poderesGerais = preparePoderesContext(state, poderesRaca, [], () => null, CompendiumIndex.getAll("magia"), { racas })
+                .poderes.filter((p) => p.origem === "geral" && p.tipo === "geral")
+                .map((p) => ({ id: p.id, nome: p.name, eligible: p.eligible || p.id === versatilId, requer: p.unmet.join(", "), selected: p.id === versatilId }))
+                .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
+            } catch (e) {
+              console.warn("t20-ficha-wizard | poderes do Versátil", e);
+            }
+          }
+          stepCtx = {
+            ...prepareRacaContext(
             state,
             racas,
             errors,
             poderesRaca,
             CompendiumIndex.getAll("magia")
-          );
+          ),
+            racaPericias: prepareRacaPericias(state, getRaceSkillBonus(state.racaNome || state.racaId, state.escolhasPorItem), poderesGerais),
+          };
           break;
         }
         case WizardStep.Idade:
@@ -1056,6 +1077,11 @@ export function defineWizardApp(): void {
       const periciaInputs = root.querySelectorAll<HTMLInputElement>(
         'input[name^="per_esc-"], input[name^="per_int-"], input[name^="per_raca-"], input[name^="per_obrig-"], input[name="versatil_poder"]'
       );
+      const vpSel = root.querySelector<HTMLSelectElement>('select[name="versatil_poder_id"]');
+      vpSel?.addEventListener("change", () => {
+        this._setVersatilPoder(vpSel.value);
+        void this.render();
+      });
       if (periciaInputs.length > 0) {
         periciaInputs.forEach((inp) => {
           inp.addEventListener("change", () => {
@@ -1090,18 +1116,31 @@ export function defineWizardApp(): void {
         perRaca.push(inp.value);
       });
 
+      const atual = (this._state.escolhasPorItem["pericias"] as PericiaPicksParciais | undefined) ?? {};
+      const tem = (prefixo: string) => Boolean(html.querySelector(`input[name^="${prefixo}"]`));
+      const vp = html.querySelector<HTMLInputElement>('input[name="versatil_poder"]');
+      const versatil = vp ? vp.checked : Boolean(this._state.escolhasPorItem["versatil_poder"]);
       this._state.apply({
         escolhasPorItem: {
           ...this._state.escolhasPorItem,
           pericias: {
-            obrigatorias: perObrig.map((g) => (g ?? []).filter(Boolean)),
-            escolhas: perEsc,
-            extras_int: perInt,
-            raca: perRaca,
+            obrigatorias: tem("per_obrig-") ? perObrig.map((g) => (g ?? []).filter(Boolean)) : (atual.obrigatorias ?? []),
+            escolhas: tem("per_esc-") ? perEsc : (atual.escolhas ?? []),
+            extras_int: tem("per_int-") ? perInt : (atual.extras_int ?? []),
+            raca: tem("per_raca-") ? perRaca : (atual.raca ?? []),
           },
-          versatil_poder: Boolean(html.querySelector<HTMLInputElement>('input[name="versatil_poder"]')?.checked),
+          versatil_poder: versatil,
         },
       });
+      if (vp && !vp.checked) this._setVersatilPoder("");
+    }
+
+    /** Poder geral escolhido pelo Versátil: entra em `state.poderes` (gasta o slot extra). */
+    _setVersatilPoder(id: string): void {
+      const antigo = String(this._state.escolhasPorItem["versatil_poder_id"] ?? "");
+      const poderes = antigo ? this._state.poderes.filter((p) => p !== antigo) : [...this._state.poderes];
+      if (id) poderes.push(id);
+      this._state.apply({ poderes, escolhasPorItem: { ...this._state.escolhasPorItem, versatil_poder_id: id } });
     }
 
     _gatherFormData(): FormData {

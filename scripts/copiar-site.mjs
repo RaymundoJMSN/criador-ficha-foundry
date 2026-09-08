@@ -6,7 +6,7 @@
  *   node scripts/copiar-site.mjs            # só monta site/dist
  *   node scripts/copiar-site.mjs --deploy   # e copia para o servidor do t20-ficha-online
  */
-import { cpSync, existsSync, mkdirSync, rmSync } from "node:fs";
+import { cpSync, existsSync, mkdirSync, readFileSync, rmSync } from "node:fs";
 import { resolve, dirname, join } from "node:path";
 import { fileURLToPath } from "node:url";
 
@@ -22,6 +22,19 @@ const dados = join(RAIZ, "site/data/compendio.json");
 if (existsSync(dados)) {
   mkdirSync(join(DIST, "data"), { recursive: true });
   cpSync(dados, join(DIST, "data/compendio.json"));
+  // Ícones dos itens: o site serve só o dist, então copia os arquivos que o despejo referencia.
+  const RAIZES = [process.env.FOUNDRY_DATA ?? "X:/FoundryVTT/Data", join(process.env.FOUNDRY_CODE ?? "X:/FoundryVTT/Code", "resources/app/public")];
+  const imgs = new Set();
+  for (const pack of JSON.parse(readFileSync(dados, "utf8")).packs) for (const it of pack.items) if (it.img && !/^(https?:|data:)/.test(it.img)) imgs.add(it.img);
+  let copiados = 0;
+  for (const img of imgs) {
+    const origem = RAIZES.map((r) => join(r, img)).find((f) => existsSync(f));
+    if (!origem) continue;
+    mkdirSync(dirname(join(DIST, img)), { recursive: true });
+    cpSync(origem, join(DIST, img));
+    copiados++;
+  }
+  console.log(`${copiados}/${imgs.size} ícones copiados`);
 } else {
   console.warn("site/data/compendio.json não existe — rode `npm run export:compendio`");
 }

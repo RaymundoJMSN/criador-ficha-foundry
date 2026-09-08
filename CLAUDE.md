@@ -719,3 +719,19 @@ Mudou alguma destas áreas? Atualizar este `CLAUDE.md` **no mesmo commit**:
   `Actor.create` rejeitava o JSON em silêncio (`undefined`). O exportador
   junta os efeitos; o botão "Importar ficha (JSON do site)" ainda limpa
   `folder`/`_id` e efeitos não-objeto (JSONs antigos importam).
+- **Perícias de raça + Versátil ficam no passo Raça** (Ray, noite): bloco
+  `racaPericias` (`prepareRacaPericias`) com as checkboxes `per_raca-*`, o
+  checkbox Versátil e um select `versatil_poder_id` com os gerais elegíveis
+  (lista vem de `preparePoderesContext` no próprio passo Raça). O poder vai
+  para `state.poderes` (`_setVersatilPoder`) e gasta o slot extra. O passo
+  Perícias só mostra o resumo. `_savePericiasPicks` e o caminho do formData
+  só sobrescrevem os grupos presentes na tela (senão o passo Perícias apagava
+  as de raça).
+- **Centelha Mágica** (e todo slug de `magias_por_poder.json`): sem
+  sub-escolha genérica — a magia é escolhida no passo Magias, que agora entra
+  também quando a magia vem de poder concedido (`slugsDePoderesComMagia` em
+  `_passos`).
+- **Site**: `Roll` não existia no shim (`ReferenceError` no dinheiro inicial)
+  → `RollShim` (NdM, kh/kl, aritmética). `copiar-site.mjs` copia os ícones
+  referenciados pelo despejo (Data/ e Code/resources/app/public) — eram os
+  404 no console.

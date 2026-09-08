@@ -461,6 +461,25 @@ async function fromUuidShim(uuid: string): Promise<DocShim | null> {
 }
 
 /** Instala os globais e devolve o que o site precisa para fechar o ciclo. */
+/** `new Roll("4d6").roll()` do Foundry: só dados NdM (kh/kl opcional) e aritmética. */
+class RollShim {
+  total = 0;
+  constructor(readonly formula: string) {}
+  async roll(): Promise<this> {
+    return this.evaluate();
+  }
+  async evaluate(): Promise<this> {
+    const expr = String(this.formula).replace(/(\d*)d(\d+)(?:k([hl])?(\d+))?/gi, (_m, n: string, faces: string, modo: string, k: string) => {
+      const dados = Array.from({ length: Number(n || 1) }, () => 1 + Math.floor(Math.random() * Number(faces)));
+      dados.sort((a, b) => (modo === "l" ? a - b : b - a));
+      return String(dados.slice(0, k ? Number(k) : dados.length).reduce((s, d) => s + d, 0));
+    });
+    if (!/^[\d\s+\-*/().]+$/.test(expr)) throw new Error(`fórmula inválida: ${this.formula}`);
+    this.total = Number(new Function(`return (${expr})`)());
+    return this;
+  }
+}
+
 export function instalarShim(o: ShimOpcoes): void {
   opcoes = o;
   packs = new Lista(...o.dados.packs.map((p) => new PackShim(p)));
@@ -468,6 +487,7 @@ export function instalarShim(o: ShimOpcoes): void {
 
   const g = globalThis as unknown as Dict;
   g["Hooks"] = Hooks;
+  g["Roll"] = RollShim;
   g["game"] = {
     ready: true,
     user,

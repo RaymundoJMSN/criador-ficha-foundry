@@ -202,6 +202,32 @@
           {{#each this.erros}}<div class="t20w-hint" style="color:#f90;">{{this}}</div>{{/each}}
         </div>
         {{/each}}
+        {{#if racaPericias}}
+        <div class="t20w-card" style="margin-top:8px;">
+          {{#if racaPericias.racaBonus}}<strong style="font-size:0.85em;">Perícias da raça — escolha {{racaPericias.racaBonus}} (restam {{racaPericias.racaRestantes}}, qualquer):</strong>{{/if}}
+          {{#if racaPericias.versatilPossivel}}
+          <label class="t20w-row" style="font-size:0.85em;display:flex;gap:6px;align-items:center;margin:4px 0;"><input type="checkbox" name="versatil_poder" value="1" {{#if racaPericias.versatilPoder}}checked{{/if}} /> Versátil: um poder geral no lugar de uma das perícias</label>
+          {{#if racaPericias.versatilPoder}}
+          <div class="form-group" style="margin:4px 0 8px;">
+            <label style="font-size:0.85em;">Poder geral (Versátil)</label>
+            <select name="versatil_poder_id" style="width:100%;padding:6px;">
+              <option value="">— escolha um poder —</option>
+              {{#each racaPericias.poderesGerais}}<option value="{{this.id}}" {{#if this.selected}}selected{{/if}} {{#unless this.eligible}}disabled{{/unless}}>{{this.nome}}{{#unless this.eligible}} — requer {{this.requer}}{{/unless}}</option>{{/each}}
+            </select>
+          </div>
+          {{/if}}
+          {{/if}}
+          {{#if racaPericias.racaBonus}}
+          <div class="t20w-pcheck-group" data-group="raca" data-max="{{racaPericias.racaBonus}}" style="display:grid;grid-template-columns:repeat(2,1fr);gap:2px 12px;margin-top:4px;max-height:200px;overflow-y:auto;">
+            {{#each racaPericias.racaOpcoes}}
+            <label style="font-size:0.88em;display:flex;align-items:center;gap:6px;" class="{{#if this.disabled}}t20w-disabled{{/if}}">
+              <input type="checkbox" name="per_raca-{{this.id}}" value="{{this.id}}" {{#if this.checked}}checked{{/if}} {{#if this.disabled}}disabled{{/if}} />{{this.nome}}
+            </label>
+            {{/each}}
+          </div>
+          {{/if}}
+        </div>
+        {{/if}}
         {{#if selectedDetail.racaAberta}}
         <div style="margin-top:10px;">
           <strong style="font-size:0.85em;">Raças Abertas — aplique cada modificador da raça no atributo que quiser:</strong>
@@ -465,17 +491,7 @@
       {{/if}}
 
       {{#if racaBonus}}
-      <div style="margin-bottom:10px;">
-        <strong style="font-size:0.85em;">Perícias de raça — escolha {{racaBonus}} (restam {{racaRestantes}}, qualquer):</strong>
-        {{#if versatilPossivel}}<label class="t20w-row" style="font-size:0.85em;display:flex;gap:6px;align-items:center;margin:2px 0;"><input type="checkbox" name="versatil_poder" value="1" {{#if versatilPoder}}checked{{/if}} /> Versátil: trocar uma dessas perícias por um poder geral (escolhido no passo Poderes)</label>{{/if}}
-        <div class="t20w-pcheck-group" data-group="raca" data-max="{{racaBonus}}" style="display:grid;grid-template-columns:repeat(2,1fr);gap:2px 12px;margin-top:4px;max-height:160px;overflow-y:auto;">
-          {{#each racaOpcoes}}
-          <label style="font-size:0.88em;display:flex;align-items:center;gap:6px;" class="{{#if this.disabled}}t20w-disabled{{/if}}">
-            <input type="checkbox" name="per_raca-{{this.id}}" value="{{this.id}}" {{#if this.checked}}checked{{/if}} {{#if this.disabled}}disabled{{/if}} />{{this.nome}}
-          </label>
-          {{/each}}
-        </div>
-      </div>
+      <div style="margin-bottom:10px;font-size:0.85em;"><strong>Perícias de raça</strong> (marcadas no passo Raça): {{#if racaEscolhidas}}{{racaEscolhidas}}{{else}}<span style="color:#f90;">nenhuma — volte ao passo Raça</span>{{/if}}</div>
       {{/if}}
 
     </section>

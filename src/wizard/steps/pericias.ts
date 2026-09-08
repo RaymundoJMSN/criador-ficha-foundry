@@ -32,9 +32,8 @@ export interface PericiaContext {
   racaBonus: number;
   racaRestantes: number;
   racaOpcoes: PericiaOpt[];
-  /** Humano (Versátil): pode trocar uma das perícias por um poder geral. */
-  versatilPossivel: boolean;
-  versatilPoder: boolean;
+  /** Nomes das perícias marcadas no passo Raça (só leitura aqui). */
+  racaEscolhidas: string;
   errors: string[];
 }
 
@@ -96,8 +95,7 @@ function emptyContext(errors: string[]): PericiaContext {
     intBonus: 0,
     intRestantes: 0,
     racaRestantes: 0,
-    versatilPossivel: false,
-    versatilPoder: false,
+    racaEscolhidas: "",
     intOpcoes: [],
     racaBonus: 0,
     racaOpcoes: [],
@@ -114,6 +112,55 @@ function emptyContext(errors: string[]): PericiaContext {
 /** Humano: "Versátil — pode trocar uma dessas perícias por um poder geral" (LB p.21). */
 export function versatilPossivel(racaRef: string): boolean {
   return toNomeSlug(racaRef) === "humano";
+}
+
+const ordenar = (o: PericiaOpt[]): PericiaOpt[] => [...o].sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
+
+export interface PoderGeralOpt {
+  id: string;
+  nome: string;
+  eligible: boolean;
+  requer: string;
+  selected: boolean;
+}
+
+export interface RacaPericiasContext {
+  racaBonus: number;
+  racaRestantes: number;
+  racaOpcoes: PericiaOpt[];
+  versatilPossivel: boolean;
+  versatilPoder: boolean;
+  poderesGerais: PoderGeralOpt[];
+}
+
+/**
+ * Bloco do passo Raça: as perícias que a raça treina (Versátil, Kliren…) e, no
+ * humano, a troca de uma delas por um poder geral. `racaBonus` já vem com a troca
+ * descontada. ponytail: não desconta as perícias fixas da classe (normalmente a
+ * classe vem depois da raça; `computeTrained` de qualquer forma não duplica).
+ */
+export function prepareRacaPericias(state: WizardState, racaBonus: number, poderesGerais: PoderGeralOpt[]): RacaPericiasContext | null {
+  const versatil = versatilPossivel(state.racaNome || state.racaId);
+  if (racaBonus <= 0 && !versatil) return null;
+  const picks: Partial<PericiaPicks> = (state.escolhasPorItem["pericias"] as PericiaPicks | undefined) ?? {};
+  const racaPicks = picks.raca ?? [];
+  const outras = new Set([...(picks.escolhas ?? []), ...(picks.extras_int ?? []), ...(picks.obrigatorias ?? []).flat()]);
+  const racaOpcoes = ordenar(
+    Object.keys(PERICIA_NOMES).map((id) => ({
+      id,
+      nome: nome(id),
+      checked: racaPicks.includes(id),
+      disabled: outras.has(id) && !racaPicks.includes(id),
+    }))
+  );
+  return {
+    racaBonus,
+    racaRestantes: Math.max(0, racaBonus - racaPicks.length),
+    racaOpcoes: racaBonus > 0 ? racaOpcoes : [],
+    versatilPossivel: versatil,
+    versatilPoder: Boolean(state.escolhasPorItem["versatil_poder"]),
+    poderesGerais,
+  };
 }
 
 export function preparePericiaContext(
@@ -215,8 +262,7 @@ export function preparePericiaContext(
     racaBonus: plan.racaBonus,
     racaRestantes: Math.max(0, plan.racaBonus - racaPicks.length),
     racaOpcoes: plan.racaBonus > 0 ? todasOpcoes(racaPicks, committedByRaca) : [],
-    versatilPossivel: versatilPossivel(state.racaNome || state.racaId),
-    versatilPoder: Boolean(state.escolhasPorItem["versatil_poder"]),
+    racaEscolhidas: racaPicks.map(nome).join(", "),
     errors,
   };
 }

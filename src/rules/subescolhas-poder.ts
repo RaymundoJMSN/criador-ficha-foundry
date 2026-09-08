@@ -7,6 +7,8 @@
  * `sp_<slug>_<i>` (uma por cópia × quantidade: Foco em Arma ×2 = duas armas).
  */
 import dadosRaw from "../data/subescolhas_poder.json";
+import magiasPorPoderRaw from "../data/magias_por_poder.json";
+const MAGIAS_POR_PODER = magiasPorPoderRaw as Record<string, unknown>;
 import { toNomeSlug } from "../compendium/slug.js";
 import { resolverPoder } from "../compendium/resolver.js";
 import type { IndexedPoder, IndexedRace } from "../compendium/types.js";
@@ -63,8 +65,11 @@ const GENERICA: SubEscolhaPoder = { tipo: "texto", rotulo: "Sua escolha (veja o 
  * um campo de texto opcional — a resposta vai para o nome do item na ficha.
  */
 export function subEscolhaDoPoder(nomeOuSlug: string, descricao = ""): SubEscolhaPoder | null {
-  const v = DADOS[toNomeSlug(nomeOuSlug)];
+  const slug = toNomeSlug(nomeOuSlug);
+  const v = DADOS[slug];
   if (v && typeof v === "object") return v;
+  // Centelha Mágica, Orar…: a magia é escolhida no passo Magias (magias_por_poder).
+  if (slug in MAGIAS_POR_PODER) return null;
   return PEDE_ESCOLHA.test(descricao) ? GENERICA : null;
 }
 
