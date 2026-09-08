@@ -868,3 +868,18 @@ controle (`.t20w-item`, `.t20w-pcheck-group[data-max]`, `montarCombo`).
   `introRepetida` tira das opções a introdução que o pacote repete em cada uma
   e mostra no cabeçalho do passo (`explicacao`). Testes em
   `test/rules/montagem-bloqueio.test.ts`.
+
+## Correções de 2026-09-09 (tarde)
+
+- **Poder extra sumia**: no passo Poderes sem lista nenhuma (nível 1 não
+  escolhe poder de classe) o FormData vinha vazio e `patch.poderes` zerava os
+  poderes de complicação/Já Vi Coisas — daí "Escolha 2 poder(es)" na revisão.
+  Sem caixas na tela, o estado atual é mantido.
+- **Mesmo poder por duas fontes**: `_opcoesPoderGeral` tira da lista o que já
+  está em `state.poderes` (exceto o da própria fonte e os repetíveis).
+- **Duas regras de idade, excludentes**: `envelhecimentoClassico` (Livro
+  Básico, "Toques Finais") = Maduro 45 anos (For/Des/Con −1, Int/Sab/Car +1) e
+  Velho 70 anos (cumulativo: −3/+2), sem nível extra nem complicação.
+  `idadesVariadas` (HdA) continua como está e tem prioridade — marcar as duas
+  na tela de regras deixa só a de HdA valendo. `faixasDaMesa(config)` diz qual
+  lista o passo mostra; o writer aplica os modificadores das duas regras.

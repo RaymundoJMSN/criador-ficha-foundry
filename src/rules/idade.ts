@@ -148,6 +148,57 @@ export const FAIXAS: Faixa[] = [
 
 export const FAIXA_PADRAO = "jovem";
 
+/**
+ * Envelhecimento do Livro Básico ("Toques Finais"): só modificador de atributo,
+ * cumulativo (velho = maduro + velho). Sem nível extra nem complicação — é a
+ * alternativa às Idades Variadas de Heróis de Arton, nunca as duas juntas.
+ */
+export const FAIXAS_CLASSICAS: Faixa[] = [
+  {
+    id: "jovem",
+    nome: "Jovem",
+    idades: "até 44",
+    atributos: {},
+    niveisExtras: 0,
+    complicacoes: 0,
+    beneficiosOrigem: 2,
+    tamanhoMenor: false,
+    bloqueiaAumentoFisico: false,
+    habilidades: [],
+  },
+  {
+    id: "maduro_classico",
+    nome: "Maduro",
+    idades: "45+",
+    atributos: { for: -1, des: -1, con: -1, int: 1, sab: 1, car: 1 },
+    niveisExtras: 0,
+    complicacoes: 0,
+    beneficiosOrigem: 2,
+    tamanhoMenor: false,
+    bloqueiaAumentoFisico: false,
+    habilidades: [],
+  },
+  {
+    id: "velho_classico",
+    nome: "Velho",
+    idades: "70+",
+    // Cumulativo com Maduro (o livro soma as duas linhas).
+    atributos: { for: -3, des: -3, con: -3, int: 2, sab: 2, car: 2 },
+    niveisExtras: 0,
+    complicacoes: 0,
+    beneficiosOrigem: 2,
+    tamanhoMenor: false,
+    bloqueiaAumentoFisico: false,
+    habilidades: [],
+  },
+];
+
+/** Faixas em uso: as de Heróis de Arton ou as do Livro Básico. */
+export function faixasDaMesa(config: ConfigCriacao): Faixa[] {
+  if (config.idadesVariadas) return FAIXAS;
+  return config.envelhecimentoClassico ? FAIXAS_CLASSICAS : [];
+}
+
 export function getFaixa(id: string | undefined): Faixa {
   return FAIXAS.find((f) => f.id === id) ?? FAIXAS.find((f) => f.id === FAIXA_PADRAO)!;
 }
@@ -209,7 +260,10 @@ export interface EstadoIdade {
 
 /** Faixa em vigor: só existe se Idades Variadas estiver ligada. */
 export function faixaDoPersonagem(s: EstadoIdade): Faixa {
-  return s.config.idadesVariadas ? getFaixa(s.escolhasPorItem["idade_faixa"] as string | undefined) : getFaixa(FAIXA_PADRAO);
+  const faixas = faixasDaMesa(s.config);
+  if (faixas.length === 0) return getFaixa(FAIXA_PADRAO);
+  const id = s.escolhasPorItem["idade_faixa"] as string | undefined;
+  return faixas.find((f) => f.id === id) ?? faixas.find((f) => f.id === FAIXA_PADRAO) ?? faixas[0]!;
 }
 
 /** Nível de jogo = nível do grupo + níveis extras da faixa etária. */
@@ -293,7 +347,7 @@ export function complicacoesIdadeEscolhidas(s: EstadoIdade): string[] {
 
 /** O passo Idade & Complicações só existe se alguma das três regras estiver ligada. */
 export function temPassoIdade(config: ConfigCriacao): boolean {
-  return config.complicacoes || config.complicacaoIdade || config.idadesVariadas;
+  return config.complicacoes || config.complicacaoIdade || config.idadesVariadas || config.envelhecimentoClassico;
 }
 
 /** Pendências do passo (texto para o jogador). */

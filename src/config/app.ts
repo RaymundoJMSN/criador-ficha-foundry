@@ -64,6 +64,8 @@ async function ConfigApp_onSubmit(_event: Event, form: HTMLFormElement, formData
     complicacoes: o["complicacoes"] === true,
     complicacaoIdade: o["complicacaoIdade"] === true,
     idadesVariadas: o["idadesVariadas"] === true,
+    // As duas regras de idade são excludentes: Heróis de Arton manda.
+    envelhecimentoClassico: o["envelhecimentoClassico"] === true && o["idadesVariadas"] !== true,
     racasAbertas: o["racasAbertas"] === true,
     devocoesAbertas: o["devocoesAbertas"] === true,
     distincoes: o["distincoes"] === true,

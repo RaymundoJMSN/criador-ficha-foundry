@@ -248,10 +248,14 @@ export function defineWizardApp(): void {
 
     /** Poderes gerais para um select de poder extra (Versátil, complicação…), com a elegibilidade real. */
     _opcoesPoderGeral(fonte: string): PoderGeralOpt[] {
-      const atual = poderesExtrasEscolhidos(this._state)[fonte] ?? "";
+      const escolhidos = poderesExtrasEscolhidos(this._state);
+      const atual = escolhidos[fonte] ?? "";
+      // Poder já pego (por outra fonte extra ou no passo Poderes) sai da lista:
+      // dava para escolher o mesmo poder duas vezes e levar dois itens iguais.
+      const jaTem = new Set(this._state.poderes.filter((id) => id !== atual));
       try {
         return this._contextoPoderes()
-          .poderes.filter((p) => p.origem === "geral" && p.tipo === "geral")
+          .poderes.filter((p) => p.origem === "geral" && p.tipo === "geral" && (!jaTem.has(p.id) || p.repetivel))
           .map((p) => ({ id: p.id, nome: p.name, eligible: p.eligible || p.id === atual, requer: p.unmet.join(", "), selected: p.id === atual }))
           .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
       } catch (e) {
@@ -513,7 +517,11 @@ export function defineWizardApp(): void {
         const caixas = Array.from(raiz?.querySelectorAll('input[name^="poder-"]') ?? []) as HTMLInputElement[];
         const marcados = caixas.filter((c) => c.type === "hidden" || c.checked).map((c) => c.value);
         const lista = caixas.map((c) => c.value);
-        patch["poderes"] = caixas.length ? this._mesclarMarcados("poderes", marcados, (id) => lista.includes(id)) : poderes;
+        // Sem caixa nenhuma na tela (nível 1 não escolhe poder de classe), o
+        // FormData vem vazio e apagava os extras de complicação/Já Vi Coisas.
+        patch["poderes"] = caixas.length
+          ? this._mesclarMarcados("poderes", marcados, (id) => lista.includes(id))
+          : [...this._state.poderes];
       }
       if (formData.has("passo_magias")) patch["magias"] = magias;
 

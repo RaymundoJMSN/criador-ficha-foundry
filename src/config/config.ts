@@ -34,6 +34,8 @@ export interface ConfigCriacao {
   complicacaoIdade: boolean;
   /** Idades Variadas: faixa etária com modificadores, níveis extras e complicações (HA p.288). */
   idadesVariadas: boolean;
+  /** Envelhecimento do Livro Básico (Maduro/Velho só com modificador de atributo). */
+  envelhecimentoClassico: boolean;
   /** Raças Abertas: modificadores raciais em qualquer atributo (HA p.281). */
   racasAbertas: boolean;
   /** Devoções Abertas: qualquer deus, sem restrição de raça/classe (HA p.281). */
@@ -54,6 +56,7 @@ export const CONFIG_PADRAO: ConfigCriacao = {
   complicacoes: false,
   complicacaoIdade: false,
   idadesVariadas: false,
+  envelhecimentoClassico: false,
   racasAbertas: false,
   devocoesAbertas: false,
   distincoes: false,
@@ -101,6 +104,7 @@ export function resumoConfig(c: ConfigCriacao, nomeMetodo: (id: string) => strin
   if (c.complicacoes) partes.push("complicações");
   if (c.complicacaoIdade) partes.push("complicação de idade por poder");
   if (c.idadesVariadas) partes.push("idades variadas");
+  if (c.envelhecimentoClassico) partes.push("envelhecimento (livro básico)");
   if (c.racasAbertas) partes.push("raças abertas");
   if (c.devocoesAbertas) partes.push("devoções abertas");
   if (c.distincoes) partes.push("distinções");

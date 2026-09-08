@@ -2,7 +2,8 @@ import type { WizardState } from "../state.js";
 import type { IndexedPoder } from "../../compendium/types.js";
 import { toNomeSlug } from "../../compendium/slug.js";
 import {
-  FAIXAS,
+  faixasDaMesa,
+  type Faixa,
   COMPLICACOES_IDADE,
   faixaDoPersonagem,
   complicacoesIdadeExigidas,
@@ -30,7 +31,7 @@ export interface IdadeContext {
   errors: string[];
 }
 
-function resumoFaixa(f: (typeof FAIXAS)[number]): string {
+function resumoFaixa(f: Faixa): string {
   const partes: string[] = [];
   const mods = Object.entries(f.atributos).map(([a, v]) => `${ATTR_LABEL[a]} ${v > 0 ? "+" : ""}${v}`);
   if (mods.length) partes.push(mods.join(", "));
@@ -71,8 +72,8 @@ export function prepareIdadeContext(
 
   return {
     stepTitle: "Idade & Complicações",
-    mostraFaixas: config.idadesVariadas,
-    faixas: FAIXAS.map((f) => ({ id: f.id, nome: f.nome, idades: f.idades, resumo: resumoFaixa(f), selected: f.id === faixa.id })),
+    mostraFaixas: faixasDaMesa(config).length > 0,
+    faixas: faixasDaMesa(config).map((f) => ({ id: f.id, nome: f.nome, idades: f.idades, resumo: resumoFaixa(f), selected: f.id === faixa.id })),
     faixaResumo: resumoFaixa(faixa),
     mostraJaViCoisas: podeJaViCoisas(state),
     jaViCoisas: jaViCoisas(state),

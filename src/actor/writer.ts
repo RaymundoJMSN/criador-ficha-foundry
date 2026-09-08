@@ -411,7 +411,8 @@ export class ActorWriter {
       // ("Pontos ignoram bônus de Atributo"), então o modificador permanente da
       // faixa etária vai na coluna racial junto com o da raça — um ancião com
       // Con −2 tem menos PV, como manda o livro.
-      if (state.config.idadesVariadas) {
+      // Vale para as duas regras de idade (HdA e o envelhecimento do Livro Básico).
+      if (state.config.idadesVariadas || state.config.envelhecimentoClassico) {
         for (const [k, v] of Object.entries(faixaDoPersonagem(state).atributos)) atributos[k] = (atributos[k] ?? 0) + v;
       }
       for (const [k, v] of Object.entries(modificadores)) atributos[k] = (atributos[k] ?? 0) + (v ?? 0);
@@ -861,7 +862,7 @@ export class ActorWriter {
       });
     }
     const faixa = faixaDoPersonagem(state);
-    if (state.config.idadesVariadas && faixa.id !== FAIXA_PADRAO) {
+    if ((state.config.idadesVariadas || state.config.envelhecimentoClassico) && faixa.id !== FAIXA_PADRAO) {
       // Atributos da faixa já foram para o item de raça (ver acima); aqui só o resto.
       const efeitos = faixa.habilidades.flatMap((h) => h.efeitos);
       const linhas = [
