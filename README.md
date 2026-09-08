@@ -42,6 +42,15 @@ livros — nada é chutado.
   Variadas, Raças Abertas, Devoções Abertas, Distinções.
 - Ficha nasce com retrato da raça, Active Effects dos itens e um aviso no chat.
 
+## Site
+
+O mesmo criador roda no navegador em `t20.raynathus.com.br/criar/`: no fim ele
+entrega um JSON, e o botão **Importar ficha (JSON do site)** na aba Atores do
+Foundry cria o personagem. É o mesmo código do módulo sobre um shim do Foundry
+(`site/`), então tudo que muda aqui muda lá. `npm run export:compendio` gera o
+despejo dos compêndios (fora do git), `npm run build:site` monta e
+`npm run deploy:site` publica.
+
 ## Instalação
 
 Foundry VTT → Módulos → Instalar módulo → colar a URL do manifesto:

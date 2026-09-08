@@ -383,6 +383,38 @@ A correção está em `scripts/port-t20db.mjs`, citada — o T20-DB não foi alt
 
 ---
 
+## Site (t20.raynathus.com.br/criar) — o MESMO módulo no navegador
+
+O site do t20-ficha-online (`X:\FoundryVTT\Data\modules\t20-ficha-online`,
+Express + SQLite em 127.0.0.1:8731, Caddy em `t20.raynathus.com.br`) ganha o
+criador em `/criar/`. Não há segunda implementação: `site/main.ts` instala um
+**shim do Foundry** (`site/shim.ts`) e importa `src/module.ts` inteiro.
+
+- Shim = só o que o módulo usa: `game.packs` (despejo `site/data/compendio.json`,
+  gerado por `npm run export:compendio` dos packs em LevelDB; 4.220 itens, 6,6 MB,
+  gitignorado — texto Jambo), `Actor.create` em memória (`ActorShim` reproduz o
+  hook de raça: atributos `.racial` + `grants`), `game.settings`/flags do usuário
+  em localStorage, `ApplicationV2` + `HandlebarsApplicationMixin` (Handlebars no
+  navegador, templates via fetch, `scrollable` preservado, clique em
+  `[data-action]` → `_onClickAction`), helpers `eq/gt/lt/and/or/not/localize`,
+  `DialogV2.confirm` (window.confirm), `ui.notifications` (toast), `fromUuid`
+  (modal com a descrição do item — é o que o 📖 abre no site), `ChatMessage` (nada).
+- Fim do fluxo: o writer chama `actor.sheet.render(true)` → o site abre "Ficha
+  pronta" com o JSON para baixar. No Foundry, botão **Importar ficha (JSON do
+  site)** na aba Atores (`launcher.ts`) faz `Actor.create(json)`.
+- Build: `npm run build:site` (Vite com `vite.config.site.ts`, base `/criar/`,
+  saída `site/dist` + `scripts/copiar-site.mjs` copia templates/styles/lang para
+  `site/dist/modules/t20-ficha-wizard/` e o compêndio para `site/dist/data/`).
+  `npm run deploy:site` copia tudo para `server/public/criar` do ficha-online —
+  o Express serve `public/` estático, sem reiniciar o serviço. Preview local:
+  `.claude/launch.json` → `criador-site` (vite preview na 4174).
+- Regra: **nunca** copiar lógica para o site. Se algo do Foundry faltar ao rodar
+  lá, acrescenta-se ao shim. `tsc` não inclui `site/` (o Vite compila).
+- Pendente do site: salvar personagens no servidor (hoje só o rascunho em
+  localStorage), login por nome, DNS/Caddy `ficha.raynathus.com.br` (hoje é
+  `t20.raynathus.com.br`; o Caddy manda `/modules/*` da raiz para o Foundry —
+  `/criar/modules/...` não colide), deuses menores na ficha do deus.
+
 ## Como lançar
 
 `git tag v0.2.1 && git push origin v0.2.1` → `.github/workflows/release.yml`

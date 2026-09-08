@@ -142,6 +142,13 @@ Multiclasse, UI nova (CSS próprio, progresso, cartões, Revisão completa),
 raças só do compêndio, deuses menores, distinções, proficiências das classes
 de Heróis de Arton pelo PDF, retrato da raça, chat ao criar. Ver `CLAUDE.md`.
 
+## Site — fase 1 (2026-09-07)
+
+O mesmo módulo roda em `t20.raynathus.com.br/criar/` sobre um shim do Foundry
+(`site/shim.ts`); no fim baixa o JSON e o módulo importa. Fase 2: salvar
+personagens no servidor (SQLite do ficha-online), login por nome, domínio
+`ficha.raynathus.com.br`, lista "meus personagens", reabrir e editar.
+
 ## Noite de 2026-09-07 (pedidos do Ray)
 
 Cabeçalho sem contador, rolagem preservada, botão 📖 para abrir o item do

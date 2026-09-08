@@ -25,6 +25,37 @@ export function registerLauncher(): void {
     footer.style.cssText = "padding: 8px 4px 4px;";
     footer.appendChild(btn);
 
+    // Ficha feita no site (t20.raynathus.com.br/criar): o JSON baixado vira ator.
+    const imp = document.createElement("button");
+    imp.type = "button";
+    imp.className = "t20w-import-ficha";
+    imp.style.cssText = "width: 100%; margin-top: 4px; font-size: 0.85em;";
+    imp.innerHTML = `<i class="fas fa-file-import"></i> Importar ficha (JSON do site)`;
+    imp.addEventListener("click", () => {
+      if (!game.user?.can("ACTOR_CREATE")) {
+        ui.notifications?.warn("Você não tem permissão para criar atores neste mundo.");
+        return;
+      }
+      const input = document.createElement("input");
+      input.type = "file";
+      input.accept = "application/json,.json";
+      input.addEventListener("change", async () => {
+        const arquivo = input.files?.[0];
+        if (!arquivo) return;
+        try {
+          const dados = JSON.parse(await arquivo.text()) as { name?: string; type?: string; items?: unknown[] };
+          if (dados.type !== "character" || !Array.isArray(dados.items)) throw new Error("não é uma ficha de personagem");
+          const actor = (await Actor.create(dados as never)) as { name: string; sheet?: { render(f: boolean): void } } | undefined;
+          actor?.sheet?.render(true);
+          ui.notifications?.info(`Ficha importada: ${actor?.name ?? dados.name}`);
+        } catch (err) {
+          ui.notifications?.error(`Não importou: ${(err as Error).message}`);
+        }
+      });
+      input.click();
+    });
+    footer.appendChild(imp);
+
     // Só o mestre configura as regras da mesa.
     if (game.user?.isGM) {
       const cfg = document.createElement("button");

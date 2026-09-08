@@ -6,3 +6,5 @@ dist/
 nul
 scripts/.cache-pdf/
 src/data/textos.json
+site/data/
+site/dist/

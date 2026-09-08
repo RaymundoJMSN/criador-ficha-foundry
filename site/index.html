@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Criar Personagem — Tormenta20</title>
+    <link rel="stylesheet" href="modules/t20-ficha-wizard/styles/wizard.css" />
+  </head>
+  <body>
+    <header class="t20w-site-topo">
+      <h1>Criar Personagem</h1>
+      <span id="t20w-status"></span>
+      <button id="t20w-abrir" type="button" disabled>Abrir o criador</button>
+    </header>
+    <main id="t20w-site-app"></main>
+    <div id="t20w-toasts"></div>
+
+    <dialog id="t20w-pronto" class="t20w-dialogo">
+      <h2>Ficha pronta</h2>
+      <p><strong id="t20w-pronto-nome"></strong> <span id="t20w-pronto-resumo" class="t20w-hint"></span></p>
+      <p>Baixe o arquivo e, no Foundry, use o botão <strong>Importar ficha</strong> na aba Atores (ou o menu do ator → Importar dados).</p>
+      <p><a id="t20w-baixar" class="t20w-btn" href="#">⬇ Baixar JSON</a> <button id="t20w-fechar-pronto" type="button" class="t20w-btn-sm">Fechar</button></p>
+    </dialog>
+    <dialog id="t20w-item" class="t20w-dialogo">
+      <h2 id="t20w-item-titulo"></h2>
+      <div id="t20w-item-corpo" class="t20w-item-corpo"></div>
+      <p><button id="t20w-fechar-item" type="button" class="t20w-btn-sm">Fechar</button></p>
+    </dialog>
+    <script type="module" src="./main.ts"></script>
+  </body>
+</html>

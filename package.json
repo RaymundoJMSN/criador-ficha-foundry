@@ -12,10 +12,14 @@
     "textos": "node scripts/gerar-textos.mjs",
     "conferir": "node scripts/conferir-livros.mjs",
     "port:pdf": "node scripts/port-pdf-classes.mjs --conferir",
-    "port:deuses": "node scripts/port-pdf-deuses-menores.mjs"
+    "port:deuses": "node scripts/port-pdf-deuses-menores.mjs",
+    "export:compendio": "node scripts/exportar-compendio.mjs",
+    "build:site": "vite build --config vite.config.site.ts && node scripts/copiar-site.mjs",
+    "deploy:site": "vite build --config vite.config.site.ts && node scripts/copiar-site.mjs --deploy"
   },
   "devDependencies": {
     "@league-of-foundry-developers/foundry-vtt-types": "github:League-of-Foundry-Developers/foundry-vtt-types#b3a6b69cedb1d67e19b5b537baa46505900873f7",
+    "handlebars": "^4.7.9",
     "prettier": "^3.3.0",
     "typescript": "^5.5.0",
     "vite": "^5.4.0",

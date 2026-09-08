@@ -1,0 +1,106 @@
+/* Página do site em volta do wizard (o wizard usa styles/wizard.css do módulo). */
+html,
+body {
+  margin: 0;
+  height: 100%;
+  background: #131213;
+  color: #e6e1d8;
+  font-family: "Segoe UI", system-ui, sans-serif;
+}
+.t20w-site-topo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.t20w-site-topo h1 {
+  font-size: 1.1em;
+  margin: 0;
+  flex: 1;
+}
+#t20w-site-app {
+  display: flex;
+  justify-content: center;
+  padding: 12px;
+}
+.application.t20w-site-app {
+  width: min(900px, 100%);
+  height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  overflow: hidden;
+}
+.application.t20w-site-app .window-header {
+  display: flex;
+  align-items: center;
+  padding: 6px 12px;
+  background: #1c1a1b;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+.application.t20w-site-app .window-title {
+  flex: 1;
+  margin: 0;
+  font-size: 1em;
+}
+.application.t20w-site-app .window-content {
+  flex: 1;
+  min-height: 0;
+  padding: 0;
+  background: radial-gradient(circle at 20% 0%, rgba(255, 153, 0, 0.06), transparent 45%), linear-gradient(180deg, #1c1a1b 0%, #131213 100%);
+}
+.header-control {
+  background: transparent;
+  border: 0;
+  color: inherit;
+  cursor: pointer;
+  font-size: 1em;
+}
+#t20w-toasts {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  z-index: 100;
+}
+.t20w-toast {
+  padding: 8px 12px;
+  border-radius: 4px;
+  background: #2a2729;
+  border-left: 3px solid #6fcf7a;
+}
+.t20w-toast-warn {
+  border-left-color: #f0a030;
+}
+.t20w-toast-error {
+  border-left-color: #f26a5a;
+}
+.t20w-dialogo {
+  background: #1c1a1b;
+  color: inherit;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 6px;
+  max-width: 640px;
+  padding: 16px 20px;
+}
+.t20w-dialogo::backdrop {
+  background: rgba(0, 0, 0, 0.6);
+}
+.t20w-item-corpo {
+  max-height: 60vh;
+  overflow-y: auto;
+  line-height: 1.45;
+}
+.t20w-btn {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 4px;
+  background: #f0a030;
+  color: #1c1a1b;
+  font-weight: 600;
+  text-decoration: none;
+}
