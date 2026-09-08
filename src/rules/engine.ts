@@ -25,7 +25,8 @@ import { getClasse, cadeiaSubEscolhas } from "./classe.js";
 import { getRaceSkillBonus, pendenciasDeEscolhasRaciais } from "./raca.js";
 import { pendenciasDaMontagem } from "./montagem.js";
 import { buildPericiaPlan, computeTrained, type PericiaPicks } from "./pericias.js";
-import { oficioResolvido, passoDoOficio } from "./oficio.js";
+import { oficiosResolvidos, passoDoOficio } from "./oficio.js";
+import { quantosOficios } from "./pericias-fontes.js";
 import { getTrainedPericaSlugs } from "../actor/mapper.js";
 import type { WizardState } from "../wizard/state.js";
 import { fontesDePoderExtra, poderesExtrasEscolhidos } from "./idade.js";
@@ -269,8 +270,13 @@ export function pendenciasComPasso(state: EngineState): Pendencia[] {
   faltando.push(...pendenciasDeIdade(state));
   // ponytail: EngineState tem os campos que o mapper lê (raça, classe, picks, origem, config).
   em(passoDoOficio(state));
-  if (getTrainedPericaSlugs(state as unknown as WizardState).includes("oficio") && !oficioResolvido(state.escolhasPorItem)) {
-    faltando.push("Ofício: diga qual (Alfaiate, Armeiro… ou um nome próprio).");
+  const oficios = quantosOficios(state as unknown as WizardState);
+  if (oficios > 0 && !oficiosResolvidos(state.escolhasPorItem, oficios)) {
+    faltando.push(
+      oficios === 1
+        ? "Ofício: diga qual (Alfaiate, Armeiro… ou um nome próprio)."
+        : `Ofício: diga quais são os ${oficios} (sem repetir).`
+    );
   }
   for (const f of fontesDePoderExtra(state)) {
     em(f.passo === "raca" ? WizardStep.Raca : WizardStep.Idade);

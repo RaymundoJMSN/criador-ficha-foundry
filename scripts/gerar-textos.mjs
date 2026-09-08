@@ -38,6 +38,8 @@ function primeirasFrases(texto, limite = 420) {
 }
 
 const textos = { origens: {}, racas: {}, classes: {}, nomes: {}, divindades: {}, poderes: {} };
+/** Classe variante → classe base ("alquimista": "inventor"). */
+const variantes = {};
 
 /* --- Origens: do markdown, inteiras (descrição + Benefício + Itens) -------- */
 
@@ -289,12 +291,28 @@ if (livrosDisponiveis()) {
   for (const [id, c] of porId(classesDosLivros())) {
     const d = c.descricao;
     if (d && !/^---/.test(d.trim())) textos.classes[id] = (c.variante ? `Classe variante de ${c.variante}. ` : "") + primeirasFrases(d);
+    // "Poder de Inventor" no alquimista: a variante escolhe da lista da base.
+    if (c.variante) {
+      const base = c.variante
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[̀-ͯ]/g, "")
+        .replace(/[^a-z0-9]+/g, "_")
+        .replace(/^_+|_+$/g, "");
+      // Só entra se a base for outra classe de verdade.
+      if (base && base !== id) variantes[id] = base;
+    }
   }
 } else {
   console.log("  (sem tormenta-livros: raças e classes ficam sem descrição)");
 }
 
 writeFileSync(join(DATA, "textos.json"), JSON.stringify(textos, null, 2) + "\n", "utf-8");
+// Versionado (é regra, não texto da Jambo): variante → classe base.
+if (Object.keys(variantes).length > 0) {
+  writeFileSync(join(DATA, "classes_variantes.json"), JSON.stringify(variantes, null, 2) + "\n", "utf-8");
+  console.log(`classes_variantes.json: ${Object.keys(variantes).length} classes variantes`);
+}
 console.log(
   `textos.json: ${Object.keys(textos.origens).length} origens, ` +
     `${Object.keys(textos.racas).length} raças, ${Object.keys(textos.classes).length} classes, ${Object.keys(textos.poderes).length} poderes, ` +

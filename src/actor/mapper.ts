@@ -7,7 +7,7 @@ import { totaisRaciaisDoEstado } from "../rules/subescolhas.js";
 import { beneficiosDeOrigemPermitidos } from "../rules/idade.js";
 import { getClasse } from "../rules/classe.js";
 import { classesDoPersonagem } from "../rules/multiclasse.js";
-import { escolhaDeOficio, OFICIOS_PADRAO, OFICIO_OUTRO } from "../rules/oficio.js";
+import { escolhasDeOficio, nomeDoOficio } from "../rules/oficio.js";
 import { toNomeSlug } from "../compendium/slug.js";
 import { getRaceSkillBonus } from "../rules/raca.js";
 import { periciasDeOutrasFontes } from "../rules/pericias-fontes.js";
@@ -146,11 +146,11 @@ export function getTrainedPericaCodes(state: WizardState): Record<string, true> 
  * Slug do ofício escolhido ("oficio_escriba"): pré-requisito de poder cobra o
  * ofício certo ("Ofício (escriba)" em Escrever Pergaminho), não um qualquer.
  */
-function slugDoOficio(escolhas: Record<string, unknown>): string | null {
-  const e = escolhaDeOficio(escolhas);
-  const nome = e.tipo === OFICIO_OUTRO ? e.nome : (OFICIOS_PADRAO.find((o) => o.code === e.tipo)?.nome ?? "");
-  const slug = toNomeSlug(nome);
-  return slug ? `oficio_${slug}` : null;
+function slugsDosOficios(escolhas: Record<string, unknown>): string[] {
+  return escolhasDeOficio(escolhas)
+    .map((e) => toNomeSlug(nomeDoOficio(e)))
+    .filter(Boolean)
+    .map((slug) => `oficio_${slug}`);
 }
 
 export function getTrainedPericaSlugs(state: WizardState): string[] {
@@ -169,6 +169,5 @@ export function getTrainedPericaSlugs(state: WizardState): string[] {
   // Origem, raça e montagem vêm do mesmo módulo que o passo Perícias usa.
   const outrasFontes = periciasDeOutrasFontes(state).map((p) => p.slug);
   const todas = [...new Set([...trainedSlugs, ...outrasFontes])];
-  const oficio = todas.includes("oficio") ? slugDoOficio(state.escolhasPorItem) : null;
-  return oficio ? [...todas, oficio] : todas;
+  return todas.includes("oficio") ? [...todas, ...slugsDosOficios(state.escolhasPorItem)] : todas;
 }

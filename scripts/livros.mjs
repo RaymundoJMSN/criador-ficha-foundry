@@ -419,8 +419,16 @@ export function classesDosLivros() {
           return sec ? limpar(sec.corpo) : null;
         })(),
         niveis,
-        // HdA: "**Classe Variante:** Bucaneiro" abre a descrição.
-        variante: /\*\*Classe Variante:\*\*\s*([^\n]+)/.exec(arq.texto)?.[1]?.trim() ?? null,
+        // HdA diz de três jeitos: "**Classe Variante:** Bucaneiro", o título do
+        // arquivo ("Machado de Pedra - Variante de Bárbaro") e a tabela de
+        // níveis ("poder de bárbaro").
+        variante:
+          /\*\*Classe Variante:\*\*\s*([^\n|]+)/.exec(arq.texto)?.[1]?.trim() ??
+          /Variante de\s+([A-Za-zÀ-ÿ ]+)/.exec(arq.texto)?.[1]?.trim() ??
+          // "poder de bárbaro" na tabela de níveis: só nos arquivos de
+          // variante do HdA, senão toda classe vira variante de si mesma.
+          (/^var-/.test(arq.nome) ? (/\bpoder de ([a-zà-ÿ]+)\b/i.exec(arq.texto)?.[1]?.trim() ?? null) : null) ??
+          null,
         descricao: primeiroParagrafo(
           seccionar(arq.texto, 2).find((s) => /Descrição/i.test(s.titulo))?.corpo ?? arq.texto
         ),

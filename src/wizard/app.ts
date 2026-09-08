@@ -60,7 +60,8 @@ function pendenciasDosPoderes(state: WizardState): string[] {
 import { prepareOrigemContext } from "./steps/origem.js";
 import { prepareClasseContext } from "./steps/classe.js";
 import { preparePericiaContext, prepareRacaPericias, type PoderGeralOpt } from "./steps/pericias.js";
-import { OFICIOS_PADRAO, OFICIO_OUTRO, escolhaDeOficio, passoDoOficio } from "../rules/oficio.js";
+import { OFICIOS_PADRAO, OFICIO_OUTRO, escolhasDeOficio, nomeDoOficio, passoDoOficio } from "../rules/oficio.js";
+import { quantosOficios } from "../rules/pericias-fontes.js";
 type PericiaPicksParciais = { obrigatorias?: string[][]; escolhas?: string[]; extras_int?: string[]; raca?: string[] };
 import { getRaceSkillBonus } from "../rules/raca.js";
 import { totaisRaciaisDoEstado, distribuirAbertos, valoresFixosDaRaca } from "../rules/subescolhas.js";
@@ -184,7 +185,8 @@ export function defineWizardApp(): void {
       return passosAplicaveis(
         classesDoPersonagem(this._state).map((c) => c.classeSlug),
         slugsDePoderesComMagia(this._state),
-        this._state.config
+        this._state.config,
+        this._state.nivel
       );
     }
 
@@ -205,9 +207,17 @@ export function defineWizardApp(): void {
      * a pendência aparece no passo onde se resolve e segura o "Próximo".
      */
     _pendenciasDoPasso(step: WizardStep, stepCtx: unknown): string[] {
+      const passos = this._passos();
+      const atual = passos.indexOf(step);
+      const rotulo = (s: WizardStep): string => game.i18n?.localize(STEP_META[s].labelKey) ?? s;
+      // Do passo atual e dos anteriores: escolher um poder que aumenta a cota de
+      // magias, por exemplo, faz faltar magia num passo que já ficou para trás.
       const daRegra = pendenciasComPasso(this._state as unknown as EngineState)
-        .filter((p) => p.passo === step)
-        .map((p) => p.texto);
+        .filter((p) => {
+          const i = passos.indexOf(p.passo);
+          return i >= 0 && i <= atual;
+        })
+        .map((p) => (p.passo === step ? p.texto : `${rotulo(p.passo)}: ${p.texto}`));
       const ctx = (stepCtx ?? {}) as {
         subEscolhasPasso?: SubEscolhaView[];
         oficio?: unknown;
@@ -299,14 +309,29 @@ export function defineWizardApp(): void {
     /** Bloco "Ofício: qual?" no passo em que a perícia foi marcada. */
     _blocoOficio(step: WizardStep): unknown {
       const state = this._state;
-      if (!getTrainedPericaSlugs(state).includes("oficio")) return null;
-      if (passoDoOficio(state) !== step) return null;
-      const e = escolhaDeOficio(state.escolhasPorItem);
-      return {
-        tipos: [...OFICIOS_PADRAO.map((o) => ({ id: o.code, nome: o.nome, selected: e.tipo === o.code })), { id: OFICIO_OUTRO, nome: "Outro (nome próprio)…", selected: e.tipo === OFICIO_OUTRO }],
-        outro: e.tipo === OFICIO_OUTRO,
-        nome: e.nome,
-      };
+      const quantos = quantosOficios(state);
+      if (quantos === 0 || passoDoOficio(state) !== step) return null;
+      const escolhas = escolhasDeOficio(state.escolhasPorItem);
+      const usados = new Set(escolhas.slice(0, quantos).map((e) => nomeDoOficio(e).toLowerCase()).filter(Boolean));
+      const campos = Array.from({ length: quantos }, (_, i) => {
+        const e = escolhas[i] ?? { tipo: "", nome: "" };
+        const meu = nomeDoOficio(e).toLowerCase();
+        // Cada ofício só pode aparecer uma vez.
+        const tipos = OFICIOS_PADRAO.map((o) => ({
+          id: o.code,
+          nome: o.nome,
+          selected: e.tipo === o.code,
+          bloqueado: usados.has(o.nome.toLowerCase()) && o.nome.toLowerCase() !== meu,
+        }));
+        return {
+          indice: i,
+          numero: i + 1,
+          tipos: [...tipos, { id: OFICIO_OUTRO, nome: "Outro (nome próprio)…", selected: e.tipo === OFICIO_OUTRO, bloqueado: false }],
+          outro: e.tipo === OFICIO_OUTRO,
+          nome: e.nome,
+        };
+      });
+      return { campos, varios: quantos > 1 };
     }
 
     /** Sub-escolhas dos poderes que nascem neste passo (Ray: decidir onde o poder é pego). */
@@ -337,6 +362,33 @@ export function defineWizardApp(): void {
 
     /** A busca de equipamento re-renderiza a cada tecla; devolve o foco ao campo. */
     _focarBusca = false;
+
+    /** Contexto do último render, para recalcular o rodapé sem re-renderizar. */
+    _ultimoCtx: unknown = {};
+
+    /**
+     * Refaz só a lista de pendências e o botão "Próximo". Re-renderizar a tela
+     * inteira a cada tecla tirava o foco do campo.
+     */
+    _atualizarRodape(): void {
+      const root = this.element as HTMLElement | undefined;
+      if (!root) return;
+      const pendencias =
+        this._currentStep === WizardStep.Revisao ? [] : this._pendenciasDoPasso(this._currentStep, this._ultimoCtx);
+      const caixa = root.querySelector<HTMLElement>(".t20w-pendencias-rodape");
+      const proximo = root.querySelector<HTMLButtonElement>('[data-action="next"]');
+      if (proximo) {
+        proximo.disabled = pendencias.length > 0;
+        proximo.title = pendencias.length > 0 ? "Resolva o que falta neste passo" : "";
+      }
+      if (!caixa) {
+        if (pendencias.length > 0) void this.render();
+        return;
+      }
+      caixa.hidden = pendencias.length === 0;
+      const lista = caixa.querySelector("ul");
+      if (lista) lista.replaceChildren(...pendencias.map((t) => Object.assign(document.createElement("li"), { textContent: t })));
+    }
 
     goToStep(step: WizardStep): void {
       this._currentStep = step;
@@ -573,14 +625,22 @@ export function defineWizardApp(): void {
           break;
         }
         case WizardStep.Idade:
+        case WizardStep.Complicacao:
           stepCtx = {
             ...prepareIdadeContext(state, CompendiumIndex.getAll("poder") as IndexedPoder[], errors),
-            // Complicação e Já Vi Coisas dão um poder geral: escolhido aqui mesmo.
+            // Cada poder geral extra é escolhido no passo que o gera.
             poderesExtras: fontesDePoderExtra(state)
-              .filter((f) => f.passo === "idade")
+              .filter((f) => (step === WizardStep.Complicacao ? f.fonte === "complicacao" : f.fonte === "ja_vi_coisas"))
               .map((f) => ({ ...f, opcoes: this._opcoesPoderGeral(f.fonte) })),
           };
           break;
+        case WizardStep.Distincao: {
+          const poderes = CompendiumIndex.getAll("poder") as IndexedPoder[];
+          stepCtx = preparePoderesContext(state, poderes, errors, () => null, CompendiumIndex.getAll("magia") as IndexedMagia[], {
+            racas: CompendiumIndex.getAll("race") as IndexedRace[],
+          });
+          break;
+        }
         case WizardStep.Origem: {
           const poderes = CompendiumIndex.getAll("poder") as IndexedPoder[];
           const resolvePoderNome = (slug: string): string | null =>
@@ -689,6 +749,7 @@ export function defineWizardApp(): void {
       }
 
       const subEscolhasPasso = this._subEscolhasDoPasso(step);
+      this._ultimoCtx = { ...(stepCtx as object), subEscolhasPasso };
       const errosDoPasso = [...new Set((stepCtx as { errors?: string[] }).errors ?? errors)];
       const pendenciasPasso =
         step === WizardStep.Revisao
@@ -705,6 +766,8 @@ export function defineWizardApp(): void {
         passoNumero: stepIdx + 1,
         passoTotal: passos.length,
         // Boolean switches for wizard.hbs single-template approach
+        showDistincao: step === WizardStep.Distincao,
+        showComplicacao: step === WizardStep.Complicacao,
         showNivel: step === WizardStep.Nivel,
         showAtributos: step === WizardStep.Atributos,
         showRaca: step === WizardStep.Raca,
@@ -1257,18 +1320,35 @@ export function defineWizardApp(): void {
         });
       }
 
+      // Digitar o nome grava na hora: sem isso só o botão Sortear valia, e
+      // apagar o nome travava o "Próximo" até recarregar a página.
+      const campoNome = root.querySelector<HTMLInputElement>('input[name="nome"]');
+      campoNome?.addEventListener("input", () => {
+        this._state.apply({ nome: campoNome.value });
+        this._atualizarRodape();
+      });
+
       // ── Perícias live dedup — save picks + re-render on any change ──────
       const periciaInputs = root.querySelectorAll<HTMLInputElement>(
         'input[name^="per_esc-"], input[name^="per_int-"], input[name^="per_raca-"], input[name^="per_obrig-"], input[name="versatil_poder"]'
       );
-      root.querySelector<HTMLSelectElement>('select[name="oficio_tipo"]')?.addEventListener("change", (e) => {
-        const tipo = (e.target as HTMLSelectElement).value;
-        this._state.apply({ escolhasPorItem: { ...this._state.escolhasPorItem, oficio: { ...escolhaDeOficio(this._state.escolhasPorItem), tipo } } });
-        void this.render();
+      const gravarOficio = (i: number, mudanca: { tipo?: string; nome?: string }): void => {
+        const lista = escolhasDeOficio(this._state.escolhasPorItem);
+        while (lista.length <= i) lista.push({ tipo: "", nome: "" });
+        lista[i] = { ...lista[i]!, ...mudanca };
+        this._state.apply({ escolhasPorItem: { ...this._state.escolhasPorItem, oficio: lista } });
+      };
+      root.querySelectorAll<HTMLSelectElement>('select[name^="oficio_tipo-"]').forEach((sel) => {
+        sel.addEventListener("change", () => {
+          gravarOficio(Number(sel.name.split("-")[1] ?? 0), { tipo: sel.value });
+          void this.render();
+        });
       });
-      root.querySelector<HTMLInputElement>('input[name="oficio_nome"]')?.addEventListener("change", (e) => {
-        const nome = (e.target as HTMLInputElement).value.trim();
-        this._state.apply({ escolhasPorItem: { ...this._state.escolhasPorItem, oficio: { ...escolhaDeOficio(this._state.escolhasPorItem), nome } } });
+      root.querySelectorAll<HTMLInputElement>('input[name^="oficio_nome-"]').forEach((inp) => {
+        inp.addEventListener("change", () => {
+          gravarOficio(Number(inp.name.split("-")[1] ?? 0), { nome: inp.value.trim() });
+          this._atualizarRodape();
+        });
       });
       // Aumento de Atributo: uma linha, o atributo vem do select (o item real é o da variante).
       root.querySelectorAll<HTMLSelectElement>('select[name^="variante-"]').forEach((sel) => {

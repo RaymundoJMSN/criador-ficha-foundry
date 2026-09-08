@@ -905,3 +905,25 @@ controle (`.t20w-item`, `.t20w-pcheck-group[data-max]`, `montarCombo`).
   checkbox marcado ficava sem cor. Agora `.t20w-wizard, .t20w-config`.
 - `openConfigApp` virou alterna: clicar de novo fecha (no site cada clique
   empilhava uma janela).
+
+## Rodada de 2026-09-09 (noite) — pedidos da mesa
+
+- **Cada regra opcional ganhou o seu passo**: Distinção (5º nível+) e
+  Complicação saíram de dentro de Poderes/Idade. Passo Idade agora é só idade.
+  **Magias vem antes de Poderes** (pedido do Davi).
+- **Pendência de passo anterior aparece com o nome do passo** ("Magias: escolha
+  2 magias"): escolher um poder que muda a cota de magias faz faltar coisa num
+  passo que já ficou para trás.
+- **Nome**: digitar grava na hora (`input`) e o rodapé se atualiza sem
+  re-render (`_atualizarRodape`) — antes só o botão Sortear valia e apagar o
+  nome travava o "Próximo" até recarregar.
+- **Ofício múltiplo**: pode treinar Ofício uma vez por ofício diferente. A
+  escolha virou LISTA (`escolhasDeOficio`), `quantosOficios(state)` conta as
+  marcações, o passo mostra um select por ofício e o mesmo ofício não repete.
+  A ficha recebe uma perícia por ofício (fixas pelo código, próprias em ofi1,
+  ofi2…).
+- **Classe variante herda os poderes da base** (alquimista pega poder de
+  inventor): `src/data/classes_variantes.json` (gerado dos livros — declaração
+  "Classe Variante", título "Variante de X" ou "poder de X" na tabela) +
+  `classeBaseDaVariante`. Vale para a lista de poderes e para pré-requisito de
+  nível de classe.

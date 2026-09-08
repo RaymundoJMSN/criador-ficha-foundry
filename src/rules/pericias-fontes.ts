@@ -15,6 +15,21 @@ export interface PericiaDeFonte {
  * benefício de origem, habilidade racial e montagem da raça. Fonte única — o
  * passo Perícias mostra como treinada e o mapper grava na ficha.
  */
+/** Quantas vezes "Ofício" foi treinado: uma perícia por ofício diferente (LB p.121). */
+export function quantosOficios(state: WizardState): number {
+  const picks = (state.escolhasPorItem["pericias"] as
+    | { obrigatorias?: string[][]; escolhas?: string[]; extras_int?: string[]; raca?: string[] }
+    | undefined) ?? {};
+  const marcados = [
+    ...(picks.obrigatorias ?? []).flat(),
+    ...(picks.escolhas ?? []),
+    ...(picks.extras_int ?? []),
+    ...(picks.raca ?? []),
+  ].filter((p) => p === "oficio").length;
+  const deFora = periciasDeOutrasFontes(state).filter((p) => p.slug === "oficio").length;
+  return marcados + deFora;
+}
+
 export function periciasDeOutrasFontes(state: WizardState): PericiaDeFonte[] {
   const out: PericiaDeFonte[] = [];
   const vistas = new Set<string>();

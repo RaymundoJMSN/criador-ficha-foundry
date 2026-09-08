@@ -44,16 +44,47 @@ export interface EscolhaOficio {
   nome: string;
 }
 
-export function escolhaDeOficio(escolhas: Record<string, unknown>): EscolhaOficio {
-  const e = (escolhas["oficio"] as Partial<EscolhaOficio> | undefined) ?? {};
-  return { tipo: String(e.tipo ?? ""), nome: String(e.nome ?? "").trim() };
+const vazia = (): EscolhaOficio => ({ tipo: "", nome: "" });
+
+/**
+ * Ofício pode ser treinado várias vezes, uma por ofício diferente (LB p.121):
+ * a escolha é uma LISTA. Estado antigo (um objeto só) vira lista de um.
+ */
+export function escolhasDeOficio(escolhas: Record<string, unknown>): EscolhaOficio[] {
+  const bruto = escolhas["oficio"];
+  const lista = Array.isArray(bruto) ? bruto : bruto ? [bruto] : [];
+  return lista.map((e) => {
+    const o = (e ?? {}) as Partial<EscolhaOficio>;
+    return { tipo: String(o.tipo ?? ""), nome: String(o.nome ?? "").trim() };
+  });
 }
 
-/** Só vale se o tipo é conhecido e, sendo próprio, tem nome. */
-export function oficioResolvido(escolhas: Record<string, unknown>): boolean {
-  const e = escolhaDeOficio(escolhas);
+/** A escolha de índice `i` (ou uma vazia). */
+export function escolhaDeOficio(escolhas: Record<string, unknown>, i = 0): EscolhaOficio {
+  return escolhasDeOficio(escolhas)[i] ?? vazia();
+}
+
+function completa(e: EscolhaOficio): boolean {
   if (e.tipo === OFICIO_OUTRO) return e.nome.length > 0;
   return OFICIOS_PADRAO.some((o) => o.code === e.tipo);
+}
+
+/** Nome do ofício para comparar/gravar ("Armeiro", "Escriba"). */
+export function nomeDoOficio(e: EscolhaOficio): string {
+  return e.tipo === OFICIO_OUTRO ? e.nome : (OFICIOS_PADRAO.find((o) => o.code === e.tipo)?.nome ?? "");
+}
+
+/** Todas as `quantos` escolhas feitas, sem repetir ofício. */
+export function oficiosResolvidos(escolhas: Record<string, unknown>, quantos = 1): boolean {
+  const lista = escolhasDeOficio(escolhas).slice(0, quantos);
+  if (lista.length < quantos || !lista.every(completa)) return false;
+  const nomes = lista.map((e) => nomeDoOficio(e).toLowerCase());
+  return new Set(nomes).size === nomes.length;
+}
+
+/** Compatível com o uso antigo (um ofício só). */
+export function oficioResolvido(escolhas: Record<string, unknown>): boolean {
+  return oficiosResolvidos(escolhas, 1);
 }
 
 /**
@@ -61,11 +92,26 @@ export function oficioResolvido(escolhas: Record<string, unknown>): boolean {
  * (formato de `_onPericiaCustomCreate` do sistema: `ofi1`, atributo Int,
  * somente treinada, treinada).
  */
-export function periciaDoOficio(escolhas: Record<string, unknown>): { code: string } | { key: string; dados: Record<string, unknown> } | null {
-  const e = escolhaDeOficio(escolhas);
-  if (OFICIOS_PADRAO.some((o) => o.code === e.tipo)) return { code: e.tipo };
-  if (e.tipo === OFICIO_OUTRO && e.nome) {
-    return { key: "ofi1", dados: { label: `Ofício: ${e.nome}`, custom: true, atributo: "int", st: true, treinado: true } };
+export type PericiaDeOficio = { code: string } | { key: string; dados: Record<string, unknown> };
+
+/** Uma entrada de ficha por ofício: os fixos pelo código, os próprios em ofi1, ofi2… */
+export function periciasDosOficios(escolhas: Record<string, unknown>, quantos = 1): PericiaDeOficio[] {
+  const out: PericiaDeOficio[] = [];
+  let proprios = 0;
+  for (const e of escolhasDeOficio(escolhas).slice(0, quantos)) {
+    if (OFICIOS_PADRAO.some((o) => o.code === e.tipo)) {
+      out.push({ code: e.tipo });
+    } else if (e.tipo === OFICIO_OUTRO && e.nome) {
+      proprios += 1;
+      out.push({
+        key: `ofi${proprios}`,
+        dados: { label: `Ofício: ${e.nome}`, custom: true, atributo: "int", st: true, treinado: true },
+      });
+    }
   }
-  return null;
+  return out;
+}
+
+export function periciaDoOficio(escolhas: Record<string, unknown>): PericiaDeOficio | null {
+  return periciasDosOficios(escolhas, 1)[0] ?? null;
 }

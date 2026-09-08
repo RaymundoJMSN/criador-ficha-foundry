@@ -204,6 +204,9 @@ export function preparePericiaContext(
   // e travada em todas as listas, para o jogador não gastar escolha nela.
   const deFora = new Map(periciasDeOutrasFontes(state).map((p) => [p.slug, p.fonte]));
   const comFonte = (o: PericiaOpt): PericiaOpt => {
+    // Ofício conta uma vez por ofício diferente: marcar num grupo não trava nos
+    // outros, e ter Ofício pela origem não impede treinar outro aqui.
+    if (o.id === "oficio") return { ...o, disabled: false };
     const fonte = deFora.get(o.id);
     return fonte ? { ...o, checked: true, disabled: true, jaTreinada: true, fonte } : o;
   };

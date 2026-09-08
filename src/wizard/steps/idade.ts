@@ -71,7 +71,7 @@ export function prepareIdadeContext(
     : [];
 
   return {
-    stepTitle: "Idade & Complicações",
+    stepTitle: "Idade",
     mostraFaixas: faixasDaMesa(config).length > 0,
     faixas: faixasDaMesa(config).map((f) => ({ id: f.id, nome: f.nome, idades: f.idades, resumo: resumoFaixa(f), selected: f.id === faixa.id })),
     faixaResumo: resumoFaixa(faixa),

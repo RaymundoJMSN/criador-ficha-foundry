@@ -1,0 +1,16 @@
+{
+  "alquimista": "inventor",
+  "atleta": "lutador",
+  "burgues": "nobre",
+  "duelista": "bucaneiro",
+  "ermitao": "druida",
+  "inovador": "guerreiro",
+  "machado_de_pedra": "barbaro",
+  "magimarcialista": "bardo",
+  "necromante": "arcanista",
+  "santo": "paladino",
+  "seteiro": "cacador",
+  "usurpador": "clerigo",
+  "vassalo": "cavaleiro",
+  "ventanista": "ladino"
+}

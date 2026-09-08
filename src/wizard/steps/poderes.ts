@@ -1,5 +1,5 @@
 import { toNomeSlug, uuidDe } from "../../compendium/slug.js";
-import { getClasse, respostaSubEscolha } from "../../rules/classe.js";
+import { getClasse, respostaSubEscolha, classeBaseDaVariante } from "../../rules/classe.js";
 import { getRaca } from "../../rules/raca.js";
 import { getTrainedPericaSlugs } from "../../actor/mapper.js";
 import { getDivindade } from "../../rules/divindade.js";
@@ -412,7 +412,15 @@ export function preparePoderesContext(
   // pré-requisito {tipo:"poder"} pelo slug certo.
   const idsDaClasse = new Set<string>();
   const idParaSlug = new Map<string, string>();
-  const nomesClasses = todasClasses.map((c) => norm(c.classeNome)).filter(Boolean);
+  // "Poder de Inventor" no 2º nível do alquimista: a variante escolhe da lista
+  // da classe base além da sua (HdA cap. 2).
+  const nomesClasses = [
+    ...new Set(
+      todasClasses
+        .flatMap((c) => [norm(c.classeNome), classeBaseDaVariante(c.classeNome || c.classeId) ?? ""])
+        .filter(Boolean)
+    ),
+  ];
   for (const p of allPoderes) {
     // subtipo "Geral" = poder de classe de toda classe (Aumento de Atributo).
     const sub = norm(p.system.subtipo ?? "");
@@ -421,8 +429,10 @@ export function preparePoderesContext(
     }
   }
   for (const c of todasClasses) {
-    for (const slug of getClasse(c.classeNome || c.classeId)?.poderes_classe_ids ?? []) {
-      const achado = resolverPoder(slug, c.classeSlug, allPoderes, "classe");
+    const base = classeBaseDaVariante(c.classeNome || c.classeId);
+    const listas = [getClasse(c.classeNome || c.classeId), base ? getClasse(base) : null];
+    for (const slug of listas.flatMap((cl) => cl?.poderes_classe_ids ?? [])) {
+      const achado = resolverPoder(slug, c.classeSlug, allPoderes, "classe") ?? (base ? resolverPoder(slug, base, allPoderes, "classe") : null);
       if (!achado) continue;
       idsDaClasse.add(achado.item.id);
       idParaSlug.set(achado.item.id, slug);

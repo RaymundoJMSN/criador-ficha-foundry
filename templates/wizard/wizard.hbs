@@ -302,15 +302,6 @@
       </div>
       {{/if}}
 
-      {{#if mostraComplicacao}}
-      <h3 style="font-size:0.95em;margin:12px 0 4px;">Complicação do personagem <small style="opacity:0.7;font-weight:normal;">(outra regra: uma complicação qualquer em troca de um poder geral)</small></h3>
-      <select name="complicacao" class="t20w-busca-select-alvo" style="width:100%;">
-        <option value="">— nenhuma —</option>
-        {{#each complicacoes}}<option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.name}}{{#if this.classe}} ({{this.classe}}){{/if}}</option>{{/each}}
-      </select>
-      {{#each complicacoes}}{{#if this.selected}}<p class="t20w-hint" style="margin-top:6px;">{{this.descricao}}</p>{{/if}}{{/each}}
-      {{/if}}
-
       {{#each poderesExtras}}
       <div class="form-group" style="margin-top:10px;">
         <label style="font-size:0.9em;"><strong>{{this.rotulo}}</strong></label>
@@ -596,16 +587,6 @@
 
       {{#if poderesParaPick}}
       <div>
-        {{#if distincoes}}
-        <div class="t20w-card" style="margin:0 0 10px;">
-          <h3>Distinção <small style="text-transform:none;letter-spacing:0;opacity:0.7;">(HA cap. 2 — admissão é do mestre; a marca vem junto e os poderes contam como gerais)</small></h3>
-          <select name="distincao" style="width:100%;">
-            <option value="">— nenhuma —</option>
-            {{#each distincoes.opcoes}}<option value="{{this.nome}}" {{#if this.selected}}selected{{/if}}>{{this.nome}} ({{this.n}} poderes)</option>{{/each}}
-          </select>
-          {{#if distincoes.escolhida}}<p class="t20w-hint" style="margin-top:6px;">{{#if distincoes.escolhida.marca}}Marca da distinção: <strong>{{distincoes.escolhida.marca}}</strong> (automática). {{/if}}Os {{distincoes.escolhida.n}} poderes aparecem na lista com a etiqueta “distinção”.</p>{{/if}}
-        </div>
-        {{/if}}
         <h3 style="font-size:0.95em;margin:0 0 6px 0;opacity:0.8;">Escolha de Poderes</h3>
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap;">
           <span style="font-size:0.9em;">Escolha <strong>{{poderesParaPick}}</strong> — Selecionados: <strong>{{selectedCount}}</strong></span>
@@ -741,6 +722,48 @@
       {{else}}
       <p class="t20w-hint">{{classeNome}} não conjura magias. Clique em Próximo.</p>
       {{/if}}
+    </section>
+    {{/if}}
+
+    {{#if showDistincao}}
+    <section class="t20w-step">
+      <h2>{{stepTitle}}</h2>
+      <p class="t20w-hint">Regra opcional de Heróis de Arton (cap. 2): personagem de 5º nível ou mais pode começar com uma distinção, se o mestre admitir.</p>
+{{#if distincoes}}
+      <div class="t20w-card" style="margin:0 0 10px;">
+        <h3>Distinção <small style="text-transform:none;letter-spacing:0;opacity:0.7;">(HA cap. 2 — admissão é do mestre; a marca vem junto e os poderes contam como gerais)</small></h3>
+        <select name="distincao" style="width:100%;">
+          <option value="">— nenhuma —</option>
+          {{#each distincoes.opcoes}}<option value="{{this.nome}}" {{#if this.selected}}selected{{/if}}>{{this.nome}} ({{this.n}} poderes)</option>{{/each}}
+        </select>
+        {{#if distincoes.escolhida}}<p class="t20w-hint" style="margin-top:6px;">{{#if distincoes.escolhida.marca}}Marca da distinção: <strong>{{distincoes.escolhida.marca}}</strong> (automática). {{/if}}Os {{distincoes.escolhida.n}} poderes aparecem na lista com a etiqueta “distinção”.</p>{{/if}}
+      </div>
+      {{/if}}
+    </section>
+    {{/if}}
+
+    {{#if showComplicacao}}
+    <section class="t20w-step">
+      <h2>{{stepTitle}}</h2>
+      <p class="t20w-hint">Regra opcional de Heróis de Arton (p.282): uma complicação em troca de um poder geral.</p>
+      {{#if mostraComplicacao}}
+      <h3 style="font-size:0.95em;margin:12px 0 4px;">Complicação do personagem <small style="opacity:0.7;font-weight:normal;">(outra regra: uma complicação qualquer em troca de um poder geral)</small></h3>
+      <select name="complicacao" class="t20w-busca-select-alvo" style="width:100%;">
+        <option value="">— nenhuma —</option>
+        {{#each complicacoes}}<option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.name}}{{#if this.classe}} ({{this.classe}}){{/if}}</option>{{/each}}
+      </select>
+      {{#each complicacoes}}{{#if this.selected}}<p class="t20w-hint" style="margin-top:6px;">{{this.descricao}}</p>{{/if}}{{/each}}
+      {{/if}}
+
+      {{#each poderesExtras}}
+      <div class="form-group" style="margin-top:10px;">
+        <label style="font-size:0.9em;"><strong>{{this.rotulo}}</strong></label>
+        <select name="poder_extra-{{this.fonte}}" style="width:100%;padding:6px;">
+          <option value="">— escolha um poder —</option>
+          {{#each this.opcoes}}<option value="{{this.id}}" {{#if this.selected}}selected{{/if}} {{#unless this.eligible}}disabled{{/unless}}>{{this.nome}}{{#unless this.eligible}} — requer {{this.requer}}{{/unless}}</option>{{/each}}
+        </select>
+      </div>
+      {{/each}}
     </section>
     {{/if}}
 
@@ -911,12 +934,17 @@
     {{#if oficio}}
     <section class="t20w-card" style="margin:12px 0 0;">
       <h3>Ofício — qual?</h3>
-      <p class="t20w-hint" style="margin:0 0 6px 0;">Ofício são várias perícias: escolha uma das da ficha ou invente a sua (carpinteiro, pedreiro, ourives…).</p>
-      <select name="oficio_tipo" style="width:100%;padding:5px;">
-        <option value="">— escolha —</option>
-        {{#each oficio.tipos}}<option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.nome}}</option>{{/each}}
-      </select>
-      {{#if oficio.outro}}<input type="text" name="oficio_nome" value="{{oficio.nome}}" placeholder="Nome do ofício" maxlength="40" style="width:100%;padding:5px;margin-top:6px;" />{{/if}}
+      <p class="t20w-hint" style="margin:0 0 6px 0;">Ofício são várias perícias: escolha uma das da ficha ou invente a sua (carpinteiro, pedreiro, ourives…).{{#if oficio.varios}} Você treinou mais de um: cada um tem de ser diferente.{{/if}}</p>
+      {{#each oficio.campos}}
+      <div class="form-group" style="margin-top:6px;">
+        {{#if ../oficio.varios}}<label style="font-size:0.85em;">Ofício {{this.numero}}</label>{{/if}}
+        <select name="oficio_tipo-{{this.indice}}" style="width:100%;padding:5px;">
+          <option value="">— escolha —</option>
+          {{#each this.tipos}}<option value="{{this.id}}" {{#if this.selected}}selected{{/if}} {{#if this.bloqueado}}disabled{{/if}}>{{this.nome}}</option>{{/each}}
+        </select>
+        {{#if this.outro}}<input type="text" name="oficio_nome-{{this.indice}}" value="{{this.nome}}" placeholder="Nome do ofício" maxlength="40" style="width:100%;padding:5px;margin-top:6px;" />{{/if}}
+      </div>
+      {{/each}}
     </section>
     {{/if}}
     {{#if subEscolhasPasso.length}}
@@ -944,12 +972,10 @@
   <footer class="t20w-footer">
     {{#if showBack}}<button type="button" class="t20w-btn" data-action="back">← Voltar</button>{{else}}<span></span>{{/if}}
     <span class="t20w-espaco"></span>
-    {{#if pendenciasPasso.length}}
-    <div class="t20w-pendencias t20w-pendencias-rodape">
+    <div class="t20w-pendencias t20w-pendencias-rodape" {{#unless pendenciasPasso.length}}hidden{{/unless}}>
       <strong>Falta neste passo:</strong>
       <ul>{{#each pendenciasPasso}}<li>{{this}}</li>{{/each}}</ul>
     </div>
-    {{/if}}
     {{#if showNext}}<button type="button" class="t20w-btn primaria" data-action="next" {{#if nextBloqueado}}disabled title="Resolva o que falta neste passo"{{/if}}>Próximo →</button>{{/if}}
     {{#if showCreate}}<button type="button" class="t20w-btn primaria" data-action="create" {{#unless isComplete}}disabled title="Resolva as pendências acima"{{/unless}}>✦ Criar Personagem</button>{{/if}}
   </footer>

@@ -125,14 +125,28 @@ describe("Complicações e Já Vi Coisas → poderes gerais extras", () => {
   });
 });
 
-describe("passo Idade & Complicações só com alguma regra ligada", () => {
-  it("padrão não tem o passo; qualquer uma das três liga", () => {
+describe("cada regra opcional ligada ganha o seu passo", () => {
+  it("padrão não tem passo nenhum; cada regra liga o seu", () => {
     expect(temPassoIdade(CONFIG_PADRAO)).toBe(false);
-    expect(passosAplicaveis("guerreiro", [], CONFIG_PADRAO)).not.toContain(WizardStep.Idade);
-    expect(passosAplicaveis("guerreiro", [], cfg({ complicacoes: true }))).toContain(WizardStep.Idade);
-    expect(passosAplicaveis("guerreiro", [], cfg({ idadesVariadas: true }))).toContain(WizardStep.Idade);
-    const p = passosAplicaveis("guerreiro", [], cfg({ complicacaoIdade: true }));
+    const padrao = passosAplicaveis("guerreiro", [], CONFIG_PADRAO, 5);
+    expect(padrao).not.toContain(WizardStep.Idade);
+    expect(padrao).not.toContain(WizardStep.Complicacao);
+    expect(padrao).not.toContain(WizardStep.Distincao);
+    // Complicação agora é passo próprio, não mais junto da idade.
+    const comComplicacao = passosAplicaveis("guerreiro", [], cfg({ complicacoes: true }), 5);
+    expect(comComplicacao).toContain(WizardStep.Complicacao);
+    expect(comComplicacao).not.toContain(WizardStep.Idade);
+    expect(passosAplicaveis("guerreiro", [], cfg({ idadesVariadas: true }), 5)).toContain(WizardStep.Idade);
+    // Distinção exige 5º nível (HdA cap. 2).
+    expect(passosAplicaveis("guerreiro", [], cfg({ distincoes: true }), 4)).not.toContain(WizardStep.Distincao);
+    expect(passosAplicaveis("guerreiro", [], cfg({ distincoes: true }), 5)).toContain(WizardStep.Distincao);
+    const p = passosAplicaveis("guerreiro", [], cfg({ complicacaoIdade: true }), 5);
     expect(p.indexOf(WizardStep.Idade)).toBe(p.indexOf(WizardStep.Raca) + 1);
+  });
+
+  it("Magias vem antes de Poderes (pedido da mesa)", () => {
+    const p = passosAplicaveis("arcanista", [], CONFIG_PADRAO, 5);
+    expect(p.indexOf(WizardStep.Magias)).toBeLessThan(p.indexOf(WizardStep.Poderes));
   });
 });
 

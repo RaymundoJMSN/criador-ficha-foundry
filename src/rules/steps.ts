@@ -1,5 +1,6 @@
 import { isConjurador, magiasExtrasDosPoderes } from "./magias.js";
 import { temPassoIdade } from "./idade.js";
+import { NIVEL_MINIMO_DISTINCAO } from "./distincoes.js";
 import { CONFIG_PADRAO, type ConfigCriacao } from "../config/config.js";
 /** Wizard step identifiers — order matches STEP_ORDER array. */
 export enum WizardStep {
@@ -11,8 +12,10 @@ export enum WizardStep {
   Classe = "classe",
   Pericias = "pericias",
   Divindade = "divindade",
-  Poderes = "poderes",
   Magias = "magias",
+  Distincao = "distincao",
+  Complicacao = "complicacao",
+  Poderes = "poderes",
   Equipamento = "equipamento",
   Revisao = "revisao",
 }
@@ -27,8 +30,12 @@ export const STEP_ORDER: WizardStep[] = [
   WizardStep.Classe,
   WizardStep.Pericias,
   WizardStep.Divindade,
-  WizardStep.Poderes,
+  // Magias antes de Poderes (pedido da mesa): o poder pode exigir a magia, e a
+  // magia que vem de poder é escolhida no próprio poder.
   WizardStep.Magias,
+  WizardStep.Distincao,
+  WizardStep.Complicacao,
+  WizardStep.Poderes,
   WizardStep.Equipamento,
   WizardStep.Revisao,
 ];
@@ -70,6 +77,16 @@ export const STEP_META: Record<WizardStep, StepMeta> = {
     labelKey: "T20W.Wizard.Step.Poderes",
   },
   [WizardStep.Magias]: { conditional: true, required: false, labelKey: "T20W.Wizard.Step.Magias" },
+  [WizardStep.Distincao]: {
+    conditional: true,
+    required: false,
+    labelKey: "T20W.Wizard.Step.Distincao",
+  },
+  [WizardStep.Complicacao]: {
+    conditional: true,
+    required: false,
+    labelKey: "T20W.Wizard.Step.Complicacao",
+  },
   [WizardStep.Equipamento]: {
     conditional: false,
     required: true,
@@ -92,14 +109,17 @@ export const STEP_META: Record<WizardStep, StepMeta> = {
 export function passosAplicaveis(
   classeSlug: string | string[],
   poderSlugs: string[] = [],
-  config: ConfigCriacao = CONFIG_PADRAO
+  config: ConfigCriacao = CONFIG_PADRAO,
+  nivel = 1
 ): WizardStep[] {
   const slugs = Array.isArray(classeSlug) ? classeSlug : [classeSlug];
   const conjura = slugs.some(isConjurador) || magiasExtrasDosPoderes(poderSlugs) > 0;
   return STEP_ORDER.filter((s) => {
     if (s === WizardStep.Magias) return conjura;
-    // Idade & Complicações só existe se o mestre ligou alguma das regras (HA cap. 4).
+    // Cada regra opcional ligada ganha o seu passo (pedido da mesa).
     if (s === WizardStep.Idade) return temPassoIdade(config);
+    if (s === WizardStep.Distincao) return config.distincoes && nivel >= NIVEL_MINIMO_DISTINCAO;
+    if (s === WizardStep.Complicacao) return config.complicacoes;
     return true;
   });
 }

@@ -347,7 +347,7 @@ export function complicacoesIdadeEscolhidas(s: EstadoIdade): string[] {
 
 /** O passo Idade & Complicações só existe se alguma das três regras estiver ligada. */
 export function temPassoIdade(config: ConfigCriacao): boolean {
-  return config.complicacoes || config.complicacaoIdade || config.idadesVariadas || config.envelhecimentoClassico;
+  return config.complicacaoIdade || config.idadesVariadas || config.envelhecimentoClassico;
 }
 
 /** Pendências do passo (texto para o jogador). */

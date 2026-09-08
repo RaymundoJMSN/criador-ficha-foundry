@@ -1,6 +1,7 @@
 import { MODULE_ID } from "../constants.js";
 import { mapStateToActorData, getTrainedPericaCodes , getTrainedPericaSlugs } from "./mapper.js";
-import { periciaDoOficio } from "../rules/oficio.js";
+import { periciasDosOficios } from "../rules/oficio.js";
+import { quantosOficios } from "../rules/pericias-fontes.js";
 import periciasSistemaRaw from "../data/pericias_sistema.json";
 
 const periciasSistema = periciasSistemaRaw as unknown as Record<string, { atributo: string; st: boolean; pda: boolean; size: boolean }>;
@@ -910,8 +911,8 @@ export class ActorWriter {
     // Set trained perícias after full actor initialization (system schema = correct attributes)
     const trainedCodes = getTrainedPericaCodes(state);
     // "oficio" não tem code: vira a perícia fixa escolhida (alfa, arme…) ou uma própria (ofi1).
-    const oficio = getTrainedPericaSlugs(state).includes("oficio") ? periciaDoOficio(state.escolhasPorItem) : null;
-    if (Object.keys(trainedCodes).length > 0 || oficio) {
+    const oficios = periciasDosOficios(state.escolhasPorItem, quantosOficios(state));
+    if (Object.keys(trainedCodes).length > 0 || oficios.length > 0) {
       const pericasUpdate: Record<string, unknown> = {};
       for (const code of Object.keys(trainedCodes)) {
         // Só `treinado` bastaria no Foundry (o resto já existe), mas no site a
@@ -929,8 +930,10 @@ export class ActorWriter {
           pericasUpdate[`system.pericias.${code}.label`] = "";
         }
       }
-      if (oficio && "code" in oficio) pericasUpdate[`system.pericias.${oficio.code}.treinado`] = true;
-      else if (oficio) pericasUpdate[`system.pericias.${oficio.key}`] = oficio.dados;
+      for (const o of oficios) {
+        if ("code" in o) pericasUpdate[`system.pericias.${o.code}.treinado`] = true;
+        else pericasUpdate[`system.pericias.${o.key}`] = o.dados;
+      }
       try {
         await actor.update(pericasUpdate);
         console.log(`${MODULE_ID} | ActorWriter: trained ${Object.keys(trainedCodes).length} perícias`);

@@ -1,4 +1,5 @@
 import classesDataRaw from "../data/classes.json";
+import { toNomeSlug } from "../compendium/slug.js";
 import type { IndexedClasse } from "../compendium/types.js";
 import { classeDoCompendio } from "./classe-do-compendio.js";
 
@@ -66,6 +67,19 @@ function slug(value: string): string {
  * The Foundry classe item carries NO rules — only the item to attach.
  * Lookup by db id or by Foundry display name (slug-matched).
  */
+import variantesRaw from "../data/classes_variantes.json";
+
+const variantes = variantesRaw as Record<string, string>;
+
+/**
+ * Classe base de uma variante ("alquimista" → "inventor"). A variante recebe
+ * "Poder de Inventor" no 2º nível, ou seja, escolhe da lista da base (HdA cap. 2).
+ */
+export function classeBaseDaVariante(classeSlugOuNome: string): string | null {
+  const slug = toNomeSlug(classeSlugOuNome);
+  return variantes[slug] ?? null;
+}
+
 export function getClasse(idOrName: string): ClasseData | null {
   const s = slug(idOrName);
   // Sem classe ainda: "" casava com qualquer id no startsWith e devolvia
