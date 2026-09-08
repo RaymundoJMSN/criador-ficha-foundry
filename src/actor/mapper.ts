@@ -9,7 +9,8 @@ import { getClasse } from "../rules/classe.js";
 import { classesDoPersonagem } from "../rules/multiclasse.js";
 import { escolhaDeOficio, OFICIOS_PADRAO, OFICIO_OUTRO } from "../rules/oficio.js";
 import { toNomeSlug } from "../compendium/slug.js";
-import { getRaceSkillBonus, periciasDeEscolhasRaciais } from "../rules/raca.js";
+import { getRaceSkillBonus } from "../rules/raca.js";
+import { periciasDeOutrasFontes } from "../rules/pericias-fontes.js";
 import { buildPericiaPlan, computeTrained, type PericiaPicks } from "../rules/pericias.js";
 
 /** Output shape consumed by Actor.create() for tormenta20 system. */
@@ -165,17 +166,9 @@ export function getTrainedPericaSlugs(state: WizardState): string[] {
   } else {
     trainedSlugs = state.periciasTreinadas;
   }
-  // Perícias vindas dos benefícios de origem (nunca chegavam na ficha antes).
-  const beneficiosOrigem = state.origemId
-    ? validarBeneficios(
-        state.origemId,
-        (state.escolhasPorItem["origem_beneficios"] as string[]) ?? [],
-        beneficiosDeOrigemPermitidos(state)
-      ).pericias
-    : [];
-
-  const daRaca = periciasDeEscolhasRaciais(racaRef, state.escolhasPorItem).treinadas;
-  const todas = [...new Set([...trainedSlugs, ...beneficiosOrigem, ...daRaca])];
+  // Origem, raça e montagem vêm do mesmo módulo que o passo Perícias usa.
+  const outrasFontes = periciasDeOutrasFontes(state).map((p) => p.slug);
+  const todas = [...new Set([...trainedSlugs, ...outrasFontes])];
   const oficio = todas.includes("oficio") ? slugDoOficio(state.escolhasPorItem) : null;
   return oficio ? [...todas, oficio] : todas;
 }

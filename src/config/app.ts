@@ -75,7 +75,23 @@ async function ConfigApp_onSubmit(_event: Event, form: HTMLFormElement, formData
   void form;
 }
 
+let configAberta: { close(): unknown } | null = null;
+
+/** Abre a tela; clicar de novo fecha (o site empilhava uma janela por clique). */
 export function openConfigApp(): void {
   if (!ConfigApp) defineConfigApp();
-  new ConfigApp().render(true);
+  if (configAberta) {
+    const anterior = configAberta;
+    configAberta = null;
+    void anterior.close();
+    return;
+  }
+  const app = new ConfigApp();
+  configAberta = app;
+  const fechar = app.close.bind(app);
+  app.close = (...args: unknown[]) => {
+    configAberta = null;
+    return fechar(...args);
+  };
+  app.render(true);
 }

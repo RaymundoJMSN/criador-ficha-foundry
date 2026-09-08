@@ -145,6 +145,19 @@ export function introRepetida(descricoes: string[]): string {
  * mesmo grupo exclusivo está marcada (as três Afinidades Elementais) ou falta o
  * pré-requisito. Prevenir é melhor que avisar depois (Ray).
  */
+/** Perícias treinadas por opções marcadas na montagem da raça. */
+export function periciasTreinadasDaMontagem(idOrName: string, escolhas: Record<string, unknown>): string[] {
+  const m = montagemDaRaca(idOrName);
+  if (!m?.passos) return [];
+  const out: string[] = [];
+  for (const passo of m.passos) {
+    for (const o of opcoesMarcadas(passo, escolhas)) {
+      for (const p of (o as { pericias?: string[] }).pericias ?? []) out.push(p);
+    }
+  }
+  return out;
+}
+
 export function opcaoBloqueada(
   passo: PassoMontagem,
   opcao: OpcaoMontagem,

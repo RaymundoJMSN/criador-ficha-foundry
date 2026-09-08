@@ -1,9 +1,13 @@
 import { buildPericiaPlan, computeTrained, type PericiaPicks } from "../../rules/pericias.js";
+import { periciasDeOutrasFontes } from "../../rules/pericias-fontes.js";
 import { getClasse } from "../../rules/classe.js";
 import { toNomeSlug } from "../../compendium/slug.js";
 import type { WizardState } from "../state.js";
 
 export interface PericiaOpt {
+  /** Já treinada fora deste passo (origem, raça): marcada e travada. */
+  jaTreinada?: boolean;
+  fonte?: string;
   id: string;
   nome: string;
   checked: boolean;
@@ -196,6 +200,13 @@ export function preparePericiaContext(
   // For esc: committed by fixas + obrigatorias + int + raca
   // For int: committed by fixas + obrigatorias + esc + raca
   // For raca: committed by fixas + obrigatorias + esc + int
+  // Perícia treinada pela origem ou pela raça já está garantida: aparece marcada
+  // e travada em todas as listas, para o jogador não gastar escolha nela.
+  const deFora = new Map(periciasDeOutrasFontes(state).map((p) => [p.slug, p.fonte]));
+  const comFonte = (o: PericiaOpt): PericiaOpt => {
+    const fonte = deFora.get(o.id);
+    return fonte ? { ...o, checked: true, disabled: true, jaTreinada: true, fonte } : o;
+  };
   const committedByEsc = new Set([...fixasSet, ...obrigPicksFlat, ...intPicks, ...racaPicks]);
   const committedByInt = new Set([...fixasSet, ...obrigPicksFlat, ...escPicks, ...racaPicks]);
   const committedByRaca = new Set([...fixasSet, ...obrigPicksFlat, ...escPicks, ...intPicks]);
@@ -215,29 +226,33 @@ export function preparePericiaContext(
       groupIndex: i,
       quantidade: g.quantidade,
       opcoes: porNome(
-        g.opcoes.map((id) => ({
-          id,
-          nome: nome(id),
-          checked: (picks.obrigatorias[i] ?? []).includes(id),
-          // Disable if committed by another bucket (but not this one's own picks)
-          disabled: committedByObrig.has(id) && !(picks.obrigatorias[i] ?? []).includes(id),
-        }))
+        g.opcoes.map((id) =>
+          comFonte({
+            id,
+            nome: nome(id),
+            checked: (picks.obrigatorias[i] ?? []).includes(id),
+            // Disable if committed by another bucket (but not this one's own picks)
+            disabled: committedByObrig.has(id) && !(picks.obrigatorias[i] ?? []).includes(id),
+          })
+        )
       ),
     };
   });
 
   const escolhasOpcoes: PericiaOpt[] = porNome(
-    plan.escolhas.opcoes.map((id) => ({
-      id,
-      nome: nome(id),
-      checked: escPicks.includes(id),
-      disabled: committedByEsc.has(id) && !escPicks.includes(id),
-    }))
+    plan.escolhas.opcoes.map((id) =>
+      comFonte({
+        id,
+        nome: nome(id),
+        checked: escPicks.includes(id),
+        disabled: committedByEsc.has(id) && !escPicks.includes(id),
+      })
+    )
   );
 
   const todasOpcoes = (selected: string[], committedByOthers: Set<string>): PericiaOpt[] =>
     porNome(
-      plan.todas.map((id) => ({
+      plan.todas.map((id) => comFonte({
         id,
         nome: nome(id),
         checked: selected.includes(id),

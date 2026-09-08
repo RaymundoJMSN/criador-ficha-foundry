@@ -895,3 +895,13 @@ controle (`.t20w-item`, `.t20w-pcheck-group[data-max]`, `montarCombo`).
   vazia. Comparação normalizada.
 - **Sub-escolha mostra a descrição do poder** ("Explorador — Tipo de terreno"
   não dizia o que era o poder).
+
+- **Perícia de origem/raça aparece treinada no passo Perícias**: módulo novo
+  `src/rules/pericias-fontes.ts` (`periciasDeOutrasFontes`) usado pelo passo e
+  pelo mapper. A opção vem marcada, travada e com a fonte ao lado ("(origem)").
+- **Versátil em card próprio** (`.t20w-destaque`, borda accent) no passo Raça,
+  antes das perícias da raça — estava escondido no meio da lista.
+- As variáveis de cor viviam só em `.t20w-wizard`: na tela de Regras da mesa o
+  checkbox marcado ficava sem cor. Agora `.t20w-wizard, .t20w-config`.
+- `openConfigApp` virou alterna: clicar de novo fecha (no site cada clique
+  empilhava uma janela).

@@ -39,8 +39,11 @@ sufixo no nome ("Centelha Mágica (Abençoar Alimentos)").
   `montarSubEscolhas`. A view traz `fonte`/`slug`; o app filtra por passo em
   `_subEscolhasDoPasso`. Poder novo com decisão = uma entrada no JSON, zero
   UI nova.
-- **Perícias** — `buildPericiaPlan`/`computeTrained`; treinadas de todas as
-  fontes só por `getTrainedPericaSlugs` (mapper). Marcação parcial já conta
+- **Perícias** — `buildPericiaPlan`/`computeTrained` para as escolhas da
+  classe; `periciasDeOutrasFontes` (origem, raça, montagem) para o que já vem
+  treinado — o passo Perícias mostra marcada e travada com a fonte ao lado, e o
+  mapper grava na ficha pela mesma função. Treinadas de todas as fontes só por
+  `getTrainedPericaSlugs`. Marcação parcial já conta
   (pré-requisito reage na hora; o erro segura o avanço).
 - **Extras de poder geral** — `fontesDePoderExtra`/`poderesExtrasEscolhidos`
   (`src/rules/idade.ts`); `state.poderes` contém os ids, `poderes_extras`
