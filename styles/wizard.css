@@ -629,6 +629,22 @@ details.t20w-mais > summary:hover {
   padding-left: 18px;
   font-size: 0.88em;
 }
+/* No rodapé, à esquerda do "Próximo": o que falta para seguir. */
+.t20w-pendencias-rodape {
+  margin: 0;
+  padding: 4px 10px;
+  font-size: 0.8em;
+  max-height: 76px;
+  overflow-y: auto;
+  text-align: left;
+}
+.t20w-pendencias-rodape ul {
+  margin: 2px 0 0;
+  font-size: 1em;
+}
+.t20w-footer {
+  flex-wrap: wrap;
+}
 .t20w-errors {
   margin: 10px 0 0;
   padding: 8px 12px 8px 28px;

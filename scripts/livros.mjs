@@ -198,12 +198,33 @@ function descricaoCompleta(corpo) {
   return ps.length > 0 ? ps.join("\n\n") : null;
 }
 
+/**
+ * "Ajuntamento Escamoso. Embora sejam um grupo…" é habilidade de raça, não
+ * descrição: começa com um nome curto todo capitalizado seguido de ponto.
+ */
+function pareceHabilidade(p) {
+  const primeira = p.split(/\.\s/)[0] ?? "";
+  const palavras = primeira.split(/\s+/).filter(Boolean);
+  if (palavras.length === 0 || palavras.length > 5) return false;
+  return palavras.every((w) => /^[(]?[A-ZÁÉÍÓÚÂÊÔÃÕÇ]/.test(w) || /^(de|da|do|dos|das|e|com|em)$/i.test(w));
+}
+
+/** Texto entre o título do arquivo e a primeira seção `##`. */
+function abertura(texto) {
+  const semTitulo = texto.replace(/^#\s+.+$/m, "");
+  const fim = semTitulo.search(/^##\s/m);
+  return fim >= 0 ? semTitulo.slice(0, fim) : semTitulo;
+}
+
 function primeiroParagrafo(corpo) {
   for (const bruto of corpo.split(/\r?\n\r?\n/)) {
+    // Legenda de imagem e citação em itálico abrem os verbetes de Ameaças.
+    if (/^\s*(!\[|\*[^*])/.test(bruto)) continue;
     const p = limpar(bruto);
     if (!p || p.startsWith("|") || p.startsWith(">") || p.startsWith("#")) continue;
     if (/^(Itens|Benefícios?|Descrição)\b/i.test(p)) continue;
-    if (p.length < 40) continue;
+    if (/^[+−-]?\d/.test(p)) continue;
+    if (p.length < 60 || pareceHabilidade(p)) continue;
     return p;
   }
   return null;
@@ -276,9 +297,12 @@ export function racasDosLivros() {
         tamanho: celula(arq.texto, "Tamanho"),
         deslocamento: celula(arq.texto, "Deslocamento"),
         habilidades,
-        descricao: primeiroParagrafo(
-          seccionar(arq.texto, 2).find((s) => /Descrição/i.test(s.titulo))?.corpo ?? arq.texto
-        ),
+        // "## Descrição" quando existe; senão a abertura do verbete (antes da
+        // primeira seção). Varrer o arquivo inteiro trazia habilidade de raça
+        // ("Ajuntamento Escamoso…") ou a linha de modificadores como descrição.
+        descricao:
+          primeiroParagrafo(seccionar(arq.texto, 2).find((s) => /Descrição/i.test(s.titulo))?.corpo ?? "") ??
+          primeiroParagrafo(abertura(arq.texto)),
       });
     }
   }

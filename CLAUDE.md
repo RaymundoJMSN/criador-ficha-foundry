@@ -841,3 +841,24 @@ controle (`.t20w-item`, `.t20w-pcheck-group[data-max]`, `montarCombo`).
   `form.handler` no submit — antes o Salvar não fazia nada.
 - Radio/checkbox quadrados em toda a janela (`.t20w-wizard`/`.t20w-config`,
   com `!important`): o círculo do v13 escapava fora de `.t20w-step`.
+
+## Correções de 2026-09-09 (manhã)
+
+- **Nome da perícia na ficha**: `label` de perícia PADRÃO tem de ficar VAZIO —
+  a ficha resolve o nome pelo código. Gravar "T20.SkillAtle" fazia a ficha
+  mostrar a chave crua (foi o que apareceu no Tazif.json). Só ofício próprio
+  (`ofi1`, `custom: true`) usa label ("Ofício: Carpinteiro"). O writer grava
+  atributo/st/pda/size/custom/label vazio, e a importação zera label que
+  comece com "T20." (conserta ficha já baixada).
+- **Descrição da raça**: o texto do livro vem PRIMEIRO; o item do compêndio é
+  o último recurso (era ele que trazia lista de poderes no Eiradaan e
+  "Aggelus: descendentes celestes"). Sub-raça sem verbete usa o da raça-base
+  (Aggelus/Sulfure → Suraggel). `gerar-textos` grava toda raça que os livros
+  descrevem (86 verbetes) e a descrição sai só de "## Descrição" ou da
+  abertura do verbete — nunca de outra seção, senão vinha habilidade de raça
+  ("Ajuntamento Escamoso…") ou a linha de modificadores. As 26 raças que o
+  Dragão Brasil publica apenas como regras ficam sem parágrafo (o livro não
+  tem texto), com as habilidades listadas normalmente logo abaixo.
+- **Pendências no rodapé**, à esquerda do "Próximo" (`.t20w-pendencias-rodape`),
+  e os erros do passo entram na MESMA lista: antes a origem mostrava a mesma
+  frase duas vezes (bloco de erros no corpo + pendências).

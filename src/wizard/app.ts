@@ -681,8 +681,11 @@ export function defineWizardApp(): void {
       }
 
       const subEscolhasPasso = this._subEscolhasDoPasso(step);
+      const errosDoPasso = [...new Set((stepCtx as { errors?: string[] }).errors ?? errors)];
       const pendenciasPasso =
-        step === WizardStep.Revisao ? [] : this._pendenciasDoPasso(step, { ...(stepCtx as object), subEscolhasPasso });
+        step === WizardStep.Revisao
+          ? []
+          : [...new Set([...this._pendenciasDoPasso(step, { ...(stepCtx as object), subEscolhasPasso }), ...errosDoPasso])];
       return {
         currentStep: step,
         steps,
@@ -714,6 +717,8 @@ export function defineWizardApp(): void {
         showRevisao: step === WizardStep.Revisao,
         ...(stepCtx as object),
         subEscolhasPasso: subEscolhasPasso,
+        // Erro que não virou pendência do passo (só a Revisão) fica no corpo.
+        errosSoltos: step === WizardStep.Revisao ? errosDoPasso : [],
         oficio: this._blocoOficio(step),
         // Cada passo soma o que ele detecta ao que veio da navegação, então a
         // mesma frase chegava pelos dois caminhos e aparecia repetida.

@@ -64,7 +64,12 @@ export function registerLauncher(): void {
           if (actor && pericias) {
             const up: Record<string, unknown> = {};
             for (const [code, campos] of Object.entries(pericias)) {
-              for (const [campo, valor] of Object.entries(campos ?? {})) up[`system.pericias.${code}.${campo}`] = valor;
+              for (const [campo, valor] of Object.entries(campos ?? {})) {
+                // Ficha antiga trazia label "T20.SkillAtle"; a perícia padrão
+                // mostra o nome pelo código e exibiria a chave crua.
+                up[`system.pericias.${code}.${campo}`] =
+                  campo === "label" && typeof valor === "string" && valor.startsWith("T20.") ? "" : valor;
+              }
             }
             if (Object.keys(up).length > 0) await actor.update(up);
           }

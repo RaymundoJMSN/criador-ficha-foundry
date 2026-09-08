@@ -397,8 +397,11 @@ export function prepareRacaContext(
 
     // O item de raça do compêndio vem com description vazia, então o texto sai
     // do textos.json (gerado dos livros; gitignorado).
-    const descricaoFoundry =
-      selecionada.system.descricao || (dbRaca ? (textos.racas?.[dbRaca.id] ?? "") : "");
+    // O item do compêndio traz coisa que não é descrição (lista de poderes em
+    // Eiradaan, "Aggelus: descendentes celestes"): o texto do livro vem primeiro.
+    // Sub-raça sem verbete próprio usa o da raça-base (Aggelus → Suraggel).
+    const doLivro = dbRaca ? (textos.racas?.[dbRaca.id] ?? textos.racas?.[toNomeSlug(dbRaca.raca_base ?? "")] ?? "") : "";
+    const descricaoFoundry = doLivro || selecionada.system.descricao || "";
     const tamanhoBruto = (selecionada.system.tamanho?.[0] ?? dbRaca?.tamanho ?? "med").toString();
     const deslocamento = selecionada.system.movement?.walk ?? dbRaca?.deslocamento ?? 9;
     const unidade = selecionada.system.movement?.unit ?? "m";

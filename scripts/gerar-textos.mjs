@@ -267,10 +267,21 @@ if (livrosDisponiveis()) {
     return m;
   };
 
-  const racasLivro = porId(racasDosLivros());
-  for (const r of dados("racas.json")) {
-    const d = racasLivro.get(r.id)?.descricao;
-    if (d) textos.racas[r.id] = primeirasFrases(d);
+  // Toda raça que algum livro descreve, não só as do T20-DB: "Suraggel" não é
+  // id de raça jogável (Aggelus/Sulfure são), mas é o verbete que descreve as duas.
+  for (const [id, r] of porId(racasDosLivros())) {
+    const d = r.descricao;
+    if (d && !/^---/.test(d.trim())) textos.racas[id] = primeirasFrases(d);
+  }
+  // Raça cujo verbete tem outro nome no livro.
+  const ALIAS_RACA = {
+    golem_desperto: "golem",
+    kallyanach: "kallyanach_ryuujin",
+    kobold: "kobolds",
+    trog_anao: "trog",
+  };
+  for (const [id, verbete] of Object.entries(ALIAS_RACA)) {
+    if (!textos.racas[id] && textos.racas[verbete]) textos.racas[id] = textos.racas[verbete];
   }
 
   // Toda classe que algum livro descreve (o compêndio tem mais classes que o

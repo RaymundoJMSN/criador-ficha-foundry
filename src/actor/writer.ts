@@ -3,7 +3,7 @@ import { mapStateToActorData, getTrainedPericaCodes , getTrainedPericaSlugs } fr
 import { periciaDoOficio } from "../rules/oficio.js";
 import periciasSistemaRaw from "../data/pericias_sistema.json";
 
-const periciasSistema = periciasSistemaRaw as Record<string, { label: string; atributo: string; st: boolean; pda: boolean }>;
+const periciasSistema = periciasSistemaRaw as unknown as Record<string, { atributo: string; st: boolean; pda: boolean; size: boolean }>;
 
 /**
  * Sentidos da ficha (Visão no Escuro etc.): o T20-DB não guarda, mas o texto da
@@ -914,15 +914,18 @@ export class ActorWriter {
       const pericasUpdate: Record<string, unknown> = {};
       for (const code of Object.keys(trainedCodes)) {
         // Só `treinado` bastaria no Foundry (o resto já existe), mas no site a
-        // ficha nasce vazia: sem label/atributo a perícia chega na importação
-        // sem nome e com Força. Gravar os dois é inofensivo dos dois lados.
+        // ficha nasce vazia: sem atributo a perícia chega na importação com
+        // Força. `label` fica VAZIO — perícia padrão mostra o nome pelo código,
+        // e escrever "T20.SkillAtle" faz a ficha exibir a chave crua.
         const info = periciasSistema[code];
         pericasUpdate[`system.pericias.${code}.treinado`] = true;
         if (info) {
-          pericasUpdate[`system.pericias.${code}.label`] = info.label;
           pericasUpdate[`system.pericias.${code}.atributo`] = info.atributo;
           pericasUpdate[`system.pericias.${code}.st`] = info.st;
           pericasUpdate[`system.pericias.${code}.pda`] = info.pda;
+          pericasUpdate[`system.pericias.${code}.size`] = info.size;
+          pericasUpdate[`system.pericias.${code}.custom`] = false;
+          pericasUpdate[`system.pericias.${code}.label`] = "";
         }
       }
       if (oficio && "code" in oficio) pericasUpdate[`system.pericias.${oficio.code}.treinado`] = true;
