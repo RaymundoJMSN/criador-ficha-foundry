@@ -883,3 +883,15 @@ controle (`.t20w-item`, `.t20w-pcheck-group[data-max]`, `montarCombo`).
   `idadesVariadas` (HdA) continua como está e tem prioridade — marcar as duas
   na tela de regras deixa só a de HdA valendo. `faixasDaMesa(config)` diz qual
   lista o passo mostra; o writer aplica os modificadores das duas regras.
+
+- **Pré-requisito `{tipo:"outro"}`** que dá para conferir vira regra de verdade
+  (`traduzirOutro`): "habilidade de classe Magias" e "treinado em X" caíam no
+  `default: true` e deixavam Escrever Pergaminho sempre elegível.
+- **Ofício específico**: `getTrainedPericaSlugs` devolve também
+  `oficio_<tipo escolhido>`; "Ofício (escriba)" exige escriba, "treinado em
+  Ofício" aceita qualquer um.
+- **Poder livre da origem** (Capanga: "um poder de combate à sua escolha"):
+  o compêndio grava subtipo "Combate" e a origem pede "combate" — a lista vinha
+  vazia. Comparação normalizada.
+- **Sub-escolha mostra a descrição do poder** ("Explorador — Tipo de terreno"
+  não dizia o que era o poder).

@@ -67,11 +67,27 @@ describe("checkPrereqs — tipos portados de motor/prerequisitos.py", () => {
     expect(ok([{ tipo: "nivel_classe", classe: "guerreiro", valor: 6 }], nv5)).toBe(false);
   });
 
-  it("pericia_treinada aceita valor ou pericia, e ignora especialização", () => {
+  it("pericia_treinada aceita valor ou pericia; ofício exige o ofício certo", () => {
     expect(ok([{ tipo: "pericia_treinada", valor: "luta" }])).toBe(true);
     expect(ok([{ tipo: "pericia_treinada", pericia: "misticismo" }])).toBe(false);
-    const oficio = com({ periciasTreinadas: ["oficio"] });
-    expect(ok([{ tipo: "pericia_treinada", valor: "Ofício (alquimista)" }], oficio)).toBe(true);
+    // "Ofício (alquimista)" pede alquimista: outro ofício não serve (Escrever
+    // Pergaminho pede escriba). "Treinado em Ofício" aceita qualquer um.
+    const armeiro = com({ periciasTreinadas: ["oficio", "oficio_armeiro"] });
+    const alquimista = com({ periciasTreinadas: ["oficio", "oficio_alquimista"] });
+    expect(ok([{ tipo: "pericia_treinada", valor: "Ofício (alquimista)" }], armeiro)).toBe(false);
+    expect(ok([{ tipo: "pericia_treinada", valor: "Ofício (alquimista)" }], alquimista)).toBe(true);
+    expect(ok([{ tipo: "pericia_treinada", valor: "Ofício" }], armeiro)).toBe(true);
+  });
+
+  it("prereq \"outro\" que dá para conferir vira regra (Escrever Pergaminho)", () => {
+    const semNada = com({ periciasTreinadas: [] });
+    const pronto = com({ periciasTreinadas: ["oficio", "oficio_escriba"], habilidadesClasse: ["magias"] });
+    const req = [
+      { tipo: "outro", valor: "habilidade de classe Magias" },
+      { tipo: "outro", valor: "treinado em Ofício (escriba)" },
+    ];
+    expect(ok(req, semNada)).toBe(false);
+    expect(ok(req, pronto)).toBe(true);
   });
 
   it("habilidade_classe aceita lista como OR", () => {

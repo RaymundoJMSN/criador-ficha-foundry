@@ -922,6 +922,7 @@
       {{#each subEscolhasPasso}}
       <div class="form-group" style="margin-top:6px;">
         <label for="{{this.name}}"><strong>{{this.poder}}</strong> — {{this.rotulo}}{{#if this.opcional}} <span class="t20w-hint">(opcional; vai para o nome do item)</span>{{/if}}</label>
+        {{#if this.descricao}}<div class="t20w-desc" style="margin:2px 0 4px;">{{this.descricao}}</div>{{/if}}
         {{#if this.texto}}
         <input type="text" id="{{this.name}}" name="{{this.name}}" value="{{this.valor}}" placeholder="Anote a escolha…" style="width:100%;padding:5px;" />
         {{else}}

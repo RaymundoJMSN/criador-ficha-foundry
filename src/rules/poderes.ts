@@ -106,10 +106,12 @@ function atende(req: Prereq, state: PartialWizardState): boolean {
     case "pericia":
     case "pericia_treinada":
     case "treinamento_pericia": {
-      // "Ofício (alquimista)" também é atendido por "oficio" treinado.
       const alvo = norm(req["pericia"] ?? req["valor"]);
       const base = alvo.split("_")[0] ?? alvo;
-      return pericias.includes(alvo) || pericias.includes(base);
+      // "Ofício (escriba)" exige o ofício escriba; "treinado em Ofício" aceita
+      // qualquer um (o slug do ofício escolhido entra como "oficio_escriba").
+      if (base === "oficio" && alvo !== base) return pericias.includes(alvo);
+      return pericias.includes(alvo) || pericias.some((p) => p === base || p.startsWith(`${base}_`));
     }
 
     case "habilidade_classe": {
@@ -196,7 +198,7 @@ function atende(req: Prereq, state: PartialWizardState): boolean {
 }
 
 export function checkPrereqs(prereqs: Prereq[], state: PartialWizardState): PrereqCheckResult {
-  const unmet = prereqs.filter((req) => !atende(req, state));
+  const unmet = prereqs.map(traduzirOutro).filter((req) => !atende(req, state));
   return { eligible: unmet.length === 0, unmet };
 }
 
@@ -236,8 +238,11 @@ export function formatPrereq(req: Prereq): string {
       return `Poder: ${titleCase(String(req["id"]))}`;
     case "pericia":
     case "pericia_treinada":
-    case "treinamento_pericia":
-      return `Treinado em ${titleCase(String(req["pericia"] ?? req["valor"]))}`;
+    case "treinamento_pericia": {
+      const nome = String(req["pericia"] ?? req["valor"] ?? "");
+      // "Ofício (escriba)" já vem legível do livro; titleCase virava "OfíCio".
+      return `Treinado em ${/[ (]/.test(nome) ? nome : titleCase(nome)}`;
+    }
     case "habilidade_classe":
       return `Ter ${listaLegivel(req["id"] ?? req["valor"])}`;
     case "habilidade_racial":
@@ -331,6 +336,21 @@ export function prereqsDoTexto(descricao: string): Prereq[] {
 /** Regras do T20-DB quando há; senão as lidas do texto do item. */
 export function prereqsDoPoder(poderSlug: string, descricao = ""): Prereq[] {
   return prereqsData[poderSlug] ?? (descricao ? prereqsDoTexto(descricao) : []);
+}
+
+/**
+ * O T20-DB guarda como `{tipo:"outro"}` coisas que sabemos checar ("habilidade
+ * de classe Magias", "treinado em Ofício (escriba)"). Sem isso caem no default
+ * e o poder ficava sempre elegível (Escrever Pergaminho).
+ */
+function traduzirOutro(req: Prereq): Prereq {
+  if (req["tipo"] !== "outro") return req;
+  const texto = String(req["valor"] ?? "").trim();
+  let m: RegExpExecArray | null;
+  if ((m = /^habilidade de classe\s+(.+)$/i.exec(texto))) return { tipo: "habilidade_classe", id: norm(m[1]) };
+  if ((m = /^treinad[oa] em\s+(.+)$/i.exec(texto))) return { tipo: "pericia_treinada", valor: m[1] };
+  if ((m = /^lan[çc]ar magias$/i.exec(texto))) return { tipo: "habilidade_classe", id: "magias" };
+  return req;
 }
 
 export function describeUnmet(poderSlug: string, state: PartialWizardState, descricao = ""): string[] {

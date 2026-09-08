@@ -123,7 +123,8 @@ export function prepareOrigemContext(
       const chave = `origem_poder_livre_${categoria}`;
       const escolhido = (state.escolhasPorItem[chave] as string | undefined) ?? null;
       const opcoes = todosPoderes
-        .filter((p) => p.system.subtipo === categoria)
+        // O compêndio grava "Combate"; a origem pede "combate".
+        .filter((p) => toNomeSlug(p.system.subtipo ?? "") === toNomeSlug(categoria))
         .filter((p) => describeUnmet(toNomeSlug(p.name), paraElegibilidade, p.system.descricao ?? "").length === 0)
         .map((p) => ({ id: p.id, nome: p.name, selected: p.id === escolhido }))
         .sort((a, b) => a.nome.localeCompare(b.nome));

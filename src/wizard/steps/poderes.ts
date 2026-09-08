@@ -108,6 +108,8 @@ export interface SubEscolhaView {
   /** De onde o poder veio (classe, poder, origem, divindade, raça). */
   fonte: string;
   slug: string;
+  /** Texto do poder: sem ele a pergunta ("Tipo de terreno") não diz nada. */
+  descricao: string;
 }
 
 const CLASSES_TODAS = Object.keys(progressaoRaw as Record<string, unknown>);
@@ -227,6 +229,7 @@ export function montarSubEscolhas(
         opcoes: opcoes.map((o) => ({ ...o, selected: o.id === atual })),
         fonte: p.fonte,
         slug: p.slug,
+        descricao: p.descricao,
       });
     }
   }
