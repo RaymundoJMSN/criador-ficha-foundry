@@ -242,7 +242,7 @@ if (livrosDisponiveis()) {
   // T20-DB); arquivo só de poderes cai no frontmatter e fica de fora.
   for (const [id, c] of porId(classesDosLivros())) {
     const d = c.descricao;
-    if (d && !/^---/.test(d.trim())) textos.classes[id] = primeirasFrases(d);
+    if (d && !/^---/.test(d.trim())) textos.classes[id] = (c.variante ? `Classe variante de ${c.variante}. ` : "") + primeirasFrases(d);
   }
 } else {
   console.log("  (sem tormenta-livros: raças e classes ficam sem descrição)");

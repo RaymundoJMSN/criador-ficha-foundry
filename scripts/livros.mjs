@@ -296,8 +296,8 @@ export function classesDosLivros() {
     ["herois-arton", "01-campeoes-arton"],
   ]) {
     for (const arq of arquivosDe(livro, pasta)) {
-      // A pasta do HdA mistura raças e origens; só o Treinador é classe.
-      if (livro === "herois-arton" && !/treinador/i.test(arq.nome)) continue;
+      // A pasta do HdA mistura raças e origens: classe é o Treinador e as 14 variantes (var-*).
+      if (livro === "herois-arton" && !/treinador|^var-/i.test(arq.nome)) continue;
       const titulo = /^#\s+(.+)$/m.exec(arq.texto)?.[1]?.trim();
       // "Guerreiro - Poderes de Classe" é lista de poder, não o verbete da classe.
       if (!titulo || /poderes de classe/i.test(titulo)) continue;
@@ -332,6 +332,9 @@ export function classesDosLivros() {
           return sec ? limpar(sec.corpo) : null;
         })(),
         niveis,
+        // HdA: "**Classe Variante:** Bucaneiro" abre a descrição.
+        variante: /\*\*Classe Variante:\*\*\s*([^
+]+)/.exec(arq.texto)?.[1]?.trim() ?? null,
         descricao: primeiroParagrafo(
           seccionar(arq.texto, 2).find((s) => /Descrição/i.test(s.titulo))?.corpo ?? arq.texto
         ),
