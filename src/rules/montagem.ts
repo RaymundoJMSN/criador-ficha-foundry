@@ -98,6 +98,23 @@ export function opcoesMarcadas(passo: PassoMontagem, escolhas: Record<string, un
   return passo.opcoes.filter((o) => lista.includes(o.id));
 }
 
+/**
+ * Opção que o jogador não pode marcar agora: o passo já encheu, outra opção do
+ * mesmo grupo exclusivo está marcada (as três Afinidades Elementais) ou falta o
+ * pré-requisito. Prevenir é melhor que avisar depois (Ray).
+ */
+export function opcaoBloqueada(
+  passo: PassoMontagem,
+  opcao: OpcaoMontagem,
+  marcadas: OpcaoMontagem[]
+): boolean {
+  if (marcadas.some((o) => o.id === opcao.id)) return false;
+  if (marcadas.length >= passo.escolher && passo.escolher > 1) return true;
+  if (opcao.exclusivo && marcadas.some((o) => o.exclusivo === opcao.exclusivo)) return true;
+  const ids = new Set(marcadas.map((o) => o.id));
+  return (opcao.requer ?? []).some((req) => !ids.has(req));
+}
+
 export function subMarcada(passoId: string, opcaoId: string, escolhas: Record<string, unknown>): string {
   const v = escolhas[chaveSub(passoId, opcaoId)];
   return typeof v === "string" ? v : "";

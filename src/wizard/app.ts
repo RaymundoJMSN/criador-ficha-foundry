@@ -60,7 +60,7 @@ function pendenciasDosPoderes(state: WizardState): string[] {
 import { prepareOrigemContext } from "./steps/origem.js";
 import { prepareClasseContext } from "./steps/classe.js";
 import { preparePericiaContext, prepareRacaPericias, type PoderGeralOpt } from "./steps/pericias.js";
-import { OFICIOS_PADRAO, OFICIO_OUTRO, escolhaDeOficio } from "../rules/oficio.js";
+import { OFICIOS_PADRAO, OFICIO_OUTRO, escolhaDeOficio, passoDoOficio } from "../rules/oficio.js";
 type PericiaPicksParciais = { obrigatorias?: string[][]; escolhas?: string[]; extras_int?: string[]; raca?: string[] };
 import { getRaceSkillBonus } from "../rules/raca.js";
 import { totaisRaciaisDoEstado, distribuirAbertos, valoresFixosDaRaca } from "../rules/subescolhas.js";
@@ -114,7 +114,7 @@ import { prepareEquipamentoContext } from "./steps/equipamento.js";
 import { prepareRevisaoContext } from "./steps/revisao.js";
 import { ActorWriter } from "../actor/writer.js";
 import { getTrainedPericaCodes, getTrainedPericaSlugs } from "../actor/mapper.js";
-import { pendencias, type EngineState } from "../rules/engine.js";
+import { pendencias, pendenciasComPasso, type EngineState } from "../rules/engine.js";
 import type {
   IndexedClasse,
   IndexedRace,
@@ -200,6 +200,39 @@ export function defineWizardApp(): void {
       return [...semCaixa, ...comCaixa];
     }
 
+    /**
+     * O que falta NESTE passo. Ray: nada de descobrir no fim que falta coisa —
+     * a pendência aparece no passo onde se resolve e segura o "Próximo".
+     */
+    _pendenciasDoPasso(step: WizardStep, stepCtx: unknown): string[] {
+      const daRegra = pendenciasComPasso(this._state as unknown as EngineState)
+        .filter((p) => p.passo === step)
+        .map((p) => p.texto);
+      const ctx = (stepCtx ?? {}) as {
+        subEscolhasPasso?: SubEscolhaView[];
+        oficio?: unknown;
+        canProceed?: boolean;
+        dinheiroRestante?: number;
+      };
+      const subs = (ctx.subEscolhasPasso ?? []).filter((s) => !s.valor).map((s) => `${s.poder}: ${s.rotulo.toLowerCase()}.`);
+      const extras: string[] = [];
+      if (step === WizardStep.Poderes) {
+        extras.push(...pendenciasDeHabilidades(this._state, CompendiumIndex.getAll("poder") as IndexedPoder[]));
+      }
+      if (step === WizardStep.Equipamento && ctx.canProceed === false) {
+        extras.push(
+          (ctx.dinheiroRestante ?? 0) < 0
+            ? `Você gastou T$ ${-(ctx.dinheiroRestante ?? 0)} a mais do que tem.`
+            : "Complete as escolhas de equipamento."
+        );
+      }
+      if (step === WizardStep.Atributos) {
+        const r = validatePointBuy(this._state.atributosBase, this._state.config.pontosCompra);
+        if (this._state.metodoAtributos === "compra_pontos" && r.remaining < 0) extras.push(`Pontos excedidos em ${-r.remaining}.`);
+      }
+      return [...new Set([...daRegra, ...subs, ...extras])];
+    }
+
     /** Contexto do passo Poderes: a única fonte de lista/elegibilidade de poderes (Versátil, complicação, sub-escolhas). */
     _contextoPoderes(): ReturnType<typeof preparePoderesContext> {
       const poderes = CompendiumIndex.getAll("poder") as IndexedPoder[];
@@ -263,12 +296,7 @@ export function defineWizardApp(): void {
     _blocoOficio(step: WizardStep): unknown {
       const state = this._state;
       if (!getTrainedPericaSlugs(state).includes("oficio")) return null;
-      const picks = (state.escolhasPorItem["pericias"] as PericiaPicksParciais | undefined) ?? {};
-      const daOrigem = state.origemId
-        ? validarBeneficios(state.origemId, (state.escolhasPorItem["origem_beneficios"] as string[]) ?? [], beneficiosDeOrigemPermitidos(state)).pericias.includes("oficio")
-        : false;
-      const passo = (picks.raca ?? []).includes("oficio") ? WizardStep.Raca : daOrigem ? WizardStep.Origem : WizardStep.Pericias;
-      if (passo !== step) return null;
+      if (passoDoOficio(state) !== step) return null;
       const e = escolhaDeOficio(state.escolhasPorItem);
       return {
         tipos: [...OFICIOS_PADRAO.map((o) => ({ id: o.code, nome: o.nome, selected: e.tipo === o.code })), { id: OFICIO_OUTRO, nome: "Outro (nome próprio)…", selected: e.tipo === OFICIO_OUTRO }],
@@ -515,12 +543,7 @@ export function defineWizardApp(): void {
       let stepCtx: unknown = {};
       switch (step) {
         case WizardStep.Nivel:
-          stepCtx = {
-            ...prepareNivelContext(state, errors),
-            poderesExtras: fontesDePoderExtra(state)
-              .filter((f) => f.passo === "nivel")
-              .map((f) => ({ ...f, opcoes: this._opcoesPoderGeral(f.fonte) })),
-          };
+          stepCtx = prepareNivelContext(state, errors);
           break;
         case WizardStep.Atributos:
           stepCtx = prepareAtributosContext(state, errors);
@@ -542,7 +565,13 @@ export function defineWizardApp(): void {
           break;
         }
         case WizardStep.Idade:
-          stepCtx = prepareIdadeContext(state, CompendiumIndex.getAll("poder") as IndexedPoder[], errors);
+          stepCtx = {
+            ...prepareIdadeContext(state, CompendiumIndex.getAll("poder") as IndexedPoder[], errors),
+            // Complicação e Já Vi Coisas dão um poder geral: escolhido aqui mesmo.
+            poderesExtras: fontesDePoderExtra(state)
+              .filter((f) => f.passo === "idade")
+              .map((f) => ({ ...f, opcoes: this._opcoesPoderGeral(f.fonte) })),
+          };
           break;
         case WizardStep.Origem: {
           const poderes = CompendiumIndex.getAll("poder") as IndexedPoder[];
@@ -651,11 +680,16 @@ export function defineWizardApp(): void {
         }
       }
 
+      const subEscolhasPasso = this._subEscolhasDoPasso(step);
+      const pendenciasPasso =
+        step === WizardStep.Revisao ? [] : this._pendenciasDoPasso(step, { ...(stepCtx as object), subEscolhasPasso });
       return {
         currentStep: step,
         steps,
         showBack: stepIdx > 0,
         showNext: stepIdx < passos.length - 1,
+        pendenciasPasso,
+        nextBloqueado: pendenciasPasso.length > 0,
         showCreate: stepIdx === passos.length - 1,
         passoNumero: stepIdx + 1,
         passoTotal: passos.length,
@@ -679,7 +713,7 @@ export function defineWizardApp(): void {
         showEquipamento: step === WizardStep.Equipamento,
         showRevisao: step === WizardStep.Revisao,
         ...(stepCtx as object),
-        subEscolhasPasso: this._subEscolhasDoPasso(step),
+        subEscolhasPasso: subEscolhasPasso,
         oficio: this._blocoOficio(step),
         // Cada passo soma o que ele detecta ao que veio da navegação, então a
         // mesma frase chegava pelos dois caminhos e aparecia repetida.
@@ -1352,7 +1386,17 @@ export function defineWizardApp(): void {
         this.applyFormData(this._gatherFormData());
         const max = 4;
         const current = this._state.atributosBase[attr as keyof typeof this._state.atributosBase] ?? 0;
-        if (current < max) {
+        // Só sobe se houver ponto para pagar (o botão já vem desabilitado).
+        const cabe = (() => {
+          if (this._state.metodoAtributos !== "compra_pontos") return true;
+          try {
+            const custo = pointBuyCost(current + 1) - pointBuyCost(current);
+            return custo <= validatePointBuy(this._state.atributosBase, this._state.config.pontosCompra).remaining;
+          } catch {
+            return false;
+          }
+        })();
+        if (current < max && cabe) {
           this._state.apply({
             atributosBase: { ...this._state.atributosBase, [attr]: current + 1 },
           });

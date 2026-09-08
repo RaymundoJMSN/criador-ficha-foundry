@@ -25,7 +25,7 @@ import { getClasse, cadeiaSubEscolhas } from "./classe.js";
 import { getRaceSkillBonus, pendenciasDeEscolhasRaciais } from "./raca.js";
 import { pendenciasDaMontagem } from "./montagem.js";
 import { buildPericiaPlan, computeTrained, type PericiaPicks } from "./pericias.js";
-import { oficioResolvido } from "./oficio.js";
+import { oficioResolvido, passoDoOficio } from "./oficio.js";
 import { getTrainedPericaSlugs } from "../actor/mapper.js";
 import type { WizardState } from "../wizard/state.js";
 import { fontesDePoderExtra, poderesExtrasEscolhidos } from "./idade.js";
@@ -168,17 +168,41 @@ export function validate(step: WizardStep, state: EngineState): ValidationResult
  * Tudo que ainda falta para a ficha estar completa. Cada linha é uma pendência
  * legível — é o que a Revisão mostra e o que bloqueia o botão Criar.
  */
-export function pendencias(state: EngineState): string[] {
-  const faltando: string[] = [];
+export interface Pendencia {
+  /** Passo onde ela se resolve — é lá que o wizard mostra e trava o "Próximo". */
+  passo: WizardStep;
+  texto: string;
+}
 
+export function pendencias(state: EngineState): string[] {
+  return pendenciasComPasso(state).map((p) => p.texto);
+}
+
+export function pendenciasComPasso(state: EngineState): Pendencia[] {
+  const lista: Pendencia[] = [];
+  let atual: WizardStep = WizardStep.Revisao;
+  const em = (p: WizardStep): void => {
+    atual = p;
+  };
+  const faltando = {
+    push: (...textos: string[]): void => {
+      for (const t of textos) lista.push({ passo: atual, texto: t });
+    },
+  };
+
+  em(WizardStep.Nivel);
   if (!state.nome.trim()) faltando.push("Dê um nome ao personagem.");
+  em(WizardStep.Raca);
   if (!state.racaId) faltando.push("Escolha uma raça.");
+  em(WizardStep.Origem);
   if (!state.origemId && beneficiosDeOrigemPermitidos(state) > 0) faltando.push("Escolha uma origem.");
+  em(WizardStep.Classe);
   if (!state.classeId) faltando.push("Escolha uma classe.");
 
   const classeRef = state.classeNome || state.classeId;
   const racaRef = state.racaNome || state.racaId;
 
+  em(WizardStep.Raca);
   if (state.racaId && getRaceModifierGroups(racaRef, state.escolhasPorItem).length > 0) {
     const choices = (state.escolhasPorItem["raca_modificadores"] as string[][]) ?? [];
     if (validateRaceModifiers(racaRef, choices, state.escolhasPorItem).errors.length > 0) {
@@ -191,6 +215,7 @@ export function pendencias(state: EngineState): string[] {
     faltando.push(...pendenciasDaMontagem(racaRef, state.escolhasPorItem));
   }
 
+  em(WizardStep.Origem);
   if (state.origemId) {
     const escolhidos = (state.escolhasPorItem["origem_beneficios"] as string[]) ?? [];
     const beneficios = validarBeneficios(state.origemId, escolhidos, beneficiosDeOrigemPermitidos(state));
@@ -202,6 +227,7 @@ export function pendencias(state: EngineState): string[] {
     }
   }
 
+  em(WizardStep.Classe);
   faltando.push(...errosMulticlasse(state));
   // Caminho de cada classe no nível que ela tem (cavaleiro só no 5º).
   for (const c of classesDoPersonagem(state)) {
@@ -217,6 +243,7 @@ export function pendencias(state: EngineState): string[] {
     }
   }
 
+  em(WizardStep.Pericias);
   const classe = getClasse(classeRef);
   if (classe) {
 
@@ -233,18 +260,23 @@ export function pendencias(state: EngineState): string[] {
 
   // Complicação e "Já Vi Coisas" dão poderes gerais a mais (HA p.282/289).
   // Multiclasse: vagas de cada classe no seu nível, somadas.
+  em(WizardStep.Poderes);
   const slots = slotsDePoderTotal(state) + poderesGeraisExtras(state);
   if (state.poderes.length < slots) {
     faltando.push(`Escolha ${slots} poder(es) — ${state.poderes.length} escolhido(s).`);
   }
+  em(WizardStep.Idade);
   faltando.push(...pendenciasDeIdade(state));
   // ponytail: EngineState tem os campos que o mapper lê (raça, classe, picks, origem, config).
+  em(passoDoOficio(state));
   if (getTrainedPericaSlugs(state as unknown as WizardState).includes("oficio") && !oficioResolvido(state.escolhasPorItem)) {
     faltando.push("Ofício: diga qual (Alfaiate, Armeiro… ou um nome próprio).");
   }
   for (const f of fontesDePoderExtra(state)) {
-    if (!poderesExtrasEscolhidos(state)[f.fonte]) faltando.push(`${f.rotulo}: escolha o poder na tela onde ele nasce.`);
+    em(f.passo === "raca" ? WizardStep.Raca : WizardStep.Idade);
+    if (!poderesExtrasEscolhidos(state)[f.fonte]) faltando.push(`${f.rotulo}: escolha o poder.`);
   }
+  em(WizardStep.Raca);
   if (state.config.racasAbertas && racaRef) {
     faltando.push(...distribuirAbertos(racaRef, (state.escolhasPorItem["raca_aberta"] as Record<string, string>) ?? {}).erros);
   }
@@ -254,6 +286,7 @@ export function pendencias(state: EngineState): string[] {
   const cotaMagias =
     classesTodas.reduce((n, c) => n + cotaDeMagias(c.classeNome || c.classeId, c.niveis, caminhoDe(state, c), []), 0) +
     magiasExtrasDosPoderes(slugsDePoderesComMagia(state));
+  em(WizardStep.Magias);
   if (state.magias.length < cotaMagias) {
     faltando.push(`Escolha ${cotaMagias} magia(s) — ${state.magias.length} escolhida(s).`);
   }
@@ -262,12 +295,14 @@ export function pendencias(state: EngineState): string[] {
   if (state.magias.length > cotaMagias) {
     faltando.push(`Magias a mais: remova ${state.magias.length - cotaMagias}.`);
   }
+  em(WizardStep.Classe);
   const escolasPrecisa = Math.max(...classesTodas.map((c) => escolasAEscolher(c.classeSlug)));
   const escolasTem = ((state.escolhasPorItem["classe_escolas"] as string[] | undefined) ?? []).length;
   if (escolasPrecisa > 0 && escolasTem < escolasPrecisa) {
     faltando.push(`Escolha ${escolasPrecisa} escolas de magia — ${escolasTem} marcada(s).`);
   }
 
+  em(WizardStep.Divindade);
   if (classesTodas.some((c) => isDivindadeObrigatoria(c.classeSlug)) && !state.divindadeId) {
     faltando.push("Esta classe exige uma divindade.");
   }
@@ -284,7 +319,7 @@ export function pendencias(state: EngineState): string[] {
     );
   }
 
-  return faltando;
+  return lista;
 }
 
 export function getOptions(

@@ -53,6 +53,8 @@ export interface AtributosContext {
     label: string;
     value: number;
     custo: number;
+    podeSubir: boolean;
+    podeDescer: boolean;
     opcoes: Opcao[];
   }>;
   pool: number[];
@@ -109,7 +111,7 @@ export function prepareAtributosContext(
       { valor: "", label: "—", selected: dist[id] === undefined },
       ...pool.map((v, i) => ({ valor: String(i), label: String(v), selected: dist[id] === i })),
     ];
-    return { id, label: ATTR_LABELS[id]!, value, custo, opcoes };
+    return { id, label: ATTR_LABELS[id]!, value, custo, opcoes, podeSubir: true, podeDescer: value > -1 };
   });
 
   const soma = {} as Record<Atributo, number>;
@@ -136,6 +138,17 @@ export function prepareAtributosContext(
       : [];
 
   const pbResult = validatePointBuy(state.atributosBase, pontos);
+  // Comprar não pode deixar o saldo negativo (Ray: prevenir, não avisar).
+  for (const a of atributos) {
+    let proximo = 0;
+    try {
+      proximo = pointBuyCost(a.value + 1) - a.custo;
+    } catch {
+      a.podeSubir = false;
+      continue;
+    }
+    a.podeSubir = a.value < 4 && proximo <= pbResult.remaining;
+  }
   const gerado = isValkaria ? dados.length > 0 : pool.length > 0;
 
   return {

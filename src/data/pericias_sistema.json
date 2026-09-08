@@ -1,0 +1,206 @@
+{
+  "acro": {
+    "label": "T20.SkillAcro",
+    "atributo": "des",
+    "st": false,
+    "pda": true
+  },
+  "ades": {
+    "label": "T20.SkillAdes",
+    "atributo": "car",
+    "st": true,
+    "pda": false
+  },
+  "atle": {
+    "label": "T20.SkillAtle",
+    "atributo": "for",
+    "st": false,
+    "pda": false
+  },
+  "atua": {
+    "label": "T20.SkillAtua",
+    "atributo": "car",
+    "st": true,
+    "pda": false
+  },
+  "cava": {
+    "label": "T20.SkillCava",
+    "atributo": "des",
+    "st": false,
+    "pda": false
+  },
+  "conh": {
+    "label": "T20.SkillConh",
+    "atributo": "int",
+    "st": true,
+    "pda": false
+  },
+  "cura": {
+    "label": "T20.SkillCura",
+    "atributo": "sab",
+    "st": false,
+    "pda": false
+  },
+  "dipl": {
+    "label": "T20.SkillDipl",
+    "atributo": "car",
+    "st": false,
+    "pda": false
+  },
+  "enga": {
+    "label": "T20.SkillEnga",
+    "atributo": "car",
+    "st": false,
+    "pda": false
+  },
+  "fort": {
+    "label": "T20.SkillFort",
+    "atributo": "con",
+    "st": false,
+    "pda": false
+  },
+  "furt": {
+    "label": "T20.SkillFurt",
+    "atributo": "des",
+    "st": false,
+    "pda": true
+  },
+  "guer": {
+    "label": "T20.SkillGuer",
+    "atributo": "int",
+    "st": true,
+    "pda": false
+  },
+  "inic": {
+    "label": "T20.SkillInic",
+    "atributo": "des",
+    "st": false,
+    "pda": false
+  },
+  "inti": {
+    "label": "T20.SkillInti",
+    "atributo": "car",
+    "st": false,
+    "pda": false
+  },
+  "intu": {
+    "label": "T20.SkillIntu",
+    "atributo": "sab",
+    "st": false,
+    "pda": false
+  },
+  "inve": {
+    "label": "T20.SkillInve",
+    "atributo": "int",
+    "st": false,
+    "pda": false
+  },
+  "joga": {
+    "label": "T20.SkillJoga",
+    "atributo": "car",
+    "st": true,
+    "pda": false
+  },
+  "ladi": {
+    "label": "T20.SkillLadi",
+    "atributo": "des",
+    "st": true,
+    "pda": true
+  },
+  "luta": {
+    "label": "T20.SkillLuta",
+    "atributo": "for",
+    "st": false,
+    "pda": false
+  },
+  "mist": {
+    "label": "T20.SkillMist",
+    "atributo": "int",
+    "st": true,
+    "pda": false
+  },
+  "nobr": {
+    "label": "T20.SkillNobr",
+    "atributo": "int",
+    "st": true,
+    "pda": false
+  },
+  "perc": {
+    "label": "T20.SkillPerc",
+    "atributo": "sab",
+    "st": false,
+    "pda": false
+  },
+  "pilo": {
+    "label": "T20.SkillPilo",
+    "atributo": "des",
+    "st": true,
+    "pda": false
+  },
+  "pont": {
+    "label": "T20.SkillPont",
+    "atributo": "des",
+    "st": false,
+    "pda": false
+  },
+  "refl": {
+    "label": "T20.SkillRefl",
+    "atributo": "des",
+    "st": false,
+    "pda": false
+  },
+  "reli": {
+    "label": "T20.SkillReli",
+    "atributo": "sab",
+    "st": true,
+    "pda": false
+  },
+  "sobr": {
+    "label": "T20.SkillSobr",
+    "atributo": "sab",
+    "st": false,
+    "pda": false
+  },
+  "vont": {
+    "label": "T20.SkillVont",
+    "atributo": "sab",
+    "st": false,
+    "pda": false
+  },
+  "alfa": {
+    "label": "T20.SkillAlfa",
+    "atributo": "int",
+    "st": true,
+    "pda": false
+  },
+  "alqu": {
+    "label": "T20.SkillAlqu",
+    "atributo": "int",
+    "st": true,
+    "pda": false
+  },
+  "arme": {
+    "label": "T20.SkillArme",
+    "atributo": "int",
+    "st": true,
+    "pda": false
+  },
+  "arte": {
+    "label": "T20.SkillArte",
+    "atributo": "int",
+    "st": true,
+    "pda": false
+  },
+  "cozi": {
+    "label": "T20.SkillCozi",
+    "atributo": "int",
+    "st": true,
+    "pda": false
+  },
+  "enge": {
+    "label": "T20.SkillEnge",
+    "atributo": "int",
+    "st": true,
+    "pda": true
+  }
+}

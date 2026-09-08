@@ -95,17 +95,23 @@ describe("Complicações e Já Vi Coisas → poderes gerais extras", () => {
     expect(poderesGeraisExtras(est({ complicacoes: true }, { complicacao: "x" }))).toBe(1);
     expect(poderesGeraisExtras(est({ complicacoes: true, complicacaoIdade: true }, { complicacao: "x", idade_ja_vi_coisas: true }))).toBe(2);
   });
-  it("as três regras juntas: ancião com complicação e Já Vi Coisas = 5 complicações de idade, 2 poderes gerais", () => {
-    const s = est(
+  it("Já Vi Coisas é do adulto (HdA p.289): ancião marca a flag e não ganha nada", () => {
+    const anciao = est(
       { complicacoes: true, complicacaoIdade: true, idadesVariadas: true },
       { idade_faixa: "anciao", complicacao: "x", idade_ja_vi_coisas: true }
     );
-    expect(complicacoesIdadeExigidas(s)).toBe(5);
-    expect(poderesGeraisExtras(s)).toBe(2);
-    expect(pendenciasDeIdade(s)).toEqual(["Escolha 5 complicação(ões) de idade — 0 marcada(s)."]);
+    expect(complicacoesIdadeExigidas(anciao)).toBe(4);
+    expect(poderesGeraisExtras(anciao)).toBe(1);
+    const adulto = est(
+      { complicacoes: true, complicacaoIdade: true, idadesVariadas: true },
+      { idade_faixa: "adulto", complicacao: "x", idade_ja_vi_coisas: true }
+    );
+    expect(complicacoesIdadeExigidas(adulto)).toBe(1);
+    expect(poderesGeraisExtras(adulto)).toBe(2);
+    expect(pendenciasDeIdade(adulto)).toEqual(["Escolha 1 complicação(ões) de idade — 0 marcada(s)."]);
     const ok = est(
       { complicacoes: true, complicacaoIdade: true, idadesVariadas: true },
-      { idade_faixa: "anciao", complicacao: "x", idade_ja_vi_coisas: true, complicacoes_idade: ["abatido", "catarata", "gota", "tosse", "turrao"] }
+      { idade_faixa: "adulto", complicacao: "x", idade_ja_vi_coisas: true, complicacoes_idade: ["abatido"] }
     );
     expect(pendenciasDeIdade(ok)).toEqual([]);
   });

@@ -30,7 +30,7 @@ export function registerLauncher(): void {
     imp.type = "button";
     imp.className = "t20w-import-ficha";
     imp.style.cssText = "width: 100%; margin-top: 4px; font-size: 0.85em;";
-    imp.innerHTML = `<i class="fas fa-file-import"></i> Importar ficha (JSON do site)`;
+    imp.innerHTML = `<i class="fas fa-file-import"></i> Importar ficha`;
     imp.addEventListener("click", () => {
       if (!game.user?.can("ACTOR_CREATE")) {
         ui.notifications?.warn("Você não tem permissão para criar atores neste mundo.");
@@ -48,12 +48,26 @@ export function registerLauncher(): void {
           // como id solto (despejo antigo) derrubariam a validação.
           delete dados.folder;
           delete dados._id;
+          // `system.pericias.<code>` parcial substitui o SkillData inteiro e a
+          // perícia entra sem nome e com Força: sai do create e volta por update.
+          const sys = (dados as { system?: { pericias?: Record<string, Record<string, unknown>> } }).system;
+          const pericias = sys?.pericias;
+          if (sys) delete sys.pericias;
           for (const it of dados.items ?? []) {
             delete it["folder"];
             it["effects"] = ((it["effects"] as unknown[] | undefined) ?? []).filter((e) => typeof e === "object" && e !== null);
           }
           if (dados.type !== "character" || !Array.isArray(dados.items)) throw new Error("não é uma ficha de personagem");
-          const actor = (await Actor.create(dados as never)) as { name: string; sheet?: { render(f: boolean): void } } | undefined;
+          const actor = (await Actor.create(dados as never)) as
+            | { name: string; sheet?: { render(f: boolean): void }; update(d: Record<string, unknown>): Promise<unknown> }
+            | undefined;
+          if (actor && pericias) {
+            const up: Record<string, unknown> = {};
+            for (const [code, campos] of Object.entries(pericias)) {
+              for (const [campo, valor] of Object.entries(campos ?? {})) up[`system.pericias.${code}.${campo}`] = valor;
+            }
+            if (Object.keys(up).length > 0) await actor.update(up);
+          }
           actor?.sheet?.render(true);
           ui.notifications?.info(`Ficha importada: ${actor?.name ?? dados.name}`);
         } catch (err) {

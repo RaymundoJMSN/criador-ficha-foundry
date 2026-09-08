@@ -100,7 +100,13 @@ export const FAIXAS: Faixa[] = [
     beneficiosOrigem: 2,
     tamanhoMenor: false,
     bloqueiaAumentoFisico: false,
-    habilidades: [],
+    habilidades: [
+      {
+        nome: "Já Vi Coisas",
+        resumo: "Opcional: um poder geral a mais, em troca de uma complicação de idade.",
+        efeitos: [],
+      },
+    ],
   },
   {
     id: "maduro",
@@ -211,9 +217,19 @@ export function nivelEfetivo(nivelGrupo: number, s: EstadoIdade): number {
   return Math.min(20, nivelGrupo + faixaDoPersonagem(s).niveisExtras);
 }
 
+/**
+ * "Já Vi Coisas" é habilidade do **Adulto** (HdA p.289): um poder geral em
+ * troca de uma complicação de idade. Sem Idades Variadas ligada não há faixa,
+ * então a regra vale para qualquer um (é o que o toggle do mestre quer dizer).
+ */
+export function podeJaViCoisas(s: EstadoIdade): boolean {
+  if (!s.config.complicacaoIdade) return false;
+  return !s.config.idadesVariadas || faixaDoPersonagem(s).id === "adulto";
+}
+
 /** "Já Vi Coisas": trocou uma complicação de idade a mais por um poder geral? */
 export function jaViCoisas(s: EstadoIdade): boolean {
-  return s.config.complicacaoIdade && Boolean(s.escolhasPorItem["idade_ja_vi_coisas"]);
+  return podeJaViCoisas(s) && Boolean(s.escolhasPorItem["idade_ja_vi_coisas"]);
 }
 
 /** Quantas complicações de idade o personagem tem de escolher. */
@@ -235,19 +251,19 @@ export interface FontePoderExtra {
   fonte: string;
   rotulo: string;
   /** Passo do wizard onde o poder é escolhido. */
-  passo: "nivel" | "raca";
+  passo: "idade" | "raca";
 }
 
 /**
  * Cada fonte de poder geral extra é escolhida na tela onde nasce (Ray): Versátil
- * no passo Raça, complicação e Já Vi Coisas no passo Nível. `versatil_poder` só
- * é gravado para humano.
+ * no passo Raça, complicação e Já Vi Coisas no passo Idade & Complicações.
+ * `versatil_poder` só é gravado para humano.
  */
 export function fontesDePoderExtra(s: EstadoIdade): FontePoderExtra[] {
   const out: FontePoderExtra[] = [];
   if (s.escolhasPorItem["versatil_poder"]) out.push({ fonte: "versatil", rotulo: "Poder geral (Versátil)", passo: "raca" });
-  if (complicacaoEscolhida(s)) out.push({ fonte: "complicacao", rotulo: "Poder geral pela complicação", passo: "nivel" });
-  if (jaViCoisas(s)) out.push({ fonte: "ja_vi_coisas", rotulo: "Poder geral por Já Vi Coisas", passo: "nivel" });
+  if (complicacaoEscolhida(s)) out.push({ fonte: "complicacao", rotulo: "Poder geral pela complicação", passo: "idade" });
+  if (jaViCoisas(s)) out.push({ fonte: "ja_vi_coisas", rotulo: "Poder geral por Já Vi Coisas", passo: "idade" });
   return out;
 }
 

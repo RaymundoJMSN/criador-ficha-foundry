@@ -138,10 +138,13 @@
 }
 /* Radio e checkbox iguais: quadrado, sempre visível (o círculo do tema do
    Foundry só aparecia depois de marcar). */
-.t20w-step input[type="radio"],
-.t20w-step input[type="checkbox"] {
-  appearance: none;
-  -webkit-appearance: none;
+.t20w-wizard input[type="radio"],
+.t20w-wizard input[type="checkbox"],
+.t20w-config input[type="radio"],
+.t20w-config input[type="checkbox"] {
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  border-radius: 3px !important;
   width: 16px;
   height: 16px;
   min-width: 16px;
@@ -156,8 +159,10 @@
   place-content: center;
   vertical-align: middle;
 }
-.t20w-step input[type="radio"]::before,
-.t20w-step input[type="checkbox"]::before {
+.t20w-wizard input[type="radio"]::before,
+.t20w-wizard input[type="checkbox"]::before,
+.t20w-config input[type="radio"]::before,
+.t20w-config input[type="checkbox"]::before {
   content: "" !important;
   width: 10px;
   height: 10px;
@@ -166,12 +171,16 @@
   transform: scale(0);
   transition: transform 80ms ease-in-out;
 }
-.t20w-step input[type="radio"]:checked,
-.t20w-step input[type="checkbox"]:checked {
+.t20w-wizard input[type="radio"]:checked,
+.t20w-wizard input[type="checkbox"]:checked,
+.t20w-config input[type="radio"]:checked,
+.t20w-config input[type="checkbox"]:checked {
   border-color: var(--t20w-accent);
 }
-.t20w-step input[type="radio"]:checked::before,
-.t20w-step input[type="checkbox"]:checked::before {
+.t20w-wizard input[type="radio"]:checked::before,
+.t20w-wizard input[type="checkbox"]:checked::before,
+.t20w-config input[type="radio"]:checked::before,
+.t20w-config input[type="checkbox"]:checked::before {
   transform: scale(1);
 }
 .t20w-abrir {

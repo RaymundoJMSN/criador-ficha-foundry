@@ -11,7 +11,7 @@ import {
   type AtributoEscolhaDef,
 } from "../../rules/raca.js";
 import { PERICIA_SLUGS } from "../../rules/pericia-slug.js";
-import { montagemDaRaca, opcoesMarcadas, subMarcada, pendenciasDaMontagem, type OpcaoMontagem } from "../../rules/montagem.js";
+import { montagemDaRaca, opcoesMarcadas, opcaoBloqueada, subMarcada, pendenciasDaMontagem, type OpcaoMontagem } from "../../rules/montagem.js";
 import textosRaw from "../../data/textos.json";
 import { describeUnmet, type PartialWizardState } from "../../rules/poderes.js";
 import { toNomeSlug, uuidDe } from "../../compendium/slug.js";
@@ -203,7 +203,6 @@ function montarMontagem(
   return m.passos.map((passo) => {
     const marc = opcoesMarcadas(passo, escolhas);
     const ids = new Set(marc.map((o) => o.id));
-    const cheio = marc.length >= passo.escolher;
     return {
       id: passo.id,
       nome: passo.nome,
@@ -223,7 +222,7 @@ function montarMontagem(
           resumo: resumoDaOpcao(o),
           nota: o.nota ?? "",
           selected,
-          bloqueada: !selected && cheio && passo.escolher > 1,
+          bloqueada: opcaoBloqueada(passo, o, marc),
           sub,
         };
       }),

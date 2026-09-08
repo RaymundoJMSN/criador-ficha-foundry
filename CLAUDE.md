@@ -802,3 +802,42 @@ controle (`.t20w-item`, `.t20w-pcheck-group[data-max]`, `montarCombo`).
 - Cuidado com heredoc do Bash em patch com regex: `
 ` e `\*` quebram —
   patch por arquivo (Write) + `python arquivo.py`.
+
+## Rodada de 2026-09-09 (madrugada)
+
+- **Frontmatter dos livros**: `ler()` do `livros.mjs` tinha a regex em string
+  (`"[\s\S]"` virou `[s\S]`) e nunca casava — descrição de raça saía como
+  "--- title: ...". Regex literal. 33 classes e 44 raças com texto.
+- **Prevenir em vez de avisar** (ver PADROES.md §3): grupo exclusivo do duende
+  (`opcaoBloqueada`), compra de pontos (`podeSubir`) e loja (`naoCabe`).
+- **Pendência no passo onde se resolve**: `pendenciasComPasso` devolve
+  `{passo, texto}`; `_pendenciasDoPasso` junta sub-escolhas, habilidades,
+  dinheiro e pontos; "Próximo" trava. O "Falta para poder criar" da Revisão
+  vira rede de segurança (vazia no fluxo normal).
+- **Perícias na ficha importada**: `system.pericias.<code>` só com
+  `{treinado:true}` **substitui o SkillData inteiro** — a perícia entra sem
+  nome e com Força (foi o que aconteceu no Dulla.json). O writer grava também
+  `label`/`atributo`/`st`/`pda` (de `src/data/pericias_sistema.json`, gerado
+  por `npm run gerar:pericias` a partir do próprio sistema) e o botão
+  "Importar ficha" tira `system.pericias` do `create` e reaplica por `update`
+  (conserta JSON antigo).
+- **Armas/Armaduras/Sentidos automáticos**: `proficienciasDoPersonagem`
+  (mapper) preenche `system.tracos.profArmas/profArmaduras` pela classe;
+  `sentidosDosItens` (writer) lê "visão no escuro/na penumbra/percepção às
+  cegas/faro" no texto da raça e dos poderes raciais.
+  **`system.attributes.sentidos.value` é um SetField**: update por caminho
+  ("system.attributes.sentidos.value") não grava nada, tem de ser objeto
+  aninhado.
+- **Idade**: "Já Vi Coisas" é habilidade do **Adulto** (HdA p.289) —
+  `podeJaViCoisas`; Adulto deixou de ser "nenhum efeito". Os poderes extras
+  (complicação, Já Vi Coisas) são escolhidos no passo **Idade**, não no Nível.
+  Rótulos separam as duas regras de complicação.
+- **Descrição de habilidade de classe** sem item no compêndio (Façanha
+  Atlética) vem de `textos.poderes`.
+- **Botão** da aba Atores: "Importar ficha" (sem "JSON do site").
+- **Site**: botão "Regras da mesa" (mesma tela do módulo). Para ela funcionar
+  o shim passou a criar o elemento com a `tag` do DEFAULT_OPTIONS (`form`),
+  aplicar as `classes` (senão o CSS não pegava) e disparar o
+  `form.handler` no submit — antes o Salvar não fazia nada.
+- Radio/checkbox quadrados em toda a janela (`.t20w-wizard`/`.t20w-config`,
+  com `!important`): o círculo do v13 escapava fora de `.t20w-step`.

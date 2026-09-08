@@ -10,6 +10,12 @@
   {{/if}}
 
   <div class="t20w-content">
+    {{#if pendenciasPasso.length}}
+    <div class="t20w-pendencias">
+      <strong style="font-size:0.9em;">Falta neste passo:</strong>
+      <ul>{{#each pendenciasPasso}}<li>{{this}}</li>{{/each}}</ul>
+    </div>
+    {{/if}}
 
     {{#if showNivel}}
     <section class="t20w-step">
@@ -55,11 +61,11 @@
         {{#each atributos}}
         <div class="t20w-attr-row" style="display:flex;align-items:center;gap:8px;">
           <span style="width:110px;font-size:0.9em;">{{this.label}}</span>
-          <button type="button" class="t20w-btn-sm" data-action="attrDec" data-attr="{{this.id}}" style="width:26px;height:26px;padding:0;font-size:1em;line-height:1;cursor:pointer;">−</button>
+          <button type="button" class="t20w-btn-sm" data-action="attrDec" data-attr="{{this.id}}" {{#unless this.podeDescer}}disabled{{/unless}} style="width:26px;height:26px;padding:0;font-size:1em;line-height:1;cursor:pointer;">−</button>
           <input type="number" name="attr-{{this.id}}" value="{{this.value}}"
             class="t20w-attr-input" data-attr="{{this.id}}"
             style="width:52px;text-align:center;" min="-1" max="4" />
-          <button type="button" class="t20w-btn-sm" data-action="attrInc" data-attr="{{this.id}}" style="width:26px;height:26px;padding:0;font-size:1em;line-height:1;cursor:pointer;">+</button>
+          <button type="button" class="t20w-btn-sm" data-action="attrInc" data-attr="{{this.id}}" {{#unless this.podeSubir}}disabled title="Sem pontos para subir"{{/unless}} style="width:26px;height:26px;padding:0;font-size:1em;line-height:1;cursor:pointer;">+</button>
           <span class="t20w-custo" style="font-size:0.8em;opacity:0.7;width:60px;">custo: {{this.custo}}</span>
         </div>
         {{/each}}
@@ -284,12 +290,12 @@
       {{/if}}
 
       {{#if mostraJaViCoisas}}
-      <h3 style="font-size:0.95em;margin:12px 0 4px;">Já Vi Coisas</h3>
+      <h3 style="font-size:0.95em;margin:12px 0 4px;">Já Vi Coisas <small style="opacity:0.7;font-weight:normal;">(habilidade do adulto)</small></h3>
       <label class="t20w-opcao"><input type="checkbox" name="idade_ja_vi_coisas" {{#if jaViCoisas}}checked{{/if}} /><span>Receber <strong>um poder geral</strong> em troca de <strong>uma complicação de idade</strong> a mais.</span></label>
       {{/if}}
 
       {{#if complicacoesIdadeExigidas}}
-      <h3 style="font-size:0.95em;margin:12px 0 4px;">Complicações de idade — escolha {{complicacoesIdadeExigidas}}</h3>
+      <h3 style="font-size:0.95em;margin:12px 0 4px;">Complicações de idade — escolha {{complicacoesIdadeExigidas}} <small style="opacity:0.7;font-weight:normal;">(os achaques que vêm com os anos)</small></h3>
       <div class="t20w-scroll t20w-lista" style="max-height:260px;overflow-y:auto;">
         {{#each complicacoesIdade}}
         <label class="t20w-opcao"><input type="checkbox" name="compl_idade-{{this.id}}" value="{{this.id}}" {{#if this.selected}}checked{{/if}} {{#if this.bloqueado}}disabled{{/if}} /><span><strong>{{this.nome}}</strong> — {{this.resumo}}</span></label>
@@ -298,7 +304,7 @@
       {{/if}}
 
       {{#if mostraComplicacao}}
-      <h3 style="font-size:0.95em;margin:12px 0 4px;">Complicação <small style="opacity:0.7;font-weight:normal;">(opcional: uma, em troca de um poder geral)</small></h3>
+      <h3 style="font-size:0.95em;margin:12px 0 4px;">Complicação do personagem <small style="opacity:0.7;font-weight:normal;">(outra regra: uma complicação qualquer em troca de um poder geral)</small></h3>
       <select name="complicacao" class="t20w-busca-select-alvo" style="width:100%;">
         <option value="">— nenhuma —</option>
         {{#each complicacoes}}<option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.name}}{{#if this.classe}} ({{this.classe}}){{/if}}</option>{{/each}}
@@ -799,7 +805,7 @@
               style="width:24px;height:24px;padding:0;font-size:1.1em;line-height:1;cursor:pointer;flex-shrink:0;">−</button>
             <span style="min-width:18px;text-align:center;">{{qty}}</span>
             {{/if}}
-            <button type="button" class="t20w-btn-sm" data-action="equipAdd" data-id="{{id}}"
+            <button type="button" class="t20w-btn-sm" data-action="equipAdd" data-id="{{id}}" {{#if naoCabe}}disabled title="T$ insuficiente"{{/if}}
               style="width:24px;height:24px;padding:0;font-size:1.1em;line-height:1;cursor:pointer;flex-shrink:0;">+</button>
           </div>
           {{else}}
@@ -938,7 +944,7 @@
   <footer class="t20w-footer">
     {{#if showBack}}<button type="button" class="t20w-btn" data-action="back">← Voltar</button>{{else}}<span></span>{{/if}}
     <span class="t20w-espaco"></span>
-    {{#if showNext}}<button type="button" class="t20w-btn primaria" data-action="next">Próximo →</button>{{/if}}
+    {{#if showNext}}<button type="button" class="t20w-btn primaria" data-action="next" {{#if nextBloqueado}}disabled title="Resolva o que falta neste passo"{{/if}}>Próximo →</button>{{/if}}
     {{#if showCreate}}<button type="button" class="t20w-btn primaria" data-action="create" {{#unless isComplete}}disabled title="Resolva as pendências acima"{{/unless}}>✦ Criar Personagem</button>{{/if}}
   </footer>
 </div>

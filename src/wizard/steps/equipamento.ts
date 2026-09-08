@@ -107,6 +107,7 @@ export function prepareEquipamentoContext(
       peso: item.system.peso ?? 0,
       qty,
       selected: qty > 0,
+      naoCabe: false,
       categoria: toCategoria(item),
     };
   });
@@ -121,6 +122,8 @@ export function prepareEquipamentoContext(
   const dinheiroRestante = dinheiroInicial - dinheiroGasto;
   const dinheiroOk = dinheiroRestante >= 0;
   const escolhasPendentes = inicial.escolhas.filter((e) => !e.feita).length;
+  // Não dá para comprar o que não cabe no bolso: o "+" some antes do estouro.
+  for (const i of itens) i.naoCabe = i.preco > dinheiroRestante;
 
   return {
     stepTitle: "Equipamentos",

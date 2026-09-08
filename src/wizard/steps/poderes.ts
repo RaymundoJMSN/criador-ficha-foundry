@@ -3,6 +3,7 @@ import { getClasse, respostaSubEscolha } from "../../rules/classe.js";
 import { getRaca } from "../../rules/raca.js";
 import { getTrainedPericaSlugs } from "../../actor/mapper.js";
 import { getDivindade } from "../../rules/divindade.js";
+import { descricaoDoLivro } from "../../compendium/index.js";
 import { describeUnmet, temPrereqsConhecidos, prereqDoTexto, prereqsDoTexto, type PartialWizardState } from "../../rules/poderes.js";
 import { totaisRaciaisDoEstado } from "../../rules/subescolhas.js";
 import { poderesGeraisExtras, faixaDoPersonagem, idsDePoderesExtras, poderesExtrasEscolhidos, fontesDePoderExtra } from "../../rules/idade.js";
@@ -352,7 +353,7 @@ export function preparePoderesContext(
         return {
           slug,
           nome: opcoes[0]!.name.split(":")[0]!.trim(),
-          descricao: item?.system.descricao ?? "",
+          descricao: item?.system.descricao || descricaoDoLivro(item?.name ?? opcoes[0]!.name),
           uuid: item ? uuidDe(item) : "",
           opcoes: opcoes
             .map((o) => ({ id: o.id, nome: o.name.split(":").slice(1).join(":").trim(), selected: o.id === escolhido }))
@@ -364,7 +365,9 @@ export function preparePoderesContext(
       return {
         slug,
         nome: item?.name ?? resolvePoderNome(slug) ?? prettifySlug(slug),
-        descricao: item?.system.descricao ?? "",
+        // Habilidade que o compêndio não traz (Façanha Atlética do atleta) tem
+        // o texto do livro em textos.poderes.
+        descricao: item?.system.descricao || descricaoDoLivro(item?.name ?? resolvePoderNome(slug) ?? prettifySlug(slug)),
         uuid: item ? uuidDe(item) : "",
         opcoes: [] as Array<{ id: string; nome: string; selected: boolean }>,
         pendente: false,

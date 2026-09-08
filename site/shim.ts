@@ -292,9 +292,27 @@ class ApplicationV2 {
   constructor(options: Dict = {}) {
     const padrao = (this.constructor as typeof ApplicationV2).DEFAULT_OPTIONS;
     this.options = { ...padrao, ...options, window: { ...(padrao["window"] as Dict), ...((options["window"] as Dict) ?? {}) } };
-    this.element = document.createElement("div");
+    // `tag: "form"` (tela de Regras da mesa) precisa ser um <form> de verdade,
+    // senão o botão Salvar não dispara o handler de submit.
+    this.element = document.createElement(String(this.options["tag"] ?? "div"));
     this.element.className = "application t20w-site-app";
     this.element.id = String(this.options["id"] ?? "");
+    // As classes do DEFAULT_OPTIONS (t20w-config…) carregam o CSS do módulo.
+    for (const c of (this.options["classes"] as string[] | undefined) ?? []) this.element.classList.add(c);
+    const form = this.options["form"] as { handler?: (e: Event, f: HTMLElement, d: unknown) => unknown; closeOnSubmit?: boolean } | undefined;
+    if (form?.handler && this.element instanceof HTMLFormElement) {
+      this.element.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const dados = Object.fromEntries(new FormData(this.element as HTMLFormElement).entries());
+        // Checkbox desmarcado não vem no FormData; o handler espera todas as chaves.
+        for (const input of (this.element as HTMLFormElement).querySelectorAll<HTMLInputElement>('input[type="checkbox"]')) {
+          if (input.name) dados[input.name] = input.checked;
+        }
+        void Promise.resolve(form.handler!(e, this.element, { object: dados })).then(() => {
+          if (form.closeOnSubmit !== false) this.close();
+        });
+      });
+    }
   }
   get id(): string {
     return String(this.options["id"] ?? "");

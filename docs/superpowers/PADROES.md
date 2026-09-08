@@ -48,7 +48,25 @@ sufixo no nome ("Centelha Mágica (Abençoar Alimentos)").
 - **Estado de checkbox → estado** — sempre `_mesclarMarcados`: o que não tem
   checkbox na tela (variante, escolhido noutro passo) permanece.
 
-## 3. UI: um padrão por tipo de controle
+## 3. Prevenir, nunca avisar depois
+
+Escolha inválida **não pode ser feita**: a opção fica desabilitada com o motivo
+no `title`. Nada de mensagem "você errou" depois do fato.
+
+- Grupo exclusivo / pré-requisito (Presentes do duende): `opcaoBloqueada`
+  desabilita as irmãs do grupo e as que dependem de outra opção.
+- Compra de pontos: `podeSubir` por atributo — o "+" morre quando o próximo
+  ponto não cabe (o saldo nunca fica negativo).
+- Loja: `naoCabe` desabilita o "+" do item mais caro que o dinheiro restante.
+- Cota cheia (`.t20w-pcheck-group[data-max]`): o resto desabilita.
+
+O que ainda falta aparece **no passo onde se resolve**, não no fim:
+`pendenciasComPasso` (engine) marca cada pendência com o `WizardStep`; o app
+soma as do passo (sub-escolhas, habilidades, dinheiro, pontos) em
+`_pendenciasDoPasso` e o "Próximo" fica travado até a lista esvaziar. A
+Revisão só mostra o que sobrar — no fluxo normal, nada.
+
+## 4. UI: um padrão por tipo de controle
 
 - Lista de itens (poder, magia, habilidade, equipamento): `.t20w-lista` +
   `.t20w-item` (`.selecionado`, `.inelegivel`, `.t20w-extra`), nome em
@@ -65,7 +83,7 @@ sufixo no nome ("Centelha Mágica (Abençoar Alimentos)").
 - Módulo e site rodam o MESMO código (templates, CSS, regras); o site só
   troca o Foundry pelo `site/shim.ts`. Nada de comportamento só de um lado.
 
-## 4. Fluxo para coisa nova
+## 5. Fluxo para coisa nova
 
 1. Regra pura em `src/rules/*` com `--check`/vitest.
 2. Dados em `src/data/*.json` (sub-escolha, prereq, tarifa) — não em código.

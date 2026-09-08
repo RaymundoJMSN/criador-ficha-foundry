@@ -283,6 +283,9 @@ async function boot(): Promise<void> {
   const abrir = el<HTMLButtonElement>("t20w-abrir");
   abrir.disabled = false;
   abrir.addEventListener("click", () => openWizard());
+  // As mesmas regras opcionais do módulo (o mestre liga aqui e o navegador guarda).
+  const { openConfigApp } = await import("../src/config/app");
+  el("t20w-regras").addEventListener("click", () => openConfigApp());
   void carregarLista();
   openWizard();
 }

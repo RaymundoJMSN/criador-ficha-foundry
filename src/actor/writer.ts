@@ -1,6 +1,31 @@
 import { MODULE_ID } from "../constants.js";
 import { mapStateToActorData, getTrainedPericaCodes , getTrainedPericaSlugs } from "./mapper.js";
 import { periciaDoOficio } from "../rules/oficio.js";
+import periciasSistemaRaw from "../data/pericias_sistema.json";
+
+const periciasSistema = periciasSistemaRaw as Record<string, { label: string; atributo: string; st: boolean; pda: boolean }>;
+
+/**
+ * Sentidos da ficha (Visão no Escuro etc.): o T20-DB não guarda, mas o texto da
+ * raça e dos poderes raciais diz. Roda depois dos itens, no ator já montado.
+ */
+const SENTIDOS: Array<[RegExp, string]> = [
+  [/vis[ãa]o no escuro/i, "escuro"],
+  [/vis[ãa]o na penumbra/i, "penumbra"],
+  [/percep[çc][ãa]o [àa]s cegas/i, "cegas"],
+  [/faro/i, "faro"],
+];
+
+function sentidosDosItens(itens: Array<{ type?: string; name?: string; system?: Record<string, unknown> }>): string[] {
+  const achados = new Set<string>();
+  for (const item of itens) {
+    const sys = (item.system ?? {}) as { tipo?: string; description?: { value?: string } };
+    if (item.type !== "race" && sys.tipo !== "racial") continue;
+    const texto = `${item.name ?? ""} ${(sys.description?.value ?? "").replace(/<[^>]+>/g, " ")}`;
+    for (const [re, chave] of SENTIDOS) if (re.test(texto)) achados.add(chave);
+  }
+  return [...achados];
+}
 import type { WizardState } from "../wizard/state.js";
 import type { IndexedPoder } from "../compendium/types.js";
 import { CompendiumIndex } from "../compendium/index.js";
@@ -869,6 +894,18 @@ export class ActorWriter {
       }
     }
 
+    const sentidos = sentidosDosItens([...((actor as unknown as { items: Iterable<never> }).items ?? [])]);
+    if (sentidos.length > 0) {
+      try {
+        // Aninhado, não por caminho: `sentidos.value` é um SetField e o update
+        // com "system.attributes.sentidos.value" não grava nada (some em silêncio).
+        await actor.update({ system: { attributes: { sentidos: { value: sentidos } } } } as never);
+        console.log(`${MODULE_ID} | ActorWriter: sentidos ${sentidos.join(", ")}`);
+      } catch (err) {
+        console.warn(`${MODULE_ID} | ActorWriter: falha nos sentidos:`, err);
+      }
+    }
+
     // Set trained perícias after full actor initialization (system schema = correct attributes)
     const trainedCodes = getTrainedPericaCodes(state);
     // "oficio" não tem code: vira a perícia fixa escolhida (alfa, arme…) ou uma própria (ofi1).
@@ -876,7 +913,17 @@ export class ActorWriter {
     if (Object.keys(trainedCodes).length > 0 || oficio) {
       const pericasUpdate: Record<string, unknown> = {};
       for (const code of Object.keys(trainedCodes)) {
+        // Só `treinado` bastaria no Foundry (o resto já existe), mas no site a
+        // ficha nasce vazia: sem label/atributo a perícia chega na importação
+        // sem nome e com Força. Gravar os dois é inofensivo dos dois lados.
+        const info = periciasSistema[code];
         pericasUpdate[`system.pericias.${code}.treinado`] = true;
+        if (info) {
+          pericasUpdate[`system.pericias.${code}.label`] = info.label;
+          pericasUpdate[`system.pericias.${code}.atributo`] = info.atributo;
+          pericasUpdate[`system.pericias.${code}.st`] = info.st;
+          pericasUpdate[`system.pericias.${code}.pda`] = info.pda;
+        }
       }
       if (oficio && "code" in oficio) pericasUpdate[`system.pericias.${oficio.code}.treinado`] = true;
       else if (oficio) pericasUpdate[`system.pericias.${oficio.key}`] = oficio.dados;

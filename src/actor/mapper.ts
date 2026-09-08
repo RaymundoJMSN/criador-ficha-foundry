@@ -6,6 +6,7 @@ import { getDivindade } from "../rules/divindade.js";
 import { totaisRaciaisDoEstado } from "../rules/subescolhas.js";
 import { beneficiosDeOrigemPermitidos } from "../rules/idade.js";
 import { getClasse } from "../rules/classe.js";
+import { classesDoPersonagem } from "../rules/multiclasse.js";
 import { getRaceSkillBonus, periciasDeEscolhasRaciais } from "../rules/raca.js";
 import { buildPericiaPlan, computeTrained, type PericiaPicks } from "../rules/pericias.js";
 
@@ -26,6 +27,8 @@ export interface ActorCreateData {
       to: number;
       tp: number;
     };
+    /** Proficiências (Armas/Armaduras da aba de traços) vindas da classe. */
+    tracos: { profArmas: { value: string[] }; profArmaduras: { value: string[] } };
   };
   items: unknown[];
 }
@@ -71,6 +74,9 @@ export function mapStateToActorData(
     type: CHARACTER_TYPE,
     system: {
       atributos,
+      // Armas/Armaduras da ficha vêm das proficiências da classe (Ray: campo
+      // que o jogador não deveria ter de preencher à mão).
+      tracos: proficienciasDoPersonagem(state),
       detalhes: {
         raca: state.racaNome || state.racaId,
         origem: origemNome,
@@ -95,6 +101,34 @@ export function mapStateToActorData(
  * given state. Used by writer.ts to call actor.update() after all items are embedded,
  * so the system schema has already set correct atributo for each perícia.
  */
+/** `armas_simples` → `simples`; `armaduras_leves` → `lev`… (chaves de `CONFIG.T20.profArmas/profArmaduras`). */
+const PROF_ARMA: Record<string, string> = {
+  armas_simples: "simples",
+  armas_marciais: "marcial",
+  armas_exoticas: "exotica",
+  armas_de_fogo: "fogo",
+};
+const PROF_ARMADURA: Record<string, string> = {
+  armaduras_leves: "lev",
+  armaduras_pesadas: "pes",
+  escudos: "esc",
+};
+
+export function proficienciasDoPersonagem(state: WizardState): {
+  profArmas: { value: string[] };
+  profArmaduras: { value: string[] };
+} {
+  const armas = new Set<string>();
+  const armaduras = new Set<string>();
+  for (const c of classesDoPersonagem(state)) {
+    for (const p of getClasse(c.classeNome || c.classeId)?.proficiencias ?? []) {
+      if (PROF_ARMA[p]) armas.add(PROF_ARMA[p]!);
+      if (PROF_ARMADURA[p]) armaduras.add(PROF_ARMADURA[p]!);
+    }
+  }
+  return { profArmas: { value: [...armas] }, profArmaduras: { value: [...armaduras] } };
+}
+
 export function getTrainedPericaCodes(state: WizardState): Record<string, true> {
   const result: Record<string, true> = {};
   for (const slug of getTrainedPericaSlugs(state)) {

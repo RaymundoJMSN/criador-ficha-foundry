@@ -13,6 +13,7 @@
     "conferir": "node scripts/conferir-livros.mjs",
     "port:pdf": "node scripts/port-pdf-classes.mjs --conferir",
     "port:deuses": "node scripts/port-pdf-deuses-menores.mjs",
+    "gerar:pericias": "node scripts/gerar-pericias.mjs",
     "export:compendio": "node scripts/exportar-compendio.mjs",
     "build:site": "vite build --config vite.config.site.ts && node scripts/copiar-site.mjs",
     "deploy:site": "vite build --config vite.config.site.ts && node scripts/copiar-site.mjs --deploy"

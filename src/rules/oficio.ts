@@ -3,6 +3,31 @@
  * personagem diz qual. O sistema traz seis fixas (`crafting: true` em
  * `T20.pericias`) e aceita até nove próprias (`ofi1`…`ofi9`, rótulo "Ofício: X").
  */
+import { WizardStep } from "./steps.js";
+import { validarBeneficios } from "./origem.js";
+import { beneficiosDeOrigemPermitidos } from "./idade.js";
+import type { ConfigCriacao } from "../config/config.js";
+
+export interface EstadoOficio {
+  origemId: string;
+  escolhasPorItem: Record<string, unknown>;
+  config: ConfigCriacao;
+}
+
+/** Ofício foi marcado na raça, na origem ou nas perícias da classe: é lá que se diz qual. */
+export function passoDoOficio(state: EstadoOficio): WizardStep {
+  const picks = (state.escolhasPorItem["pericias"] as { raca?: string[] } | undefined) ?? {};
+  if ((picks.raca ?? []).includes("oficio")) return WizardStep.Raca;
+  const daOrigem = state.origemId
+    ? validarBeneficios(
+        state.origemId,
+        (state.escolhasPorItem["origem_beneficios"] as string[]) ?? [],
+        beneficiosDeOrigemPermitidos(state)
+      ).pericias.includes("oficio")
+    : false;
+  return daOrigem ? WizardStep.Origem : WizardStep.Pericias;
+}
+
 export const OFICIOS_PADRAO: ReadonlyArray<{ code: string; nome: string }> = [
   { code: "alfa", nome: "Alfaiate" },
   { code: "alqu", nome: "Alquimista" },

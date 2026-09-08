@@ -8,6 +8,7 @@ import {
   complicacoesIdadeExigidas,
   complicacoesIdadeEscolhidas,
   jaViCoisas,
+  podeJaViCoisas,
   pendenciasDeIdade,
 } from "../../rules/idade.js";
 
@@ -37,7 +38,7 @@ function resumoFaixa(f: (typeof FAIXAS)[number]): string {
   if (f.niveisExtras) partes.push(`+${f.niveisExtras} nível(is)`);
   if (f.complicacoes) partes.push(`${f.complicacoes} complicação(ões) de idade`);
   if (f.beneficiosOrigem < 2) partes.push(f.beneficiosOrigem === 0 ? "sem origem" : "1 benefício de origem");
-  for (const h of f.habilidades) if (h.efeitos.length) partes.push(h.nome);
+  for (const h of f.habilidades) partes.push(h.nome);
   if (f.bloqueiaAumentoFisico) partes.push("sem Aumento de Atributo físico");
   return partes.length ? partes.join("; ") : "nenhum efeito";
 }
@@ -73,7 +74,7 @@ export function prepareIdadeContext(
     mostraFaixas: config.idadesVariadas,
     faixas: FAIXAS.map((f) => ({ id: f.id, nome: f.nome, idades: f.idades, resumo: resumoFaixa(f), selected: f.id === faixa.id })),
     faixaResumo: resumoFaixa(faixa),
-    mostraJaViCoisas: config.complicacaoIdade,
+    mostraJaViCoisas: podeJaViCoisas(state),
     jaViCoisas: jaViCoisas(state),
     complicacoesIdadeExigidas: exigidas,
     complicacoesIdade:

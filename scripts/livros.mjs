@@ -18,9 +18,10 @@ export function livrosDisponiveis() {
 }
 
 function ler(caminho) {
-  // Tira o frontmatter YAML: senão ele vaza para dentro da descrição.
-  const FRONTMATTER = new RegExp("^---\r?\n[\s\S]*?\r?\n---\r?\n");
-  return readFileSync(caminho, "utf-8").replace(FRONTMATTER, "");
+  // Tira o frontmatter YAML: senão ele vaza para dentro da descrição (Bugbear
+  // aparecia como "--- title: ..."). Regex literal: a versão em string perdia a
+  // barra de [\s\S] e nunca casava.
+  return readFileSync(caminho, "utf-8").replace(/^---\r?\n[\s\S]*?\r?\n---\r?\n/, "");
 }
 
 /** Tira negrito, links e imagens — sobra o texto corrido. */
