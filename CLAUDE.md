@@ -735,3 +735,33 @@ Mudou alguma destas áreas? Atualizar este `CLAUDE.md` **no mesmo commit**:
   → `RollShim` (NdM, kh/kl, aritmética). `copiar-site.mjs` copia os ícones
   referenciados pelo despejo (Data/ e Code/resources/app/public) — eram os
   404 no console.
+
+## Padrões (2026-09-08)
+
+Leia `docs/superpowers/PADROES.md`: escolha acontece onde a coisa é obtida;
+listas de poder/magia/sub-escolha têm UMA origem cada (`preparePoderesContext`,
+`filterMagias`/`opcoesDaSub`, `subescolhas_poder.json`); UI por tipo de
+controle (`.t20w-item`, `.t20w-pcheck-group[data-max]`, `montarCombo`).
+
+- Extras de poder geral (Versátil, complicação, Já Vi Coisas) são escolhidos
+  na tela de origem (`poder_extra-<fonte>` → `escolhasPorItem.poderes_extras`)
+  e no passo Poderes ficam marcados/riscados fora da cota. `_mesclarMarcados`
+  preserva ids sem checkbox (variantes, extras) — sem isso o clique num
+  checkbox ou o "Próximo" apagavam o "Aumento de Atributo (Força)".
+- "Aumento de Atributo (X)" vira uma linha com select (`agruparVariantes`);
+  o item da ficha é o da variante.
+- Centelha, Orar, Truque Mágico, Truque de Palco: sub-escolha `magia` no
+  próprio poder (saíram de `magias_por_poder.json`, que fica só com os que
+  ampliam a lista da classe). O bloco `subEscolhasPasso` aparece no passo
+  onde o poder nasce (`_subEscolhasDoPasso`).
+- Ofício: `src/rules/oficio.ts` — fixos do sistema (alfa/alqu/arme/arte/cozi/
+  enge) ou próprio (`system.pericias.ofi1`, formato de
+  `_onPericiaCustomCreate`). Antes "oficio" era pulado em silêncio no writer.
+- `computeTrained` conta marcação parcial (pré-requisito e bloco do Ofício
+  reagem na hora); o erro continua segurando o avanço.
+- Habilidades de classe, equipamento (📖), concedidos e benefícios de origem
+  (limite `data-max`) seguem os blocos padrão. Origem com texto do livro não
+  repete perícias/itens extraídos.
+- Textos: `gerar-textos.mjs` cobre toda classe que algum livro descreve
+  (+Treinador do HdA); classes só do compêndio (Duelista, Burguês…) ficam com
+  a descrição do item, que costuma vir vazia.

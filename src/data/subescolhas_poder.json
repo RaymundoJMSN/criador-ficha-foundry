@@ -285,5 +285,39 @@
   "citadino_abastado": {
     "tipo": "texto",
     "rotulo": "Ofício em que é treinado"
+  },
+  "centelha_magica": {
+    "tipo": "magia",
+    "rotulo": "Magia de 1º círculo (arcana ou divina)",
+    "circulo": 1,
+    "tradicao": [
+      "arc",
+      "div"
+    ]
+  },
+  "orar": {
+    "tipo": "magia",
+    "rotulo": "Magia divina de 1º círculo",
+    "circulo": 1,
+    "tradicao": [
+      "div"
+    ]
+  },
+  "truque_magico": {
+    "tipo": "magia",
+    "rotulo": "Magia arcana de 1º círculo",
+    "circulo": 1,
+    "tradicao": [
+      "arc"
+    ]
+  },
+  "truque_de_palco": {
+    "tipo": "magia",
+    "rotulo": "Magia arcana de 1º círculo com o aprimoramento truque",
+    "circulo": 1,
+    "tradicao": [
+      "arc"
+    ],
+    "quantidade": 3
   }
 }

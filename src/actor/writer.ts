@@ -1,5 +1,6 @@
 import { MODULE_ID } from "../constants.js";
-import { mapStateToActorData, getTrainedPericaCodes } from "./mapper.js";
+import { mapStateToActorData, getTrainedPericaCodes , getTrainedPericaSlugs } from "./mapper.js";
+import { periciaDoOficio } from "../rules/oficio.js";
 import type { WizardState } from "../wizard/state.js";
 import type { IndexedPoder } from "../compendium/types.js";
 import { CompendiumIndex } from "../compendium/index.js";
@@ -859,11 +860,15 @@ export class ActorWriter {
 
     // Set trained perícias after full actor initialization (system schema = correct attributes)
     const trainedCodes = getTrainedPericaCodes(state);
-    if (Object.keys(trainedCodes).length > 0) {
+    // "oficio" não tem code: vira a perícia fixa escolhida (alfa, arme…) ou uma própria (ofi1).
+    const oficio = getTrainedPericaSlugs(state).includes("oficio") ? periciaDoOficio(state.escolhasPorItem) : null;
+    if (Object.keys(trainedCodes).length > 0 || oficio) {
       const pericasUpdate: Record<string, unknown> = {};
       for (const code of Object.keys(trainedCodes)) {
         pericasUpdate[`system.pericias.${code}.treinado`] = true;
       }
+      if (oficio && "code" in oficio) pericasUpdate[`system.pericias.${oficio.code}.treinado`] = true;
+      else if (oficio) pericasUpdate[`system.pericias.${oficio.key}`] = oficio.dados;
       try {
         await actor.update(pericasUpdate);
         console.log(`${MODULE_ID} | ActorWriter: trained ${Object.keys(trainedCodes).length} perícias`);

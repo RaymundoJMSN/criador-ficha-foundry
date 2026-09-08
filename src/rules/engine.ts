@@ -25,6 +25,10 @@ import { getClasse, cadeiaSubEscolhas } from "./classe.js";
 import { getRaceSkillBonus, pendenciasDeEscolhasRaciais } from "./raca.js";
 import { pendenciasDaMontagem } from "./montagem.js";
 import { buildPericiaPlan, computeTrained, type PericiaPicks } from "./pericias.js";
+import { oficioResolvido } from "./oficio.js";
+import { getTrainedPericaSlugs } from "../actor/mapper.js";
+import type { WizardState } from "../wizard/state.js";
+import { fontesDePoderExtra, poderesExtrasEscolhidos } from "./idade.js";
 import type { IndexedMagia, AnyIndexed } from "../compendium/types.js";
 
 export interface EngineState {
@@ -234,6 +238,13 @@ export function pendencias(state: EngineState): string[] {
     faltando.push(`Escolha ${slots} poder(es) — ${state.poderes.length} escolhido(s).`);
   }
   faltando.push(...pendenciasDeIdade(state));
+  // ponytail: EngineState tem os campos que o mapper lê (raça, classe, picks, origem, config).
+  if (getTrainedPericaSlugs(state as unknown as WizardState).includes("oficio") && !oficioResolvido(state.escolhasPorItem)) {
+    faltando.push("Ofício: diga qual (Alfaiate, Armeiro… ou um nome próprio).");
+  }
+  for (const f of fontesDePoderExtra(state)) {
+    if (!poderesExtrasEscolhidos(state)[f.fonte]) faltando.push(`${f.rotulo}: escolha o poder na tela onde ele nasce.`);
+  }
   if (state.config.racasAbertas && racaRef) {
     faltando.push(...distribuirAbertos(racaRef, (state.escolhasPorItem["raca_aberta"] as Record<string, string>) ?? {}).erros);
   }

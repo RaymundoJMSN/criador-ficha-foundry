@@ -14,6 +14,7 @@ interface Opcao {
   value: string;
   text: string;
   grupo: string;
+  disabled: boolean;
 }
 
 export function montarCombo(sel: HTMLSelectElement): void {
@@ -21,6 +22,7 @@ export function montarCombo(sel: HTMLSelectElement): void {
     value: o.value,
     text: o.text,
     grupo: o.parentElement instanceof HTMLOptGroupElement ? o.parentElement.label : "",
+    disabled: o.disabled,
   }));
   const textoDe = (value: string): string => opcoes.find((o) => o.value === value)?.text ?? "";
 
@@ -52,6 +54,7 @@ export function montarCombo(sel: HTMLSelectElement): void {
     ativo = -1;
   };
   const escolher = (value: string): void => {
+    if (opcoes.find((o) => o.value === value)?.disabled) return;
     sel.value = value;
     mostrarValor();
     fechar();
@@ -75,7 +78,8 @@ export function montarCombo(sel: HTMLSelectElement): void {
         "t20w-combo-item" +
         (o.value && o.value === sel.value ? " t20w-combo-atual" : "") +
         (i === ativo ? " t20w-combo-ativo" : "") +
-        (o.value ? "" : " t20w-combo-vazio");
+        (o.value ? "" : " t20w-combo-vazio") +
+        (o.disabled ? " t20w-combo-desab" : "");
       el.textContent = o.text;
       // mousedown (não click): o blur do input fecharia a lista antes do click.
       el.addEventListener("mousedown", (e) => {

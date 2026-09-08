@@ -60,6 +60,7 @@ function pendenciasDosPoderes(state: WizardState): string[] {
 import { prepareOrigemContext } from "./steps/origem.js";
 import { prepareClasseContext } from "./steps/classe.js";
 import { preparePericiaContext, prepareRacaPericias, type PoderGeralOpt } from "./steps/pericias.js";
+import { OFICIOS_PADRAO, OFICIO_OUTRO, escolhaDeOficio } from "../rules/oficio.js";
 type PericiaPicksParciais = { obrigatorias?: string[][]; escolhas?: string[]; extras_int?: string[]; raca?: string[] };
 import { getRaceSkillBonus } from "../rules/raca.js";
 import { totaisRaciaisDoEstado, distribuirAbertos, valoresFixosDaRaca } from "../rules/subescolhas.js";
@@ -75,7 +76,8 @@ function abrirNoCompendio(uuid: string): void {
 }
 import { lerConfig, resumoConfig } from "../config/config.js";
 import { listMetodos } from "../rules/atributos.js";
-import { nivelEfetivo, faixaDoPersonagem } from "../rules/idade.js";
+import { nivelEfetivo, faixaDoPersonagem, fontesDePoderExtra, poderesExtrasEscolhidos, beneficiosDeOrigemPermitidos } from "../rules/idade.js";
+import { validarBeneficios } from "../rules/origem.js";
 import { prepareIdadeContext } from "./steps/idade.js";
 import { openConfigApp } from "../config/app.js";
 import { classesDoPersonagem } from "../rules/multiclasse.js";
@@ -105,13 +107,13 @@ function aplicarConfig(state: WizardState): void {
   state.apply(patch as Parameters<WizardState["apply"]>[0]);
 }
 import { prepareDivindadeContext } from "./steps/divindade.js";
-import { preparePoderesContext, pendenciasDeHabilidades } from "./steps/poderes.js";
+import { preparePoderesContext, pendenciasDeHabilidades, type SubEscolhaView } from "./steps/poderes.js";
 import { chaveHabilidade } from "../compendium/resolver.js";
 import { prepareMagiasContext } from "./steps/magias.js";
 import { prepareEquipamentoContext } from "./steps/equipamento.js";
 import { prepareRevisaoContext } from "./steps/revisao.js";
 import { ActorWriter } from "../actor/writer.js";
-import { getTrainedPericaCodes } from "../actor/mapper.js";
+import { getTrainedPericaCodes, getTrainedPericaSlugs } from "../actor/mapper.js";
 import { pendencias, type EngineState } from "../rules/engine.js";
 import type {
   IndexedClasse,
@@ -184,6 +186,112 @@ export function defineWizardApp(): void {
         slugsDePoderesComMagia(this._state),
         this._state.config
       );
+    }
+
+    /**
+     * Junta o que a tela marcou com o que a tela não mostra: ids sem checkbox
+     * (variantes do Aumento de Atributo, escolhidos noutro passo) ficam; poder
+     * repetível mantém as cópias; desmarcar tira todas.
+     */
+    _mesclarMarcados(campo: "poderes" | "magias", marcados: string[], temCaixa: (id: string) => boolean): string[] {
+      const atual = this._state[campo] as string[];
+      const semCaixa = atual.filter((id) => !temCaixa(id));
+      const comCaixa = marcados.flatMap((id) => Array(Math.max(1, atual.filter((x) => x === id).length)).fill(id) as string[]);
+      return [...semCaixa, ...comCaixa];
+    }
+
+    /** Contexto do passo Poderes: a única fonte de lista/elegibilidade de poderes (Versátil, complicação, sub-escolhas). */
+    _contextoPoderes(): ReturnType<typeof preparePoderesContext> {
+      const poderes = CompendiumIndex.getAll("poder") as IndexedPoder[];
+      return preparePoderesContext(
+        this._state,
+        poderes,
+        [],
+        (slug) => poderes.find((p) => toNomeSlug(p.name) === slug)?.name ?? null,
+        CompendiumIndex.getAll("magia") as IndexedMagia[],
+        { racas: CompendiumIndex.getAll("race") as IndexedRace[], armas: CompendiumIndex.getAll("arma") as IndexedEquipamento[] }
+      );
+    }
+
+    /** Poderes gerais para um select de poder extra (Versátil, complicação…), com a elegibilidade real. */
+    _opcoesPoderGeral(fonte: string): PoderGeralOpt[] {
+      const atual = poderesExtrasEscolhidos(this._state)[fonte] ?? "";
+      try {
+        return this._contextoPoderes()
+          .poderes.filter((p) => p.origem === "geral" && p.tipo === "geral")
+          .map((p) => ({ id: p.id, nome: p.name, eligible: p.eligible || p.id === atual, requer: p.unmet.join(", "), selected: p.id === atual }))
+          .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
+      } catch (e) {
+        console.warn(`${MODULE_ID} | poderes extras`, e);
+        return [];
+      }
+    }
+
+    /** Poder geral extra escolhido na tela de origem: entra em `state.poderes` fora da cota do passo Poderes. */
+    _setPoderExtra(fonte: string, id: string): void {
+      const salvos = { ...((this._state.escolhasPorItem["poderes_extras"] as Record<string, string> | undefined) ?? {}) };
+      const antigo = salvos[fonte] ?? "";
+      const poderes = [...this._state.poderes];
+      const i = antigo ? poderes.indexOf(antigo) : -1;
+      if (i >= 0) poderes.splice(i, 1);
+      if (id) {
+        poderes.push(id);
+        salvos[fonte] = id;
+      } else {
+        delete salvos[fonte];
+      }
+      this._state.apply({ poderes, escolhasPorItem: { ...this._state.escolhasPorItem, poderes_extras: salvos } });
+    }
+
+    /** Fonte que deixou de existir (tirou a complicação, desmarcou Versátil) leva o poder junto. */
+    _sincronizarPoderesExtras(): void {
+      const ativas = new Set(fontesDePoderExtra(this._state).map((f) => f.fonte));
+      const salvos = (this._state.escolhasPorItem["poderes_extras"] as Record<string, string> | undefined) ?? {};
+      for (const fonte of Object.keys(salvos)) if (!ativas.has(fonte)) this._setPoderExtra(fonte, "");
+    }
+
+    /** Bloco "Ofício: qual?" no passo em que a perícia foi marcada. */
+    _blocoOficio(step: WizardStep): unknown {
+      const state = this._state;
+      if (!getTrainedPericaSlugs(state).includes("oficio")) return null;
+      const picks = (state.escolhasPorItem["pericias"] as PericiaPicksParciais | undefined) ?? {};
+      const daOrigem = state.origemId
+        ? validarBeneficios(state.origemId, (state.escolhasPorItem["origem_beneficios"] as string[]) ?? [], beneficiosDeOrigemPermitidos(state)).pericias.includes("oficio")
+        : false;
+      const passo = (picks.raca ?? []).includes("oficio") ? WizardStep.Raca : daOrigem ? WizardStep.Origem : WizardStep.Pericias;
+      if (passo !== step) return null;
+      const e = escolhaDeOficio(state.escolhasPorItem);
+      return {
+        tipos: [...OFICIOS_PADRAO.map((o) => ({ id: o.code, nome: o.nome, selected: e.tipo === o.code })), { id: OFICIO_OUTRO, nome: "Outro (nome próprio)…", selected: e.tipo === OFICIO_OUTRO }],
+        outro: e.tipo === OFICIO_OUTRO,
+        nome: e.nome,
+      };
+    }
+
+    /** Sub-escolhas dos poderes que nascem neste passo (Ray: decidir onde o poder é pego). */
+    _subEscolhasDoPasso(step: WizardStep): SubEscolhaView[] {
+      const FONTES: Partial<Record<WizardStep, string[]>> = {
+        [WizardStep.Nivel]: ["extra_complicacao", "extra_ja_vi_coisas"],
+        [WizardStep.Raca]: ["raça", "extra_versatil"],
+        [WizardStep.Origem]: ["origem"],
+        [WizardStep.Classe]: ["classe"],
+        [WizardStep.Divindade]: ["divindade"],
+        [WizardStep.Poderes]: ["poder"],
+      };
+      const fontes = FONTES[step];
+      if (!fontes) return [];
+      const poderes = CompendiumIndex.getAll("poder") as IndexedPoder[];
+      const fonteDoSlug = new Map<string, string>();
+      for (const [fonte, id] of Object.entries(poderesExtrasEscolhidos(this._state))) {
+        const nome = poderes.find((p) => p.id === id)?.name;
+        if (nome) fonteDoSlug.set(toNomeSlug(nome), `extra_${fonte}`);
+      }
+      try {
+        return this._contextoPoderes().subEscolhas.filter((s) => fontes.includes((s.fonte === "poder" && fonteDoSlug.get(s.slug)) || s.fonte));
+      } catch (e) {
+        console.warn(`${MODULE_ID} | sub-escolhas`, e);
+        return [];
+      }
     }
 
     goToStep(step: WizardStep): void {
@@ -358,7 +466,15 @@ export function defineWizardApp(): void {
       // Checkbox desmarcada não aparece no FormData, então "lista vazia" e "passo
       // não estava na tela" ficavam iguais — desmarcar tudo nunca limpava o estado.
       // O input escondido do passo distingue os dois casos.
-      if (formData.has("passo_poderes")) patch["poderes"] = poderes;
+      if (formData.has("passo_poderes")) {
+        // FormData ignora checkbox desabilitado (extra marcado e riscado) e não
+        // vê as variantes: lê a tela e mescla com o estado.
+        const raiz = this.element as HTMLElement | undefined;
+        const caixas = Array.from(raiz?.querySelectorAll('input[name^="poder-"]') ?? []) as HTMLInputElement[];
+        const marcados = caixas.filter((c) => c.type === "hidden" || c.checked).map((c) => c.value);
+        const lista = caixas.map((c) => c.value);
+        patch["poderes"] = caixas.length ? this._mesclarMarcados("poderes", marcados, (id) => lista.includes(id)) : poderes;
+      }
       if (formData.has("passo_magias")) patch["magias"] = magias;
 
       this._state.apply(patch as Parameters<typeof this._state.apply>[0]);
@@ -367,6 +483,7 @@ export function defineWizardApp(): void {
     async _prepareContext(_options: unknown): Promise<unknown> {
       const step = this._currentStep;
       const state = this._state;
+      this._sincronizarPoderesExtras();
       // Cada passo acrescenta o que ele mesmo detecta ao que veio da navegação;
       // sem dedupe a mesma frase aparecia repetida a cada render.
       const errors = [...new Set(this._errors)];
@@ -385,7 +502,12 @@ export function defineWizardApp(): void {
       let stepCtx: unknown = {};
       switch (step) {
         case WizardStep.Nivel:
-          stepCtx = prepareNivelContext(state, errors);
+          stepCtx = {
+            ...prepareNivelContext(state, errors),
+            poderesExtras: fontesDePoderExtra(state)
+              .filter((f) => f.passo === "nivel")
+              .map((f) => ({ ...f, opcoes: this._opcoesPoderGeral(f.fonte) })),
+          };
           break;
         case WizardStep.Atributos:
           stepCtx = prepareAtributosContext(state, errors);
@@ -393,19 +515,7 @@ export function defineWizardApp(): void {
         case WizardStep.Raca: {
           const racas = CompendiumIndex.getAll("race") as IndexedRace[];
           const poderesRaca = CompendiumIndex.getAll("poder") as IndexedPoder[];
-          // Versátil: lista de poderes gerais com a elegibilidade do passo Poderes.
-          const versatilId = String(state.escolhasPorItem["versatil_poder_id"] ?? "");
-          let poderesGerais: PoderGeralOpt[] = [];
-          if (state.escolhasPorItem["versatil_poder"]) {
-            try {
-              poderesGerais = preparePoderesContext(state, poderesRaca, [], () => null, CompendiumIndex.getAll("magia"), { racas })
-                .poderes.filter((p) => p.origem === "geral" && p.tipo === "geral")
-                .map((p) => ({ id: p.id, nome: p.name, eligible: p.eligible || p.id === versatilId, requer: p.unmet.join(", "), selected: p.id === versatilId }))
-                .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
-            } catch (e) {
-              console.warn("t20-ficha-wizard | poderes do Versátil", e);
-            }
-          }
+          const poderesGerais: PoderGeralOpt[] = state.escolhasPorItem["versatil_poder"] ? this._opcoesPoderGeral("versatil") : [];
           stepCtx = {
             ...prepareRacaContext(
             state,
@@ -556,6 +666,8 @@ export function defineWizardApp(): void {
         showEquipamento: step === WizardStep.Equipamento,
         showRevisao: step === WizardStep.Revisao,
         ...(stepCtx as object),
+        subEscolhasPasso: this._subEscolhasDoPasso(step),
+        oficio: this._blocoOficio(step),
         // Cada passo soma o que ele detecta ao que veio da navegação, então a
         // mesma frase chegava pelos dois caminhos e aparecia repetida.
         errors: [...new Set((stepCtx as { errors?: string[] }).errors ?? errors)],
@@ -840,16 +952,13 @@ export function defineWizardApp(): void {
           caixa.addEventListener("change", () => {
             // Poder repetível (Orar ×2) tem o id N vezes no estado; a caixa
             // marcada mantém as cópias, desmarcar tira todas.
-            const atual = this._state[campo] as string[];
             // Marcada fora do filtro (magia escondida pelo filtro de escola) vem
             // como input hidden: conta como marcada, senão sumia ao clicar em outra.
             const marcados = Array.from(caixas)
               .filter((c) => c.type === "hidden" || c.checked)
-              .flatMap((c) => {
-                const n = atual.filter((id) => id === c.value).length;
-                return Array(Math.max(1, n)).fill(c.value) as string[];
-              });
-            this._state.apply({ [campo]: marcados } as Parameters<typeof this._state.apply>[0]);
+              .map((c) => c.value);
+            const lista = Array.from(caixas).map((c) => c.value);
+            this._state.apply({ [campo]: this._mesclarMarcados(campo, marcados, (id) => lista.includes(id)) } as Parameters<typeof this._state.apply>[0]);
             this._errors = [];
             void this.render();
           });
@@ -1077,10 +1186,29 @@ export function defineWizardApp(): void {
       const periciaInputs = root.querySelectorAll<HTMLInputElement>(
         'input[name^="per_esc-"], input[name^="per_int-"], input[name^="per_raca-"], input[name^="per_obrig-"], input[name="versatil_poder"]'
       );
-      const vpSel = root.querySelector<HTMLSelectElement>('select[name="versatil_poder_id"]');
-      vpSel?.addEventListener("change", () => {
-        this._setVersatilPoder(vpSel.value);
+      root.querySelector<HTMLSelectElement>('select[name="oficio_tipo"]')?.addEventListener("change", (e) => {
+        const tipo = (e.target as HTMLSelectElement).value;
+        this._state.apply({ escolhasPorItem: { ...this._state.escolhasPorItem, oficio: { ...escolhaDeOficio(this._state.escolhasPorItem), tipo } } });
         void this.render();
+      });
+      root.querySelector<HTMLInputElement>('input[name="oficio_nome"]')?.addEventListener("change", (e) => {
+        const nome = (e.target as HTMLInputElement).value.trim();
+        this._state.apply({ escolhasPorItem: { ...this._state.escolhasPorItem, oficio: { ...escolhaDeOficio(this._state.escolhasPorItem), nome } } });
+      });
+      // Aumento de Atributo: uma linha, o atributo vem do select (o item real é o da variante).
+      root.querySelectorAll<HTMLSelectElement>('select[name^="variante-"]').forEach((sel) => {
+        sel.addEventListener("change", () => {
+          if (!sel.value) return;
+          this._state.apply({ poderes: [...this._state.poderes, sel.value] });
+          this._errors = [];
+          void this.render();
+        });
+      });
+      root.querySelectorAll<HTMLSelectElement>('select[name^="poder_extra-"]').forEach((sel) => {
+        sel.addEventListener("change", () => {
+          this._setPoderExtra(sel.name.slice("poder_extra-".length), sel.value);
+          void this.render();
+        });
       });
       if (periciaInputs.length > 0) {
         periciaInputs.forEach((inp) => {
@@ -1132,15 +1260,7 @@ export function defineWizardApp(): void {
           versatil_poder: versatil,
         },
       });
-      if (vp && !vp.checked) this._setVersatilPoder("");
-    }
-
-    /** Poder geral escolhido pelo Versátil: entra em `state.poderes` (gasta o slot extra). */
-    _setVersatilPoder(id: string): void {
-      const antigo = String(this._state.escolhasPorItem["versatil_poder_id"] ?? "");
-      const poderes = antigo ? this._state.poderes.filter((p) => p !== antigo) : [...this._state.poderes];
-      if (id) poderes.push(id);
-      this._state.apply({ poderes, escolhasPorItem: { ...this._state.escolhasPorItem, versatil_poder_id: id } });
+      if (vp && !vp.checked) this._setPoderExtra("versatil", "");
     }
 
     _gatherFormData(): FormData {

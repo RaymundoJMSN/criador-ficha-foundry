@@ -228,8 +228,40 @@ export function complicacaoEscolhida(s: EstadoIdade): string {
 
 /** Poderes gerais extras: um pela complicação (HA p.282) e um pelo Já Vi Coisas (HA p.289). */
 export function poderesGeraisExtras(s: EstadoIdade): number {
-  // `versatil_poder` só é gravado para humano (Versátil: perícia → poder geral).
-  return (complicacaoEscolhida(s) ? 1 : 0) + (jaViCoisas(s) ? 1 : 0) + (s.escolhasPorItem["versatil_poder"] ? 1 : 0);
+  return fontesDePoderExtra(s).length;
+}
+
+export interface FontePoderExtra {
+  fonte: string;
+  rotulo: string;
+  /** Passo do wizard onde o poder é escolhido. */
+  passo: "nivel" | "raca";
+}
+
+/**
+ * Cada fonte de poder geral extra é escolhida na tela onde nasce (Ray): Versátil
+ * no passo Raça, complicação e Já Vi Coisas no passo Nível. `versatil_poder` só
+ * é gravado para humano.
+ */
+export function fontesDePoderExtra(s: EstadoIdade): FontePoderExtra[] {
+  const out: FontePoderExtra[] = [];
+  if (s.escolhasPorItem["versatil_poder"]) out.push({ fonte: "versatil", rotulo: "Poder geral (Versátil)", passo: "raca" });
+  if (complicacaoEscolhida(s)) out.push({ fonte: "complicacao", rotulo: "Poder geral pela complicação", passo: "nivel" });
+  if (jaViCoisas(s)) out.push({ fonte: "ja_vi_coisas", rotulo: "Poder geral por Já Vi Coisas", passo: "nivel" });
+  return out;
+}
+
+/** fonte → id do poder escolhido (`escolhasPorItem.poderes_extras`), só fontes ativas e preenchidas. */
+export function poderesExtrasEscolhidos(s: EstadoIdade): Record<string, string> {
+  const salvos = (s.escolhasPorItem["poderes_extras"] as Record<string, string> | undefined) ?? {};
+  const out: Record<string, string> = {};
+  for (const f of fontesDePoderExtra(s)) if (salvos[f.fonte]) out[f.fonte] = salvos[f.fonte]!;
+  return out;
+}
+
+/** Ids dos poderes que vieram das fontes extras (já estão em `state.poderes`). */
+export function idsDePoderesExtras(s: EstadoIdade): string[] {
+  return Object.values(poderesExtrasEscolhidos(s));
 }
 
 /** Benefícios de origem que a faixa deixa (2, 1 ou 0). */

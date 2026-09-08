@@ -82,11 +82,12 @@ export function computeTrained(plan: PericiaPlan, picks: PericiaPicks): TrainedR
   // Obligatory groups
   plan.obrigatorias.forEach((grupo, i) => {
     const pick = picks.obrigatorias[i] ?? [];
+    // Incompleto ainda conta o que já foi marcado: pré-requisito e o bloco do
+    // Ofício reagem na hora, e o erro segura o avanço.
     if (pick.length < grupo.quantidade) {
       errors.push(
         `Escolha ${grupo.quantidade} entre ${listaLegivel(grupo.opcoes)}.`
       );
-      return;
     }
     for (const p of pick.slice(0, grupo.quantidade)) {
       if (!grupo.opcoes.includes(p)) {
@@ -106,11 +107,12 @@ export function computeTrained(plan: PericiaPlan, picks: PericiaPicks): TrainedR
     errors.push(
       `Perícias da classe: escolha ${plan.escolhas.quantidade} (marcou ${esc.length}).`
     );
-  } else if (esc.length < plan.escolhas.quantidade) {
-    errors.push(
-      `Perícias da classe: faltam ${plan.escolhas.quantidade - esc.length} de ${plan.escolhas.quantidade}.`
-    );
   } else {
+    if (esc.length < plan.escolhas.quantidade) {
+      errors.push(
+        `Perícias da classe: faltam ${plan.escolhas.quantidade - esc.length} de ${plan.escolhas.quantidade}.`
+      );
+    }
     esc.forEach((p) => trained.add(p));
   }
 

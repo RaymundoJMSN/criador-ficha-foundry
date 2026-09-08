@@ -1,5 +1,6 @@
 import dinheiroDataRaw from "../../data/dinheiro.json";
 import type { IndexedEquipamento } from "../../compendium/types.js";
+import { uuidDe } from "../../compendium/slug.js";
 import type { WizardState } from "../state.js";
 import { equipamentoInicial, type EquipamentoInicial } from "../../rules/itens-iniciais.js";
 import { beneficiosDeOrigemPermitidos } from "../../rules/idade.js";
@@ -87,6 +88,7 @@ export function prepareEquipamentoContext(
     return {
       id: item.id,
       name: item.name,
+      uuid: uuidDe(item),
       img: item.img,
       type: item.type,
       preco: item.system.preco ?? 0,

@@ -238,10 +238,11 @@ if (livrosDisponiveis()) {
     if (d) textos.racas[r.id] = primeirasFrases(d);
   }
 
-  const classesLivro = porId(classesDosLivros());
-  for (const id of Object.keys(dados("classes.json"))) {
-    const d = classesLivro.get(id)?.descricao;
-    if (d) textos.classes[id] = primeirasFrases(d);
+  // Toda classe que algum livro descreve (o compêndio tem mais classes que o
+  // T20-DB); arquivo só de poderes cai no frontmatter e fica de fora.
+  for (const [id, c] of porId(classesDosLivros())) {
+    const d = c.descricao;
+    if (d && !/^---/.test(d.trim())) textos.classes[id] = primeirasFrases(d);
   }
 } else {
   console.log("  (sem tormenta-livros: raças e classes ficam sem descrição)");

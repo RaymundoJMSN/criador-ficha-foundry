@@ -100,10 +100,10 @@ describe("filterMagias", () => {
     ).toEqual(["a", "c"]);
   });
 
-  it("paladino sem Orar não vê magia; com Orar vê divinas de 1º círculo", () => {
+  it("paladino sem poder de magia não vê magia; com Aspecto da Primavera vê as de 1º círculo", () => {
     const magias = [mockMagia({ circulo: 1, tipo: "div" }, "a"), mockMagia({ circulo: 2, tipo: "div" }, "b")];
     expect(filterMagias(magias, { classeSlug: "paladino", nivel: 5 })).toHaveLength(0);
-    expect(filterMagias(magias, { classeSlug: "paladino", nivel: 5, poderSlugs: ["orar"] }).map((m) => m.id)).toEqual(["a"]);
+    expect(filterMagias(magias, { classeSlug: "paladino", nivel: 5, poderSlugs: ["aspecto_da_primavera"] }).map((m) => m.id)).toEqual(["a"]);
   });
 
   it("magia sem tipo passa (compêndio incompleto)", () => {
@@ -112,12 +112,13 @@ describe("filterMagias", () => {
 });
 
 describe("cota: classe + poderes que ensinam magia", () => {
-  it("Orar 2× dá 2; Conhecimento Mágico dá 2; poder qualquer dá 0", () => {
-    expect(magiasExtrasDosPoderes(["orar", "orar"])).toBe(2);
+  it("Segredos da Natureza dá 2; Conhecimento Mágico dá 2; Orar (sub-escolha no poder) e poder qualquer dão 0", () => {
+    expect(magiasExtrasDosPoderes(["segredos_da_natureza"])).toBe(2);
+    expect(magiasExtrasDosPoderes(["orar", "orar"])).toBe(0);
     expect(magiasExtrasDosPoderes(["conhecimento_magico", "ataque_especial"])).toBe(2);
   });
-  it("paladino nv3 com Orar conhece 1; clérigo nv2 com Conhecimento Mágico conhece 6", () => {
-    expect(cotaDeMagias("Paladino", 3, "", ["orar"])).toBe(1);
+  it("paladino nv3 com Aspecto da Primavera conhece 1; clérigo nv2 com Conhecimento Mágico conhece 6", () => {
+    expect(cotaDeMagias("Paladino", 3, "", ["aspecto_da_primavera"])).toBe(1);
     expect(cotaDeMagias("Clérigo", 2, "", ["conhecimento_magico"])).toBe(6);
   });
   it("slugsDosPoderes usa o nome registrado", () => {
@@ -144,13 +145,13 @@ describe("excedentesPorCirculo", () => {
   });
 });
 
-describe("tradição aberta por poder (Centelha Mágica)", () => {
+describe("tradição aberta por poder (Aspecto da Primavera)", () => {
   const mg = (id: string, tipo: string, circulo: number) => ({ id, name: id, img: "", type: "magia", packId: "p", system: { tipo, circulo } }) as never;
   const magias = [mg("arc1", "arc", 1), mg("arc2", "arc", 2), mg("div1", "div", 1), mg("div2", "div", 2), mg("uni1", "uni", 1)];
-  it("clérigo nv5 com Centelha vê as arcanas de 1º círculo, não as de 2º", () => {
+  it("clérigo nv5 com Aspecto da Primavera vê as arcanas de 1º círculo, não as de 2º", () => {
     const sem = filterMagias(magias, { classeSlug: "clerigo", nivel: 5 }).map((m: { id: string }) => m.id);
     expect(sem).toEqual(["div1", "div2", "uni1"]);
-    const com = filterMagias(magias, { classeSlug: "clerigo", nivel: 5, poderSlugs: ["centelha_magica"] }).map((m: { id: string }) => m.id);
+    const com = filterMagias(magias, { classeSlug: "clerigo", nivel: 5, poderSlugs: ["aspecto_da_primavera"] }).map((m: { id: string }) => m.id);
     expect(com).toEqual(["arc1", "div1", "div2", "uni1"]);
   });
 });

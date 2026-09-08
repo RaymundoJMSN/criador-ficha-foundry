@@ -48,30 +48,5 @@
       "arcana",
       "divina"
     ]
-  },
-  "truque_de_palco": {
-    "quantidade": 3,
-    "tradicao": [
-      "arcana"
-    ]
-  },
-  "truque_magico": {
-    "quantidade": 1,
-    "tradicao": [
-      "arcana"
-    ]
-  },
-  "orar": {
-    "quantidade": 1,
-    "tradicao": [
-      "divina"
-    ]
-  },
-  "centelha_magica": {
-    "quantidade": 1,
-    "tradicao": [
-      "arcana",
-      "divina"
-    ]
   }
 }

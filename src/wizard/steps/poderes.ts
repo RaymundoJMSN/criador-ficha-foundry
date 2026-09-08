@@ -5,7 +5,7 @@ import { getTrainedPericaSlugs } from "../../actor/mapper.js";
 import { getDivindade } from "../../rules/divindade.js";
 import { describeUnmet, temPrereqsConhecidos, prereqDoTexto, prereqsDoTexto, type PartialWizardState } from "../../rules/poderes.js";
 import { totaisRaciaisDoEstado } from "../../rules/subescolhas.js";
-import { poderesGeraisExtras, faixaDoPersonagem } from "../../rules/idade.js";
+import { poderesGeraisExtras, faixaDoPersonagem, idsDePoderesExtras, poderesExtrasEscolhidos, fontesDePoderExtra } from "../../rules/idade.js";
 import { distincaoEscolhida, podeTerDistincao, listDistincoes } from "../../rules/distincoes.js";
 import { habilidadesAte, getClasseProgressao } from "../../rules/progressao.js";
 import { classesDoPersonagem, habilidadesDeTodas, slotsDePoderTotal, niveisPorClasse } from "../../rules/multiclasse.js";
@@ -46,6 +46,10 @@ export interface PoderEntry {
   descricao: string;
   /** Whether this entry is a class power or a general power taken in its place. */
   origem: "classe" | "geral";
+  /** Escolhido em outro passo (Versátil, complicação…): fica marcado e riscado, fora da cota. */
+  extraDe: string;
+  /** "Aumento de Atributo": uma linha só; o item real é o da variante escolhida no select. */
+  variantes?: Array<{ id: string; rotulo: string; vezes: number; selected: boolean; eligible: boolean; bloqueado: boolean; unmet: string }>;
   /** Não pode ser marcado agora: pré-requisito não cumprido ou cota cheia. */
   bloqueado: boolean;
   /** Pode ser escolhido mais de uma vez (Orar, Foco em Arma…). */
@@ -100,6 +104,9 @@ export interface SubEscolhaView {
   valor: string;
   opcional: boolean;
   opcoes: Array<{ id: string; nome: string; selected: boolean }>;
+  /** De onde o poder veio (classe, poder, origem, divindade, raça). */
+  fonte: string;
+  slug: string;
 }
 
 const CLASSES_TODAS = Object.keys(progressaoRaw as Record<string, unknown>);
@@ -217,6 +224,8 @@ export function montarSubEscolhas(
         valor: atual,
         opcional: Boolean(sub.opcional),
         opcoes: opcoes.map((o) => ({ ...o, selected: o.id === atual })),
+        fonte: p.fonte,
+        slug: p.slug,
       });
     }
   }
@@ -262,6 +271,51 @@ export function geralDaLista(state: WizardState): (subtipo: string, pasta?: stri
     const t = tokensDe(subtipo);
     return t.length > 0 && racas.some((rt) => t.every((x) => rt.has(x)));
   };
+}
+
+/**
+ * "Aumento de Atributo (Força)"… viram UMA linha "Aumento de Atributo" com o
+ * atributo num select (Ray: o poder sem atributo nunca é uma opção real). O
+ * item que vai para a ficha é o da variante. Mexe na lista no lugar.
+ */
+const VARIANTE = /^(Aumento de Atributo) \((.+)\)$/;
+export function agruparVariantes(entries: PoderEntry[]): void {
+  const grupos = new Map<string, PoderEntry[]>();
+  for (const e of entries) {
+    const m = VARIANTE.exec(e.name);
+    if (m) (grupos.get(m[1]!) ?? grupos.set(m[1]!, []).get(m[1]!)!).push(e);
+  }
+  for (const [base, vars] of grupos) {
+    const generico = entries.find((e) => e.name === base);
+    const ancora = generico ?? vars[0]!;
+    const grupo: PoderEntry = {
+      ...ancora,
+      id: `grupo:${toNomeSlug(base)}`,
+      name: base,
+      selected: vars.some((v) => v.selected),
+      eligible: vars.some((v) => v.eligible),
+      unmet: vars.every((v) => !v.eligible) ? (vars[0]?.unmet ?? []) : [],
+      bloqueado: true,
+      repetivel: false,
+      podeMais: false,
+      vezes: vars.reduce((s, v) => s + v.vezes, 0),
+      extraDe: vars.map((v) => v.extraDe).find(Boolean) ?? "",
+      variantes: vars.map((v) => ({
+        id: v.id,
+        rotulo: VARIANTE.exec(v.name)![2]!,
+        vezes: v.vezes,
+        selected: v.selected,
+        eligible: v.eligible,
+        bloqueado: v.bloqueado,
+        unmet: v.unmet.join(", "),
+      })),
+    };
+    const pos = entries.indexOf(ancora);
+    const fora = new Set<PoderEntry>([...vars, ...(generico ? [generico] : [])]);
+    const restante = entries.filter((e) => !fora.has(e));
+    restante.splice(Math.min(pos, restante.length), 0, grupo);
+    entries.splice(0, entries.length, ...restante);
+  }
 }
 
 function prettifySlug(slug: string): string {
@@ -327,25 +381,20 @@ export function preparePoderesContext(
   // Já Vi Coisas (HA p.282/289), que só podem ser gerais.
   const slotsClasse = slotsDePoderTotal(state);
   const extrasGerais = poderesGeraisExtras(state);
-  const poderesParaPick = slotsClasse + extrasGerais;
+  // Os extras (Versátil, complicação, Já Vi Coisas) são escolhidos na tela de
+  // origem e não entram na cota daqui: só aparecem marcados e riscados.
+  const poderesParaPick = slotsClasse;
   const faixa = faixaDoPersonagem(state);
-
-  if (poderesParaPick === 0) {
-    return {
-      stepTitle: "Poderes",
-      habilidades,
-      poderesParaPick: 0,
-      extrasGerais: 0,
-      poderes: [],
-      semTabela,
-      categorias: [],
-      distincoes: null,
-      soElegiveis: false,
-      inelegiveis: 0,
-      selectedCount: state.poderes.length,
-      subEscolhas,
-      errors,
-    };
+  const idsExtras = idsDePoderesExtras(state);
+  const semExtras = [...state.poderes];
+  for (const id of idsExtras) {
+    const i = semExtras.indexOf(id);
+    if (i >= 0) semExtras.splice(i, 1);
+  }
+  const rotuloDoExtra = new Map<string, string>();
+  for (const f of fontesDePoderExtra(state)) {
+    const id = poderesExtrasEscolhidos(state)[f.fonte];
+    if (id) rotuloDoExtra.set(id, f.rotulo);
   }
 
   // Build pick list from poderes_classe_ids. O nome no compêndio raramente é o slug
@@ -426,8 +475,8 @@ export function preparePoderesContext(
     describeUnmet(slugDoItem(p), stateForEligibility, p.system.descricao ?? "").length === 0
   );
 
-  const noLimite = state.poderes.length >= poderesParaPick;
-  const classeEscolhidos = state.poderes.filter((id) => idsDaClasse.has(id)).length;
+  const noLimite = semExtras.length >= poderesParaPick;
+  const classeEscolhidos = semExtras.filter((id) => idsDaClasse.has(id)).length;
   const classeNoLimite = classeEscolhidos >= slotsClasse;
   // Velho/ancião: "não pode escolher o poder Aumento de Atributo para atributos físicos" (HA p.289).
   const aumentoFisico = /^aumento de atributo \((força|destreza|constituição)\)/i;
@@ -485,9 +534,11 @@ export function preparePoderesContext(
         subtipo: p.system.subtipo ?? "",
         descricao: p.system.descricao ?? "",
         origem: ehGeral(p) ? ("geral" as const) : ("classe" as const),
+        extraDe: rotuloDoExtra.get(p.id) ?? "",
         // Elegibilidade é recalculada a cada render: escolher o Poder A libera
         // na hora o Poder B que exigia A.
         bloqueado:
+          rotuloDoExtra.has(p.id) ||
           !state.poderes.includes(p.id) &&
           (unmet.length > 0 ||
             noLimite ||
@@ -501,6 +552,7 @@ export function preparePoderesContext(
 
   // Marcados primeiro, depois os elegíveis, depois o resto — cada bloco por nome.
   const ordem = (e: PoderEntry) => (e.selected ? 0 : e.eligible ? 1 : 2);
+  agruparVariantes(entries);
   entries.sort((a, b) => ordem(a) - ordem(b) || a.name.localeCompare(b.name));
   const categorias = [...new Set(entries.map((e) => e.categoria))].sort((a, b) => a.localeCompare(b, "pt-BR"));
 
@@ -524,7 +576,7 @@ export function preparePoderesContext(
     soElegiveis: Boolean(state.escolhasPorItem["poder_so_elegiveis"]),
     inelegiveis: entries.filter((e) => !e.eligible && !e.selected).length,
     subEscolhas,
-    selectedCount: state.poderes.length,
+    selectedCount: semExtras.length,
     errors,
   };
 }

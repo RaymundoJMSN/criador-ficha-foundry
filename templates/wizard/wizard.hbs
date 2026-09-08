@@ -210,7 +210,7 @@
           {{#if racaPericias.versatilPoder}}
           <div class="form-group" style="margin:4px 0 8px;">
             <label style="font-size:0.85em;">Poder geral (Versátil)</label>
-            <select name="versatil_poder_id" style="width:100%;padding:6px;">
+            <select name="poder_extra-versatil" style="width:100%;padding:6px;">
               <option value="">— escolha um poder —</option>
               {{#each racaPericias.poderesGerais}}<option value="{{this.id}}" {{#if this.selected}}selected{{/if}} {{#unless this.eligible}}disabled{{/unless}}>{{this.nome}}{{#unless this.eligible}} — requer {{this.requer}}{{/unless}}</option>{{/each}}
             </select>
@@ -306,9 +306,15 @@
       {{#each complicacoes}}{{#if this.selected}}<p class="t20w-hint" style="margin-top:6px;">{{this.descricao}}</p>{{/if}}{{/each}}
       {{/if}}
 
-      {{#if poderesGeraisExtras}}
-      <p style="margin-top:12px;font-size:0.9em;">Poderes gerais extras no passo Poderes: <strong>+{{poderesGeraisExtras}}</strong></p>
-      {{/if}}
+      {{#each poderesExtras}}
+      <div class="form-group" style="margin-top:10px;">
+        <label style="font-size:0.9em;"><strong>{{this.rotulo}}</strong></label>
+        <select name="poder_extra-{{this.fonte}}" style="width:100%;padding:6px;">
+          <option value="">— escolha um poder —</option>
+          {{#each this.opcoes}}<option value="{{this.id}}" {{#if this.selected}}selected{{/if}} {{#unless this.eligible}}disabled{{/unless}}>{{this.nome}}{{#unless this.eligible}} — requer {{this.requer}}{{/unless}}</option>{{/each}}
+        </select>
+      </div>
+      {{/each}}
     </section>
     {{/if}}
 
@@ -328,14 +334,16 @@
       <div class="t20w-card">
         <h3 style="margin:0 0 6px;">{{selectedDetail.nome}}</h3>
         {{#if selectedDetail.descricao}}<p class="t20w-texto-livro">{{selectedDetail.descricao}}</p>{{/if}}
+        {{#unless selectedDetail.descricao}}
         {{#if selectedDetail.pericias.length}}<p style="font-size:0.85em;margin:0 0 4px;"><strong>Perícias:</strong> {{#each selectedDetail.pericias}}{{this}}{{#unless @last}}, {{/unless}}{{/each}}</p>{{/if}}
         {{#if selectedDetail.itens_iniciais.length}}<p style="font-size:0.85em;margin:0 0 4px;"><strong>Itens iniciais:</strong></p><ul style="font-size:0.82em;margin:0 0 6px;padding-left:18px;">{{#each selectedDetail.itens_iniciais}}<li>{{this}}</li>{{/each}}</ul>{{/if}}
+        {{/unless}}
         {{#if selectedDetail.beneficios.length}}
         <div style="margin-top:8px;">
           <strong style="font-size:0.85em;">
             {{#if selectedDetail.beneficiosAuto}}Benefícios (todos){{else}}Escolha {{selectedDetail.beneficiosQtd}} benefícios — perícias e/ou poderes ({{selectedDetail.beneficiosMarcados}}/{{selectedDetail.beneficiosQtd}}){{/if}}
           </strong>
-          <div style="display:flex;flex-direction:column;gap:4px;margin-top:6px;">
+          <div class="t20w-pcheck-group" data-group="origem" data-max="{{selectedDetail.beneficiosQtd}}" style="display:flex;flex-direction:column;gap:4px;margin-top:6px;">
             {{#each selectedDetail.beneficios}}
             <label for="origem-ben-{{@index}}" style="display:flex;align-items:center;gap:6px;font-size:0.9em;cursor:pointer;">
               <input type="checkbox" id="origem-ben-{{@index}}" name="origem_beneficio" value="{{this.token}}" {{#if this.selected}}checked{{/if}} {{#if ../selectedDetail.beneficiosAuto}}disabled{{/if}} style="flex-shrink:0;" />
@@ -534,7 +542,7 @@
           <strong>Escolha {{quantosPoderes}} poder(es) concedido(s):</strong>
         </p>
         {{/if}}
-        <div style="display:flex;flex-direction:column;gap:4px;">
+        <div class="t20w-pcheck-group" data-group="divindade" data-max="{{quantosPoderes}}" style="display:flex;flex-direction:column;gap:4px;">
           {{#each selectedDivindade.poderes}}
           <label for="div-poder-{{@index}}" class="t20w-opcao">
             <input type="checkbox" id="div-poder-{{@index}}" name="divindade_poder"
@@ -560,33 +568,22 @@
       <div style="margin-bottom:16px;">
         <h3 style="font-size:0.95em;margin:0 0 6px 0;opacity:0.8;">Habilidades de Classe</h3>
         <p class="t20w-hint" style="margin:0 0 6px 0;">Você recebe estas habilidades automaticamente:</p>
-        <ul style="margin:0;padding-left:20px;">
-          {{#each habilidades}}<li style="margin-bottom:4px;"><strong data-uuid="{{this.uuid}}">{{this.nome}}</strong>{{#if this.uuid}} <button type="button" class="t20w-abrir" data-action="abrirItem" data-uuid="{{this.uuid}}" title="Abrir o item do compêndio (botão direito no nome também abre)">📖</button>{{/if}}{{#if this.opcoes.length}}:
-            <select class="t20w-habilidade" data-slug="{{this.slug}}" style="margin-left:4px;padding:2px 4px;">
-              <option value="">— escolha —</option>
-              {{#each this.opcoes}}<option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.nome}}</option>{{/each}}
-            </select>{{/if}}{{#if this.descricao}}<details class="t20w-mais"><summary>descrição</summary><div class="t20w-desc">{{this.descricao}}</div></details>{{/if}}</li>{{/each}}
-        </ul>
-      </div>
-      {{/if}}
-
-      {{#if subEscolhas.length}}
-      <div class="t20w-card" style="margin:0 0 12px;">
-        <h3>Escolhas dos seus poderes</h3>
-        <p class="t20w-hint" style="margin:0 0 6px 0;">Poderes que pedem uma decisão ao serem adquiridos.</p>
-        {{#each subEscolhas}}
-        <div class="form-group" style="margin-top:6px;">
-          <label for="{{this.name}}"><strong>{{this.poder}}</strong> — {{this.rotulo}}{{#if this.opcional}} <span class="t20w-hint">(opcional; vai para o nome do item)</span>{{/if}}</label>
-          {{#if this.texto}}
-          <input type="text" id="{{this.name}}" name="{{this.name}}" value="{{this.valor}}" placeholder="Anote a escolha…" style="width:100%;padding:5px;" />
-          {{else}}
-          <select id="{{this.name}}" name="{{this.name}}" style="width:100%;padding:5px;">
-            <option value="">— escolha —</option>
-            {{#each this.opcoes}}<option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.nome}}</option>{{/each}}
-          </select>
-          {{/if}}
+        <div class="t20w-lista">
+          {{#each habilidades}}
+          <div class="t20w-item" style="cursor:default;">
+            <div class="t20w-corpo">
+              <div class="t20w-row">
+                <span class="t20w-nome" data-uuid="{{this.uuid}}">{{this.nome}}</span>{{#if this.uuid}} <button type="button" class="t20w-abrir" data-action="abrirItem" data-uuid="{{this.uuid}}" title="Abrir o item do compêndio (botão direito no nome também abre)">📖</button>{{/if}}
+                {{#if this.opcoes.length}}<select class="t20w-habilidade" data-slug="{{this.slug}}" style="margin-left:auto;padding:2px 4px;">
+                  <option value="">— escolha —</option>
+                  {{#each this.opcoes}}<option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.nome}}</option>{{/each}}
+                </select>{{/if}}
+              </div>
+              {{#if this.descricao}}<div class="t20w-desc">{{this.descricao}}</div>{{/if}}
+            </div>
+          </div>
+          {{/each}}
         </div>
-        {{/each}}
       </div>
       {{/if}}
 
@@ -604,7 +601,7 @@
         {{/if}}
         <h3 style="font-size:0.95em;margin:0 0 6px 0;opacity:0.8;">Escolha de Poderes</h3>
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap;">
-          <span style="font-size:0.9em;">Escolha <strong>{{poderesParaPick}}</strong>{{#if extrasGerais}} <small style="opacity:0.7;">({{extrasGerais}} extra(s) por complicação/Versátil, só gerais)</small>{{/if}} — Selecionados: <strong>{{selectedCount}}</strong></span>
+          <span style="font-size:0.9em;">Escolha <strong>{{poderesParaPick}}</strong> — Selecionados: <strong>{{selectedCount}}</strong></span>
           <select id="t20w-poder-cat">
             <option value="">Todas as categorias</option>
             {{#each categorias}}<option value="{{this}}">{{this}}</option>{{/each}}
@@ -615,7 +612,29 @@
 
         <div class="t20w-poderes-list t20w-scroll t20w-lista" style="max-height:360px;overflow-y:auto;">
           {{#each poderes}}
-          <label class="t20w-poder-row t20w-item{{#if this.selected}} selecionado{{/if}}{{#unless this.eligible}} inelegivel{{/unless}}"
+          {{#if this.variantes}}
+          <div class="t20w-poder-row t20w-item{{#if this.selected}} selecionado{{/if}}{{#unless this.eligible}} inelegivel{{/unless}}"
+               data-poder-name="{{this.name}}" data-poder-cat="{{this.categoria}}" data-poder-elegivel="{{#if this.eligible}}1{{else}}0{{/if}}" style="cursor:default;">
+            <img src="{{this.img}}" onerror="this.style.display='none'" />
+            <div class="t20w-corpo">
+              <div class="t20w-row">
+                <span class="t20w-nome" data-uuid="{{this.uuid}}">{{this.name}}</span> <button type="button" class="t20w-abrir" data-action="abrirItem" data-uuid="{{this.uuid}}" title="Abrir o item do compêndio">📖</button>
+                <span class="t20w-badge">{{this.categoria}}</span>
+                <select name="variante-{{this.id}}" style="margin-left:auto;padding:2px 4px;max-width:60%;">
+                  <option value="">— escolher atributo —</option>
+                  {{#each this.variantes}}<option value="{{this.id}}" {{#if this.bloqueado}}disabled{{/if}}>{{this.rotulo}}{{#unless this.eligible}} — requer {{this.unmet}}{{/unless}}</option>{{/each}}
+                </select>
+              </div>
+              {{#if this.vezes}}
+              <div class="t20w-row" style="gap:6px;flex-wrap:wrap;margin-top:4px;">
+                {{#each this.variantes}}{{#if this.selected}}<span class="t20w-badge" style="display:inline-flex;align-items:center;gap:4px;">{{this.rotulo}}{{#if (gt this.vezes 1)}} ×{{this.vezes}}{{/if}} <button type="button" class="t20w-btn-sm" data-action="poderMenos" data-id="{{this.id}}" title="Tirar" style="width:18px;height:18px;padding:0;line-height:1;cursor:pointer;">−</button></span>{{/if}}{{/each}}
+              </div>
+              {{/if}}
+              {{#if this.descricao}}<details class="t20w-mais"><summary>descrição</summary><div class="t20w-desc">{{this.descricao}}</div></details>{{/if}}
+            </div>
+          </div>
+          {{else}}
+          <label class="t20w-poder-row t20w-item{{#if this.selected}} selecionado{{/if}}{{#unless this.eligible}} inelegivel{{/unless}}{{#if this.extraDe}} t20w-extra{{/if}}"
                  data-poder-name="{{this.name}}"
                  data-poder-cat="{{this.categoria}}"
                  data-poder-elegivel="{{#if this.eligible}}1{{else}}{{#if this.selected}}1{{else}}0{{/if}}{{/if}}">
@@ -625,7 +644,7 @@
             <div class="t20w-corpo">
               <div class="t20w-row">
                 <span class="t20w-nome" data-uuid="{{this.uuid}}">{{this.name}}</span> <button type="button" class="t20w-abrir" data-action="abrirItem" data-uuid="{{this.uuid}}" title="Abrir o item do compêndio (botão direito no nome também abre)">📖</button>
-                <span class="t20w-badge">{{this.categoria}}</span>
+                <span class="t20w-badge">{{this.categoria}}</span>{{#if this.extraDe}} <span class="t20w-badge" title="Escolhido em outro passo; não conta na cota daqui">{{this.extraDe}}</span>{{/if}}
                 {{#if this.repetivel}}
                   {{#if this.selected}}
                   <span style="margin-left:auto;display:flex;align-items:center;gap:4px;font-size:0.8em;">
@@ -645,6 +664,7 @@
               {{#if this.requerTexto}}<div class="t20w-requer" style="opacity:0.7;">Pré-requisito (do livro, confira): {{this.requerTexto}}</div>{{/if}}
             </div>
           </label>
+          {{/if}}
           {{/each}}
         </div>
       </div>
@@ -694,7 +714,7 @@
       {{#each magiasByCirculo}}
       <div style="margin-bottom:14px;">
         <h3 style="font-size:0.9em;margin:0 0 6px;opacity:0.8;">{{label}}{{#if teto}} <small style="opacity:0.7;">(até {{teto}} deste círculo para cima)</small>{{/if}}</h3>
-        <div class="t20w-scroll t20w-lista" style="max-height:260px;overflow-y:auto;">
+        <div class="t20w-scroll t20w-lista" style="max-height:70vh;overflow-y:auto;">
           {{#each magias}}
           <label class="t20w-item{{#if this.selected}} selecionado{{/if}}{{#if this.excedente}} excedente{{/if}}" style="align-items:center;">
             <input type="checkbox" name="magia-{{this.id}}" value="{{this.id}}" {{#if this.selected}}checked{{/if}} {{#if this.bloqueado}}disabled{{/if}} />
@@ -769,7 +789,8 @@
           {{#each itens}}
           <div class="t20w-equip-row t20w-item{{#if selected}} selecionado{{/if}}" style="align-items:center;cursor:default;font-size:0.88em;">
             <img src="{{img}}" alt="" onerror="this.style.display='none'" />
-            <span class="t20w-corpo" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{name}}</span>
+            <span class="t20w-corpo" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" data-uuid="{{uuid}}">{{name}}</span>
+            <button type="button" class="t20w-abrir" data-action="abrirItem" data-uuid="{{uuid}}" title="Ver o item">📖</button>
             <span style="opacity:0.7;white-space:nowrap;">{{preco}} T$</span>
             <span style="opacity:0.5;white-space:nowrap;font-size:0.8em;">{{peso}} kg</span>
             {{#if selected}}
@@ -880,7 +901,38 @@
     <ul class="t20w-errors">{{#each errors}}<li>{{this}}</li>{{/each}}</ul>
     {{/if}}
 
-  </div>
+  
+    {{#if oficio}}
+    <section class="t20w-card" style="margin:12px 0 0;">
+      <h3>Ofício — qual?</h3>
+      <p class="t20w-hint" style="margin:0 0 6px 0;">Ofício são várias perícias: escolha uma das da ficha ou invente a sua (carpinteiro, pedreiro, ourives…).</p>
+      <select name="oficio_tipo" style="width:100%;padding:5px;">
+        <option value="">— escolha —</option>
+        {{#each oficio.tipos}}<option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.nome}}</option>{{/each}}
+      </select>
+      {{#if oficio.outro}}<input type="text" name="oficio_nome" value="{{oficio.nome}}" placeholder="Nome do ofício" maxlength="40" style="width:100%;padding:5px;margin-top:6px;" />{{/if}}
+    </section>
+    {{/if}}
+    {{#if subEscolhasPasso.length}}
+    <section class="t20w-card" style="margin:12px 0 0;">
+      <h3>Escolhas dos seus poderes</h3>
+      <p class="t20w-hint" style="margin:0 0 6px 0;">Poderes deste passo que pedem uma decisão ao serem adquiridos.</p>
+      {{#each subEscolhasPasso}}
+      <div class="form-group" style="margin-top:6px;">
+        <label for="{{this.name}}"><strong>{{this.poder}}</strong> — {{this.rotulo}}{{#if this.opcional}} <span class="t20w-hint">(opcional; vai para o nome do item)</span>{{/if}}</label>
+        {{#if this.texto}}
+        <input type="text" id="{{this.name}}" name="{{this.name}}" value="{{this.valor}}" placeholder="Anote a escolha…" style="width:100%;padding:5px;" />
+        {{else}}
+        <select id="{{this.name}}" name="{{this.name}}" style="width:100%;padding:5px;">
+          <option value="">— escolha —</option>
+          {{#each this.opcoes}}<option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.nome}}</option>{{/each}}
+        </select>
+        {{/if}}
+      </div>
+      {{/each}}
+    </section>
+    {{/if}}
+</div>
 
   <footer class="t20w-footer">
     {{#if showBack}}<button type="button" class="t20w-btn" data-action="back">← Voltar</button>{{else}}<span></span>{{/if}}
