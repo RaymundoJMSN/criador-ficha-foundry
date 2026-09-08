@@ -634,11 +634,6 @@ details.t20w-mais > summary:hover {
   font-size: 0.88em;
 }
 /* No rodapé, à esquerda do "Próximo": o que falta para seguir. */
-/* Card que não pode passar batido (Versátil do humano). */
-.t20w-destaque {
-  border: 1px solid var(--t20w-accent);
-  background: rgba(242, 166, 90, 0.08);
-}
 .t20w-pendencias-rodape {
   margin: 0;
   padding: 4px 10px;
