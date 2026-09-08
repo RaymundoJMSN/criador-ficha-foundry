@@ -29,6 +29,10 @@ export interface ShimOpcoes {
   onFichaPronta(actor: ActorShim): void;
   /** Abre o "item do compêndio" (botão 📖). */
   onAbrirItem(doc: Dict): void;
+  /** O wizard gravou (valor) ou apagou (null) o rascunho — o site espelha no servidor. */
+  onRascunho?(valor: { estado?: string; passo?: string } | null): void;
+  /** Responder "sim" ao próximo DialogV2.confirm (retomar personagem aberto pelo painel). */
+  autoConfirmar?: boolean;
 }
 
 const clone = <T>(v: T): T => JSON.parse(JSON.stringify(v)) as T;
@@ -430,9 +434,11 @@ const user = {
     } catch {
       /* sem storage */
     }
+    if (key === "rascunho") opcoes.onRascunho?.(valor as { estado?: string; passo?: string });
   },
   async unsetFlag(scope: string, key: string): Promise<void> {
     localStorage.removeItem(chaveLS(`flag.${scope}`, key));
+    if (key === "rascunho") opcoes.onRascunho?.(null);
   },
 };
 
@@ -479,6 +485,10 @@ export function instalarShim(o: ShimOpcoes): void {
         HandlebarsApplicationMixin,
         DialogV2: {
           async confirm(cfg: { content?: string }): Promise<boolean> {
+            if (opcoes.autoConfirmar) {
+              opcoes.autoConfirmar = false;
+              return true;
+            }
             return window.confirm(semHtml(cfg.content ?? "Confirmar?"));
           },
         },
@@ -497,6 +507,15 @@ export function instalarShim(o: ShimOpcoes): void {
   g["fromUuid"] = fromUuidShim;
   // Para depuração/teste no navegador: as aplicações abertas.
   g["t20wSite"] = { aplicacoes };
+}
+
+const MODULE_ID = "t20-ficha-wizard";
+/** Rascunho do wizard (a flag que `restaurarRascunho` lê ao abrir). */
+export function gravarRascunho(valor: { estado: string; passo?: string }): void {
+  localStorage.setItem(chaveLS(`flag.${MODULE_ID}`, "rascunho"), JSON.stringify(valor));
+}
+export function limparRascunho(): void {
+  localStorage.removeItem(chaveLS(`flag.${MODULE_ID}`, "rascunho"));
 }
 
 export { Hooks as HooksShim, aplicacoes };

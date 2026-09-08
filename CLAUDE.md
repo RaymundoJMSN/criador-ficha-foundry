@@ -410,10 +410,20 @@ criador em `/criar/`. Não há segunda implementação: `site/main.ts` instala u
   `.claude/launch.json` → `criador-site` (vite preview na 4174).
 - Regra: **nunca** copiar lógica para o site. Se algo do Foundry faltar ao rodar
   lá, acrescenta-se ao shim. `tsc` não inclui `site/` (o Vite compila).
-- Pendente do site: salvar personagens no servidor (hoje só o rascunho em
-  localStorage), login por nome, DNS/Caddy `ficha.raynathus.com.br` (hoje é
-  `t20.raynathus.com.br`; o Caddy manda `/modules/*` da raiz para o Foundry —
-  `/criar/modules/...` não colide), deuses menores na ficha do deus.
+- **Fase 2 (salvar no site)**: login por nome (sem senha, padrão do data-rpg;
+  `localStorage t20w-site.jogador`). O shim chama `onRascunho` toda vez que o
+  wizard grava a flag `rascunho` → `main.ts` faz PUT com debounce de 1,5 s em
+  `/api/criador/personagens/:id` (id aleatório por personagem, guardado em
+  `t20w-site.personagemAtual`; "recomeçar" apaga a flag → próximo salvamento é
+  personagem novo). A ficha final vai no mesmo registro (`ficha`, COALESCE no
+  upsert). Painel "Meus personagens": abrir (`?personagem=<id>` → grava a flag
+  e `autoConfirmar` responde "Retomar" sozinho), baixar o JSON de novo, apagar.
+  Servidor: tabela `criador` em `server/src/db.js`, rotas em `app.js`, teste
+  `server/test/criador.test.js`. **Rota nova só entra depois de `nssm restart
+  T20Ficha` (admin)** — o estático em `public/criar` entra na hora.
+- Pendente: DNS/Caddy `ficha.raynathus.com.br` (hoje é `t20.raynathus.com.br`;
+  o Caddy manda `/modules/*` da raiz para o Foundry — `/criar/modules/...` não
+  colide), deuses menores na ficha do deus, editar a ficha já gerada.
 
 ## Como lançar
 

@@ -145,9 +145,14 @@ de Heróis de Arton pelo PDF, retrato da raça, chat ao criar. Ver `CLAUDE.md`.
 ## Site — fase 1 (2026-09-07)
 
 O mesmo módulo roda em `t20.raynathus.com.br/criar/` sobre um shim do Foundry
-(`site/shim.ts`); no fim baixa o JSON e o módulo importa. Fase 2: salvar
-personagens no servidor (SQLite do ficha-online), login por nome, domínio
-`ficha.raynathus.com.br`, lista "meus personagens", reabrir e editar.
+(`site/shim.ts`); no fim baixa o JSON e o módulo importa.
+
+## Site — fase 2 (2026-09-07)
+
+Login por nome, rascunho e ficha salvos no servidor (`/api/criador/...`,
+tabela `criador`), painel "Meus personagens" (abrir, baixar, apagar), CSS do
+site (controles com tema, sem barra horizontal). Falta: domínio
+`ficha.raynathus.com.br` (Caddy + DNS, admin), editar ficha já gerada.
 
 ## Noite de 2026-09-07 (pedidos do Ray)
 
