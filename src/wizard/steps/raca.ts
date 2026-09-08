@@ -350,6 +350,7 @@ function buildModGroups(racaRef: string, choices: string[][], escolhas: Record<s
 
 function limparHtml(html: string): string {
   return html
+    .replace(/@(?:UUID|Compendium)\[[^\]]*\]\{([^}]*)\}/g, "$1")
     .replace(/<[^>]+>/g, " ")
     .replace(/&[a-z]+;|&#\d+;/gi, " ")
     .replace(/\s+/g, " ")

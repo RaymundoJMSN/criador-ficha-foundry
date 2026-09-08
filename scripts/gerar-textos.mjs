@@ -17,7 +17,7 @@
 import { readFileSync, writeFileSync, existsSync, readdirSync } from "fs";
 import { resolve, dirname, join } from "path";
 import { fileURLToPath } from "url";
-import { livrosDisponiveis, racasDosLivros, classesDosLivros, origensDosLivros, LIVROS } from "./livros.mjs";
+import { livrosDisponiveis, racasDosLivros, classesDosLivros, origensDosLivros, poderesDosLivros, LIVROS } from "./livros.mjs";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const DATA = resolve(HERE, "../src/data");
@@ -37,7 +37,7 @@ function primeirasFrases(texto, limite = 420) {
   return (out || frases[0] || "").trim();
 }
 
-const textos = { origens: {}, racas: {}, classes: {}, nomes: {}, divindades: {} };
+const textos = { origens: {}, racas: {}, classes: {}, nomes: {}, divindades: {}, poderes: {} };
 
 /* --- Origens: do markdown, inteiras (descrição + Benefício + Itens) -------- */
 
@@ -201,7 +201,7 @@ if (livrosDisponiveis()) {
   if (existsSync(arq)) {
     const md = readFileSync(arq, "utf-8");
     const campo = (corpo, nome) => {
-      const m = new RegExp("\\*\\*" + nome + ":?\\*\\*:?\\s*(.+)").exec(corpo);
+      const m = new RegExp("\\*\\*" + nome + "[.:]?\\*\\*[.:]?\\s*(.+)").exec(corpo);
       return m ? m[1].replace(/\*\*/g, "").trim() : null;
     };
     const blocos = md.split(/^### /m).slice(1);
@@ -219,6 +219,41 @@ if (livrosDisponiveis()) {
       if (ficha.crencas && ficha.simbolo) textos.divindades[id] = ficha;
     }
   }
+  // Deuses menores (Deuses de Arton): mesma ficha + descrição e devotos.
+  const arqMenores = join(LIVROS, "deuses-arton/04-deuses-avatares/23-deuses-menores.md");
+  if (existsSync(arqMenores)) {
+    const campo = (corpo, nome) => {
+      const m = new RegExp("\\*\\*" + nome + "[.:]?\\*\\*[.:]?\\s*(.+)").exec(corpo);
+      return m ? m[1].replace(/\*\*/g, "").trim() : null;
+    };
+    for (const b of readFileSync(arqMenores, "utf-8").split(/^### /m).slice(1)) {
+      const linhas = b.split(/\r?\n/);
+      const nome = (linhas[0] ?? "").split(",")[0].trim();
+      const id = nome.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "_").replace(/^_+|_+$/g, "");
+      const corpo = b.split(/^#### /m)[0];
+      const descricao = corpo
+        .split(/\r?\n\s*\r?\n/)
+        .slice(1)
+        .map((p) => p.replace(/\*\*/g, "").trim())
+        .find((p) => p.length >= 40 && !/^(Crenças|Símbolo|Canalizar|Arma|Devotos|Obrigações)/.test(p) && !/status divino/i.test(p));
+      const ficha = {
+        descricao: descricao ?? null,
+        crencas: campo(corpo, "Crenças e Objetivos"),
+        simbolo: campo(corpo, "Símbolo Sagrado"),
+        canalizar: campo(corpo, "Canalizar Energia"),
+        arma: campo(corpo, "Arma Preferida"),
+        devotos: campo(corpo, "Devotos"),
+        obrigacoes: campo(corpo, "Obrigações & Restrições"),
+      };
+      if (id && (ficha.crencas || ficha.simbolo) && !textos.divindades[id]) textos.divindades[id] = ficha;
+    }
+  }
+}
+
+/* --- Poderes: texto do livro para item do compêndio sem descrição --------- */
+
+if (livrosDisponiveis()) {
+  for (const [id, texto] of poderesDosLivros()) textos.poderes[id] = texto;
 }
 
 /* --- Raças e classes: do markdown, que tem "## Descrição" ----------------- */
@@ -251,6 +286,6 @@ if (livrosDisponiveis()) {
 writeFileSync(join(DATA, "textos.json"), JSON.stringify(textos, null, 2) + "\n", "utf-8");
 console.log(
   `textos.json: ${Object.keys(textos.origens).length} origens, ` +
-    `${Object.keys(textos.racas).length} raças, ${Object.keys(textos.classes).length} classes, ` +
+    `${Object.keys(textos.racas).length} raças, ${Object.keys(textos.classes).length} classes, ${Object.keys(textos.poderes).length} poderes, ` +
     `nomes de ${Object.keys(textos.nomes).length} raças, ${Object.keys(textos.divindades).length} deuses`
 );

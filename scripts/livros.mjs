@@ -288,6 +288,68 @@ export function racasDosLivros() {
 /*  Classes                                                            */
 /* ------------------------------------------------------------------ */
 
+/**
+ * Descrição de todo poder/habilidade que os livros trazem, por slug do nome
+ * (sem o "(1º Nível)" do fim). Cabeçalho ##/###/#### abre um verbete; `---`
+ * ou o próximo cabeçalho fecha. Primeiro livro vence. Serve de fallback para
+ * item do compêndio sem descrição.
+ */
+export function poderesDosLivros() {
+  const out = new Map();
+  const ESTRUTURA =
+    /^(descri[cç][aã]o|caracter[íi]sticas|pontos de (vida|mana)|per[íi]cias|profici[êe]ncias|poderes? (de|do|da|por|e )|p[áa]gina|tabela|habilidades|origens|devotos|natureza|status|menores|conceito|entidade|drag[aã]o-real|mortal|objeto|pr[ée]-requisito|equipamento|itens|magias|regras|novas?|outros)/i;
+  const pastas = [];
+  for (const [livro, sub] of [
+    ["tormenta20-core", "05-pericias-poderes"],
+    ["tormenta20-core", "04-classes"],
+    ["tormenta20-core", "03-racas"],
+    ["dragao-brasil", "02-classes"],
+    ["dragao-brasil", "04-pericias-poderes"],
+    ["dragao-brasil", "01-racas"],
+  ]) pastas.push([livro, sub]);
+  for (const livro of ["herois-arton", "deuses-arton"]) {
+    const raiz = join(LIVROS, livro);
+    if (!existsSync(raiz)) continue;
+    for (const sub of readdirSync(raiz)) if (!/\./.test(sub)) pastas.push([livro, sub]);
+  }
+  for (const [livro, sub] of pastas) {
+    for (const arq of arquivosDe(livro, sub)) {
+      let nome = null;
+      let corpo = [];
+      const fechar = () => {
+        if (nome) {
+          const paragrafos = corpo
+            .join("\n")
+            .split(/\n\s*\n/)
+            .map((p) => limpar(p))
+            .filter((p) => p && !p.startsWith("|") && !p.startsWith(">") && !/^Poder Concedido$/i.test(p));
+          const texto = paragrafos.join(" ").trim();
+          const id = slug(nome);
+          if (texto.length >= 30 && id && !out.has(id)) out.set(id, texto);
+        }
+        nome = null;
+        corpo = [];
+      };
+      for (const linha of arq.texto.split(/\r?\n/)) {
+        const h = /^#{2,4}\s+(.+?)\s*$/.exec(linha);
+        if (h) {
+          fechar();
+          const n = h[1].replace(/\*\*/g, "").replace(/\s*\([^)]*\)\s*$/, "").trim();
+          if (n && !ESTRUTURA.test(n)) nome = n;
+          continue;
+        }
+        if (/^---\s*$/.test(linha)) {
+          fechar();
+          continue;
+        }
+        if (nome) corpo.push(linha);
+      }
+      fechar();
+    }
+  }
+  return out;
+}
+
 export function classesDosLivros() {
   const out = [];
   for (const [livro, pasta] of [

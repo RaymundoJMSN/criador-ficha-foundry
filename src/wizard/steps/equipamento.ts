@@ -57,11 +57,23 @@ function toCategoria(item: IndexedEquipamento): ItemCategoria {
   return "geral";
 }
 
+/**
+ * Loja de nível 1: fora itens mágicos, artefatos, específicos, tesouros e o
+ * que módulos guardam como "equipamento" sem ser (habilidades de criatura,
+ * distinções, raças). Decidido pelo pack e pela pasta do compêndio.
+ */
+const PACKS_FORA = new Set(["tormenta20.equipamentos-magicos", "tormenta20.habilidades-de-criaturas"]);
+const PASTA_FORA = /m[áa]gic|artefat|espec[íi]fic|avatares|tesouro|material especial|distin[çc]|ra[çc]as|classes/i;
+export function itemDaLoja(item: IndexedEquipamento): boolean {
+  return !PACKS_FORA.has(item.packId) && !PASTA_FORA.test(item.pasta ?? "");
+}
+
 export function prepareEquipamentoContext(
   state: WizardState,
-  allItems: IndexedEquipamento[],
+  todosItens: IndexedEquipamento[],
   errors: string[] = []
 ): EquipamentoContext {
+  const allItems = todosItens.filter(itemDaLoja);
   const isNivel1 = state.nivel === 1;
   // Criança ("Sem Origem", HA p.288) não recebe os itens da origem.
   const inicial = equipamentoInicial({ ...state, semOrigem: beneficiosDeOrigemPermitidos(state) === 0 }, allItems);

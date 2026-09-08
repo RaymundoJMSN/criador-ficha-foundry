@@ -18,8 +18,9 @@ describe("buildPericiaPlan", () => {
     expect(buildPericiaPlan(guerreiro(), 2, 2).racaBonus).toBe(2);
   });
 
-  it("todas = all 28 skills (for Int/raça any-skill pickers)", () => {
-    expect(buildPericiaPlan(guerreiro(), 0, 0).todas.length).toBe(28);
+  it("todas = 28 perícias do sistema + Ofício (for Int/raça any-skill pickers)", () => {
+    expect(buildPericiaPlan(guerreiro(), 0, 0).todas.length).toBe(29);
+    expect(buildPericiaPlan(guerreiro(), 0, 0).todas).toContain("oficio");
   });
 });
 

@@ -139,7 +139,7 @@
           <ul style="margin:6px 0 0;padding-left:0;list-style:none;display:flex;flex-direction:column;gap:4px;">
             {{#each selectedDetail.poderesRaciais}}
             <li style="font-size:0.85em;background:rgba(255,255,255,0.04);border-radius:3px;padding:5px 8px;">
-              <strong data-uuid="{{this.uuid}}">{{this.nome}}</strong>{{#if this.uuid}} <button type="button" class="t20w-abrir" data-action="abrirItem" data-uuid="{{this.uuid}}" title="Abrir o item do compêndio (botão direito no nome também abre)">📖</button>{{/if}}
+              <strong data-uuid="{{this.uuid}}">{{this.nome}}</strong>
               {{#if this.descricao}}<div style="opacity:0.75;margin-top:2px;">{{this.descricao}}</div>{{/if}}
             </li>
             {{/each}}
@@ -183,9 +183,9 @@
             <label class="t20w-opcao {{#if this.bloqueada}}t20w-disabled{{/if}}">
               <input type="{{#if ../radio}}radio{{else}}checkbox{{/if}}" name="{{../inputName}}" value="{{this.id}}" {{#if this.selected}}checked{{/if}} {{#if this.bloqueada}}disabled{{/if}} />
               <span style="flex:1;">
-                <strong data-uuid="{{this.uuid}}">{{this.nome}}</strong>{{#if this.uuid}} <button type="button" class="t20w-abrir" data-action="abrirItem" data-uuid="{{this.uuid}}" title="Abrir o item do compêndio (botão direito no nome também abre)">📖</button>{{/if}}{{#if this.resumo}} <span class="t20w-hint">— {{this.resumo}}</span>{{/if}}
+                <strong data-uuid="{{this.uuid}}">{{this.nome}}</strong>{{#if this.resumo}} <span class="t20w-hint">— {{this.resumo}}</span>{{/if}}
                 {{#if this.nota}}<div class="t20w-hint">{{this.nota}}</div>{{/if}}
-                {{#if this.descricao}}<details class="t20w-mais"><summary>descrição</summary><div class="t20w-desc">{{this.descricao}}</div></details>{{/if}}
+                {{#if this.descricao}}<div class="t20w-desc">{{this.descricao}}</div>{{/if}}
                 {{#if this.sub}}
                 <div class="form-group" style="margin-top:4px;">
                   <label for="{{this.sub.name}}" style="font-size:0.85em;">{{this.sub.rotulo}}</label>
@@ -218,7 +218,7 @@
           {{/if}}
           {{/if}}
           {{#if racaPericias.racaBonus}}
-          <div class="t20w-pcheck-group" data-group="raca" data-max="{{racaPericias.racaBonus}}" style="display:grid;grid-template-columns:repeat(2,1fr);gap:2px 12px;margin-top:4px;max-height:200px;overflow-y:auto;">
+          <div class="t20w-pcheck-group" data-group="raca" data-max="{{racaPericias.racaBonus}}" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:2px 12px;margin-top:4px;">
             {{#each racaPericias.racaOpcoes}}
             <label style="font-size:0.88em;display:flex;align-items:center;gap:6px;" class="{{#if this.disabled}}t20w-disabled{{/if}}">
               <input type="checkbox" name="per_raca-{{this.id}}" value="{{this.id}}" {{#if this.checked}}checked{{/if}} {{#if this.disabled}}disabled{{/if}} />{{this.nome}}
@@ -347,7 +347,7 @@
             {{#each selectedDetail.beneficios}}
             <label for="origem-ben-{{@index}}" style="display:flex;align-items:center;gap:6px;font-size:0.9em;cursor:pointer;">
               <input type="checkbox" id="origem-ben-{{@index}}" name="origem_beneficio" value="{{this.token}}" {{#if this.selected}}checked{{/if}} {{#if ../selectedDetail.beneficiosAuto}}disabled{{/if}} style="flex-shrink:0;" />
-              <span style="cursor:pointer;" data-uuid="{{this.uuid}}">{{this.nome}}{{#if this.exclusivo}} <em style="opacity:0.7;">(exclusivo)</em>{{/if}} {{#if this.uuid}}<button type="button" class="t20w-abrir" data-action="abrirItem" data-uuid="{{this.uuid}}" title="Abrir o item do compêndio (botão direito no nome também abre)">📖</button>{{/if}}</span>
+              <span style="cursor:pointer;" data-uuid="{{this.uuid}}">{{this.nome}}{{#if this.exclusivo}} <em style="opacity:0.7;">(exclusivo)</em>{{/if}} </span>
             </label>
             {{/each}}
           </div>
@@ -423,8 +423,8 @@
           <label for="{{../chave}}-{{this.slug}}" class="t20w-opcao">
             <input type="radio" id="{{../chave}}-{{this.slug}}" name="{{../chave}}" value="{{this.slug}}"
               {{#if this.selected}}checked{{/if}} />
-            <span data-uuid="{{this.uuid}}"><strong>{{this.nome}}</strong> <button type="button" class="t20w-abrir" data-action="abrirItem" data-uuid="{{this.uuid}}" title="Abrir o item do compêndio (botão direito no nome também abre)">📖</button>
-              {{#if this.descricao}}<details class="t20w-mais"><summary>descrição</summary><div class="t20w-desc">{{this.descricao}}</div></details>{{/if}}</span>
+            <span data-uuid="{{this.uuid}}"><strong>{{this.nome}}</strong>
+              {{#if this.descricao}}<div class="t20w-desc">{{this.descricao}}</div>{{/if}}</span>
           </label>
           {{/each}}
         </div>
@@ -475,7 +475,7 @@
       <div style="margin-bottom:10px;">
         <strong style="font-size:0.85em;">Perícias da classe — escolha {{escolhasQtd}} (restam {{escolhasRestantes}}):</strong>
         {{#if listaIncompleta}}<div style="font-size:0.78em;opacity:0.7;margin:2px 0 4px;">O compêndio não traz a lista de perícias desta classe — escolha entre todas e confira no livro.</div>{{/if}}
-        <div class="t20w-pcheck-group" data-group="esc" data-max="{{escolhasQtd}}" style="display:grid;grid-template-columns:repeat(2,1fr);gap:2px 12px;margin-top:4px;max-height:200px;overflow-y:auto;">
+        <div class="t20w-pcheck-group" data-group="esc" data-max="{{escolhasQtd}}" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:2px 12px;margin-top:4px;">
           {{#each escolhasOpcoes}}
           <label style="font-size:0.88em;display:flex;align-items:center;gap:6px;" class="{{#if this.disabled}}t20w-disabled{{/if}}">
             <input type="checkbox" name="per_esc-{{this.id}}" value="{{this.id}}" {{#if this.checked}}checked{{/if}} {{#if this.disabled}}disabled{{/if}} />{{this.nome}}
@@ -488,7 +488,7 @@
       {{#if intBonus}}
       <div style="margin-bottom:10px;">
         <strong style="font-size:0.85em;">Perícias extras por Inteligência — escolha {{intBonus}} (restam {{intRestantes}}, qualquer):</strong>
-        <div class="t20w-pcheck-group" data-group="int" data-max="{{intBonus}}" style="display:grid;grid-template-columns:repeat(2,1fr);gap:2px 12px;margin-top:4px;max-height:160px;overflow-y:auto;">
+        <div class="t20w-pcheck-group" data-group="int" data-max="{{intBonus}}" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:2px 12px;margin-top:4px;">
           {{#each intOpcoes}}
           <label style="font-size:0.88em;display:flex;align-items:center;gap:6px;" class="{{#if this.disabled}}t20w-disabled{{/if}}">
             <input type="checkbox" name="per_int-{{this.id}}" value="{{this.id}}" {{#if this.checked}}checked{{/if}} {{#if this.disabled}}disabled{{/if}} />{{this.nome}}
@@ -537,17 +537,19 @@
           {{#each selectedDivindade.ficha}}<dt>{{this.rotulo}}</dt><dd>{{this.texto}}</dd>{{/each}}
         </dl>
         {{/if}}
-        {{#if quantosPoderes}}
+        {{#if selectedDivindade.auto}}
+        <p style="font-size:0.85em;margin:0 0 6px;"><strong>Poder concedido</strong> <span class="t20w-hint">(vem com a devoção, não há escolha)</span></p>
+        {{else}}{{#if quantosPoderes}}
         <p style="font-size:0.85em;margin:0 0 6px;">
           <strong>Escolha {{quantosPoderes}} poder(es) concedido(s):</strong>
         </p>
-        {{/if}}
+        {{/if}}{{/if}}
         <div class="t20w-pcheck-group" data-group="divindade" data-max="{{quantosPoderes}}" style="display:flex;flex-direction:column;gap:4px;">
           {{#each selectedDivindade.poderes}}
           <label for="div-poder-{{@index}}" class="t20w-opcao">
             <input type="checkbox" id="div-poder-{{@index}}" name="divindade_poder"
-                   value="{{this.slug}}" {{#if this.selected}}checked{{/if}} />
-            <span data-uuid="{{this.uuid}}"><strong>{{this.nome}}</strong> {{#if this.uuid}}<button type="button" class="t20w-abrir" data-action="abrirItem" data-uuid="{{this.uuid}}" title="Abrir o item do compêndio (botão direito no nome também abre)">📖</button>{{/if}}{{#if this.descricao}}<div class="t20w-desc">{{this.descricao}}</div>{{/if}}</span>
+                   value="{{this.slug}}" {{#if this.selected}}checked{{/if}} {{#if this.auto}}disabled data-fixo="1"{{/if}} />
+            <span data-uuid="{{this.uuid}}"><strong>{{this.nome}}</strong> {{#if this.descricao}}<div class="t20w-desc">{{this.descricao}}</div>{{/if}}</span>
           </label>
           {{/each}}
         </div>
@@ -573,7 +575,7 @@
           <div class="t20w-item" style="cursor:default;">
             <div class="t20w-corpo">
               <div class="t20w-row">
-                <span class="t20w-nome" data-uuid="{{this.uuid}}">{{this.nome}}</span>{{#if this.uuid}} <button type="button" class="t20w-abrir" data-action="abrirItem" data-uuid="{{this.uuid}}" title="Abrir o item do compêndio (botão direito no nome também abre)">📖</button>{{/if}}
+                <span class="t20w-nome" data-uuid="{{this.uuid}}">{{this.nome}}</span>
                 {{#if this.opcoes.length}}<select class="t20w-habilidade" data-slug="{{this.slug}}" style="margin-left:auto;padding:2px 4px;">
                   <option value="">— escolha —</option>
                   {{#each this.opcoes}}<option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.nome}}</option>{{/each}}
@@ -618,7 +620,7 @@
             <img src="{{this.img}}" onerror="this.style.display='none'" />
             <div class="t20w-corpo">
               <div class="t20w-row">
-                <span class="t20w-nome" data-uuid="{{this.uuid}}">{{this.name}}</span> <button type="button" class="t20w-abrir" data-action="abrirItem" data-uuid="{{this.uuid}}" title="Abrir o item do compêndio">📖</button>
+                <span class="t20w-nome" data-uuid="{{this.uuid}}">{{this.name}}</span>
                 <span class="t20w-badge">{{this.categoria}}</span>
                 <select name="variante-{{this.id}}" style="margin-left:auto;padding:2px 4px;max-width:60%;">
                   <option value="">— escolher atributo —</option>
@@ -643,7 +645,7 @@
             <img src="{{this.img}}" onerror="this.style.display='none'" />
             <div class="t20w-corpo">
               <div class="t20w-row">
-                <span class="t20w-nome" data-uuid="{{this.uuid}}">{{this.name}}</span> <button type="button" class="t20w-abrir" data-action="abrirItem" data-uuid="{{this.uuid}}" title="Abrir o item do compêndio (botão direito no nome também abre)">📖</button>
+                <span class="t20w-nome" data-uuid="{{this.uuid}}">{{this.name}}</span>
                 <span class="t20w-badge">{{this.categoria}}</span>{{#if this.extraDe}} <span class="t20w-badge" title="Escolhido em outro passo; não conta na cota daqui">{{this.extraDe}}</span>{{/if}}
                 {{#if this.repetivel}}
                   {{#if this.selected}}
@@ -720,7 +722,7 @@
             <input type="checkbox" name="magia-{{this.id}}" value="{{this.id}}" {{#if this.selected}}checked{{/if}} {{#if this.bloqueado}}disabled{{/if}} />
             <img src="{{this.img}}" onerror="this.style.display='none'" />
             <div class="t20w-corpo">
-              <span class="t20w-nome" data-uuid="{{this.uuid}}">{{this.name}}</span> <button type="button" class="t20w-abrir" data-action="abrirItem" data-uuid="{{this.uuid}}" title="Abrir o item do compêndio (botão direito no nome também abre)">📖</button>
+              <span class="t20w-nome" data-uuid="{{this.uuid}}">{{this.name}}</span>
               <span class="t20w-badge">{{this.escola}}</span>{{#if this.tipo}}<span class="t20w-badge">{{this.tipo}}</span>{{/if}}
               {{#if this.descricao}}<details class="t20w-mais"><summary>descrição</summary><div class="t20w-desc">{{this.descricao}}</div></details>{{/if}}
             </div>
@@ -788,9 +790,8 @@
         <div class="t20w-equip-list t20w-scroll t20w-lista" style="max-height:340px;overflow-y:auto;">
           {{#each itens}}
           <div class="t20w-equip-row t20w-item{{#if selected}} selecionado{{/if}}" style="align-items:center;cursor:default;font-size:0.88em;">
-            <img src="{{img}}" alt="" onerror="this.style.display='none'" />
+            <img src="{{img}}" alt="" onerror="this.style.visibility='hidden'" />
             <span class="t20w-corpo" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap;" data-uuid="{{uuid}}">{{name}}</span>
-            <button type="button" class="t20w-abrir" data-action="abrirItem" data-uuid="{{uuid}}" title="Ver o item">📖</button>
             <span style="opacity:0.7;white-space:nowrap;">{{preco}} T$</span>
             <span style="opacity:0.5;white-space:nowrap;font-size:0.8em;">{{peso}} kg</span>
             {{#if selected}}

@@ -46,7 +46,8 @@ const SLUG_TO_CODE: Record<string, string> = {
 export const PERICIA_CODES: string[] = Object.values(SLUG_TO_CODE);
 
 /** All 28 core perícia full slugs (T20-DB ids). */
-export const PERICIA_SLUGS: string[] = Object.keys(SLUG_TO_CODE);
+// "oficio" não tem code no sistema (vira alfa/arme/… ou ofi1 pelo rules/oficio.ts), mas é escolhível.
+export const PERICIA_SLUGS: string[] = [...Object.keys(SLUG_TO_CODE), "oficio"];
 
 const CODE_SET = new Set(PERICIA_CODES);
 

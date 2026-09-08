@@ -57,8 +57,6 @@ export interface SubEscolhaPoder {
 const DADOS = dadosRaw as unknown as Record<string, SubEscolhaPoder | string>;
 
 /** "Escolha uma perícia…", "um aliado a sua escolha": o texto pede decisão. */
-const PEDE_ESCOLHA = /\bescolh[ae] (um|uma|dois|duas|tr[êe]s|quatro)\b|\b[àa] sua escolha\b/i;
-const GENERICA: SubEscolhaPoder = { tipo: "texto", rotulo: "Sua escolha (veja o texto do poder)", opcional: true };
 
 /**
  * Regra estruturada do JSON; sem ela, poder cujo texto pede uma escolha ganha
@@ -68,9 +66,11 @@ export function subEscolhaDoPoder(nomeOuSlug: string, descricao = ""): SubEscolh
   const slug = toNomeSlug(nomeOuSlug);
   const v = DADOS[slug];
   if (v && typeof v === "object") return v;
-  // Centelha Mágica, Orar…: a magia é escolhida no passo Magias (magias_por_poder).
-  if (slug in MAGIAS_POR_PODER) return null;
-  return PEDE_ESCOLHA.test(descricao) ? GENERICA : null;
+  // Sem entrada estruturada não há sub-escolha (Ray: "de acordo com o item ou
+  // não existir"). `descricao` fica na assinatura para quem chamava com ela.
+  void descricao;
+  void MAGIAS_POR_PODER;
+  return null;
 }
 
 export const chaveSubPoder = (slug: string, i: number): string => `sp_${slug}_${i}`;

@@ -106,7 +106,7 @@ function aplicarConfig(state: WizardState): void {
   }
   state.apply(patch as Parameters<WizardState["apply"]>[0]);
 }
-import { prepareDivindadeContext } from "./steps/divindade.js";
+import { prepareDivindadeContext , concedidosAutomaticos } from "./steps/divindade.js";
 import { preparePoderesContext, pendenciasDeHabilidades, type SubEscolhaView } from "./steps/poderes.js";
 import { chaveHabilidade } from "../compendium/resolver.js";
 import { prepareMagiasContext } from "./steps/magias.js";
@@ -243,6 +243,15 @@ export function defineWizardApp(): void {
       this._state.apply({ poderes, escolhasPorItem: { ...this._state.escolhasPorItem, poderes_extras: salvos } });
     }
 
+    /** Deus com lista ≤ cota: o concedido entra sozinho (checkbox desabilitado não vai no FormData). */
+    _sincronizarConcedidos(): void {
+      const auto = concedidosAutomaticos(this._state);
+      if (!auto.length) return;
+      const atual = (this._state.escolhasPorItem["divindade_poderes"] as string[] | undefined) ?? [];
+      if (atual.length === auto.length && auto.every((s) => atual.includes(s))) return;
+      this._state.apply({ escolhasPorItem: { ...this._state.escolhasPorItem, divindade_poderes: auto } });
+    }
+
     /** Fonte que deixou de existir (tirou a complicação, desmarcou Versátil) leva o poder junto. */
     _sincronizarPoderesExtras(): void {
       const ativas = new Set(fontesDePoderExtra(this._state).map((f) => f.fonte));
@@ -293,6 +302,9 @@ export function defineWizardApp(): void {
         return [];
       }
     }
+
+    /** A busca de equipamento re-renderiza a cada tecla; devolve o foco ao campo. */
+    _focarBusca = false;
 
     goToStep(step: WizardStep): void {
       this._currentStep = step;
@@ -484,6 +496,7 @@ export function defineWizardApp(): void {
       const step = this._currentStep;
       const state = this._state;
       this._sincronizarPoderesExtras();
+      this._sincronizarConcedidos();
       // Cada passo acrescenta o que ele mesmo detecta ao que veio da navegação;
       // sem dedupe a mesma frase aparecia repetida a cada render.
       const errors = [...new Set(this._errors)];
@@ -765,6 +778,8 @@ export function defineWizardApp(): void {
           const checked = Array.from(checkboxes).filter((c) => c.checked);
           const atLimit = checked.length >= max;
           checkboxes.forEach((cb) => {
+            // Marcado de fábrica (concedido único, benefício automático): não mexe.
+            if (cb.dataset["fixo"]) return;
             if (!cb.checked) {
               cb.disabled = atLimit;
               const lbl = cb.closest("label");
@@ -884,14 +899,20 @@ export function defineWizardApp(): void {
         montarCombo(sel);
       });
 
-      // ── Botão direito num nome com data-uuid abre o item do compêndio ────
-      root.querySelectorAll<HTMLElement>("[data-uuid]").forEach((el) => {
-        if (!el.dataset["uuid"] || el.tagName === "BUTTON") return;
-        el.addEventListener("contextmenu", (e) => {
-          e.preventDefault();
-          abrirNoCompendio(el.dataset["uuid"] ?? "");
-        });
-      });
+      // ── Duplo clique ou botão direito na linha abre o item (no Foundry a
+      // ficha do compêndio, no site o diálogo). O uuid fica no nome ou na linha.
+      const abrirDoEvento = (e: Event) => {
+        const alvo = e.target as HTMLElement;
+        if (alvo.closest("input, select, textarea, button, a, summary")) return;
+        const linha = alvo.closest<HTMLElement>(".t20w-item, .t20w-opcao, .t20w-equip-row, label, li");
+        const el = alvo.closest<HTMLElement>('[data-uuid]:not([data-uuid=""])') ?? linha?.querySelector<HTMLElement>('[data-uuid]:not([data-uuid=""])');
+        const uuid = el?.dataset["uuid"];
+        if (!uuid) return;
+        e.preventDefault();
+        abrirNoCompendio(uuid);
+      };
+      root.addEventListener("dblclick", abrirDoEvento);
+      root.addEventListener("contextmenu", abrirDoEvento);
 
       // ── Sub-escolhas de poder (Aspirante a Herói: atributo; Foco em Arma: arma…) ──
       root.querySelectorAll<HTMLSelectElement | HTMLInputElement>("select[name^='sp-'], input[name^='sp-']").forEach((sel) => {
@@ -1147,7 +1168,14 @@ export function defineWizardApp(): void {
 
       const equipSearch = root.querySelector<HTMLInputElement>("#t20w-equip-search");
       if (equipSearch) {
+        if (this._focarBusca) {
+          this._focarBusca = false;
+          equipSearch.focus();
+          const fim = equipSearch.value.length;
+          equipSearch.setSelectionRange(fim, fim);
+        }
         equipSearch.addEventListener("input", (e) => {
+          this._focarBusca = true;
           this._state.apply({
             escolhasPorItem: {
               ...this._state.escolhasPorItem,

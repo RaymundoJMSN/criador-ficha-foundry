@@ -1,5 +1,13 @@
 import { ITEM_TYPES, type ItemType } from "../constants.js";
 import type { AnyIndexed, TypeToIndexed } from "./types.js";
+import { toNomeSlug } from "./slug.js";
+import textosRaw from "../data/textos.json";
+
+const textosPoderes = ((textosRaw as { poderes?: Record<string, string> }).poderes ?? {}) as Record<string, string>;
+/** Texto do livro para um poder cujo item veio sem descrição ("Aumento de Atributo (Força)" cai em "aumento_de_atributo"). */
+export function descricaoDoLivro(nome: string): string {
+  return textosPoderes[toNomeSlug(nome.replace(/\s*\([^)]*\)\s*$/, ""))] ?? textosPoderes[toNomeSlug(nome)] ?? "";
+}
 
 const RELEVANT_TYPES = new Set<string>(Object.values(ITEM_TYPES));
 
@@ -77,7 +85,7 @@ function decodificar(html: string): string {
 
 /** Texto puro a partir do HTML do compêndio. */
 function semHtml(html: string): string {
-  return decodificar(html.replace(/<[^>]+>/g, " "))
+  return decodificar(html.replace(/@(?:UUID|Compendium)\[[^\]]*\]\{([^}]*)\}/g, "$1").replace(/<[^>]+>/g, " "))
     .replace(/\s+/g, " ")
     .trim();
 }
@@ -134,7 +142,7 @@ class CompendiumIndexClass {
           packId: pack.collection,
           type: itemType,
           pasta: pastaDe(entry["folder"]),
-          system: { ...system, descricao: semHtml(bruto) },
+          system: { ...system, descricao: semHtml(bruto) || descricaoDoLivro(String(entry["name"] ?? "")) },
         } as AnyIndexed);
       }
     }

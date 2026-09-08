@@ -765,3 +765,40 @@ controle (`.t20w-item`, `.t20w-pcheck-group[data-max]`, `montarCombo`).
 - Textos: `gerar-textos.mjs` cobre toda classe que algum livro descreve
   (+Treinador do HdA); classes só do compêndio (Duelista, Burguês…) ficam com
   a descrição do item, que costuma vir vazia.
+
+## Rodada de 2026-09-08 (noite)
+
+- `@UUID[...]{Nome}` nas descrições vira só o nome (`semHtml` do índice e
+  `limparHtml` da raça).
+- Sem botão 📖: duplo clique ou botão direito na linha (`.t20w-item`,
+  `.t20w-opcao`, `.t20w-equip-row`, label, li) abre o item — Foundry abre a
+  ficha (janela v1 `ItemSheetT20`, fica em `ui.windows`, não em
+  `foundry.applications.instances`), site abre o diálogo. `data-uuid` vazio
+  é ignorado.
+- Descrição aberta (`.t20w-desc`) nas telas pequenas (raça, caminhos de
+  classe); `<details>` só nas listas grandes (poderes, magias).
+- **Sub-escolha genérica não existe mais**: `subEscolhaDoPoder` devolve null
+  sem entrada em `subescolhas_poder.json`. Poder que precisa decidir algo ganha
+  entrada no JSON, senão não pede nada.
+- Perícias: grupos sem rolagem (`auto-fill minmax(170px)`); "oficio" entra em
+  `PERICIA_SLUGS` (listas "qualquer").
+- Deus com lista ≤ cota (menores com 1 concedido): `auto` no contexto,
+  checkbox marcado+desabilitado com `data-fixo` (o `enforceCheckboxGroup`
+  re-habilitava todo marcado — agora pula `data-fixo`), e
+  `_sincronizarConcedidos` grava `divindade_poderes` (checkbox desabilitado
+  não vai no FormData).
+- Fichas dos deuses menores vêm de
+  `deuses-arton/04-deuses-avatares/23-deuses-menores.md` (campos com ponto
+  dentro do negrito: `**Crenças e Objetivos.**`), com Descrição e Devotos.
+- `textos.poderes` (2.959 verbetes ##/###/#### dos livros, `poderesDosLivros`)
+  = fallback de descrição: no índice (`descricaoDoLivro`) e no writer
+  (`resolveItem` preenche `system.description.value` de poder vazio).
+- Loja de equipamento: `itemDaLoja` tira packs `equipamentos-magicos` e
+  `habilidades-de-criaturas` e pastas mágicas/artefatos/específicos/tesouros/
+  distinções/raças/classes (o "Arco do Crepúsculo" vinha de
+  "HdA - Itens Mágicos/Armas Específicas"). Ícone que falha fica invisível
+  mas reserva o espaço (linhas alinhadas). Busca devolve o foco após o
+  re-render (`_focarBusca`).
+- Cuidado com heredoc do Bash em patch com regex: `
+` e `\*` quebram —
+  patch por arquivo (Write) + `python arquivo.py`.

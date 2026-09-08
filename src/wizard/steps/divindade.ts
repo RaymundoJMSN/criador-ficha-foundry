@@ -12,12 +12,21 @@ import { classesDoPersonagem } from "../../rules/multiclasse.js";
 
 const textos = textosRaw as { divindades?: Record<string, Record<string, string>> };
 const CAMPOS_DEUS: Array<[string, string]> = [
+  ["descricao", "Descrição"],
   ["crencas", "Crenças e Objetivos"],
   ["simbolo", "Símbolo Sagrado"],
   ["canalizar", "Canalizar Energia"],
   ["arma", "Arma Preferida"],
   ["obrigacoes", "Obrigações & Restrições"],
+  ["devotos", "Devotos"],
 ];
+/** Concedidos que vêm sozinhos (lista ≤ cota): o app grava em `divindade_poderes`. */
+export function concedidosAutomaticos(state: WizardState): string[] {
+  const ctx = prepareDivindadeContext(state);
+  const sel = ctx.selectedDivindade as { auto?: boolean; poderes?: Array<{ slug: string }> } | null;
+  return sel?.auto ? (sel.poderes ?? []).map((p) => p.slug) : [];
+}
+
 function fichaDoDeus(id: string): Array<{ rotulo: string; texto: string }> | null {
   const f = textos.divindades?.[id];
   if (!f) return null;
@@ -83,12 +92,15 @@ export function prepareDivindadeContext(
   const cotaClasse = Math.max(...slugsClasses.map((c) => poderesConcedidosParaEscolher(c, Boolean(selected))));
   const quantosPoderes = selected ? Math.min(cotaClasse, selected.poderes_concedidos.length) : cotaClasse;
   const escolhidos = (state.escolhasPorItem["divindade_poderes"] as string[] | undefined) ?? [];
+  // Lista menor ou igual à cota (deus menor com 1 poder): não há o que escolher.
+  const auto = Boolean(selected) && selected!.id !== PANTEAO.id && selected!.poderes_concedidos.length > 0 && selected!.poderes_concedidos.length <= cotaClasse;
 
   const selectedDivindade = selected
     ? {
         id: selected.id,
         nome: selected.nome,
         ficha: fichaDoDeus(selected.id),
+        auto,
         nota:
           selected.id === PANTEAO.id
             ? "Cultua o Panteão como um todo: não recebe poder concedido e não pode usar armas cortantes ou perfurantes (LB p.103)."
@@ -101,7 +113,8 @@ export function prepareDivindadeContext(
               nome: p?.nome ?? prettifySlug(slug),
               descricao: p?.descricao ?? "",
               uuid: p?.uuid ?? "",
-              selected: escolhidos.includes(slug),
+              selected: auto || escolhidos.includes(slug),
+              auto,
             };
           })
           .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR")),

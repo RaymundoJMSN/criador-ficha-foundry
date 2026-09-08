@@ -25,6 +25,7 @@ import { PERICIA_NOMES } from "../wizard/steps/pericias.js";
 import { ESCOLAS } from "../rules/magias.js";
 import type { IndexedRace } from "../compendium/types.js";
 import { escolhasDaRaca, pedidoAtivo, partesDoPedido } from "../rules/raca.js";
+import { descricaoDoLivro } from "../compendium/index.js";
 import {
   beneficiosDeOrigemPermitidos,
   complicacaoEscolhida,
@@ -268,7 +269,17 @@ async function marcarNiveisDosPoderes(actorBruto: unknown, state: WizardState): 
  * Resolves a compendium item id to its full document object.
  * Returns null if the pack or document is not found.
  */
+/** Item do compêndio pronto para embutir; poder sem descrição ganha o texto do livro. */
 async function resolveItem(itemId: string): Promise<unknown | null> {
+  const obj = (await resolveItemBruto(itemId)) as { type?: string; name?: string; system?: { description?: { value?: string } } } | null;
+  if (obj?.type === "poder" && !(obj.system?.description?.value ?? "").replace(/<[^>]+>/g, "").trim()) {
+    const texto = descricaoDoLivro(obj.name ?? "");
+    if (texto) ((obj.system ??= {}).description ??= {}).value = `<p>${texto}</p>`;
+  }
+  return obj;
+}
+
+async function resolveItemBruto(itemId: string): Promise<unknown | null> {
   // @ts-expect-error fvtt-types game.packs typing incomplete for v13
   const packs = game.packs as Collection<CompendiumCollection<Item>>;
   for (const pack of packs) {
