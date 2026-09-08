@@ -71,8 +71,18 @@ export function registrarDeusesMenores(
   const porDeus = new Map<string, { nome: string; slugs: string[] }>();
   for (const p of concedidos) {
     const sub = p.system?.subtipo?.replace(/\s+/g, " ").trim();
-    // "Allihanna, Azgher" = poder partilhado por deuses maiores; "system.…" = lixo do pacote.
-    if (!sub || sub.includes("system.") || sub.split(",").some((parte) => majores.has(normNome(parte)))) continue;
+    if (!sub || sub.includes("system.")) continue;
+    // "Allihanna, Azgher" = poder partilhado por deuses maiores (Deuses de Arton):
+    // entra na lista de cada um deles (o T20-DB só tem os do Livro Básico).
+    const partes = sub.split(",").map((parte) => normNome(parte));
+    if (partes.some((parte) => majores.has(parte))) {
+      for (const d of divindadesData) {
+        if (!partes.includes(normNome(d.nome))) continue;
+        const slug = slugPoder(p.name);
+        if (!d.poderes_concedidos.includes(slug)) d.poderes_concedidos.push(slug);
+      }
+      continue;
+    }
     const chave = curtoDe(sub);
     const entrada = porDeus.get(chave) ?? { nome: sub, slugs: [] };
     entrada.slugs.push(slugPoder(p.name));
@@ -161,7 +171,8 @@ export function isDivindadeAcessa(
 
 export function listDivindadesParaPersonagem(racaId: string, classeId: string, abertas = false): Divindade[] {
   // O T20-DB também traz um "panteao"; vale o daqui (com a regra de classe).
-  return [...listDivindades().filter((d) => d.id !== PANTEAO.id), PANTEAO].filter((d) =>
+  // "arton" é entrada do T20-DB (druida devoto do mundo), não é deus do livro.
+  return [...listDivindades().filter((d) => d.id !== PANTEAO.id && d.id !== "arton"), PANTEAO].filter((d) =>
     isDivindadeAcessa(d.id, racaId, classeId, abertas)
   );
 }

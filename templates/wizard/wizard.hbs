@@ -453,7 +453,7 @@
 
       {{#if intBonus}}
       <div style="margin-bottom:10px;">
-        <strong style="font-size:0.85em;">Perícias extras por Inteligência — até {{intBonus}} (qualquer):</strong>
+        <strong style="font-size:0.85em;">Perícias extras por Inteligência — escolha {{intBonus}} (restam {{intRestantes}}, qualquer):</strong>
         <div class="t20w-pcheck-group" data-group="int" data-max="{{intBonus}}" style="display:grid;grid-template-columns:repeat(2,1fr);gap:2px 12px;margin-top:4px;max-height:160px;overflow-y:auto;">
           {{#each intOpcoes}}
           <label style="font-size:0.88em;display:flex;align-items:center;gap:6px;" class="{{#if this.disabled}}t20w-disabled{{/if}}">
@@ -466,7 +466,8 @@
 
       {{#if racaBonus}}
       <div style="margin-bottom:10px;">
-        <strong style="font-size:0.85em;">Perícias de raça — escolha {{racaBonus}} (qualquer):</strong>
+        <strong style="font-size:0.85em;">Perícias de raça — escolha {{racaBonus}} (restam {{racaRestantes}}, qualquer):</strong>
+        {{#if versatilPossivel}}<label class="t20w-row" style="font-size:0.85em;display:flex;gap:6px;align-items:center;margin:2px 0;"><input type="checkbox" name="versatil_poder" value="1" {{#if versatilPoder}}checked{{/if}} /> Versátil: trocar uma dessas perícias por um poder geral (escolhido no passo Poderes)</label>{{/if}}
         <div class="t20w-pcheck-group" data-group="raca" data-max="{{racaBonus}}" style="display:grid;grid-template-columns:repeat(2,1fr);gap:2px 12px;margin-top:4px;max-height:160px;overflow-y:auto;">
           {{#each racaOpcoes}}
           <label style="font-size:0.88em;display:flex;align-items:center;gap:6px;" class="{{#if this.disabled}}t20w-disabled{{/if}}">
@@ -587,7 +588,7 @@
         {{/if}}
         <h3 style="font-size:0.95em;margin:0 0 6px 0;opacity:0.8;">Escolha de Poderes</h3>
         <div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;flex-wrap:wrap;">
-          <span style="font-size:0.9em;">Escolha <strong>{{poderesParaPick}}</strong>{{#if extrasGerais}} <small style="opacity:0.7;">({{extrasGerais}} extra(s) por complicação, só gerais)</small>{{/if}} — Selecionados: <strong>{{selectedCount}}</strong></span>
+          <span style="font-size:0.9em;">Escolha <strong>{{poderesParaPick}}</strong>{{#if extrasGerais}} <small style="opacity:0.7;">({{extrasGerais}} extra(s) por complicação/Versátil, só gerais)</small>{{/if}} — Selecionados: <strong>{{selectedCount}}</strong></span>
           <select id="t20w-poder-cat">
             <option value="">Todas as categorias</option>
             {{#each categorias}}<option value="{{this}}">{{this}}</option>{{/each}}
@@ -600,7 +601,7 @@
           {{#each poderes}}
           <label class="t20w-poder-row t20w-item{{#if this.selected}} selecionado{{/if}}{{#unless this.eligible}} inelegivel{{/unless}}"
                  data-poder-name="{{this.name}}"
-                 data-poder-cat="{{this.tipo}}"
+                 data-poder-cat="{{this.categoria}}"
                  data-poder-elegivel="{{#if this.eligible}}1{{else}}{{#if this.selected}}1{{else}}0{{/if}}{{/if}}">
             <input type="checkbox" name="poder-{{this.id}}" value="{{this.id}}"
                    {{#if this.selected}}checked{{/if}} {{#if this.bloqueado}}disabled{{/if}} />
@@ -608,7 +609,7 @@
             <div class="t20w-corpo">
               <div class="t20w-row">
                 <span class="t20w-nome" data-uuid="{{this.uuid}}">{{this.name}}</span> <button type="button" class="t20w-abrir" data-action="abrirItem" data-uuid="{{this.uuid}}" title="Abrir o item do compêndio (botão direito no nome também abre)">📖</button>
-                {{#if this.tipo}}<span class="t20w-badge">{{this.tipo}}</span>{{/if}}
+                <span class="t20w-badge">{{this.categoria}}</span>
                 {{#if this.repetivel}}
                   {{#if this.selected}}
                   <span style="margin-left:auto;display:flex;align-items:center;gap:4px;font-size:0.8em;">

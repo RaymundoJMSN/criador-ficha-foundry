@@ -144,7 +144,9 @@ export function getRaceSkillBonus(idOrName: string, escolhas: Record<string, unk
   if (!raca) return 0;
   const total = (raca.treinar_pericias ?? []).reduce((sum, t) => sum + (t.quantidade ?? 0), 0);
   // Mashin: uma maravilha mecânica no lugar de uma das perícias.
-  return Math.max(0, total - periciasTrocadasNaMontagem(idOrName, escolhas));
+  // Humano (Versátil): um poder geral no lugar de uma das perícias.
+  const versatil = raca.id === "humano" && escolhas["versatil_poder"] ? 1 : 0;
+  return Math.max(0, total - periciasTrocadasNaMontagem(idOrName, escolhas) - versatil);
 }
 
 /** Fixed (non-choosable) racial attribute modifiers, e.g. anão +2 con +1 sab -1 des. */

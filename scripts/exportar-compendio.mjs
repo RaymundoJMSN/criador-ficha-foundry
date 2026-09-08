@@ -42,11 +42,19 @@ try {
       await db.open();
       const folders = [];
       const items = [];
+      // Efeitos embutidos ficam em chaves próprias ("!items.effects!<item>.<efeito>");
+      // no item só sobra a lista de ids — sem juntar, a ficha importada perde os AEs.
+      const efeitos = new Map();
       for await (const [chave, v] of db.iterator()) {
         if (chave.startsWith("!folders!")) folders.push({ _id: v._id, name: v.name, folder: v.folder ?? null });
         else if (chave.startsWith("!items!") && TIPOS.has(v.type)) items.push(v);
+        else if (chave.startsWith("!items.effects!")) {
+          const itemId = chave.slice("!items.effects!".length).split(".")[0];
+          (efeitos.get(itemId) ?? efeitos.set(itemId, []).get(itemId)).push(v);
+        }
       }
       await db.close();
+      for (const it of items) it.effects = efeitos.get(it._id) ?? [];
       if (items.length > 0) packs.push({ collection: `${prefixo}.${nome}`, documentName: "Item", folders, items });
     }
   }

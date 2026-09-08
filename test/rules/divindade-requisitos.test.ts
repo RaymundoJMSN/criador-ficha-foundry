@@ -18,13 +18,14 @@ describe("requisitos de devoto (LB cap. 2)", () => {
   it("humano pode ser devoto de qualquer divindade (menos o Panteão, que é regra de clérigo/frade)", () => {
     const todas = listDivindades();
     const paraHumano = listDivindadesParaPersonagem("humano", "arcanista");
-    expect(paraHumano.length).toBe(todas.length - 1);
+    // menos o Panteão e o "arton" do T20-DB
+    expect(paraHumano.length).toBe(todas.length - 2);
     expect(paraHumano.map((d) => d.id)).not.toContain("panteao");
   });
 
   it("clérigo pode ser devoto de qualquer divindade, Panteão incluído", () => {
     const lista = listDivindadesParaPersonagem("goblin", "clerigo");
-    expect(lista.length).toBe(listDivindades().length);
+    expect(lista.length).toBe(listDivindades().length - 1);
     expect(lista.map((d) => d.id)).toContain("panteao");
   });
 

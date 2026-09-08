@@ -43,7 +43,15 @@ export function registerLauncher(): void {
         const arquivo = input.files?.[0];
         if (!arquivo) return;
         try {
-          const dados = JSON.parse(await arquivo.text()) as { name?: string; type?: string; items?: unknown[] };
+          const dados = JSON.parse(await arquivo.text()) as { name?: string; type?: string; folder?: unknown; _id?: unknown; items?: Array<Record<string, unknown>> };
+          // Ids de pasta/ator do site não existem neste mundo; efeitos que vieram
+          // como id solto (despejo antigo) derrubariam a validação.
+          delete dados.folder;
+          delete dados._id;
+          for (const it of dados.items ?? []) {
+            delete it["folder"];
+            it["effects"] = ((it["effects"] as unknown[] | undefined) ?? []).filter((e) => typeof e === "object" && e !== null);
+          }
           if (dados.type !== "character" || !Array.isArray(dados.items)) throw new Error("não é uma ficha de personagem");
           const actor = (await Actor.create(dados as never)) as { name: string; sheet?: { render(f: boolean): void } } | undefined;
           actor?.sheet?.render(true);

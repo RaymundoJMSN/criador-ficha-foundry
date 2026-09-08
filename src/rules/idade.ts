@@ -228,7 +228,8 @@ export function complicacaoEscolhida(s: EstadoIdade): string {
 
 /** Poderes gerais extras: um pela complicação (HA p.282) e um pelo Já Vi Coisas (HA p.289). */
 export function poderesGeraisExtras(s: EstadoIdade): number {
-  return (complicacaoEscolhida(s) ? 1 : 0) + (jaViCoisas(s) ? 1 : 0);
+  // `versatil_poder` só é gravado para humano (Versátil: perícia → poder geral).
+  return (complicacaoEscolhida(s) ? 1 : 0) + (jaViCoisas(s) ? 1 : 0) + (s.escolhasPorItem["versatil_poder"] ? 1 : 0);
 }
 
 /** Benefícios de origem que a faixa deixa (2, 1 ou 0). */

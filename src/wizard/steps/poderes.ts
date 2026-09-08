@@ -1,6 +1,8 @@
 import { toNomeSlug, uuidDe } from "../../compendium/slug.js";
 import { getClasse, respostaSubEscolha } from "../../rules/classe.js";
 import { getRaca } from "../../rules/raca.js";
+import { getTrainedPericaSlugs } from "../../actor/mapper.js";
+import { getDivindade } from "../../rules/divindade.js";
 import { describeUnmet, temPrereqsConhecidos, prereqDoTexto, prereqsDoTexto, type PartialWizardState } from "../../rules/poderes.js";
 import { totaisRaciaisDoEstado } from "../../rules/subescolhas.js";
 import { poderesGeraisExtras, faixaDoPersonagem } from "../../rules/idade.js";
@@ -9,7 +11,7 @@ import { habilidadesAte, getClasseProgressao } from "../../rules/progressao.js";
 import { classesDoPersonagem, habilidadesDeTodas, slotsDePoderTotal, niveisPorClasse } from "../../rules/multiclasse.js";
 import { resolverPoder, opcoesDaHabilidade, chaveHabilidade } from "../../compendium/resolver.js";
 import type { IndexedEquipamento, IndexedMagia, IndexedPoder, IndexedRace } from "../../compendium/types.js";
-import { poderesAdquiridos, subEscolhaDoPoder, respostasEsperadas, chaveSubPoder, type SubEscolhaPoder } from "../../rules/subescolhas-poder.js";
+import { poderesAdquiridos, respostasDeSubEscolhas, subEscolhaDoPoder, respostasEsperadas, chaveSubPoder, type SubEscolhaPoder } from "../../rules/subescolhas-poder.js";
 import { PERICIA_SLUGS } from "../../rules/pericia-slug.js";
 import { PERICIA_NOMES, PERICIA_ATRIBUTO } from "./pericias.js";
 import type { WizardState } from "../state.js";
@@ -38,6 +40,8 @@ export interface PoderEntry {
   requerTexto: string;
   selected: boolean;
   tipo: string;
+  /** Rótulo do filtro: Classe, Combate, Destino, Magia, Tormenta, Concedido, Raça, Geral, Distinção. */
+  categoria: string;
   subtipo: string;
   descricao: string;
   /** Whether this entry is a class power or a general power taken in its place. */
@@ -235,7 +239,7 @@ const tokensDe = (s: string): string[] =>
     .split("_")
     .filter((t) => t && !IGNORAR_TOKENS.has(t));
 
-export function geralDaLista(state: WizardState): (subtipo: string) => boolean {
+export function geralDaLista(state: WizardState): (subtipo: string, pasta?: string) => boolean {
   const raca = getRaca(state.racaNome || state.racaId);
   const extras = Object.entries(state.escolhasPorItem)
     .filter(([k, v]) => k.startsWith("raca_") && typeof v === "string")
@@ -243,8 +247,17 @@ export function geralDaLista(state: WizardState): (subtipo: string) => boolean {
   const racas = [state.racaNome, raca?.nome, raca?.raca_base ?? ""]
     .filter((x): x is string => Boolean(x))
     .map((r) => new Set([...tokensDe(r.split(" (")[0]!), ...extras]));
-  return (subtipo: string) => {
-    const s = toNomeSlug(subtipo);
+  return (subtipo: string, pasta = "") => {
+    let s = toNomeSlug(subtipo);
+    if (s === "") {
+      // Sem subtipo: o Guia de NPCs guarda os poderes de raça em pastas
+      // "Raças - Vampiro (DB#220)/…" e as distinções em "Distinções - …".
+      // "Raças - Vampiro (DB#220)/…" (Guia de NPCs) ou "…/Poderes Raciais/Golem" (HdA).
+      const m = /Ra[cç]as? - ([^(/]+)|Raciais\s*\/\s*([^(/]+)/i.exec(pasta);
+      if (m) subtipo = (m[1] ?? m[2] ?? "").trim();
+      else if (/Distin/i.test(pasta)) return false;
+      s = toNomeSlug(subtipo);
+    }
     if (CATEGORIAS_GERAIS.has(s)) return true;
     const t = tokensDe(subtipo);
     return t.length > 0 && racas.some((rt) => t.every((x) => rt.has(x)));
@@ -370,19 +383,23 @@ export function preparePoderesContext(
     .map(slugDoItem);
 
   const totaisRaca = totaisRaciaisDoEstado(state);
-  const atributos = Object.fromEntries(
+  const atributos: Record<string, number> = Object.fromEntries(
     (["for", "des", "con", "int", "sab", "car"] as const).map((a) => [
       a,
       (state.atributosBase[a] ?? 0) + (totaisRaca[a] ?? 0),
     ])
   );
+  // Sub-escolha de atributo (Aspirante a Herói +1) conta para pré-requisito.
+  for (const r of respostasDeSubEscolhas(poderesAdquiridos(state, allPoderes, extras.racas ?? []), state.escolhasPorItem)) {
+    if (r.sub.tipo === "atributo" && r.valor in atributos) atributos[r.valor] = (atributos[r.valor] ?? 0) + 1;
+  }
 
   const stateForEligibility: PartialWizardState = {
     nivel: state.nivel,
     atributos,
     classeSlug,
     racaSlug: toNomeSlug(state.racaNome || ""),
-    periciasTreinadas: state.periciasTreinadas,
+    periciasTreinadas: getTrainedPericaSlugs(state),
     poderes: poderesEscolhidos,
     habilidadesClasse: habilidadeSlugs,
     niveisPorClasse: niveisPorClasse(state),
@@ -423,8 +440,27 @@ export function preparePoderesContext(
   const idsDaDistincao = new Set(distincao?.poderes.map((p) => p.id) ?? []);
   const nomesVistos = new Set<string>();
   const geralDisponivel = geralDaLista(state);
+  // Concedidos são poderes gerais para o devoto (LB cap. 5, "Grupos"): os do
+  // deus que ainda não vieram pela devoção entram na lista.
+  const jaConcedidos = new Set((state.escolhasPorItem["divindade_poderes"] as string[] | undefined) ?? []);
+  const concedidosDoDeus = new Set(
+    (state.divindadeId ? getDivindade(state.divindadeId)?.poderes_concedidos ?? [] : []).filter((s) => !jaConcedidos.has(s))
+  );
+  const ehGeral = (p: IndexedPoder) =>
+    idsDaDistincao.has(p.id) ||
+    (p.system.tipo === "geral" && geralDisponivel(p.system.subtipo ?? "", p.pasta ?? "")) ||
+    (p.system.tipo === "concedido" && concedidosDoDeus.has(slugDoItem(p)));
+  const NOMES_CAT: Record<string, string> = { "": "Geral", combate: "Combate", destino: "Destino", magia: "Magia", tormenta: "Tormenta" };
+  const categoriaDe = (p: IndexedPoder): string => {
+    if (idsDaDistincao.has(p.id)) return "Distinção";
+    if (p.system.tipo === "concedido") return "Concedido";
+    if (p.system.tipo !== "geral") return "Classe";
+    const s = toNomeSlug(p.system.subtipo ?? "");
+    if (s === "" && /Ra[cç]as? - |Raciais\s*\//i.test(p.pasta ?? "")) return "Raça";
+    return NOMES_CAT[s] ?? "Raça";
+  };
   const entries: PoderEntry[] = allPoderes
-    .filter((p) => idsDaClasse.has(p.id) || (p.system.tipo === "geral" && geralDisponivel(p.system.subtipo ?? "")) || idsDaDistincao.has(p.id))
+    .filter((p) => idsDaClasse.has(p.id) || ehGeral(p))
     .filter((p) => !nomesVistos.has(p.name) && nomesVistos.add(p.name))
     .map((p) => {
       const unmet = describeUnmet(slugDoItem(p), stateForEligibility, p.system.descricao ?? "");
@@ -445,16 +481,17 @@ export function preparePoderesContext(
         requerTexto,
         selected: state.poderes.includes(p.id),
         tipo: idsDaDistincao.has(p.id) ? "distinção" : (p.system.tipo ?? ""),
+        categoria: categoriaDe(p),
         subtipo: p.system.subtipo ?? "",
         descricao: p.system.descricao ?? "",
-        origem: p.system.tipo === "geral" || idsDaDistincao.has(p.id) ? ("geral" as const) : ("classe" as const),
+        origem: ehGeral(p) ? ("geral" as const) : ("classe" as const),
         // Elegibilidade é recalculada a cada render: escolher o Poder A libera
         // na hora o Poder B que exigia A.
         bloqueado:
           !state.poderes.includes(p.id) &&
           (unmet.length > 0 ||
             noLimite ||
-            (p.system.tipo !== "geral" && !idsDaDistincao.has(p.id) && classeNoLimite) ||
+            (!ehGeral(p) && classeNoLimite) ||
             (faixa.bloqueiaAumentoFisico && aumentoFisico.test(p.name))),
         repetivel,
         vezes,
@@ -465,7 +502,7 @@ export function preparePoderesContext(
   // Marcados primeiro, depois os elegíveis, depois o resto — cada bloco por nome.
   const ordem = (e: PoderEntry) => (e.selected ? 0 : e.eligible ? 1 : 2);
   entries.sort((a, b) => ordem(a) - ordem(b) || a.name.localeCompare(b.name));
-  const categorias = [...new Set(entries.map((e) => e.tipo).filter(Boolean))].sort();
+  const categorias = [...new Set(entries.map((e) => e.categoria))].sort((a, b) => a.localeCompare(b, "pt-BR"));
 
   const podeDistincao = podeTerDistincao(state);
   const distincoesView = podeDistincao

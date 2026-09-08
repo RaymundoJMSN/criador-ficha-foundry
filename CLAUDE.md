@@ -692,3 +692,30 @@ Mudou alguma destas áreas? Atualizar este `CLAUDE.md` **no mesmo commit**:
 - **Edições grandes de arquivo:** preferir `Write` (arquivo inteiro) a `Edit` parcial — evita truncar.
 - **Não inventar mecânica T20.** Se não está no livro / no T20-DB, marcar `// TODO` e perguntar.
 - **Pós-`git push`:** rodar `npx tsc --noEmit` + `npm test` local antes (build remoto não existe — deploy é manual no Foundry).
+
+## Feedback do Davi (2026-09-07)
+
+- **Versátil (humano)**: checkbox no grupo "Perícias de raça" grava
+  `escolhasPorItem.versatil_poder`; `getRaceSkillBonus` tira 1 perícia e
+  `poderesGeraisExtras` dá +1 slot só-geral. Contadores "(restam N)" nos grupos
+  Int e raça.
+- **Perícias treinadas no passo Poderes**: `state.periciasTreinadas` nunca era
+  preenchido (ficava `[]`) — o passo agora usa `getTrainedPericaSlugs(state)`
+  do mapper (classe + Int + raça + origem). Sub-escolha de atributo (Aspirante
+  +1) também entra no `atributos` da elegibilidade.
+- **Poderes de raça sem subtipo** (Vampiro do Guia de NPCs, "Soco Foguete"
+  do HdA): `geralDaLista` recebe a `pasta` e lê a raça de "Raças - X (…)" ou
+  "Poderes Raciais / X"; "Distinções - …" fica de fora.
+- **Categorias** do filtro = `categoria` por entrada (Classe, Combate,
+  Destino, Magia, Tormenta, Concedido, Raça, Geral, Distinção).
+  **Concedidos do deus escolhido** entram na lista como poderes gerais (LB
+  cap. 5, grupos), menos os já pegos pela devoção.
+- **Deuses**: `arton` do T20-DB filtrado (era "deus" aleatório); concedidos
+  do Deuses de Arton com subtipo = nome de deus maior ("Kallyadranoch",
+  "Lena, Thyatis") entram no `poderes_concedidos` do deus em
+  `registrarDeusesMenores`.
+- **Site → Foundry**: o despejo LevelDB guarda os AEs em chaves
+  `!items.effects!<item>.<efeito>` — o item só tinha ids soltos e o
+  `Actor.create` rejeitava o JSON em silêncio (`undefined`). O exportador
+  junta os efeitos; o botão "Importar ficha (JSON do site)" ainda limpa
+  `folder`/`_id` e efeitos não-objeto (JSONs antigos importam).

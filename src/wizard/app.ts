@@ -317,6 +317,7 @@ export function defineWizardApp(): void {
             extras_int: perInt,
             raca: perRaca,
           },
+          versatil_poder: formData.has("versatil_poder"),
         };
       }
       if (escolhas) patch["escolhasPorItem"] = escolhas;
@@ -416,7 +417,7 @@ export function defineWizardApp(): void {
         }
         case WizardStep.Pericias: {
           const intFinal = finalInt(state);
-          const racaBonus = getRaceSkillBonus(state.racaNome || state.racaId);
+          const racaBonus = getRaceSkillBonus(state.racaNome || state.racaId, state.escolhasPorItem);
           stepCtx = preparePericiaContext(state, intFinal, racaBonus, errors);
           break;
         }
@@ -1053,7 +1054,7 @@ export function defineWizardApp(): void {
 
       // ── Perícias live dedup — save picks + re-render on any change ──────
       const periciaInputs = root.querySelectorAll<HTMLInputElement>(
-        'input[name^="per_esc-"], input[name^="per_int-"], input[name^="per_raca-"], input[name^="per_obrig-"]'
+        'input[name^="per_esc-"], input[name^="per_int-"], input[name^="per_raca-"], input[name^="per_obrig-"], input[name="versatil_poder"]'
       );
       if (periciaInputs.length > 0) {
         periciaInputs.forEach((inp) => {
@@ -1098,6 +1099,7 @@ export function defineWizardApp(): void {
             extras_int: perInt,
             raca: perRaca,
           },
+          versatil_poder: Boolean(html.querySelector<HTMLInputElement>('input[name="versatil_poder"]')?.checked),
         },
       });
     }

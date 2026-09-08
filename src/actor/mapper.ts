@@ -96,6 +96,16 @@ export function mapStateToActorData(
  * so the system schema has already set correct atributo for each perícia.
  */
 export function getTrainedPericaCodes(state: WizardState): Record<string, true> {
+  const result: Record<string, true> = {};
+  for (const slug of getTrainedPericaSlugs(state)) {
+    const code = toPericiaCode(slug);
+    if (code) result[code] = true;
+  }
+  return result;
+}
+
+/** Slugs de todas as perícias treinadas (classe + Int + raça + origem). */
+export function getTrainedPericaSlugs(state: WizardState): string[] {
   const racaRef = state.racaNome || state.racaId;
 
   const classe = state.classeNome ? getClasse(state.classeNome) : null;
@@ -118,11 +128,5 @@ export function getTrainedPericaCodes(state: WizardState): Record<string, true> 
     : [];
 
   const daRaca = periciasDeEscolhasRaciais(racaRef, state.escolhasPorItem).treinadas;
-
-  const result: Record<string, true> = {};
-  for (const slug of [...trainedSlugs, ...beneficiosOrigem, ...daRaca]) {
-    const code = toPericiaCode(slug);
-    if (code) result[code] = true;
-  }
-  return result;
+  return [...new Set([...trainedSlugs, ...beneficiosOrigem, ...daRaca])];
 }

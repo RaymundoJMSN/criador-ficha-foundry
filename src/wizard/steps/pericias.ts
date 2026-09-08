@@ -1,5 +1,6 @@
 import { buildPericiaPlan, computeTrained, type PericiaPicks } from "../../rules/pericias.js";
 import { getClasse } from "../../rules/classe.js";
+import { toNomeSlug } from "../../compendium/slug.js";
 import type { WizardState } from "../state.js";
 
 export interface PericiaOpt {
@@ -26,9 +27,14 @@ export interface PericiaContext {
   escolhasRestantes: number;
   escolhasOpcoes: PericiaOpt[];
   intBonus: number;
+  intRestantes: number;
   intOpcoes: PericiaOpt[];
   racaBonus: number;
+  racaRestantes: number;
   racaOpcoes: PericiaOpt[];
+  /** Humano (Versátil): pode trocar uma das perícias por um poder geral. */
+  versatilPossivel: boolean;
+  versatilPoder: boolean;
   errors: string[];
 }
 
@@ -88,6 +94,10 @@ function emptyContext(errors: string[]): PericiaContext {
     escolhasRestantes: 0,
     escolhasOpcoes: [],
     intBonus: 0,
+    intRestantes: 0,
+    racaRestantes: 0,
+    versatilPossivel: false,
+    versatilPoder: false,
     intOpcoes: [],
     racaBonus: 0,
     racaOpcoes: [],
@@ -101,6 +111,11 @@ function emptyContext(errors: string[]): PericiaContext {
  * @param intFinal  final Int (base + racial), drives extra-skill picks.
  * @param racaBonus "any skill" the race grants (humano Versátil +2).
  */
+/** Humano: "Versátil — pode trocar uma dessas perícias por um poder geral" (LB p.21). */
+export function versatilPossivel(racaRef: string): boolean {
+  return toNomeSlug(racaRef) === "humano";
+}
+
 export function preparePericiaContext(
   state: WizardState,
   intFinal: number,
@@ -195,9 +210,13 @@ export function preparePericiaContext(
     escolhasRestantes: Math.max(0, plan.escolhas.quantidade - escPicks.length),
     escolhasOpcoes,
     intBonus: plan.intBonus,
+    intRestantes: Math.max(0, plan.intBonus - intPicks.length),
     intOpcoes: plan.intBonus > 0 ? todasOpcoes(intPicks, committedByInt) : [],
     racaBonus: plan.racaBonus,
+    racaRestantes: Math.max(0, plan.racaBonus - racaPicks.length),
     racaOpcoes: plan.racaBonus > 0 ? todasOpcoes(racaPicks, committedByRaca) : [],
+    versatilPossivel: versatilPossivel(state.racaNome || state.racaId),
+    versatilPoder: Boolean(state.escolhasPorItem["versatil_poder"]),
     errors,
   };
 }
