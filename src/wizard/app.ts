@@ -276,6 +276,25 @@ export function defineWizardApp(): void {
       }
     }
 
+    /**
+     * "Um poder de combate à sua escolha" (origem): a categoria inteira, com a
+     * mesma elegibilidade do passo Poderes — o que falta requisito aparece
+     * cinza dizendo o quê, em vez de sumir da lista.
+     */
+    _opcoesPoderLivre(categoria: string, escolhido: string): PoderGeralOpt[] {
+      const cat = toNomeSlug(categoria);
+      const jaTem = new Set(this._state.poderes.filter((id) => id !== escolhido));
+      try {
+        return this._contextoPoderes()
+          .poderes.filter((p) => p.origem === "geral" && toNomeSlug(p.subtipo) === cat && (!jaTem.has(p.id) || p.repetivel))
+          .map((p) => ({ id: p.id, nome: p.name, eligible: p.eligible || p.id === escolhido, requer: p.unmet.join(", "), selected: p.id === escolhido }))
+          .sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
+      } catch (e) {
+        console.warn(`${MODULE_ID} | poder livre da origem`, e);
+        return [];
+      }
+    }
+
     /** Poder geral extra escolhido na tela de origem: entra em `state.poderes` fora da cota do passo Poderes. */
     _setPoderExtra(fonte: string, id: string): void {
       const salvos = { ...((this._state.escolhasPorItem["poderes_extras"] as Record<string, string> | undefined) ?? {}) };
@@ -652,7 +671,9 @@ export function defineWizardApp(): void {
           const poderes = CompendiumIndex.getAll("poder") as IndexedPoder[];
           const resolvePoderNome = (slug: string): string | null =>
             poderes.find((p) => toNomeSlug(p.name) === slug)?.name ?? null;
-          stepCtx = prepareOrigemContext(state, errors, resolvePoderNome, poderes);
+          stepCtx = prepareOrigemContext(state, errors, resolvePoderNome, poderes, (categoria, escolhido) =>
+            this._opcoesPoderLivre(categoria, escolhido)
+          );
           break;
         }
         case WizardStep.Classe: {

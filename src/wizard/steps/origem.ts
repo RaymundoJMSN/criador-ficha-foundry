@@ -12,7 +12,7 @@ import { beneficiosDeOrigemPermitidos } from "../../rules/idade.js";
 import { racaSemOrigem } from "../../rules/raca.js";
 import textosRaw from "../../data/textos.json";
 import type { IndexedPoder } from "../../compendium/types.js";
-import { describeUnmet, type PartialWizardState } from "../../rules/poderes.js";
+import type { PoderGeralOpt } from "./pericias.js";
 import { toNomeSlug, uuidDe } from "../../compendium/slug.js";
 import { resolverPoder } from "../../compendium/resolver.js";
 
@@ -32,7 +32,7 @@ export interface PoderLivre {
   categoria: string;
   label: string;
   escolhido: string | null;
-  opcoes: Array<{ id: string; nome: string; selected: boolean }>;
+  opcoes: PoderGeralOpt[];
 }
 
 const textos = textosRaw as { origens?: Record<string, string> };
@@ -71,7 +71,8 @@ export function prepareOrigemContext(
   state: WizardState,
   errors: string[] = [],
   resolvePoderNome: (slug: string) => string | null = () => null,
-  todosPoderes: IndexedPoder[] = []
+  todosPoderes: IndexedPoder[] = [],
+  opcoesDeCategoria: (categoria: string, escolhido: string) => PoderGeralOpt[] = () => []
 ): OrigemContext {
   const origens = [...listOrigens()].sort((a, b) => a.nome.localeCompare(b.nome, "pt-BR"));
   const origemOptions: OrigemOption[] = origens.map((o) => ({
@@ -112,25 +113,12 @@ export function prepareOrigemContext(
     const validacao = validarBeneficios(selected.id, [...escolhidos], beneficiosDeOrigemPermitidos(state));
     errors = [...errors, ...validacao.errors];
 
-    // Poder livre: qualquer poder da categoria cujo pré-requisito o personagem
-    // já cumpra. A elegibilidade é a mesma do passo Poderes.
-    const paraElegibilidade: PartialWizardState = {
-      nivel: state.nivel,
-      atributos: state.atributosBase,
-      classeSlug: toNomeSlug(state.classeNome ?? ""),
-      racaSlug: toNomeSlug(state.racaNome ?? ""),
-      periciasTreinadas: state.periciasTreinadas,
-      poderes: [],
-    };
+    // Poder livre: a lista e a elegibilidade saem do mesmo lugar do passo
+    // Poderes (o que não dá para pegar aparece cinza dizendo o que falta).
     selectedDetail.poderesLivres = validacao.livres.map((categoria) => {
       const chave = `origem_poder_livre_${categoria}`;
       const escolhido = (state.escolhasPorItem[chave] as string | undefined) ?? null;
-      const opcoes = todosPoderes
-        // O compêndio grava "Combate"; a origem pede "combate".
-        .filter((p) => toNomeSlug(p.system.subtipo ?? "") === toNomeSlug(categoria))
-        .filter((p) => describeUnmet(toNomeSlug(p.name), paraElegibilidade, p.system.descricao ?? "").length === 0)
-        .map((p) => ({ id: p.id, nome: p.name, selected: p.id === escolhido }))
-        .sort((a, b) => a.nome.localeCompare(b.nome));
+      const opcoes = opcoesDeCategoria(categoria, escolhido ?? "");
       if (!escolhido) errors = [...errors, `Escolha o poder de ${categoria} da origem.`];
       return {
         categoria,

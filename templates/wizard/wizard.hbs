@@ -366,7 +366,7 @@
                   data-categoria="{{this.categoria}}" style="width:100%;padding:6px;">
             <option value="">— escolha um poder —</option>
             {{#each this.opcoes}}
-            <option value="{{this.id}}" {{#if this.selected}}selected{{/if}}>{{this.nome}}</option>
+            <option value="{{this.id}}" {{#if this.selected}}selected{{/if}} {{#unless this.eligible}}disabled{{/unless}}>{{this.nome}}{{#unless this.eligible}} — requer {{this.requer}}{{/unless}}</option>
             {{/each}}
           </select>
         </div>
