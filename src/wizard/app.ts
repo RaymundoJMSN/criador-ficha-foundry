@@ -64,6 +64,8 @@ import { OFICIOS_PADRAO, OFICIO_OUTRO, escolhasDeOficio, nomeDoOficio, passoDoOf
 import { quantosOficios } from "../rules/pericias-fontes.js";
 type PericiaPicksParciais = { obrigatorias?: string[][]; escolhas?: string[]; extras_int?: string[]; raca?: string[] };
 import { getRaceSkillBonus } from "../rules/raca.js";
+import { getClasse } from "../rules/classe.js";
+import { buildPericiaPlan } from "../rules/pericias.js";
 import { totaisRaciaisDoEstado, distribuirAbertos, valoresFixosDaRaca } from "../rules/subescolhas.js";
 import { toNomeSlug, uuidDe } from "../compendium/slug.js";
 
@@ -1408,14 +1410,23 @@ export function defineWizardApp(): void {
       const tem = (prefixo: string) => Boolean(html.querySelector(`input[name^="${prefixo}"]`));
       const vp = html.querySelector<HTMLInputElement>('input[name="versatil_poder"]');
       const versatil = vp ? vp.checked : Boolean(this._state.escolhasPorItem["versatil_poder"]);
+      // A cota pode encolher depois da escolha (marcar Versátil tira uma perícia
+      // da raça, baixar Inteligência tira uma extra): a sobra sai sozinha, senão
+      // ficavam as duas perícias E o poder geral.
+      const racaBonus = getRaceSkillBonus(this._state.racaNome || this._state.racaId, {
+        ...this._state.escolhasPorItem,
+        versatil_poder: versatil,
+      });
+      const classe = this._state.classeNome ? getClasse(this._state.classeNome) : null;
+      const plan = classe ? buildPericiaPlan(classe, finalInt(this._state), racaBonus) : null;
       this._state.apply({
         escolhasPorItem: {
           ...this._state.escolhasPorItem,
           pericias: {
             obrigatorias: tem("per_obrig-") ? perObrig.map((g) => (g ?? []).filter(Boolean)) : (atual.obrigatorias ?? []),
-            escolhas: tem("per_esc-") ? perEsc : (atual.escolhas ?? []),
-            extras_int: tem("per_int-") ? perInt : (atual.extras_int ?? []),
-            raca: tem("per_raca-") ? perRaca : (atual.raca ?? []),
+            escolhas: (tem("per_esc-") ? perEsc : (atual.escolhas ?? [])).slice(0, plan?.escolhas.quantidade),
+            extras_int: (tem("per_int-") ? perInt : (atual.extras_int ?? [])).slice(0, plan?.intBonus),
+            raca: (tem("per_raca-") ? perRaca : (atual.raca ?? [])).slice(0, racaBonus),
           },
           versatil_poder: versatil,
         },
