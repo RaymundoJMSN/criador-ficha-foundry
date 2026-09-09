@@ -164,7 +164,15 @@ export function getTrainedPericaSlugs(state: WizardState): string[] {
     const plan = buildPericiaPlan(classe, intFinal, getRaceSkillBonus(racaRef, state.escolhasPorItem));
     trainedSlugs = computeTrained(plan, picks).trained;
   } else {
-    trainedSlugs = state.periciasTreinadas;
+    // Raça vem antes de Classe: sem o plano da classe, o que já foi marcado
+    // (Cavalgar do Versátil) precisa contar, senão Ginete fica bloqueado ali.
+    trainedSlugs = [
+      ...state.periciasTreinadas,
+      ...(picks?.obrigatorias ?? []).flat(),
+      ...(picks?.escolhas ?? []),
+      ...(picks?.extras_int ?? []),
+      ...(picks?.raca ?? []),
+    ];
   }
   // Origem, raça e montagem vêm do mesmo módulo que o passo Perícias usa.
   const outrasFontes = periciasDeOutrasFontes(state).map((p) => p.slug);
