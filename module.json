@@ -22,6 +22,29 @@
       }
     ]
   },
+  "packs": [
+    {
+      "name": "t20w-extras",
+      "label": "T20 Ficha — itens que faltam",
+      "path": "packs/t20w-extras",
+      "type": "Item",
+      "system": "tormenta20",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      },
+      "flags": {}
+    }
+  ],
+  "packFolders": [
+    {
+      "name": "Criador de Ficha",
+      "sorting": "a",
+      "packs": [
+        "t20w-extras"
+      ]
+    }
+  ],
   "esmodules": [
     "dist/module.js"
   ],

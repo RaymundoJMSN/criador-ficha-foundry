@@ -8,3 +8,5 @@ scripts/.cache-pdf/
 src/data/textos.json
 site/data/
 site/dist/
+# texto da Jambo: o pack é gerado por scripts/gerar-pack.mjs
+packs/

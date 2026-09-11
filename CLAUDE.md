@@ -538,6 +538,35 @@ consumida por **`src/rules/classe.ts` (`getClasse`)**. O item Foundry entra só 
 
 **Poder:** `system.tipo/subtipo/alcance/area/ativacao/duracao/efeito`. **NÃO existe campo de pré-requisito estruturado** — só texto em `description.value`.
 
+**Automação = Active Effect no item; a flag `tormenta20` diz que tipo é** (lido dos itens do
+sistema, v1.4/1.5):
+
+| O que é | Flags | `changes` |
+|---|---|---|
+| Aprimoramento de magia | `{onuse:true, self:true, custo:"2"}`, `disabled:true`, `transfer:false`, nome = o texto do aprimoramento | chaves da **linha** da magia (`execucao`, `alcance`, `alvo`, `area`, `duracao`, `resistencia`, `dano`) em **modo 5** (troca) |
+| Aprimoramento que soma ("aumenta o dano em +2d6") | idem + `aumenta:true` | `{key:"dano", mode:0, value:"2d6"}` — só o incremento |
+| Truque (0 PM) | `{onuse:true, self:true}` **sem** `custo` | — |
+| Efeito numérico | — | chave real da ficha em **modo 2** (soma): `system.attributes.defesa.bonus`, `system.attributes.pm.bonus.total`, `system.tracos.resistencias.<tipo>.value` (`dano` = geral; tipos: acido, eletricidade, fogo, frio, luz, trevas, corte, perfuracao, impacto, veneno, psiquico), `system.modificadores.{ataque,dano,pericias}.*`, `system.attributes.movement.{walk,fly}` |
+| Passivo de poder/raça | `transfer:true` (vai junto do item para a ficha) | |
+| Temporário de cena | `transfer:false` + `{durationScene:true}` + `duration.rounds:999` | é assim que Armadura Arcana dá +5 Defesa |
+
+Tipos de dano em `system.rolls[].parts` = `[fórmula, tipo, ""]`: fogo, frio, acido, eletricidade,
+luz, trevas, essencia, psiquico, corte, perfuracao, impacto, curapv/curapm/curatpv/curatpm, "" (sem
+tipo — **veneno não é tipo de rolagem**). Magia: `ativacao.execucao` ∈ action/full/move/reaction/
+free/special/hour/minute; `alcance` ∈ self/touch/short/medium/long/any/km/spec; `duracao.units` ∈
+inst/round/turn/scene/sust/day/perm/special.
+
+- **Compêndio próprio do módulo** (`packs/t20w-extras`, `scripts/gerar-pack.mjs`): o que falta nos
+  compêndios instalados, em pastas ("Magias — Almanaque Dragão Brasil", "Poderes — Deuses de
+  Arton"). Hoje: as 17 magias do Almanaque DB (nenhum pack instalado as tem) + Herança de
+  Drashantyr. Dados do `magias-t20/dataset.json` (o dump que alimenta magias.raynathus.com.br);
+  ícones reaproveitados de `systems/tormenta20/icons/magias/`. Pack é LevelDB: `!items!<id>`,
+  `!items.effects!<item>.<efeito>`, `!folders!<id>` — escrito com o `classic-level` do próprio
+  Foundry, ids derivados do slug (rodar de novo não duplica). **`packs/` é gitignorado** (texto da
+  Jambo, como textos.json): quem clonar roda `npm run gerar:pack`; o zip da release também não o
+  leva. O exportador do site já inclui esse pack, e o `CompendiumIndex` varre `game.packs` inteiro
+  — a magia nova aparece no wizard sozinha. **Foundry só enxerga pack novo ao reiniciar o mundo.**
+
 - ➡️ **Validação de pré-requisito vem dos dados T20-DB** (`src/data/prereqs.json`), casados por slug.
 
 ---

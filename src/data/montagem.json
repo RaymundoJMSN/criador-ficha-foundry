@@ -748,7 +748,7 @@
             "id": "drashantyr",
             "nome": "Herança de Drashantyr",
             "poder": "Herança de Drashantyr",
-            "nota": "Não existe item no compêndio: o texto vem do livro."
+            "nota": "Não vem no compêndio do sistema: o item é do compêndio do próprio módulo."
           },
           {
             "id": "kundali",
@@ -931,7 +931,7 @@
             "id": "drashantyr",
             "nome": "Herança de Drashantyr",
             "poder": "Herança de Drashantyr",
-            "nota": "Não existe item no compêndio: o texto vem do livro."
+            "nota": "Não vem no compêndio do sistema: o item é do compêndio do próprio módulo."
           },
           {
             "id": "kundali",

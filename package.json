@@ -16,7 +16,8 @@
     "gerar:pericias": "node scripts/gerar-pericias.mjs",
     "export:compendio": "node scripts/exportar-compendio.mjs",
     "build:site": "vite build --config vite.config.site.ts && node scripts/copiar-site.mjs",
-    "deploy:site": "vite build --config vite.config.site.ts && node scripts/copiar-site.mjs --deploy"
+    "deploy:site": "vite build --config vite.config.site.ts && node scripts/copiar-site.mjs --deploy",
+    "gerar:pack": "node scripts/gerar-pack.mjs"
   },
   "devDependencies": {
     "@league-of-foundry-developers/foundry-vtt-types": "github:League-of-Foundry-Developers/foundry-vtt-types#b3a6b69cedb1d67e19b5b537baa46505900873f7",
