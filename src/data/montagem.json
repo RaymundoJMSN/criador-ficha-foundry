@@ -2,7 +2,12 @@
   "_comentario": "Raças montadas por passos (Duende HA p.?, Kallyanach Ameaças p.151, Golens Despertos e Mashin e Kobolds de Dragão Brasil, Vampiro do Guia de NPCs). Só estrutura e números: o texto de cada opção vem do item do compêndio (campo `poder`). Chave = id da raça no T20-DB (ver ALIAS em rules/montagem.ts).",
   "duende": {
     "atributos_escolha": [
-      { "valor": 1, "quantidade": 2, "atributos_diferentes": true, "observacao": "Dons: +1 em dois atributos diferentes" }
+      {
+        "valor": 1,
+        "quantidade": 2,
+        "atributos_diferentes": true,
+        "observacao": "Dons: +1 em dois atributos diferentes"
+      }
     ],
     "passos": [
       {
@@ -10,9 +15,26 @@
         "nome": "Natureza",
         "escolher": 1,
         "opcoes": [
-          { "id": "animal", "nome": "Animal", "poder": "Natureza Animal", "atributos_escolha": { "valor": 1, "quantidade": 1 }, "nota": "O +1 pode ir no mesmo atributo de um dos Dons." },
-          { "id": "vegetal", "nome": "Vegetal", "poder": "Natureza Vegetal" },
-          { "id": "mineral", "nome": "Mineral", "poder": "Natureza Mineral" }
+          {
+            "id": "animal",
+            "nome": "Animal",
+            "poder": "Natureza Animal",
+            "atributos_escolha": {
+              "valor": 1,
+              "quantidade": 1
+            },
+            "nota": "O +1 pode ir no mesmo atributo de um dos Dons."
+          },
+          {
+            "id": "vegetal",
+            "nome": "Vegetal",
+            "poder": "Natureza Vegetal"
+          },
+          {
+            "id": "mineral",
+            "nome": "Mineral",
+            "poder": "Natureza Mineral"
+          }
         ]
       },
       {
@@ -20,10 +42,40 @@
         "nome": "Tamanho",
         "escolher": 1,
         "opcoes": [
-          { "id": "minusculo", "nome": "Minúsculo", "poder": "Duende Minúsculo", "tamanho": "min", "deslocamento": 6, "atributos": { "for": -1 } },
-          { "id": "pequeno", "nome": "Pequeno", "poder": "Duende Pequeno", "tamanho": "peq", "deslocamento": 6 },
-          { "id": "medio", "nome": "Médio", "poder": "Duende Médio", "tamanho": "med", "deslocamento": 9 },
-          { "id": "grande", "nome": "Grande", "poder": "Duende Grande", "tamanho": "gra", "deslocamento": 9, "atributos": { "des": -1 } }
+          {
+            "id": "minusculo",
+            "nome": "Minúsculo",
+            "poder": "Duende Minúsculo",
+            "tamanho": "min",
+            "deslocamento": 6,
+            "atributos": {
+              "for": -1
+            }
+          },
+          {
+            "id": "pequeno",
+            "nome": "Pequeno",
+            "poder": "Duende Pequeno",
+            "tamanho": "peq",
+            "deslocamento": 6
+          },
+          {
+            "id": "medio",
+            "nome": "Médio",
+            "poder": "Duende Médio",
+            "tamanho": "med",
+            "deslocamento": 9
+          },
+          {
+            "id": "grande",
+            "nome": "Grande",
+            "poder": "Duende Grande",
+            "tamanho": "gra",
+            "deslocamento": 9,
+            "atributos": {
+              "des": -1
+            }
+          }
         ]
       },
       {
@@ -31,20 +83,89 @@
         "nome": "Presentes de Magia e de Caos",
         "escolher": 3,
         "opcoes": [
-          { "id": "afinidade_agua", "nome": "Afinidade Elemental (Água)", "poder": "Afinidade Elemental (Água)", "exclusivo": "afinidade" },
-          { "id": "afinidade_fogo", "nome": "Afinidade Elemental (Fogo)", "poder": "Afinidade Elemental (Fogo)", "exclusivo": "afinidade" },
-          { "id": "afinidade_vegetacao", "nome": "Afinidade Elemental (Vegetação)", "poder": "Afinidade Elemental (Vegetação)", "exclusivo": "afinidade" },
-          { "id": "encantar_objetos", "nome": "Encantar Objetos", "poder": "Encantar Objetos" },
-          { "id": "enfeiticar", "nome": "Enfeitiçar", "poder": "Enfeitiçar" },
-          { "id": "invisibilidade", "nome": "Invisibilidade", "poder": "Invisibilidade" },
-          { "id": "lingua_da_natureza", "nome": "Língua da Natureza", "poder": "Língua da Natureza", "efeitos": [{ "chave": "system.pericias.ades.bonus", "valor": 2 }, { "chave": "system.pericias.sobr.bonus", "valor": 2 }] },
-          { "id": "maldicao", "nome": "Maldição", "poder": "Maldição" },
-          { "id": "mais_la_do_que_aqui", "nome": "Mais Lá do que Aqui", "poder": "Mais Lá do que Aqui" },
-          { "id": "metamorfose_animal", "nome": "Metamorfose Animal", "poder": "Metamorfose Animal" },
-          { "id": "sonhos_profeticos", "nome": "Sonhos Proféticos", "poder": "Sonhos Proféticos" },
-          { "id": "velocidade_do_pensamento", "nome": "Velocidade do Pensamento", "poder": "Velocidade do Pensamento" },
-          { "id": "visao_feerica", "nome": "Visão Feérica", "poder": "Visão Feérica" },
-          { "id": "voo", "nome": "Voo", "poder": "Voo" }
+          {
+            "id": "afinidade_agua",
+            "nome": "Afinidade Elemental (Água)",
+            "poder": "Afinidade Elemental (Água)",
+            "exclusivo": "afinidade"
+          },
+          {
+            "id": "afinidade_fogo",
+            "nome": "Afinidade Elemental (Fogo)",
+            "poder": "Afinidade Elemental (Fogo)",
+            "exclusivo": "afinidade"
+          },
+          {
+            "id": "afinidade_vegetacao",
+            "nome": "Afinidade Elemental (Vegetação)",
+            "poder": "Afinidade Elemental (Vegetação)",
+            "exclusivo": "afinidade"
+          },
+          {
+            "id": "encantar_objetos",
+            "nome": "Encantar Objetos",
+            "poder": "Encantar Objetos"
+          },
+          {
+            "id": "enfeiticar",
+            "nome": "Enfeitiçar",
+            "poder": "Enfeitiçar"
+          },
+          {
+            "id": "invisibilidade",
+            "nome": "Invisibilidade",
+            "poder": "Invisibilidade"
+          },
+          {
+            "id": "lingua_da_natureza",
+            "nome": "Língua da Natureza",
+            "poder": "Língua da Natureza",
+            "efeitos": [
+              {
+                "chave": "system.pericias.ades.bonus",
+                "valor": 2
+              },
+              {
+                "chave": "system.pericias.sobr.bonus",
+                "valor": 2
+              }
+            ]
+          },
+          {
+            "id": "maldicao",
+            "nome": "Maldição",
+            "poder": "Maldição"
+          },
+          {
+            "id": "mais_la_do_que_aqui",
+            "nome": "Mais Lá do que Aqui",
+            "poder": "Mais Lá do que Aqui"
+          },
+          {
+            "id": "metamorfose_animal",
+            "nome": "Metamorfose Animal",
+            "poder": "Metamorfose Animal"
+          },
+          {
+            "id": "sonhos_profeticos",
+            "nome": "Sonhos Proféticos",
+            "poder": "Sonhos Proféticos"
+          },
+          {
+            "id": "velocidade_do_pensamento",
+            "nome": "Velocidade do Pensamento",
+            "poder": "Velocidade do Pensamento"
+          },
+          {
+            "id": "visao_feerica",
+            "nome": "Visão Feérica",
+            "poder": "Visão Feérica"
+          },
+          {
+            "id": "voo",
+            "nome": "Voo",
+            "poder": "Voo"
+          }
         ]
       },
       {
@@ -53,10 +174,50 @@
         "escolher": 1,
         "nota": "O tabu em si é combinado com o mestre; aqui só a perícia que sofre a penalidade.",
         "opcoes": [
-          { "id": "diplomacia", "nome": "Diplomacia", "anotar": "Tabu", "efeitos": [{ "chave": "system.pericias.dipl.bonus", "valor": -5 }] },
-          { "id": "iniciativa", "nome": "Iniciativa", "anotar": "Tabu", "efeitos": [{ "chave": "system.pericias.inic.bonus", "valor": -5 }] },
-          { "id": "luta", "nome": "Luta", "anotar": "Tabu", "efeitos": [{ "chave": "system.pericias.luta.bonus", "valor": -5 }] },
-          { "id": "percepcao", "nome": "Percepção", "anotar": "Tabu", "efeitos": [{ "chave": "system.pericias.perc.bonus", "valor": -5 }] }
+          {
+            "id": "diplomacia",
+            "nome": "Diplomacia",
+            "anotar": "Tabu",
+            "efeitos": [
+              {
+                "chave": "system.pericias.dipl.bonus",
+                "valor": -5
+              }
+            ]
+          },
+          {
+            "id": "iniciativa",
+            "nome": "Iniciativa",
+            "anotar": "Tabu",
+            "efeitos": [
+              {
+                "chave": "system.pericias.inic.bonus",
+                "valor": -5
+              }
+            ]
+          },
+          {
+            "id": "luta",
+            "nome": "Luta",
+            "anotar": "Tabu",
+            "efeitos": [
+              {
+                "chave": "system.pericias.luta.bonus",
+                "valor": -5
+              }
+            ]
+          },
+          {
+            "id": "percepcao",
+            "nome": "Percepção",
+            "anotar": "Tabu",
+            "efeitos": [
+              {
+                "chave": "system.pericias.perc.bonus",
+                "valor": -5
+              }
+            ]
+          }
         ]
       }
     ]
@@ -68,12 +229,66 @@
         "nome": "Bênção de Kallyadranoch",
         "escolher": 2,
         "opcoes": [
-          { "id": "armamento", "nome": "Armamento Kallyanach", "poder": "Armamento Kallyanach", "sub": { "rotulo": "Arma natural", "opcoes": [{ "id": "cauda", "rotulo": "Cauda (impacto)" }, { "id": "chifres", "rotulo": "Chifres (perfuração)" }, { "id": "mordida", "rotulo": "Mordida (perfuração)" }] } },
-          { "id": "asas", "nome": "Asas Dracônicas", "poder": "Asas Dracônicas" },
-          { "id": "escamas", "nome": "Escamas Elementais", "poder": "Escamas Elementais", "efeitos": [{ "chave": "system.attributes.defesa.bonus", "valor": 2 }] },
-          { "id": "pratica_arcana", "nome": "Prática Arcana", "poder": "Prática Arcana", "sub": { "rotulo": "Magia arcana de 1º círculo que cause dano do tipo da sua Herança Dracônica", "magia": { "circulo": 1, "tradicao": "arc" } } },
-          { "id": "sentidos", "nome": "Sentidos Dracônicos", "poder": "Sentidos Dracônicos" },
-          { "id": "sopro", "nome": "Sopro de Dragão", "poder": "Sopro de Dragão" }
+          {
+            "id": "armamento",
+            "nome": "Armamento Kallyanach",
+            "poder": "Armamento Kallyanach",
+            "sub": {
+              "rotulo": "Arma natural",
+              "opcoes": [
+                {
+                  "id": "cauda",
+                  "rotulo": "Cauda (impacto)"
+                },
+                {
+                  "id": "chifres",
+                  "rotulo": "Chifres (perfuração)"
+                },
+                {
+                  "id": "mordida",
+                  "rotulo": "Mordida (perfuração)"
+                }
+              ]
+            }
+          },
+          {
+            "id": "asas",
+            "nome": "Asas Dracônicas",
+            "poder": "Asas Dracônicas"
+          },
+          {
+            "id": "escamas",
+            "nome": "Escamas Elementais",
+            "poder": "Escamas Elementais",
+            "efeitos": [
+              {
+                "chave": "system.attributes.defesa.bonus",
+                "valor": 2
+              }
+            ]
+          },
+          {
+            "id": "pratica_arcana",
+            "nome": "Prática Arcana",
+            "poder": "Prática Arcana",
+            "sub": {
+              "rotulo": "Magia arcana de 1º círculo que cause dano do tipo da sua Herança Dracônica",
+              "magia": {
+                "circulo": 1,
+                "tradicao": "arc"
+              }
+            }
+          },
+          {
+            "id": "sentidos",
+            "nome": "Sentidos Dracônicos",
+            "poder": "Sentidos Dracônicos"
+          },
+          {
+            "id": "sopro",
+            "nome": "Sopro de Dragão",
+            "poder": "Sopro de Dragão"
+          }
         ]
       }
     ]
@@ -85,15 +300,98 @@
         "nome": "Chassi (material)",
         "escolher": 1,
         "opcoes": [
-          { "id": "barro", "nome": "Barro", "poder": "Barro", "atributos": { "con": 2 } },
-          { "id": "bronze", "nome": "Bronze", "poder": "Bronze", "atributos_escolha": { "valor": 1, "quantidade": 2 } },
-          { "id": "carne", "nome": "Carne", "poder": "Carne", "atributos": { "con": 2, "for": 1, "car": -1 }, "deslocamento": 6 },
-          { "id": "espelhos", "nome": "Espelhos", "poder": "Espelhos", "atributos": { "car": 2, "sab": 1, "con": -1 } },
-          { "id": "ferro", "nome": "Ferro", "poder": "Ferro", "atributos": { "for": 1, "con": 1 }, "deslocamento": 6, "efeitos": [{ "chave": "system.attributes.defesa.bonus", "valor": 2 }], "nota": "Penalidade de armadura –2 (anote na ficha)." },
-          { "id": "gelo", "nome": "Gelo Eterno", "poder": "Gelo", "atributos": { "con": 2 }, "deslocamento": 6 },
-          { "id": "pedra", "nome": "Pedra", "poder": "Pedra", "atributos": { "con": 2 }, "deslocamento": 6 },
-          { "id": "sucata", "nome": "Sucata", "poder": "Sucata", "atributos": { "for": 1, "con": 1 }, "deslocamento": 6 },
-          { "id": "dourado", "nome": "Dourado (Deuses de Arton)", "poder": "Chassi Dourado", "atributos": { "car": 2, "for": 1 } }
+          {
+            "id": "barro",
+            "nome": "Barro",
+            "poder": "Barro",
+            "atributos": {
+              "con": 2
+            }
+          },
+          {
+            "id": "bronze",
+            "nome": "Bronze",
+            "poder": "Bronze",
+            "atributos_escolha": {
+              "valor": 1,
+              "quantidade": 2
+            }
+          },
+          {
+            "id": "carne",
+            "nome": "Carne",
+            "poder": "Carne",
+            "atributos": {
+              "con": 2,
+              "for": 1,
+              "car": -1
+            },
+            "deslocamento": 6
+          },
+          {
+            "id": "espelhos",
+            "nome": "Espelhos",
+            "poder": "Espelhos",
+            "atributos": {
+              "car": 2,
+              "sab": 1,
+              "con": -1
+            }
+          },
+          {
+            "id": "ferro",
+            "nome": "Ferro",
+            "poder": "Ferro",
+            "atributos": {
+              "for": 1,
+              "con": 1
+            },
+            "deslocamento": 6,
+            "efeitos": [
+              {
+                "chave": "system.attributes.defesa.bonus",
+                "valor": 2
+              }
+            ],
+            "nota": "Penalidade de armadura –2 (anote na ficha)."
+          },
+          {
+            "id": "gelo",
+            "nome": "Gelo Eterno",
+            "poder": "Gelo",
+            "atributos": {
+              "con": 2
+            },
+            "deslocamento": 6
+          },
+          {
+            "id": "pedra",
+            "nome": "Pedra",
+            "poder": "Pedra",
+            "atributos": {
+              "con": 2
+            },
+            "deslocamento": 6
+          },
+          {
+            "id": "sucata",
+            "nome": "Sucata",
+            "poder": "Sucata",
+            "atributos": {
+              "for": 1,
+              "con": 1
+            },
+            "deslocamento": 6
+          },
+          {
+            "id": "dourado",
+            "nome": "Dourado (Deuses de Arton)",
+            "poder": "Chassi Dourado",
+            "atributos": {
+              "car": 2,
+              "for": 1
+            }
+          }
         ]
       },
       {
@@ -101,10 +399,54 @@
         "nome": "Fonte de energia",
         "escolher": 1,
         "opcoes": [
-          { "id": "alquimica", "nome": "Alquímica", "poder": "Alquímica" },
-          { "id": "elemental", "nome": "Elemental", "poder": "Elemental", "sub": { "rotulo": "Elemento", "opcoes": [{ "id": "agua", "rotulo": "Água (frio)" }, { "id": "ar", "rotulo": "Ar (eletricidade)" }, { "id": "fogo", "rotulo": "Fogo (fogo)" }, { "id": "terra", "rotulo": "Terra (ácido)" }] } },
-          { "id": "sagrada", "nome": "Sagrada", "poder": "Sagrada", "sub": { "rotulo": "Magia divina de 1º círculo", "magia": { "circulo": 1, "tradicao": "div" } } },
-          { "id": "vapor", "nome": "Vapor", "poder": "Vapor" }
+          {
+            "id": "alquimica",
+            "nome": "Alquímica",
+            "poder": "Alquímica"
+          },
+          {
+            "id": "elemental",
+            "nome": "Elemental",
+            "poder": "Elemental",
+            "sub": {
+              "rotulo": "Elemento",
+              "opcoes": [
+                {
+                  "id": "agua",
+                  "rotulo": "Água (frio)"
+                },
+                {
+                  "id": "ar",
+                  "rotulo": "Ar (eletricidade)"
+                },
+                {
+                  "id": "fogo",
+                  "rotulo": "Fogo (fogo)"
+                },
+                {
+                  "id": "terra",
+                  "rotulo": "Terra (ácido)"
+                }
+              ]
+            }
+          },
+          {
+            "id": "sagrada",
+            "nome": "Sagrada",
+            "poder": "Sagrada",
+            "sub": {
+              "rotulo": "Magia divina de 1º círculo",
+              "magia": {
+                "circulo": 1,
+                "tradicao": "div"
+              }
+            }
+          },
+          {
+            "id": "vapor",
+            "nome": "Vapor",
+            "poder": "Vapor"
+          }
         ]
       },
       {
@@ -112,9 +454,29 @@
         "nome": "Tamanho",
         "escolher": 1,
         "opcoes": [
-          { "id": "pequeno", "nome": "Pequeno", "poder": "Pequeno", "tamanho": "peq", "atributos": { "des": 1 } },
-          { "id": "medio", "nome": "Médio", "tamanho": "med" },
-          { "id": "grande", "nome": "Grande", "poder": "Grande", "tamanho": "gra", "atributos": { "des": -1 } }
+          {
+            "id": "pequeno",
+            "nome": "Pequeno",
+            "poder": "Pequeno",
+            "tamanho": "peq",
+            "atributos": {
+              "des": 1
+            }
+          },
+          {
+            "id": "medio",
+            "nome": "Médio",
+            "tamanho": "med"
+          },
+          {
+            "id": "grande",
+            "nome": "Grande",
+            "poder": "Grande",
+            "tamanho": "gra",
+            "atributos": {
+              "des": -1
+            }
+          }
         ]
       }
     ]
@@ -129,16 +491,59 @@
         "troca_pericia": true,
         "nota": "Opcional: troca uma das duas perícias treinadas do chassi por uma maravilha mecânica.",
         "opcoes": [
-          { "id": "adaptacao_elemental", "nome": "Adaptação Elemental", "poder": "Adaptação Elemental" },
-          { "id": "arma_acoplada", "nome": "Arma Acoplada", "poder": "Arma Acoplada" },
-          { "id": "arma_elemental", "nome": "Arma Elemental", "poder": "Arma Elemental", "nota": "Pré-requisito: Fonte de Energia (elemental)." },
-          { "id": "auxilio_de_mira", "nome": "Auxílio de Mira", "poder": "Auxílio de Mira" },
-          { "id": "caminho_da_perfeicao", "nome": "Caminho da Perfeição", "poder": "Caminho da Perfeição" },
-          { "id": "canalizar_reparos", "nome": "Canalizar Reparos", "poder": "Canalizar Reparos" },
-          { "id": "canhao_energetico", "nome": "Canhão Energético", "poder": "Canhão Energético", "requer": ["arma_acoplada"] },
-          { "id": "dinamo_de_mana", "nome": "Dínamo de Mana", "poder": "Dínamo de Mana" },
-          { "id": "pernas_aprimoradas", "nome": "Pernas Aprimoradas", "poder": "Pernas Aprimoradas" },
-          { "id": "reservatorio_alquimico", "nome": "Reservatório Alquímico", "poder": "Reservatório Alquímico", "nota": "Pré-requisito: Fonte de Energia (alquímica)." }
+          {
+            "id": "adaptacao_elemental",
+            "nome": "Adaptação Elemental",
+            "poder": "Adaptação Elemental"
+          },
+          {
+            "id": "arma_acoplada",
+            "nome": "Arma Acoplada",
+            "poder": "Arma Acoplada"
+          },
+          {
+            "id": "arma_elemental",
+            "nome": "Arma Elemental",
+            "poder": "Arma Elemental",
+            "nota": "Pré-requisito: Fonte de Energia (elemental)."
+          },
+          {
+            "id": "auxilio_de_mira",
+            "nome": "Auxílio de Mira",
+            "poder": "Auxílio de Mira"
+          },
+          {
+            "id": "caminho_da_perfeicao",
+            "nome": "Caminho da Perfeição",
+            "poder": "Caminho da Perfeição"
+          },
+          {
+            "id": "canalizar_reparos",
+            "nome": "Canalizar Reparos",
+            "poder": "Canalizar Reparos"
+          },
+          {
+            "id": "canhao_energetico",
+            "nome": "Canhão Energético",
+            "poder": "Canhão Energético",
+            "requer": ["arma_acoplada"]
+          },
+          {
+            "id": "dinamo_de_mana",
+            "nome": "Dínamo de Mana",
+            "poder": "Dínamo de Mana"
+          },
+          {
+            "id": "pernas_aprimoradas",
+            "nome": "Pernas Aprimoradas",
+            "poder": "Pernas Aprimoradas"
+          },
+          {
+            "id": "reservatorio_alquimico",
+            "nome": "Reservatório Alquímico",
+            "poder": "Reservatório Alquímico",
+            "nota": "Pré-requisito: Fonte de Energia (alquímica)."
+          }
         ]
       }
     ]
@@ -150,16 +555,71 @@
         "nome": "Talentos do Bando",
         "escolher": 2,
         "opcoes": [
-          { "id": "amontoados", "nome": "Amontoados", "poder": "Amontoados" },
-          { "id": "armadilha_terrivel", "nome": "Armadilha Terrível", "poder": "Armadilha Terrível", "sub": { "rotulo": "Magia de 1º círculo da armadilha", "magia": { "circulo": 1 } } },
-          { "id": "diferentao", "nome": "Diferentão", "poder": "Diferentão", "nota": "O poder de outra classe é escolhido com o mestre." },
-          { "id": "ex_familiar", "nome": "Ex-Familiar", "poder": "Ex-Familiar", "efeitos": [{ "chave": "system.attributes.pm.bonus.total", "valor": 2 }] },
-          { "id": "o_ousado", "nome": "O Ousado", "poder": "O Ousado" },
-          { "id": "os_do_fundo", "nome": "Os do Fundo", "poder": "Os do Fundo", "requer": ["organizadinhos"] },
-          { "id": "organizadinhos", "nome": "Organizadinhos", "poder": "Organizadinhos" },
-          { "id": "pestes_oportunistas", "nome": "Pestes Oportunistas", "poder": "Pestes Oportunistas" },
-          { "id": "somos_explosivos", "nome": "Somos Explosivos", "poder": "Somos Explosivos" },
-          { "id": "tatica_de_enxame", "nome": "Tática de Enxame", "poder": "Tática de Enxame", "requer": ["amontoados"] }
+          {
+            "id": "amontoados",
+            "nome": "Amontoados",
+            "poder": "Amontoados"
+          },
+          {
+            "id": "armadilha_terrivel",
+            "nome": "Armadilha Terrível",
+            "poder": "Armadilha Terrível",
+            "sub": {
+              "rotulo": "Magia de 1º círculo da armadilha",
+              "magia": {
+                "circulo": 1
+              }
+            }
+          },
+          {
+            "id": "diferentao",
+            "nome": "Diferentão",
+            "poder": "Diferentão",
+            "nota": "O poder de outra classe é escolhido com o mestre."
+          },
+          {
+            "id": "ex_familiar",
+            "nome": "Ex-Familiar",
+            "poder": "Ex-Familiar",
+            "efeitos": [
+              {
+                "chave": "system.attributes.pm.bonus.total",
+                "valor": 2
+              }
+            ]
+          },
+          {
+            "id": "o_ousado",
+            "nome": "O Ousado",
+            "poder": "O Ousado"
+          },
+          {
+            "id": "os_do_fundo",
+            "nome": "Os do Fundo",
+            "poder": "Os do Fundo",
+            "requer": ["organizadinhos"]
+          },
+          {
+            "id": "organizadinhos",
+            "nome": "Organizadinhos",
+            "poder": "Organizadinhos"
+          },
+          {
+            "id": "pestes_oportunistas",
+            "nome": "Pestes Oportunistas",
+            "poder": "Pestes Oportunistas"
+          },
+          {
+            "id": "somos_explosivos",
+            "nome": "Somos Explosivos",
+            "poder": "Somos Explosivos"
+          },
+          {
+            "id": "tatica_de_enxame",
+            "nome": "Tática de Enxame",
+            "poder": "Tática de Enxame",
+            "requer": ["amontoados"]
+          }
         ]
       }
     ]
@@ -171,7 +631,12 @@
         "habilidade": "Sapiência",
         "label": "Sapiência",
         "ramos": [],
-        "direto": { "tipo": "magia", "quantidade": 1, "circulo": 1, "escola": "adv" }
+        "direto": {
+          "tipo": "magia",
+          "quantidade": 1,
+          "circulo": 1,
+          "escola": "adv"
+        }
       }
     ]
   },
@@ -182,11 +647,401 @@
         "habilidade": "Resquícios da Outra Vida",
         "label": "Resquícios da Outra Vida",
         "ramos": [
-          { "id": "pericia", "rotulo": "Treinar 1 perícia (não precisa ser da classe)", "pedido": { "tipo": "pericia", "quantidade": 1, "bonus": 0 } },
-          { "id": "poder", "rotulo": "Ganhar 1 poder geral", "pedido": { "tipo": "poder", "quantidade": 1, "categoria": "geral" } },
-          { "id": "outra_raca", "rotulo": "Ser vampiro de outra raça humanoide ou monstro (exceto humano) e herdar 1 habilidade dessa raça", "pedido": { "tipo": "habilidade_outra_raca", "quantidade": 1, "excluir": ["humano"] } }
+          {
+            "id": "pericia",
+            "rotulo": "Treinar 1 perícia (não precisa ser da classe)",
+            "pedido": {
+              "tipo": "pericia",
+              "quantidade": 1,
+              "bonus": 0
+            }
+          },
+          {
+            "id": "poder",
+            "rotulo": "Ganhar 1 poder geral",
+            "pedido": {
+              "tipo": "poder",
+              "quantidade": 1,
+              "categoria": "geral"
+            }
+          },
+          {
+            "id": "outra_raca",
+            "rotulo": "Ser vampiro de outra raça humanoide ou monstro (exceto humano) e herdar 1 habilidade dessa raça",
+            "pedido": {
+              "tipo": "habilidade_outra_raca",
+              "quantidade": 1,
+              "excluir": ["humano"]
+            }
+          }
         ],
         "direto": null
+      }
+    ]
+  },
+  "aggelus": {
+    "passos": [
+      {
+        "id": "heranca",
+        "nome": "Herança planar",
+        "escolher": 1,
+        "substitui": "Luz Sagrada",
+        "nota": "Deuses de Arton p.36: celestiais e abissais nascem em qualquer reino divino, então você pode trocar Luz Sagrada pela herança de outro plano.",
+        "opcoes": [
+          {
+            "id": "padrao",
+            "nome": "Luz Sagrada",
+            "poder": "Luz Sagrada"
+          },
+          {
+            "id": "al_gazara",
+            "nome": "Herança de Al-Gazara",
+            "poder": "Herança de Al-Gazara"
+          },
+          {
+            "id": "arboria",
+            "nome": "Herança de Arbória",
+            "poder": "Herança de Arbória",
+            "sub": {
+              "rotulo": "Forma Selvagem",
+              "opcoes": [
+                {
+                  "id": "agil",
+                  "rotulo": "Ágil"
+                },
+                {
+                  "id": "sorrateira",
+                  "rotulo": "Sorrateira"
+                },
+                {
+                  "id": "veloz",
+                  "rotulo": "Veloz"
+                }
+              ]
+            }
+          },
+          {
+            "id": "chacina",
+            "nome": "Herança de Chacina",
+            "poder": "Herança de Chacina",
+            "sub": {
+              "rotulo": "Forma Selvagem",
+              "opcoes": [
+                {
+                  "id": "feroz",
+                  "rotulo": "Feroz"
+                },
+                {
+                  "id": "resistente",
+                  "rotulo": "Resistente"
+                }
+              ]
+            }
+          },
+          {
+            "id": "deathok",
+            "nome": "Herança de Deathok",
+            "poder": "Herança de Deathok",
+            "nota": "+2 em duas perícias a sua escolha, trocáveis a cada manhã — anote na ficha."
+          },
+          {
+            "id": "drashantyr",
+            "nome": "Herança de Drashantyr",
+            "poder": "Herança de Drashantyr",
+            "nota": "Não existe item no compêndio: o texto vem do livro."
+          },
+          {
+            "id": "kundali",
+            "nome": "Herança de Kundali",
+            "poder": "Herança de Kundali"
+          },
+          {
+            "id": "magika",
+            "nome": "Herança de Magika",
+            "poder": "Herança de Magika",
+            "sub": {
+              "rotulo": "Magia arcana de 1º círculo",
+              "magia": {
+                "circulo": 1
+              }
+            },
+            "nota": "A magia deve ser arcana; o atributo-chave é Inteligência ou Carisma, a sua escolha."
+          },
+          {
+            "id": "nivenciuen",
+            "nome": "Herança de Nivenciuén",
+            "poder": "Herança de Nivenciuén",
+            "sub": {
+              "rotulo": "Habilidade racial dos elfos",
+              "opcoes": [
+                {
+                  "id": "graca_de_glorienn",
+                  "rotulo": "Graça de Glórienn"
+                },
+                {
+                  "id": "sangue_magico",
+                  "rotulo": "Sangue Mágico"
+                }
+              ]
+            }
+          },
+          {
+            "id": "odisseia",
+            "nome": "Herança de Odisseia",
+            "poder": "Herança de Odisseia"
+          },
+          {
+            "id": "ordine",
+            "nome": "Herança de Ordine",
+            "poder": "Herança de Ordine"
+          },
+          {
+            "id": "pelagia",
+            "nome": "Herança de Pelágia",
+            "poder": "Herança de Pelágia",
+            "nota": "Escolha três perícias (1 PM para escolher 10 nelas) — anote na ficha."
+          },
+          {
+            "id": "pyra",
+            "nome": "Herança de Pyra",
+            "poder": "Herança de Pyra"
+          },
+          {
+            "id": "ramknal",
+            "nome": "Herança de Ramknal",
+            "poder": "Herança de Ramknal",
+            "nota": "Escolha duas entre Acrobacia, Enganação, Furtividade, Jogatina e Ladinagem — anote na ficha."
+          },
+          {
+            "id": "serena",
+            "nome": "Herança de Serena",
+            "poder": "Herança de Serena"
+          },
+          {
+            "id": "skerry",
+            "nome": "Herança de Skerry",
+            "poder": "Herança de Skerry"
+          },
+          {
+            "id": "solaris",
+            "nome": "Herança de Solaris",
+            "poder": "Herança de Solaris"
+          },
+          {
+            "id": "sombria",
+            "nome": "Herança de Sombria",
+            "poder": "Herança de Sombria"
+          },
+          {
+            "id": "sora",
+            "nome": "Herança de Sora",
+            "poder": "Herança de Sora"
+          },
+          {
+            "id": "terapolis",
+            "nome": "Herança de Terápolis",
+            "poder": "Herança de Terápolis"
+          },
+          {
+            "id": "venomia",
+            "nome": "Herança de Venomia",
+            "poder": "Herança de Venomia"
+          },
+          {
+            "id": "vitalia",
+            "nome": "Herança de Vitalia",
+            "poder": "Herança de Vitalia"
+          },
+          {
+            "id": "werra",
+            "nome": "Herança de Werra",
+            "poder": "Herança de Werra",
+            "nota": "Proficiência com armas marciais ou com duas armas exóticas, a sua escolha."
+          }
+        ]
+      }
+    ]
+  },
+  "sulfure": {
+    "passos": [
+      {
+        "id": "heranca",
+        "nome": "Herança planar",
+        "escolher": 1,
+        "substitui": "Sombras Profanas",
+        "nota": "Deuses de Arton p.36: celestiais e abissais nascem em qualquer reino divino, então você pode trocar Sombras Profanas pela herança de outro plano.",
+        "opcoes": [
+          {
+            "id": "padrao",
+            "nome": "Sombras Profanas",
+            "poder": "Sombras Profanas"
+          },
+          {
+            "id": "al_gazara",
+            "nome": "Herança de Al-Gazara",
+            "poder": "Herança de Al-Gazara"
+          },
+          {
+            "id": "arboria",
+            "nome": "Herança de Arbória",
+            "poder": "Herança de Arbória",
+            "sub": {
+              "rotulo": "Forma Selvagem",
+              "opcoes": [
+                {
+                  "id": "agil",
+                  "rotulo": "Ágil"
+                },
+                {
+                  "id": "sorrateira",
+                  "rotulo": "Sorrateira"
+                },
+                {
+                  "id": "veloz",
+                  "rotulo": "Veloz"
+                }
+              ]
+            }
+          },
+          {
+            "id": "chacina",
+            "nome": "Herança de Chacina",
+            "poder": "Herança de Chacina",
+            "sub": {
+              "rotulo": "Forma Selvagem",
+              "opcoes": [
+                {
+                  "id": "feroz",
+                  "rotulo": "Feroz"
+                },
+                {
+                  "id": "resistente",
+                  "rotulo": "Resistente"
+                }
+              ]
+            }
+          },
+          {
+            "id": "deathok",
+            "nome": "Herança de Deathok",
+            "poder": "Herança de Deathok",
+            "nota": "+2 em duas perícias a sua escolha, trocáveis a cada manhã — anote na ficha."
+          },
+          {
+            "id": "drashantyr",
+            "nome": "Herança de Drashantyr",
+            "poder": "Herança de Drashantyr",
+            "nota": "Não existe item no compêndio: o texto vem do livro."
+          },
+          {
+            "id": "kundali",
+            "nome": "Herança de Kundali",
+            "poder": "Herança de Kundali"
+          },
+          {
+            "id": "magika",
+            "nome": "Herança de Magika",
+            "poder": "Herança de Magika",
+            "sub": {
+              "rotulo": "Magia arcana de 1º círculo",
+              "magia": {
+                "circulo": 1
+              }
+            },
+            "nota": "A magia deve ser arcana; o atributo-chave é Inteligência ou Carisma, a sua escolha."
+          },
+          {
+            "id": "nivenciuen",
+            "nome": "Herança de Nivenciuén",
+            "poder": "Herança de Nivenciuén",
+            "sub": {
+              "rotulo": "Habilidade racial dos elfos",
+              "opcoes": [
+                {
+                  "id": "graca_de_glorienn",
+                  "rotulo": "Graça de Glórienn"
+                },
+                {
+                  "id": "sangue_magico",
+                  "rotulo": "Sangue Mágico"
+                }
+              ]
+            }
+          },
+          {
+            "id": "odisseia",
+            "nome": "Herança de Odisseia",
+            "poder": "Herança de Odisseia"
+          },
+          {
+            "id": "ordine",
+            "nome": "Herança de Ordine",
+            "poder": "Herança de Ordine"
+          },
+          {
+            "id": "pelagia",
+            "nome": "Herança de Pelágia",
+            "poder": "Herança de Pelágia",
+            "nota": "Escolha três perícias (1 PM para escolher 10 nelas) — anote na ficha."
+          },
+          {
+            "id": "pyra",
+            "nome": "Herança de Pyra",
+            "poder": "Herança de Pyra"
+          },
+          {
+            "id": "ramknal",
+            "nome": "Herança de Ramknal",
+            "poder": "Herança de Ramknal",
+            "nota": "Escolha duas entre Acrobacia, Enganação, Furtividade, Jogatina e Ladinagem — anote na ficha."
+          },
+          {
+            "id": "serena",
+            "nome": "Herança de Serena",
+            "poder": "Herança de Serena"
+          },
+          {
+            "id": "skerry",
+            "nome": "Herança de Skerry",
+            "poder": "Herança de Skerry"
+          },
+          {
+            "id": "solaris",
+            "nome": "Herança de Solaris",
+            "poder": "Herança de Solaris"
+          },
+          {
+            "id": "sombria",
+            "nome": "Herança de Sombria",
+            "poder": "Herança de Sombria"
+          },
+          {
+            "id": "sora",
+            "nome": "Herança de Sora",
+            "poder": "Herança de Sora"
+          },
+          {
+            "id": "terapolis",
+            "nome": "Herança de Terápolis",
+            "poder": "Herança de Terápolis"
+          },
+          {
+            "id": "venomia",
+            "nome": "Herança de Venomia",
+            "poder": "Herança de Venomia"
+          },
+          {
+            "id": "vitalia",
+            "nome": "Herança de Vitalia",
+            "poder": "Herança de Vitalia"
+          },
+          {
+            "id": "werra",
+            "nome": "Herança de Werra",
+            "poder": "Herança de Werra",
+            "nota": "Proficiência com armas marciais ou com duas armas exóticas, a sua escolha."
+          }
+        ]
       }
     ]
   }

@@ -45,7 +45,11 @@ import { slugsDosPoderes } from "../rules/magias.js";
 import magiaPorPoderRaw from "../data/magia_por_poder.json";
 const magiaPorPoder = magiaPorPoderRaw as Record<string, string>;
 import { validateRaceModifiers, distribuirAbertos } from "../rules/subescolhas.js";
-import { opcoesDaMontagem, anotacoesDaMontagem } from "../rules/montagem.js";
+import {
+  opcoesDaMontagem,
+  anotacoesDaMontagem,
+  poderesSubstituidosNaMontagem,
+} from "../rules/montagem.js";
 import { poderesAdquiridos, respostasDeSubEscolhas } from "../rules/subescolhas-poder.js";
 import { PERICIA_NOMES } from "../wizard/steps/pericias.js";
 import { ESCOLAS } from "../rules/magias.js";
@@ -112,6 +116,19 @@ async function resolverMontagem(state: WizardState): Promise<MontagemResolvida> 
           const magia = await resolveItem(magiaId);
           if (magia) out.docs.push(magia);
         }
+      } else if (descricaoDoLivro(opcao.poder)) {
+        // Sem item no compêndio (Herança de Drashantyr): a ficha recebe o poder
+        // com o texto do livro, senão a escolha do jogador sumia em silêncio.
+        out.docs.push({
+          name: sufixo ? `${opcao.poder} (${sufixo})` : opcao.poder,
+          type: "poder",
+          system: {
+            tipo: "racial",
+            subtipo: racaSlug,
+            description: { value: `<p>${descricaoDoLivro(opcao.poder)}</p>` },
+          },
+          effects: aeDe(opcao.poder, opcao.efeitos ?? []),
+        });
       } else {
         console.warn(`${MODULE_ID} | ActorWriter: poder da montagem "${opcao.poder}" não resolveu`);
       }
@@ -402,6 +419,22 @@ export class ActorWriter {
       if (montagem.deslocamento) {
         sys["movement"] = { ...((sys["movement"] as Record<string, unknown> | undefined) ?? {}), walk: montagem.deslocamento };
       }
+      // Herança planar (Deuses de Arton): a herança escolhida entra NO LUGAR de
+      // Luz Sagrada/Sombras Profanas — tirar do `grants` impede o sistema de
+      // conceder as duas ao embutir o item de raça.
+      const trocados = poderesSubstituidosNaMontagem(racaRef, state.escolhasPorItem).map(toNomeSlug);
+      if (trocados.length > 0) {
+        const nomePorId = new Map((CompendiumIndex.getAll("poder") as IndexedPoder[]).map((p) => [p.id, p.name]));
+        const grants = (sys["grants"] as Array<{ choices?: Array<{ uuid?: string }> }> | undefined) ?? [];
+        sys["grants"] = grants.map((g) => ({
+          ...g,
+          choices: (g.choices ?? []).filter((c) => {
+            const nome = nomePorId.get(String(c.uuid ?? "").split(".").pop() ?? "");
+            return !nome || !trocados.includes(toNomeSlug(nome));
+          }),
+        }));
+      }
+
       // Raças Abertas (HA p.281): os fixos da raça vão para onde o jogador pôs.
       if (state.config.racasAbertas) {
         const dist = (state.escolhasPorItem["raca_aberta"] as Record<string, string> | undefined) ?? {};

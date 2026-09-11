@@ -10,6 +10,7 @@ import {
   anotacoesDaMontagem,
   pendenciasDaMontagem,
   periciasTrocadasNaMontagem,
+  poderesSubstituidosNaMontagem,
 } from "../../src/rules/montagem.js";
 import { getRaca, getRaceSkillBonus, escolhasDaRaca } from "../../src/rules/raca.js";
 import { getRaceModifierGroups, validateRaceModifiers, getRaceAttributeTotals } from "../../src/rules/subescolhas.js";
@@ -156,5 +157,37 @@ describe("Vampiro (Guia de NPCs): Resquícios da Outra Vida", () => {
     const [r] = escolhasDaRaca("Vampiro");
     expect(r?.habilidade).toBe("Resquícios da Outra Vida");
     expect(r?.ramos.map((x) => x.pedido.tipo)).toEqual(["pericia", "poder", "habilidade_outra_raca"]);
+  });
+});
+
+describe("herança planar do suraggel (Deuses de Arton p.36)", () => {
+  const heranca = (id: string) => ({ mont_heranca: [id] });
+
+  it("aggelus e sulfure têm as 22 heranças mais a habilidade padrão", () => {
+    for (const [raca, padrao] of [
+      ["Aggelus", "Luz Sagrada"],
+      ["Sulfure", "Sombras Profanas"],
+    ] as const) {
+      const passo = montagemDaRaca(raca)?.passos?.[0];
+      expect(passo?.substitui).toBe(padrao);
+      expect(passo?.opcoes).toHaveLength(23);
+      expect(passo?.opcoes[0]?.nome).toBe(padrao);
+    }
+  });
+
+  it("ficar com a padrão não duplica o item que a raça já concede", () => {
+    expect(poderesDaMontagem("Aggelus", heranca("padrao"))).toEqual([]);
+    expect(poderesSubstituidosNaMontagem("Aggelus", heranca("padrao"))).toEqual([]);
+  });
+
+  it("escolher uma herança troca a habilidade padrão", () => {
+    const escolhas = heranca("ordine");
+    expect(poderesDaMontagem("Aggelus", escolhas).map((p) => p.poder)).toEqual(["Herança de Ordine"]);
+    expect(poderesSubstituidosNaMontagem("Aggelus", escolhas)).toEqual(["Luz Sagrada"]);
+    expect(poderesSubstituidosNaMontagem("Sulfure", escolhas)).toEqual(["Sombras Profanas"]);
+  });
+
+  it("sem escolher, o passo fica pendente", () => {
+    expect(pendenciasDaMontagem("Aggelus", {})).toEqual(["Herança planar: escolha 1."]);
   });
 });

@@ -19,11 +19,13 @@ import {
   introRepetida,
   subMarcada,
   pendenciasDaMontagem,
+  poderesSubstituidosNaMontagem,
   type OpcaoMontagem,
 } from "../../rules/montagem.js";
 import textosRaw from "../../data/textos.json";
 import { describeUnmet, type PartialWizardState } from "../../rules/poderes.js";
 import { toNomeSlug, uuidDe } from "../../compendium/slug.js";
+import { descricaoDoLivro } from "../../compendium/index.js";
 import type { IndexedMagia } from "../../compendium/types.js";
 
 export interface RacaOption {
@@ -214,8 +216,9 @@ function montarMontagem(
   return m.passos.map((passo) => {
     const marc = opcoesMarcadas(passo, escolhas);
     const ids = new Set(marc.map((o) => o.id));
+    // Sem item no compêndio (Herança de Drashantyr), o texto vem do livro.
     const descricaoDaOpcao = (o: OpcaoMontagem): string =>
-      (o.poder && itemDoPoder(o.poder, racaRef, poderes)?.system.descricao) || "";
+      (o.poder && (itemDoPoder(o.poder, racaRef, poderes)?.system.descricao || descricaoDoLivro(o.poder))) || "";
     const intro = introRepetida(passo.opcoes.map(descricaoDaOpcao));
     return {
       id: passo.id,
@@ -437,7 +440,10 @@ export function prepareRacaContext(
       modGroups: dbRaca ? buildModGroups(nome, choices, state.escolhasPorItem) : [],
       racaAberta: state.config.racasAbertas && dbRaca ? montarRacaAberta(nome, state.escolhasPorItem) : null,
       montagem: montarMontagem(nome, state.escolhasPorItem, todosPoderes, todasMagias),
-      poderesRaciais: poderesDaRaca(selecionada, todosPoderes),
+      // A herança planar escolhida entra no lugar de Luz Sagrada/Sombras Profanas.
+      poderesRaciais: poderesDaRaca(selecionada, todosPoderes).filter(
+        (p) => !poderesSubstituidosNaMontagem(nome, state.escolhasPorItem).some((x) => toNomeSlug(x) === toNomeSlug(p.nome))
+      ),
       periciasBonus: (dbRaca?.bonus_pericias ?? []).map((p) =>
         typeof p === "string" ? p : String((p as { pericia?: string }).pericia ?? "")
       ),

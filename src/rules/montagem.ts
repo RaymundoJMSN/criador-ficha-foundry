@@ -49,6 +49,12 @@ export interface PassoMontagem {
   opcional?: boolean;
   /** Mashin: a maravilha toma o lugar de uma perícia treinada do chassi. */
   troca_pericia?: boolean;
+  /**
+   * Suraggel: a opção escolhida entra NO LUGAR desta habilidade que o item de
+   * raça concede ("Luz Sagrada"). A opção de mesmo nome é o padrão — a raça já
+   * a concede, então ela não vira item de novo.
+   */
+  substitui?: string;
   nota?: string;
   opcoes: OpcaoMontagem[];
 }
@@ -90,9 +96,13 @@ export function montagemDaRaca(idOrName: string): Montagem | null {
 }
 
 export const chavePasso = (passoId: string): string => `mont_${passoId}`;
-export const chaveSub = (passoId: string, opcaoId: string): string => `mont_${passoId}_${opcaoId}_sub`;
+export const chaveSub = (passoId: string, opcaoId: string): string =>
+  `mont_${passoId}_${opcaoId}_sub`;
 
-export function opcoesMarcadas(passo: PassoMontagem, escolhas: Record<string, unknown>): OpcaoMontagem[] {
+export function opcoesMarcadas(
+  passo: PassoMontagem,
+  escolhas: Record<string, unknown>
+): OpcaoMontagem[] {
   const ids = escolhas[chavePasso(passo.id)];
   const lista = Array.isArray(ids) ? ids.map(String) : typeof ids === "string" && ids ? [ids] : [];
   return passo.opcoes.filter((o) => lista.includes(o.id));
@@ -146,7 +156,10 @@ export function introRepetida(descricoes: string[]): string {
  * pré-requisito. Prevenir é melhor que avisar depois (Ray).
  */
 /** Perícias treinadas por opções marcadas na montagem da raça. */
-export function periciasTreinadasDaMontagem(idOrName: string, escolhas: Record<string, unknown>): string[] {
+export function periciasTreinadasDaMontagem(
+  idOrName: string,
+  escolhas: Record<string, unknown>
+): string[] {
   const m = montagemDaRaca(idOrName);
   if (!m?.passos) return [];
   const out: string[] = [];
@@ -172,19 +185,31 @@ export function opcaoBloqueada(
   return (opcao.requer ?? []).some((req) => !ids.has(req));
 }
 
-export function subMarcada(passoId: string, opcaoId: string, escolhas: Record<string, unknown>): string {
+export function subMarcada(
+  passoId: string,
+  opcaoId: string,
+  escolhas: Record<string, unknown>
+): string {
   const v = escolhas[chaveSub(passoId, opcaoId)];
   return typeof v === "string" ? v : "";
 }
 
-function marcadas(idOrName: string, escolhas: Record<string, unknown>): Array<{ passo: PassoMontagem; opcao: OpcaoMontagem }> {
+function marcadas(
+  idOrName: string,
+  escolhas: Record<string, unknown>
+): Array<{ passo: PassoMontagem; opcao: OpcaoMontagem }> {
   const m = montagemDaRaca(idOrName);
   if (!m?.passos) return [];
-  return m.passos.flatMap((passo) => opcoesMarcadas(passo, escolhas).map((opcao) => ({ passo, opcao })));
+  return m.passos.flatMap((passo) =>
+    opcoesMarcadas(passo, escolhas).map((opcao) => ({ passo, opcao }))
+  );
 }
 
 /** Grupos de atributo à escolha: os da raça inteira (Dons) + os da opção marcada (Natureza Animal, Bronze). */
-export function gruposDeAtributoDaMontagem(idOrName: string, escolhas: Record<string, unknown>): AtributoEscolhaDef[] {
+export function gruposDeAtributoDaMontagem(
+  idOrName: string,
+  escolhas: Record<string, unknown>
+): AtributoEscolhaDef[] {
   const m = montagemDaRaca(idOrName);
   if (!m) return [];
   const grupos: AtributoEscolhaDef[] = [...(m.atributos_escolha ?? [])];
@@ -203,7 +228,10 @@ export function gruposDeAtributoDaMontagem(idOrName: string, escolhas: Record<st
 }
 
 /** Modificadores fixos das opções marcadas (Minúsculo For –1, chassi de Barro Con +2…). */
-export function atributosFixosDaMontagem(idOrName: string, escolhas: Record<string, unknown>): Record<string, number> {
+export function atributosFixosDaMontagem(
+  idOrName: string,
+  escolhas: Record<string, unknown>
+): Record<string, number> {
   const out: Record<string, number> = {};
   for (const { opcao } of marcadas(idOrName, escolhas)) {
     for (const [k, v] of Object.entries(opcao.atributos ?? {})) out[k] = (out[k] ?? 0) + v;
@@ -211,16 +239,25 @@ export function atributosFixosDaMontagem(idOrName: string, escolhas: Record<stri
   return out;
 }
 
-export function tamanhoDaMontagem(idOrName: string, escolhas: Record<string, unknown>): string | null {
+export function tamanhoDaMontagem(
+  idOrName: string,
+  escolhas: Record<string, unknown>
+): string | null {
   return marcadas(idOrName, escolhas).find((x) => x.opcao.tamanho)?.opcao.tamanho ?? null;
 }
 
-export function deslocamentoDaMontagem(idOrName: string, escolhas: Record<string, unknown>): number | null {
+export function deslocamentoDaMontagem(
+  idOrName: string,
+  escolhas: Record<string, unknown>
+): number | null {
   return marcadas(idOrName, escolhas).find((x) => x.opcao.deslocamento)?.opcao.deslocamento ?? null;
 }
 
 /** Quantas perícias treinadas da raça viraram outra coisa (Mashin: maravilha no lugar de uma perícia). */
-export function periciasTrocadasNaMontagem(idOrName: string, escolhas: Record<string, unknown>): number {
+export function periciasTrocadasNaMontagem(
+  idOrName: string,
+  escolhas: Record<string, unknown>
+): number {
   const m = montagemDaRaca(idOrName);
   if (!m?.passos) return 0;
   return m.passos.filter((p) => p.troca_pericia && opcoesMarcadas(p, escolhas).length > 0).length;
@@ -231,13 +268,21 @@ export function opcoesDaMontagem(
   idOrName: string,
   escolhas: Record<string, unknown>
 ): Array<{ opcao: OpcaoMontagem; sufixo?: string; magiaId?: string }> {
-  return marcadas(idOrName, escolhas).map(({ passo, opcao }) => {
-    const sub = subMarcada(passo.id, opcao.id, escolhas);
-    const out: { opcao: OpcaoMontagem; sufixo?: string; magiaId?: string } = { opcao };
-    if (opcao.sub?.opcoes && sub) out.sufixo = opcao.sub.opcoes.find((o) => o.id === sub)?.rotulo ?? sub;
-    if (opcao.sub?.magia && sub) out.magiaId = sub;
-    return out;
-  });
+  return (
+    marcadas(idOrName, escolhas)
+      // Ficar com a habilidade padrão não vira item: ela vem do item de raça.
+      .filter(
+        ({ passo, opcao }) => !passo.substitui || slug(opcao.poder ?? "") !== slug(passo.substitui)
+      )
+      .map(({ passo, opcao }) => {
+        const sub = subMarcada(passo.id, opcao.id, escolhas);
+        const out: { opcao: OpcaoMontagem; sufixo?: string; magiaId?: string } = { opcao };
+        if (opcao.sub?.opcoes && sub)
+          out.sufixo = opcao.sub.opcoes.find((o) => o.id === sub)?.rotulo ?? sub;
+        if (opcao.sub?.magia && sub) out.magiaId = sub;
+        return out;
+      })
+  );
 }
 
 export interface PoderDaMontagem {
@@ -250,17 +295,42 @@ export interface PoderDaMontagem {
 }
 
 /** Itens de poder a embutir na ficha, com sufixo/efeitos/magia da sub-escolha. */
-export function poderesDaMontagem(idOrName: string, escolhas: Record<string, unknown>): PoderDaMontagem[] {
+export function poderesDaMontagem(
+  idOrName: string,
+  escolhas: Record<string, unknown>
+): PoderDaMontagem[] {
   const out: PoderDaMontagem[] = [];
   for (const { passo, opcao } of marcadas(idOrName, escolhas)) {
-    if (!opcao.poder) continue;
+    // Ficar com a habilidade padrão não cria item: ela vem do item de raça.
+    if (!opcao.poder || slug(opcao.poder) === slug(passo.substitui ?? "")) continue;
     const sub = subMarcada(passo.id, opcao.id, escolhas);
     const item: PoderDaMontagem = { poder: opcao.poder, efeitos: opcao.efeitos ?? [] };
-    if (opcao.sub?.opcoes && sub) item.sufixo = opcao.sub.opcoes.find((o) => o.id === sub)?.rotulo ?? sub;
+    if (opcao.sub?.opcoes && sub)
+      item.sufixo = opcao.sub.opcoes.find((o) => o.id === sub)?.rotulo ?? sub;
     if (opcao.sub?.magia && sub) item.magiaId = sub;
     out.push(item);
   }
   return out;
+}
+
+/**
+ * Habilidades da raça que a escolha do jogador tirou do lugar: o suraggel que
+ * pega uma Herança planar não fica também com Luz Sagrada (Deuses de Arton).
+ */
+export function poderesSubstituidosNaMontagem(
+  idOrName: string,
+  escolhas: Record<string, unknown>
+): string[] {
+  const m = montagemDaRaca(idOrName);
+  if (!m?.passos) return [];
+  const out: string[] = [];
+  for (const passo of m.passos) {
+    if (!passo.substitui) continue;
+    for (const o of opcoesMarcadas(passo, escolhas)) {
+      if (slug(o.poder ?? "") !== slug(passo.substitui)) out.push(passo.substitui);
+    }
+  }
+  return [...new Set(out)];
 }
 
 export interface Anotacao {
@@ -270,13 +340,23 @@ export interface Anotacao {
 }
 
 /** Opções sem item próprio que marcam um item já concedido pela raça (Tabu: –5 na perícia). */
-export function anotacoesDaMontagem(idOrName: string, escolhas: Record<string, unknown>): Anotacao[] {
+export function anotacoesDaMontagem(
+  idOrName: string,
+  escolhas: Record<string, unknown>
+): Anotacao[] {
   return marcadas(idOrName, escolhas)
     .filter(({ opcao }) => opcao.anotar)
-    .map(({ opcao }) => ({ item: opcao.anotar!, sufixo: opcao.nome, efeitos: opcao.efeitos ?? [] }));
+    .map(({ opcao }) => ({
+      item: opcao.anotar!,
+      sufixo: opcao.nome,
+      efeitos: opcao.efeitos ?? [],
+    }));
 }
 
-export function pendenciasDaMontagem(idOrName: string, escolhas: Record<string, unknown>): string[] {
+export function pendenciasDaMontagem(
+  idOrName: string,
+  escolhas: Record<string, unknown>
+): string[] {
   const m = montagemDaRaca(idOrName);
   if (!m?.passos) return [];
   const faltando: string[] = [];
@@ -286,16 +366,22 @@ export function pendenciasDaMontagem(idOrName: string, escolhas: Record<string, 
       if (!passo.opcional) faltando.push(`${passo.nome}: escolha ${passo.escolher}.`);
       continue;
     }
-    if (marc.length < passo.escolher && !passo.opcional) faltando.push(`${passo.nome}: escolha ${passo.escolher} (${marc.length} marcada(s)).`);
+    if (marc.length < passo.escolher && !passo.opcional)
+      faltando.push(`${passo.nome}: escolha ${passo.escolher} (${marc.length} marcada(s)).`);
     if (marc.length > passo.escolher) faltando.push(`${passo.nome}: no máximo ${passo.escolher}.`);
     const grupos = marc.map((o) => o.exclusivo).filter(Boolean);
-    if (new Set(grupos).size !== grupos.length) faltando.push(`${passo.nome}: só uma opção do mesmo grupo (${marc.find((o) => o.exclusivo)?.nome.split(" (")[0]}).`);
+    if (new Set(grupos).size !== grupos.length)
+      faltando.push(
+        `${passo.nome}: só uma opção do mesmo grupo (${marc.find((o) => o.exclusivo)?.nome.split(" (")[0]}).`
+      );
     const ids = new Set(marc.map((o) => o.id));
     for (const o of marc) {
       for (const req of o.requer ?? []) {
-        if (!ids.has(req)) faltando.push(`${o.nome} exige ${passo.opcoes.find((x) => x.id === req)?.nome ?? req}.`);
+        if (!ids.has(req))
+          faltando.push(`${o.nome} exige ${passo.opcoes.find((x) => x.id === req)?.nome ?? req}.`);
       }
-      if (o.sub && !subMarcada(passo.id, o.id, escolhas)) faltando.push(`${o.nome}: ${o.sub.rotulo.toLowerCase()} — complete a escolha.`);
+      if (o.sub && !subMarcada(passo.id, o.id, escolhas))
+        faltando.push(`${o.nome}: ${o.sub.rotulo.toLowerCase()} — complete a escolha.`);
     }
   }
   return faltando;

@@ -235,6 +235,13 @@ arcanista 2 (bruxo) → nível 5, PV 39, PM 21, 3 poderes, 4 magias de 1º.
   `lista` antigas (Fonte Elemental do golem) que antes ficavam só no wizard.
   Efeito em item que a raça já concedeu (Tabu –5 na perícia) vai como AE no
   ATOR com `origin` — AE posto num item já existente não é transferido.
+- **Herança planar do suraggel** (Deuses de Arton p.36): aggelus e sulfure são
+  passos de montagem com `substitui` — a opção escolhida entra NO LUGAR de Luz
+  Sagrada/Sombras Profanas. A opção padrão tem o mesmo nome do `substitui` e não
+  vira item (a raça já concede); escolher uma das 22 heranças faz o writer tirar
+  a habilidade do `system.grants` do item de raça ANTES de embutir — o sistema
+  concederia as duas. Herança de Drashantyr não existe no compêndio: a descrição
+  cai em `descricaoDoLivro` e o writer cria o item com o texto do livro.
 - **Dois "Golem"** no compêndio (Livro Básico e Golens Despertos de Ameaças):
   `nomeDaRaca` põe o pack no nome repetido, `racaNome` guarda esse nome e o
   `ALIAS` em `montagem.ts` leva "golem_ameacas_de_arton" → `golem_desperto`
