@@ -307,12 +307,12 @@ function poderItem(p, textos, pastaId) {
   };
 }
 
-const pasta = (id, nome, sort) => ({
+const pasta = (id, nome, sort, mae = null) => ({
   _id: id,
   name: nome,
   type: "Item",
   description: "",
-  folder: null,
+  folder: mae,
   sorting: "a",
   sort,
   color: null,
@@ -324,6 +324,15 @@ const pasta = (id, nome, sort) => ({
 async function escreverModulo({ id, titulo, descricao, pack, rotulo, pastas, docs }) {
   const raiz = join(FOUNDRY_DATA, "modules", id);
   const destino = join(raiz, "packs", pack);
+  // O Foundry segura o LOCK do pack enquanto o mundo está aberto — regerar por
+  // cima corrompe. Melhor parar e avisar.
+  if (existsSync(join(destino, "LOCK"))) {
+    try {
+      rmSync(join(destino, "LOCK"));
+    } catch {
+      throw new Error(`o pack "${pack}" está aberto no Foundry — feche o mundo (ou o Foundry) e rode de novo`);
+    }
+  }
   if (existsSync(destino)) rmSync(destino, { recursive: true, force: true });
   mkdirSync(destino, { recursive: true });
 
@@ -381,10 +390,30 @@ const magias = dataset.magias.filter((m) => MAGIAS[m.slug]);
 const faltando = Object.keys(MAGIAS).filter((s) => !magias.some((m) => m.slug === s));
 if (faltando.length) throw new Error(`magias fora do dataset: ${faltando.join(", ")}`);
 
-const ORDINAL = { 1: "1º", 2: "2º", 3: "3º", 4: "4º", 5: "5º" };
-const pastasMagia = new Map();
-for (const c of [...new Set(magias.map((m) => m.circulo))].sort()) {
-  pastasMagia.set(c, pasta(`t20dbcirculo${c}`.padEnd(16, "0").slice(0, 16), `${ORDINAL[c]} círculo`, c));
+/**
+ * Três níveis: tradição → círculo → escola ("D2 Abjuração"). Só nasce pasta que
+ * tem magia dentro — nada de pasta vazia.
+ */
+const TRADICAO = { arc: ["Arcanas", "A"], div: ["Divina", "D"], uni: ["Universal", "U"] };
+const pastasMagia = [];
+const pastaDaMagia = new Map();
+const feitas = new Map();
+const criar = (chave, nome, sort, mae) => {
+  if (!feitas.has(chave)) {
+    const f = pasta(idDe("fld", chave), nome, sort, mae);
+    feitas.set(chave, f);
+    pastasMagia.push(f);
+  }
+  return feitas.get(chave);
+};
+for (const m of magias) {
+  const trad = GRUPO[m.grupo] ?? "arc";
+  const [nomeTrad, letra] = TRADICAO[trad];
+  const escola = m.escola;
+  const raiz = criar(trad, nomeTrad, ["arc", "div", "uni"].indexOf(trad), null);
+  const circulo = criar(`${trad}${m.circulo}`, `${m.circulo}º Círculo`, m.circulo, raiz._id);
+  const folha = criar(`${trad}${m.circulo}${ESCOLA[escola]}`, `${letra}${m.circulo} ${escola}`, m.circulo, circulo._id);
+  pastaDaMagia.set(m.slug, folha._id);
 }
 await escreverModulo({
   id: "t20-magias-dragao-brasil",
@@ -394,8 +423,8 @@ await escreverModulo({
     "com linha completa, dano por tipo e os aprimoramentos como efeito.",
   pack: "magias-dragao-brasil",
   rotulo: "Magias — Almanaque Dragão Brasil",
-  pastas: [...pastasMagia.values()],
-  docs: magias.map((m) => magiaItem(m, pastasMagia.get(m.circulo)._id)),
+  pastas: pastasMagia,
+  docs: magias.map((m) => magiaItem(m, pastaDaMagia.get(m.slug))),
 });
 
 // ── Poderes que faltam ─────────────────────────────────────────────────────
