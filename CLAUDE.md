@@ -556,16 +556,18 @@ tipo — **veneno não é tipo de rolagem**). Magia: `ativacao.execucao` ∈ act
 free/special/hour/minute; `alcance` ∈ self/touch/short/medium/long/any/km/spec; `duracao.units` ∈
 inst/round/turn/scene/sust/day/perm/special.
 
-- **Compêndio próprio do módulo** (`packs/t20w-extras`, `scripts/gerar-pack.mjs`): o que falta nos
-  compêndios instalados, em pastas ("Magias — Almanaque Dragão Brasil", "Poderes — Deuses de
-  Arton"). Hoje: as 17 magias do Almanaque DB (nenhum pack instalado as tem) + Herança de
-  Drashantyr. Dados do `magias-t20/dataset.json` (o dump que alimenta magias.raynathus.com.br);
-  ícones reaproveitados de `systems/tormenta20/icons/magias/`. Pack é LevelDB: `!items!<id>`,
-  `!items.effects!<item>.<efeito>`, `!folders!<id>` — escrito com o `classic-level` do próprio
-  Foundry, ids derivados do slug (rodar de novo não duplica). **`packs/` é gitignorado** (texto da
-  Jambo, como textos.json): quem clonar roda `npm run gerar:pack`; o zip da release também não o
-  leva. O exportador do site já inclui esse pack, e o `CompendiumIndex` varre `game.packs` inteiro
-  — a magia nova aparece no wizard sozinha. **Foundry só enxerga pack novo ao reiniciar o mundo.**
+- **Módulos do que falta** (`scripts/gerar-modulos.mjs`, `npm run gerar:modulos`): gera DOIS
+  módulos separados direto em `X:/FoundryVTT/Data/modules/` — `t20-magias-dragao-brasil` (as 17
+  magias do Almanaque DB que nenhum pack instalado tem, em pastas por círculo) e
+  `t20-poderes-que-faltam` (hoje só a Herança de Drashantyr). Módulo separado porque é conteúdo de
+  livro, não do criador de fichas. Dados do `magias-t20/dataset.json` (o dump que alimenta
+  magias.raynathus.com.br); ícones reaproveitados de `systems/tormenta20/icons/magias/`.
+  **Formato do pack (LevelDB)**: `!folders!<id>`, `!items!<id>`, `!items.effects!<item>.<efeito>` —
+  e **`item.effects` guarda a LISTA DE IDS dos efeitos**; sem ela o Foundry carrega o item sem
+  aprimoramento nenhum (foi exatamente esse o bug da 1ª versão). Ids derivados do slug, então rodar
+  de novo não duplica. Nada disso entra no git (texto da Jambo, como textos.json); o exportador do
+  site lê os dois módulos e o `CompendiumIndex` varre `game.packs` inteiro, então a magia nova
+  aparece no wizard sozinha. **Foundry só enxerga módulo/pack novo ao reiniciar o mundo.**
 
 - ➡️ **Validação de pré-requisito vem dos dados T20-DB** (`src/data/prereqs.json`), casados por slug.
 

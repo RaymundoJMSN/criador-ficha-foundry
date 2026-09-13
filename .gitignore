@@ -8,5 +8,5 @@ scripts/.cache-pdf/
 src/data/textos.json
 site/data/
 site/dist/
-# texto da Jambo: o pack é gerado por scripts/gerar-pack.mjs
+# sobra da 1a versao do compendio (hoje os itens moram em modulos proprios)
 packs/

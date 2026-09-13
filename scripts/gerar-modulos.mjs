@@ -1,25 +1,23 @@
 /**
- * Compêndio próprio do módulo: o que falta nos compêndios instalados.
+ * Gera DOIS módulos do Foundry com o que falta nos compêndios instalados:
  *
- *   node scripts/gerar-pack.mjs
+ *   t20-magias-dragao-brasil  → as 17 magias do Almanaque Dragão Brasil
+ *   t20-poderes-que-faltam    → os poderes que nenhum pack traz (Herança de Drashantyr)
  *
- * Hoje são as 17 magias do Almanaque Dragão Brasil que nem o sistema nem o
- * "Suplementos de Arton" trazem, e a Herança de Drashantyr (Deuses de Arton,
- * a única das 22 heranças planares que ficou de fora do pacote).
+ *   node scripts/gerar-modulos.mjs
  *
- * Fonte dos dados: `magias-t20/dataset.json` (o dump do Grimório que alimenta
- * magias.raynathus.com.br) — texto da Jambo, então `packs/` fica FORA do git,
- * igual a textos.json. O que o repositório versiona é este gerador: estrutura,
- * ícones e automação.
+ * Os módulos são escritos direto em `X:/FoundryVTT/Data/modules/<id>` (module.json
+ * + pack em LevelDB). Fonte dos dados: `magias-t20/dataset.json` (o dump do Grimório
+ * que alimenta magias.raynathus.com.br) — texto da Jambo, por isso nada disso entra
+ * no git; o que o repositório versiona é este gerador.
  *
  * ── Como automação funciona no Tormenta20 (tirado dos itens do sistema) ──
  * Tudo é Active Effect no item; o que muda é a flag `tormenta20`:
  *  - APRIMORAMENTO: `{ onuse: true, self: true, custo: "2" }`, `disabled: true`,
- *    `transfer: false`. O nome do efeito é o texto do aprimoramento e as
- *    mudanças usam as chaves da LINHA da magia — `execucao`, `alcance`, `alvo`,
- *    `area`, `duracao`, `resistencia`, `dano` — em modo 5 (troca). Quando o
- *    aprimoramento SOMA em vez de trocar ("aumenta o dano em +2d6"), vai
- *    `aumenta: true` e a mudança em modo 0 com só o incremento.
+ *    `transfer: false`. O nome do efeito é o texto do aprimoramento e as mudanças
+ *    usam as chaves da LINHA da magia — `execucao`, `alcance`, `alvo`, `area`,
+ *    `duracao`, `resistencia`, `dano` — em modo 5 (troca). Quando o aprimoramento
+ *    SOMA ("aumenta o dano em +2d6"), vai `aumenta: true` e modo 0 com o incremento.
  *  - EFEITO MECÂNICO: chave real da ficha em modo 2 (soma) —
  *    `system.attributes.defesa.bonus`, `system.tracos.resistencias.fogo.value`,
  *    `system.attributes.pm.bonus.total`, `system.attributes.movement.fly`.
@@ -27,21 +25,23 @@
  *  - TEMPORÁRIO de cena: `transfer: false` + `flags.tormenta20.durationScene`
  *    e `duration.rounds: 999` (é assim que Armadura Arcana dá +5 Defesa).
  *
- * O pack é LevelDB, como todo compêndio do v11+: `!items!<id>` para o item,
- * `!items.effects!<item>.<efeito>` para cada AE e `!folders!<id>` para a pasta.
+ * ── Formato do pack (LevelDB, v11+) ──
+ *   !folders!<id>                     a pasta
+ *   !items!<id>                       o item — e `item.effects` é a LISTA DE IDS
+ *                                     dos efeitos (não os documentos, nem vazio:
+ *                                     sem os ids o Foundry carrega o item SEM
+ *                                     aprimoramento nenhum)
+ *   !items.effects!<item>.<efeito>    cada Active Effect
  */
-import { rmSync, existsSync, mkdirSync } from "node:fs";
+import { rmSync, existsSync, mkdirSync, writeFileSync } from "node:fs";
 import { readFile } from "node:fs/promises";
 import { join, resolve, dirname } from "node:path";
 import { fileURLToPath, pathToFileURL } from "node:url";
 
 const HERE = dirname(fileURLToPath(import.meta.url));
 const FOUNDRY_CODE = process.env.FOUNDRY_CODE ?? "X:/FoundryVTT/Code";
+const FOUNDRY_DATA = process.env.FOUNDRY_DATA ?? "X:/FoundryVTT/Data";
 const DATASET = process.env.MAGIAS_DATASET ?? "X:/Soltos/magias-t20/dataset.json";
-const DESTINO = resolve(HERE, "../packs/t20w-extras");
-
-const PASTA_MAGIAS = "t20wmagiasdb0001";
-const PASTA_PODERES = "t20wpoderes00001";
 
 /** PM da magia pelo círculo (LB p.104). */
 const PM_POR_CIRCULO = { 1: 1, 2: 3, 3: 6, 4: 10, 5: 15 };
@@ -62,9 +62,9 @@ const ALCANCE = { pessoal: "self", toque: "touch", curto: "short", medio: "mediu
 const DURACAO = { instantanea: "inst", "1rodada": "round", cena: "scene", sustentada: "sust", "1dia": "day", permanente: "perm", outro: "special" };
 
 /**
- * Ícone e dano de cada magia que falta. O dataset só guarda UM dano; as que
- * causam dois tipos ("4d8 de ácido mais 4d8 de veneno") vêm anotadas aqui.
- * `veneno` não é tipo de rolagem no sistema — a segunda parte fica sem tipo.
+ * Ícone e dano de cada magia que falta. O dataset só guarda UM dano; as que causam
+ * dois tipos ("4d8 de ácido mais 4d8 de veneno") vêm anotadas aqui. `veneno` não é
+ * tipo de rolagem no sistema — a segunda parte fica sem tipo.
  */
 const MAGIAS = {
   "armadura-gelida": { img: "armadura-arcana" },
@@ -101,6 +101,7 @@ const PODERES = [
   {
     slug: "heranca_de_drashantyr",
     nome: "Herança de Drashantyr",
+    pasta: "Deuses de Arton",
     subtipo: "Suraggel",
     img: "systems/tormenta20/icons/racas/suraggel.webp",
     fonte: "T20 - Deuses de Arton (pág. 36)",
@@ -128,8 +129,8 @@ function idDe(prefixo, slug) {
 
 const stats = () => ({
   systemId: "tormenta20",
-  systemVersion: "1.4.214",
-  coreVersion: "13.344",
+  systemVersion: "1.5.015",
+  coreVersion: "13.351",
   createdTime: null,
   modifiedTime: null,
   lastModifiedBy: null,
@@ -161,7 +162,7 @@ function efeitoBase(id, nome, img, changes, flags, extra = {}) {
 }
 
 /** Aprimoramento → Active Effect (ver o cabeçalho: onuse/custo/aumenta). */
-function efeitoDoAprimoramento(magiaSlug, apr, i, itemId, img) {
+function efeitoDoAprimoramento(magiaSlug, apr, i, itemId) {
   const changes = [];
   let aumenta = false;
   for (const d of apr.deltas ?? []) {
@@ -203,16 +204,15 @@ function efeitoDoAprimoramento(magiaSlug, apr, i, itemId, img) {
   if (!apr.truque) flags.custo = String(apr.pm);
   return efeitoBase(idDe("apr", `${magiaSlug}${i}`), apr.texto.trim(), "icons/svg/upgrade.svg", changes, flags, {
     origin: `Item.${itemId}`,
-    img: "icons/svg/upgrade.svg",
   });
 }
 
-function magiaItem(m) {
+function magiaItem(m, pastaId) {
   const meta = MAGIAS[m.slug];
   const id = idDe("mag", m.slug);
   const area = m.alvo?.tipo === "area" ? m.alvo.bruto : "";
   const dano = meta.dano ?? (m.dano ? [[m.dano.dados, m.dano.tipo ?? ""]] : []);
-  const efeitos = m.aprimoramentos.map((a, i) => efeitoDoAprimoramento(m.slug, a, i, id, meta.img));
+  const efeitos = m.aprimoramentos.map((a, i) => efeitoDoAprimoramento(m.slug, a, i, id));
   if (meta.passivo) {
     efeitos.push(
       efeitoBase(idDe("pas", m.slug), m.nome, `systems/tormenta20/icons/magias/${meta.img}.webp`, meta.passivo, { onuse: false, durationScene: true }, {
@@ -227,7 +227,9 @@ function magiaItem(m) {
     name: m.nome,
     type: "magia",
     img: `systems/tormenta20/icons/magias/${meta.img}.webp`,
-    folder: PASTA_MAGIAS,
+    // A LISTA DE IDS é o que liga os aprimoramentos ao item dentro do pack.
+    effects: efeitos.map((e) => e._id),
+    folder: pastaId,
     sort: 0,
     ownership: { default: 0 },
     flags: {},
@@ -259,17 +261,26 @@ function magiaItem(m) {
   return { item, efeitos };
 }
 
-function poderItem(p, textos) {
+function poderItem(p, textos, pastaId) {
   const id = idDe("pod", p.slug);
   const texto = textos[p.slug] ?? "";
   if (!texto) throw new Error(`sem texto do livro para ${p.slug} (rode "npm run textos")`);
+  // Passivo de item: `transfer: true` leva o efeito para a ficha com o poder.
+  const efeitos = [
+    efeitoBase(idDe("pef", p.slug), p.nome, p.img, p.changes, { onuse: false, durationScene: false }, {
+      disabled: false,
+      transfer: true,
+      origin: `Item.${id}`,
+    }),
+  ];
   return {
     item: {
       _id: id,
       name: p.nome,
       type: "poder",
       img: p.img,
-      folder: PASTA_PODERES,
+      effects: efeitos.map((e) => e._id),
+      folder: pastaId,
       sort: 0,
       ownership: { default: 0 },
       flags: {},
@@ -278,7 +289,7 @@ function poderItem(p, textos) {
         description: { value: `<p>${texto}</p>`, chat: "", unidentified: "" },
         source: p.fonte,
         ativacao: { execucao: "passive", custo: 0, qtd: "", condicao: "", special: "" },
-        duracao: { value: 0, units: "", special: "" },
+        duracao: { value: 0, units: "inst", special: "" },
         target: { value: null, width: null, units: "", type: "" },
         range: { value: null, units: "" },
         consume: { type: "", target: "", amount: null, mpMultiplier: false },
@@ -292,14 +303,7 @@ function poderItem(p, textos) {
         chatGif: "",
       },
     },
-    // Passivo de item: `transfer: true` leva o efeito para a ficha com o poder.
-    efeitos: [
-      efeitoBase(idDe("pef", p.slug), p.nome, p.img, p.changes, { onuse: false, durationScene: false }, {
-        disabled: false,
-        transfer: true,
-        origin: `Item.${id}`,
-      }),
-    ],
+    efeitos,
   };
 }
 
@@ -316,33 +320,98 @@ const pasta = (id, nome, sort) => ({
   _stats: stats(),
 });
 
+/** Escreve um módulo inteiro: module.json + pack em LevelDB. */
+async function escreverModulo({ id, titulo, descricao, pack, rotulo, pastas, docs }) {
+  const raiz = join(FOUNDRY_DATA, "modules", id);
+  const destino = join(raiz, "packs", pack);
+  if (existsSync(destino)) rmSync(destino, { recursive: true, force: true });
+  mkdirSync(destino, { recursive: true });
+
+  writeFileSync(
+    join(raiz, "module.json"),
+    JSON.stringify(
+      {
+        id,
+        title: titulo,
+        description: descricao,
+        version: "1.0.0",
+        compatibility: { minimum: "13", verified: "13" },
+        relationships: {
+          requires: [{ id: "tormenta20", type: "system", compatibility: { minimum: "1.5.0" } }],
+        },
+        packs: [
+          {
+            name: pack,
+            label: rotulo,
+            path: `packs/${pack}`,
+            type: "Item",
+            system: "tormenta20",
+            ownership: { PLAYER: "OBSERVER", ASSISTANT: "OWNER" },
+            flags: {},
+          },
+        ],
+        authors: [{ name: "RaymundoJMSN" }],
+        flags: {},
+      },
+      null,
+      2
+    ) + "\n",
+    "utf8"
+  );
+
+  const { ClassicLevel } = await import(pathToFileURL(join(FOUNDRY_CODE, "resources/app/node_modules/classic-level/index.js")).href);
+  const db = new ClassicLevel(destino, { valueEncoding: "json" });
+  await db.open();
+  const lote = db.batch();
+  for (const f of pastas) lote.put(`!folders!${f._id}`, f);
+  let nEfeitos = 0;
+  for (const { item, efeitos } of docs) {
+    lote.put(`!items!${item._id}`, item);
+    for (const e of efeitos) lote.put(`!items.effects!${item._id}.${e._id}`, e);
+    nEfeitos += efeitos.length;
+  }
+  await lote.write();
+  await db.close();
+  console.log(`${raiz}: ${docs.length} itens, ${nEfeitos} efeitos, ${pastas.length} pasta(s)`);
+}
+
+// ── Magias do Almanaque Dragão Brasil ──────────────────────────────────────
 const dataset = JSON.parse(await readFile(DATASET, "utf8"));
-const textos = JSON.parse(await readFile(resolve(HERE, "../src/data/textos.json"), "utf8")).poderes ?? {};
 const magias = dataset.magias.filter((m) => MAGIAS[m.slug]);
 const faltando = Object.keys(MAGIAS).filter((s) => !magias.some((m) => m.slug === s));
 if (faltando.length) throw new Error(`magias fora do dataset: ${faltando.join(", ")}`);
 
-const { ClassicLevel } = await import(pathToFileURL(join(FOUNDRY_CODE, "resources/app/node_modules/classic-level/index.js")).href);
-if (existsSync(DESTINO)) rmSync(DESTINO, { recursive: true, force: true });
-mkdirSync(DESTINO, { recursive: true });
-const db = new ClassicLevel(DESTINO, { valueEncoding: "json" });
-await db.open();
-const lote = db.batch();
-lote.put(`!folders!${PASTA_MAGIAS}`, pasta(PASTA_MAGIAS, "Magias — Almanaque Dragão Brasil", 0));
-lote.put(`!folders!${PASTA_PODERES}`, pasta(PASTA_PODERES, "Poderes — Deuses de Arton", 100));
-let nEfeitos = 0;
-for (const m of magias) {
-  const { item, efeitos } = magiaItem(m);
-  lote.put(`!items!${item._id}`, item);
-  for (const e of efeitos) lote.put(`!items.effects!${item._id}.${e._id}`, e);
-  nEfeitos += efeitos.length;
+const ORDINAL = { 1: "1º", 2: "2º", 3: "3º", 4: "4º", 5: "5º" };
+const pastasMagia = new Map();
+for (const c of [...new Set(magias.map((m) => m.circulo))].sort()) {
+  pastasMagia.set(c, pasta(`t20dbcirculo${c}`.padEnd(16, "0").slice(0, 16), `${ORDINAL[c]} círculo`, c));
 }
+await escreverModulo({
+  id: "t20-magias-dragao-brasil",
+  titulo: "T20 — Magias do Almanaque Dragão Brasil",
+  descricao:
+    "As 17 magias do Almanaque Dragão Brasil que não vêm no sistema nem no Suplementos de Arton, " +
+    "com linha completa, dano por tipo e os aprimoramentos como efeito.",
+  pack: "magias-dragao-brasil",
+  rotulo: "Magias — Almanaque Dragão Brasil",
+  pastas: [...pastasMagia.values()],
+  docs: magias.map((m) => magiaItem(m, pastasMagia.get(m.circulo)._id)),
+});
+
+// ── Poderes que faltam ─────────────────────────────────────────────────────
+const textos = JSON.parse(await readFile(resolve(HERE, "../src/data/textos.json"), "utf8")).poderes ?? {};
+const pastasPoder = new Map();
 for (const p of PODERES) {
-  const { item, efeitos } = poderItem(p, textos);
-  lote.put(`!items!${item._id}`, item);
-  for (const e of efeitos) lote.put(`!items.effects!${item._id}.${e._id}`, e);
-  nEfeitos += efeitos.length;
+  if (!pastasPoder.has(p.pasta)) {
+    pastasPoder.set(p.pasta, pasta(idDe("pst", p.pasta), p.pasta, pastasPoder.size));
+  }
 }
-await lote.write();
-await db.close();
-console.log(`${DESTINO}: ${magias.length} magias + ${PODERES.length} poder(es), ${nEfeitos} efeitos`);
+await escreverModulo({
+  id: "t20-poderes-que-faltam",
+  titulo: "T20 — Poderes que faltam",
+  descricao: "Poderes dos livros que nenhum compêndio instalado traz, com os efeitos já automatizados.",
+  pack: "poderes-que-faltam",
+  rotulo: "Poderes que faltam",
+  pastas: [...pastasPoder.values()],
+  docs: PODERES.map((p) => poderItem(p, textos, pastasPoder.get(p.pasta)._id)),
+});

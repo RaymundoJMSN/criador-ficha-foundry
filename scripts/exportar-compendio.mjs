@@ -24,8 +24,9 @@ const FONTES = [
   [join(FOUNDRY_DATA, "systems/tormenta20/packs"), "tormenta20"],
   [join(FOUNDRY_DATA, "modules/suplementos-de-arton/packs"), "suplementos-de-arton"],
   [join(FOUNDRY_DATA, "modules/compendium-extra-t20/packs"), "compendium-extra-t20"],
-  // O pack do próprio módulo (gerar-pack.mjs): o site precisa das magias que faltam.
-  [resolve(HERE, "../packs"), "t20-ficha-wizard"],
+  // Módulos gerados por scripts/gerar-modulos.mjs: o site precisa deles também.
+  [join(FOUNDRY_DATA, "modules/t20-magias-dragao-brasil/packs"), "t20-magias-dragao-brasil"],
+  [join(FOUNDRY_DATA, "modules/t20-poderes-que-faltam/packs"), "t20-poderes-que-faltam"],
 ];
 const TIPOS = new Set(["poder", "magia", "race", "classe", "equipamento", "arma", "consumivel", "tesouro"]);
 
