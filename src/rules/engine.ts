@@ -301,7 +301,8 @@ export function pendenciasComPasso(state: EngineState): Pendencia[] {
   if (state.magias.length > cotaMagias) {
     faltando.push(`Magias a mais: remova ${state.magias.length - cotaMagias}.`);
   }
-  em(WizardStep.Classe);
+  // As escolas são marcadas no passo Magias (é lá que estão as caixas): cobrar
+  // isso no passo Classe travava o "Próximo" numa tela sem o que marcar.
   const escolasPrecisa = Math.max(...classesTodas.map((c) => escolasAEscolher(c.classeSlug)));
   const escolasTem = ((state.escolhasPorItem["classe_escolas"] as string[] | undefined) ?? []).length;
   if (escolasPrecisa > 0 && escolasTem < escolasPrecisa) {

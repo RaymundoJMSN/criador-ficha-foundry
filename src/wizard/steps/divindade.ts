@@ -121,12 +121,8 @@ export function prepareDivindadeContext(
       }
     : null;
 
-  if (selected && escolhidos.length !== quantosPoderes) {
-    errors = [
-      ...errors,
-      `Escolha ${quantosPoderes} poder(es) concedido(s) de ${selected.nome} — ${escolhidos.length} marcado(s).`,
-    ];
-  }
+  // A cobrança dos concedidos é uma só, no motor de pendências — repetir aqui
+  // punha o mesmo aviso duas vezes no rodapé.
 
   return {
     stepTitle: "Divindade",
