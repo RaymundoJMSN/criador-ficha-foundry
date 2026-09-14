@@ -913,11 +913,14 @@ export function defineWizardApp(): void {
       const enforceCheckboxGroup = (groupEl: HTMLElement, max: number) => {
         const checkboxes = groupEl.querySelectorAll<HTMLInputElement>("input[type='checkbox']");
         const enforce = () => {
-          const checked = Array.from(checkboxes).filter((c) => c.checked);
+          // Perícia que já veio da origem/raça aparece marcada só para mostrar
+          // que está treinada — não gasta a cota do grupo (Ray: a de origem
+          // comia a extra de Inteligência).
+          const checked = Array.from(checkboxes).filter((c) => c.checked && !c.dataset["extra"]);
           const atLimit = checked.length >= max;
           checkboxes.forEach((cb) => {
             // Marcado de fábrica (concedido único, benefício automático): não mexe.
-            if (cb.dataset["fixo"]) return;
+            if (cb.dataset["fixo"] || cb.dataset["extra"]) return;
             if (!cb.checked) {
               cb.disabled = atLimit;
               const lbl = cb.closest("label");
@@ -1417,15 +1420,15 @@ export function defineWizardApp(): void {
           (perObrig[idx] ??= []).push(inp.value);
         }
       });
-      html.querySelectorAll<HTMLInputElement>('input[type="checkbox"][name^="per_esc-"]:checked').forEach((inp) => {
-        perEsc.push(inp.value);
-      });
-      html.querySelectorAll<HTMLInputElement>('input[type="checkbox"][name^="per_int-"]:checked').forEach((inp) => {
-        perInt.push(inp.value);
-      });
-      html.querySelectorAll<HTMLInputElement>('input[type="checkbox"][name^="per_raca-"]:checked').forEach((inp) => {
-        perRaca.push(inp.value);
-      });
+      // `:checked` acha caixa desabilitada também: sem tirar as de outra fonte,
+      // a perícia da origem virava uma escolha gravada e comia a cota.
+      const marcadas = (prefixo: string): HTMLInputElement[] =>
+        Array.from(
+          html.querySelectorAll<HTMLInputElement>(`input[type="checkbox"][name^="${prefixo}"]:checked`)
+        ).filter((inp) => !inp.dataset["extra"]);
+      marcadas("per_esc-").forEach((inp) => perEsc.push(inp.value));
+      marcadas("per_int-").forEach((inp) => perInt.push(inp.value));
+      marcadas("per_raca-").forEach((inp) => perRaca.push(inp.value));
 
       const atual = (this._state.escolhasPorItem["pericias"] as PericiaPicksParciais | undefined) ?? {};
       const tem = (prefixo: string) => Boolean(html.querySelector(`input[name^="${prefixo}"]`));
@@ -1462,6 +1465,8 @@ export function defineWizardApp(): void {
       root.querySelectorAll("input, select, textarea").forEach((el) => {
         const input = el as HTMLInputElement;
         if (!input.name) return;
+        // Marcada só para mostrar que já vem de outra fonte: não é escolha.
+        if (input.dataset["extra"]) return;
         if (input.type === "checkbox" || input.type === "radio") {
           if (input.checked) fd.append(input.name, input.value);
         } else {

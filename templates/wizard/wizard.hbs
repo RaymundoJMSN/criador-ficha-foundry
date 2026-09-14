@@ -235,7 +235,7 @@
           <div class="t20w-pcheck-group" data-group="raca" data-max="{{racaPericias.racaBonus}}" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:2px 12px;margin-top:4px;">
             {{#each racaPericias.racaOpcoes}}
             <label style="font-size:0.88em;display:flex;align-items:center;gap:6px;" class="{{#if this.disabled}}t20w-disabled{{/if}}">
-              <input type="checkbox" name="per_raca-{{this.id}}" value="{{this.id}}" {{#if this.checked}}checked{{/if}} {{#if this.disabled}}disabled{{/if}} />{{this.nome}}{{#if this.jaTreinada}} <span class="t20w-hint">({{this.fonte}})</span>{{/if}}
+              <input type="checkbox" name="per_raca-{{this.id}}" value="{{this.id}}" {{#if this.checked}}checked{{/if}} {{#if this.disabled}}disabled{{/if}} {{#if this.jaTreinada}}data-extra="1"{{/if}} />{{this.nome}}{{#if this.jaTreinada}} <span class="t20w-hint">({{this.fonte}})</span>{{/if}}
             </label>
             {{/each}}
           </div>
@@ -484,7 +484,7 @@
         <div class="t20w-pcheck-group" data-group="esc" data-max="{{escolhasQtd}}" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:2px 12px;margin-top:4px;">
           {{#each escolhasOpcoes}}
           <label style="font-size:0.88em;display:flex;align-items:center;gap:6px;" class="{{#if this.disabled}}t20w-disabled{{/if}}">
-            <input type="checkbox" name="per_esc-{{this.id}}" value="{{this.id}}" {{#if this.checked}}checked{{/if}} {{#if this.disabled}}disabled{{/if}} />{{this.nome}}{{#if this.jaTreinada}} <span class="t20w-hint">({{this.fonte}})</span>{{/if}}
+            <input type="checkbox" name="per_esc-{{this.id}}" value="{{this.id}}" {{#if this.checked}}checked{{/if}} {{#if this.disabled}}disabled{{/if}} {{#if this.jaTreinada}}data-extra="1"{{/if}} />{{this.nome}}{{#if this.jaTreinada}} <span class="t20w-hint">({{this.fonte}})</span>{{/if}}
           </label>
           {{/each}}
         </div>
@@ -497,7 +497,7 @@
         <div class="t20w-pcheck-group" data-group="int" data-max="{{intBonus}}" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(170px,1fr));gap:2px 12px;margin-top:4px;">
           {{#each intOpcoes}}
           <label style="font-size:0.88em;display:flex;align-items:center;gap:6px;" class="{{#if this.disabled}}t20w-disabled{{/if}}">
-            <input type="checkbox" name="per_int-{{this.id}}" value="{{this.id}}" {{#if this.checked}}checked{{/if}} {{#if this.disabled}}disabled{{/if}} />{{this.nome}}{{#if this.jaTreinada}} <span class="t20w-hint">({{this.fonte}})</span>{{/if}}
+            <input type="checkbox" name="per_int-{{this.id}}" value="{{this.id}}" {{#if this.checked}}checked{{/if}} {{#if this.disabled}}disabled{{/if}} {{#if this.jaTreinada}}data-extra="1"{{/if}} />{{this.nome}}{{#if this.jaTreinada}} <span class="t20w-hint">({{this.fonte}})</span>{{/if}}
           </label>
           {{/each}}
         </div>
