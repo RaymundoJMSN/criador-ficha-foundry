@@ -44,6 +44,14 @@ export const PANTEAO: Divindade = {
 };
 const CLASSES_DO_PANTEAO = new Set(["clerigo", "frade"]);
 
+/**
+ * "Devoto Fiel: você se torna devoto de um deus disponível para druidas
+ * (Allihanna, Megalokk ou Oceano)" (LB p.61). Deuses de Arton p.30 abre a lista:
+ * também existem druidas de Aharadak, de Tenebra e do próprio mundo (Arton).
+ * Vale a lista da classe, não a lista de raças do deus.
+ */
+const DEUSES_DO_DRUIDA = new Set(["aharadak", "allihanna", "arton", "megalokk", "oceano", "tenebra"]);
+
 export function listDivindades(): Divindade[] {
   return [...divindadesData, ...deusesMenores];
 }
@@ -147,7 +155,11 @@ export function isDivindadeAcessa(
   if (!div) return false;
   // Regra de classe, não de devoção: nem Devoções Abertas nem humano abrem o Panteão.
   if (div.id === PANTEAO.id) return CLASSES_DO_PANTEAO.has(classeSlug);
+  // "Druida de Arton" também é regra de classe: o mundo não é um deus, então
+  // nem o coringa humano/clérigo nem Devoções Abertas colocam Arton na lista.
+  if (div.id === "arton") return classeSlug === "druida";
   if (abertas) return true;
+  if (classeSlug === "druida") return DEUSES_DO_DRUIDA.has(div.id);
 
   // Coringa (humano/clérigo) é regra do Panteão maior; deus menor diz quem aceita.
   if (!div.menor && (RACAS_CORINGA.has(racaSlug) || CLASSES_CORINGA.has(classeSlug))) return true;
@@ -171,10 +183,25 @@ export function isDivindadeAcessa(
 
 export function listDivindadesParaPersonagem(racaId: string, classeId: string, abertas = false): Divindade[] {
   // O T20-DB também traz um "panteao"; vale o daqui (com a regra de classe).
-  // "arton" é entrada do T20-DB (druida devoto do mundo), não é deus do livro.
-  return [...listDivindades().filter((d) => d.id !== PANTEAO.id && d.id !== "arton"), PANTEAO].filter((d) =>
+  // "arton" (o próprio mundo) fica na lista: a entrada só aceita druida, como
+  // manda Deuses de Arton p.30 ("Druida de Arton — Vida Universal").
+  return [...listDivindades().filter((d) => d.id !== PANTEAO.id), PANTEAO].filter((d) =>
     isDivindadeAcessa(d.id, racaId, classeId, abertas)
   );
+}
+
+/**
+ * Devoção Ampla (Deuses de Arton p.19): clérigo/frade do Panteão e druida de
+ * Arton não recebem poder concedido e, em troca, ganham +2 PM por patamar.
+ */
+export function ehDevocaoAmpla(divindadeId: string): boolean {
+  return divindadeId === PANTEAO.id || divindadeId === "arton";
+}
+
+export function pmDaDevocaoAmpla(divindadeId: string, nivel: number): number {
+  if (!ehDevocaoAmpla(divindadeId)) return 0;
+  const patamares = 1 + (nivel >= 5 ? 1 : 0) + (nivel >= 11 ? 1 : 0) + (nivel >= 17 ? 1 : 0);
+  return 2 * patamares;
 }
 
 export function isDivindadeObrigatoria(classeId: string): boolean {

@@ -3,6 +3,7 @@ import {
   isDivindadeObrigatoria,
   poderesConcedidosParaEscolher,
   PANTEAO,
+  ehDevocaoAmpla,
   type Divindade,
 } from "../../rules/divindade.js";
 import { toNomeSlug } from "../../compendium/slug.js";
@@ -101,10 +102,11 @@ export function prepareDivindadeContext(
         nome: selected.nome,
         ficha: fichaDoDeus(selected.id),
         auto,
-        nota:
-          selected.id === PANTEAO.id
-            ? "Cultua o Panteão como um todo: não recebe poder concedido e não pode usar armas cortantes ou perfurantes (LB p.103)."
-            : "",
+        nota: ehDevocaoAmpla(selected.id)
+          ? selected.id === PANTEAO.id
+            ? "Cultua o Panteão como um todo: não recebe poder concedido e não pode usar armas cortantes ou perfurantes (LB p.103). Devoção Ampla: +2 PM por patamar (Deuses de Arton)."
+            : "Druida de Arton: venera o próprio mundo como divindade. Não recebe poder concedido e, pela Devoção Ampla, ganha +2 PM por patamar (Deuses de Arton)."
+          : "",
         poderes: selected.poderes_concedidos
           .map((slug) => {
             const p = resolvePoder(slug);

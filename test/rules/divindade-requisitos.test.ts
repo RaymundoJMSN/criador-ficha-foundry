@@ -5,6 +5,7 @@ import {
   registrarDeusesMenores,
   getDivindade,
   listDivindades,
+  pmDaDevocaoAmpla,
 } from "../../src/rules/divindade.js";
 
 describe("requisitos de devoto (LB cap. 2)", () => {
@@ -59,5 +60,42 @@ describe("deuses menores (Guia de Deuses Menores) — registro pelo compêndio",
     expect(listDivindadesParaPersonagem("humano", "guerreiro").some((d) => d.id === "mauziell")).toBe(true);
     // poder partilhado de deuses maiores não vira deus menor
     expect(getDivindade("allihanna")?.menor).toBeFalsy();
+  });
+});
+
+describe("Druida de Arton (Deuses de Arton)", () => {
+  it("só druida vê Arton, e ele não dá poder concedido", () => {
+    expect(isDivindadeAcessa("arton", "humano", "druida")).toBe(true);
+    expect(isDivindadeAcessa("arton", "humano", "clerigo")).toBe(false);
+    // Devoções Abertas não abre: é regra de classe, como o Panteão.
+    expect(isDivindadeAcessa("arton", "humano", "arcanista", true)).toBe(false);
+    expect(listDivindadesParaPersonagem("anao", "druida").map((d) => d.id)).toContain("arton");
+    expect(getDivindade("arton")?.poderes_concedidos).toEqual([]);
+  });
+
+  it("druida vê os seis do livro novo", () => {
+    const ids = listDivindadesParaPersonagem("anao", "druida").map((d) => d.id);
+    for (const deus of ["aharadak", "allihanna", "megalokk", "oceano", "tenebra", "arton"]) {
+      expect(ids).toContain(deus);
+    }
+  });
+
+  it("Devoção Ampla: +2 PM por patamar", () => {
+    expect(pmDaDevocaoAmpla("arton", 1)).toBe(2);
+    expect(pmDaDevocaoAmpla("panteao", 5)).toBe(4);
+    expect(pmDaDevocaoAmpla("arton", 17)).toBe(8);
+    expect(pmDaDevocaoAmpla("allihanna", 20)).toBe(0);
+  });
+});
+
+describe("deuses disponíveis para druidas", () => {
+  it("a lista é só a da classe — nem a raça nem o coringa humano abrem outros", () => {
+    const ids = listDivindadesParaPersonagem("anao", "druida").map((d) => d.id);
+    expect(ids.sort()).toEqual(["aharadak", "allihanna", "arton", "megalokk", "oceano", "tenebra"]);
+    // anão entra na lista de raças de Khalmyr, mas o druida não pode segui-lo.
+    expect(isDivindadeAcessa("khalmyr", "anao", "druida")).toBe(false);
+    expect(isDivindadeAcessa("khalmyr", "humano", "druida")).toBe(false);
+    // Devoções Abertas (regra da mesa) desliga a restrição.
+    expect(isDivindadeAcessa("khalmyr", "humano", "druida", true)).toBe(true);
   });
 });

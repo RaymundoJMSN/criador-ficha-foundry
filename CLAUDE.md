@@ -242,6 +242,14 @@ arcanista 2 (bruxo) → nível 5, PV 39, PM 21, 3 poderes, 4 magias de 1º.
   a habilidade do `system.grants` do item de raça ANTES de embutir — o sistema
   concederia as duas. Herança de Drashantyr não existe no compêndio: a descrição
   cai em `descricaoDoLivro` e o writer cria o item com o texto do livro.
+- **Deuses do druida**: a lista vem do Devoto Fiel, não das listas de raça dos
+  deuses — Allihanna, Megalokk e Oceano (LB p.61) mais Aharadak, Tenebra e Arton
+  (Deuses de Arton p.30, "Druidas"). `DEUSES_DO_DRUIDA` em `rules/divindade.ts`;
+  Devoções Abertas da mesa desliga a restrição. **Arton** (o próprio mundo) só
+  aparece para druida, como o Panteão só aparece para clérigo/frade: nem o
+  coringa humano/clérigo nem Devoções Abertas o colocam na lista. Os dois são
+  **Devoção Ampla** (DdA p.19): sem poder concedido e +2 PM por patamar, gravados
+  na ficha como um poder com Active Effect (`pmDaDevocaoAmpla`).
 - **Dois "Golem"** no compêndio (Livro Básico e Golens Despertos de Ameaças):
   `nomeDaRaca` põe o pack no nome repetido, `racaNome` guarda esse nome e o
   `ALIAS` em `montagem.ts` leva "golem_ameacas_de_arton" → `golem_desperto`

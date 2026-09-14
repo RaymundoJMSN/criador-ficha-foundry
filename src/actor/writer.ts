@@ -40,7 +40,7 @@ import { distincaoEscolhida } from "../rules/distincoes.js";
 import { resolverPoder, opcoesDaHabilidade, chaveHabilidade } from "../compendium/resolver.js";
 import { prepareEquipamentoContext } from "../wizard/steps/equipamento.js";
 import { getOrigem, validarBeneficios, slugsDoPoderDaOrigem } from "../rules/origem.js";
-import { getDivindade, PANTEAO } from "../rules/divindade.js";
+import { getDivindade, PANTEAO, ehDevocaoAmpla, pmDaDevocaoAmpla } from "../rules/divindade.js";
 import { slugsDosPoderes } from "../rules/magias.js";
 import magiaPorPoderRaw from "../data/magia_por_poder.json";
 const magiaPorPoder = magiaPorPoderRaw as Record<string, string>;
@@ -705,23 +705,31 @@ export class ActorWriter {
 
     // Add divindade conceded powers
     const divindade = state.divindadeId ? getDivindade(state.divindadeId) : null;
-    if (divindade?.id === PANTEAO.id) {
-      // Sem concedido; a restrição fica registrada como um poder na ficha.
+    if (divindade && ehDevocaoAmpla(divindade.id)) {
+      // Devoção Ampla (Deuses de Arton p.19): sem poder concedido, +2 PM por
+      // patamar. O item guarda a regra e carrega os PM como efeito.
+      const doPanteao = divindade.id === PANTEAO.id;
+      const pm = pmDaDevocaoAmpla(divindade.id, state.nivel);
+      const nome = doPanteao ? "Devoto do Panteão" : "Druida de Arton";
+      const texto = doPanteao
+        ? "Cultua o Panteão como um todo (LB p.103). Não recebe poder concedido; não pode usar armas cortantes ou perfurantes."
+        : "Venera o próprio mundo como uma entidade divina (Deuses de Arton). Não é devoto de um único deus e não recebe poder concedido.";
       try {
         await actor.createEmbeddedDocuments("Item", [
           {
-            name: "Devoto do Panteão",
+            name: nome,
             type: "poder",
             img: "icons/svg/holy-symbol.svg",
             system: {
               tipo: "concedido",
-              subtipo: "Panteão",
-              description: { value: "<p>Cultua o Panteão como um todo (LB p.103). Não recebe poder concedido; não pode usar armas cortantes ou perfurantes.</p>" },
+              subtipo: doPanteao ? "Panteão" : "Arton",
+              description: { value: `<p>${texto}</p><p><strong>Devoção Ampla:</strong> +2 PM por patamar (+${pm} neste nível).</p>` },
             },
+            effects: aeDe(nome, [{ chave: "system.attributes.pm.bonus.total", valor: pm }]),
           },
         ]);
       } catch (err) {
-        console.warn(`${MODULE_ID} | ActorWriter: falha no Devoto do Panteão:`, err);
+        console.warn(`${MODULE_ID} | ActorWriter: falha na devoção ampla:`, err);
       }
     } else if (divindade) {
       const allPoderes = CompendiumIndex.getAll("poder");
