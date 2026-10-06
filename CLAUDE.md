@@ -567,8 +567,16 @@ inst/round/turn/scene/sust/day/perm/special.
 - **Módulos do que falta** (`scripts/gerar-modulos.mjs`, `npm run gerar:modulos`): gera DOIS
   módulos separados direto em `X:/FoundryVTT/Data/modules/` — `t20-magias-dragao-brasil` (as 17
   magias do Almanaque DB que nenhum pack instalado tem, em pastas por círculo) e
-  `t20-poderes-que-faltam` (hoje só a Herança de Drashantyr). Módulo separado porque é conteúdo de
-  livro, não do criador de fichas. Dados do `magias-t20/dataset.json` (o dump que alimenta
+  `t20-poderes-que-faltam` (Herança de Drashantyr + **Libertação de Valkaria**, 2026-10-06: origem
+  Criação dos Deuses — poder `tipo:"origem"`, origem não é tipo de item — com a RD em dois efeitos
+  desligados porque depende da energia do deus, o poder geral Escolhido dos Deuses com `@UUID` das
+  23 variantes, e os 23 "Escolhido de X" com o que é numérico como efeito: `passivo`/`opcional`
+  (jogador liga na aba de efeitos)/`uso` (`onuse` + `skill|ability|attack`, `custo` em PM, `sempre`
+  = aplica sem perguntar; margem de ameaça só existe como `criticoM` de ataque)/`cena`
+  (`durationScene`, Tenebra). Texto dessas entradas vem de `src/data/textos-extra.json`,
+  escrito à mão e gitignorado — o livro não está no `tormenta-livros`). Módulo separado porque é
+  conteúdo de livro, não do criador de fichas. **Gerar exige o mundo fechado**: o Foundry segura o
+  `LOCK` dos packs ativos. Dados do `magias-t20/dataset.json` (o dump que alimenta
   magias.raynathus.com.br); ícones reaproveitados de `systems/tormenta20/icons/magias/`.
   **Formato do pack (LevelDB)**: `!folders!<id>`, `!items!<id>`, `!items.effects!<item>.<efeito>` —
   e **`item.effects` guarda a LISTA DE IDS dos efeitos**; sem ela o Foundry carrega o item sem

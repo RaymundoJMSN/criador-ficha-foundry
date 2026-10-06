@@ -10,3 +10,4 @@ site/data/
 site/dist/
 # sobra da 1a versao do compendio (hoje os itens moram em modulos proprios)
 packs/
+src/data/textos-extra.json

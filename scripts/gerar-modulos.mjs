@@ -96,12 +96,37 @@ const APRIMORAMENTO_EXTRA = {
   "armadura-gelida": { "+5 na Defesa": [{ key: "system.attributes.defesa.bonus", mode: 2, value: "5" }] },
 };
 
-/** Poderes que faltam no compêndio (texto do livro em textos.json). */
+/**
+ * Efeito de poder, nos quatro jeitos que o sistema entende (ver cabeçalho):
+ *  - `passivo` (padrão): transfer, ligado — soma na ficha enquanto o poder existir.
+ *  - `opcional`: transfer, DESLIGADO — o jogador liga na aba de efeitos quando a
+ *    escolha do livro cai nele (qual redução de dano, qual atributo nos PM).
+ *  - `uso`: `onuse` com `skill`/`ability`/`attack` — vira caixinha no diálogo de
+ *    rolagem; `custo` desconta PM. `sempre: true` = aplica sem perguntar.
+ *  - `cena`: entra na ficha quando o poder é USADO e dura a cena (Tenebra).
+ */
+const ef = (nome, changes, o = {}) => ({ nome, changes, ...o });
+const per = (k, v) => ({ key: `system.pericias.${k}.bonus`, mode: 2, value: String(v) });
+const rolls = (dados, tipo = "") => [{ name: "Dano", key: "dano0", type: "dano", parts: [[dados, tipo, ""]], versatil: "" }];
+const ICONES = "systems/tormenta20/icons/poderes/";
+const esc = (deus, icone, extra = {}) => ({
+  slug: `escolhido_de_${deus.normalize("NFD").replace(/\p{M}/gu, "").toLowerCase().replace(/[^a-z]/g, "_")}`,
+  nome: `Escolhido de ${deus}`,
+  pasta: "Libertação de Valkaria",
+  tipo: "geral",
+  subtipo: "Escolhido dos Deuses",
+  img: `${ICONES}concedidos${icone ? "-" + icone : ""}.webp`,
+  fonte: "T20 - Libertação de Valkaria",
+  ...extra,
+});
+
+/** Poderes que faltam no compêndio (texto do livro em textos.json / textos-extra.json). */
 const PODERES = [
   {
     slug: "heranca_de_drashantyr",
     nome: "Herança de Drashantyr",
     pasta: "Deuses de Arton",
+    tipo: "racial",
     subtipo: "Suraggel",
     img: "systems/tormenta20/icons/racas/suraggel.webp",
     fonte: "T20 - Deuses de Arton (pág. 36)",
@@ -115,6 +140,88 @@ const PODERES = [
       })),
     ],
   },
+
+  // ── Libertação de Valkaria: origem Criação dos Deuses + Escolhido dos Deuses ──
+  // Origem não é tipo de item no T20: o benefício é um poder `tipo:"origem"` com
+  // `subtipo` = nome da origem (igual ao compêndio). A RD depende da energia do
+  // deus escolhido, então vai como dois efeitos opcionais e o texto lista os deuses.
+  {
+    slug: "criacao_dos_deuses",
+    nome: "Criação dos Deuses",
+    pasta: "Libertação de Valkaria",
+    tipo: "origem",
+    subtipo: "Criação dos Deuses",
+    img: `${ICONES}origem.webp`,
+    fonte: "T20 - Libertação de Valkaria",
+    efeitos: [
+      ef("Redução de trevas 5 (deus de energia positiva)", [{ key: "system.tracos.resistencias.trevas.value", mode: 2, value: "5" }], { tipo: "opcional" }),
+      ef("Redução de luz 5 (deus de energia negativa)", [{ key: "system.tracos.resistencias.luz.value", mode: 2, value: "5" }], { tipo: "opcional" }),
+    ],
+  },
+  {
+    slug: "escolhido_dos_deuses",
+    nome: "Escolhido dos Deuses",
+    pasta: "Libertação de Valkaria",
+    tipo: "geral",
+    subtipo: "",
+    img: `${ICONES}concedidos.webp`,
+    fonte: "T20 - Libertação de Valkaria",
+    requisitos: "Origem Criação dos Deuses ou ter prestado um serviço de grande importância ao deus",
+    efeitos: [],
+    // A lista de variantes entra na descrição como @UUID (ver poderItem).
+    variantes: true,
+  },
+  esc("Aharadak", "tormenta", {
+    rolltags: ["Tormenta"],
+    efeitos: [ef("Escolhido de Aharadak: +2 em uma perícia a sua escolha", [{ key: "roll", mode: 2, value: "2" }], { tipo: "uso", skill: true })],
+  }),
+  esc("Allihanna", "natureza", { ativacao: { execucao: "full", custo: 2 } }),
+  esc("Arsenal", "guerra", {
+    efeitos: [
+      ef("Escolhido de Arsenal", [per("dipl", -2), { key: "system.modificadores.ataque.geral", mode: 2, value: "1" }]),
+      // Não há modificador passivo de margem de ameaça na ficha: vai como efeito de
+      // ataque sempre aplicado (criticoM −1 = ameaça 19).
+      ef("Escolhido de Arsenal: +1 na margem de ameaça", [{ key: "criticoM", mode: 2, value: "-1" }], { tipo: "uso", attack: true, sempre: true }),
+      ef("Escolhido de Arsenal: menos da metade dos PV (+1 ataque)", [{ key: "system.modificadores.ataque.geral", mode: 2, value: "1" }], { tipo: "opcional" }),
+      ef("Escolhido de Arsenal: menos da metade dos PV (+1 margem)", [{ key: "criticoM", mode: 2, value: "-1" }], { tipo: "uso", attack: true }),
+    ],
+  }),
+  esc("Azgher", "deus-sol", { ativacao: { execucao: "move", custo: 1 }, rolls: rolls("1d6", "fogo") }),
+  esc("Glórienn", "", {
+    efeitos: [ef("Escolhido de Glórienn: +2 em perícia de Carisma contra não elfos", [{ key: "roll", mode: 2, value: "2" }], { tipo: "uso", skill: true })],
+  }),
+  esc("Hyninn", "trapaca", { ativacao: { execucao: "free", custo: 1 }, efeitos: [ef("Escolhido de Hyninn (raposa)", [per("furt", 2)])] }),
+  esc("Kallyadranoch", "dragoes"),
+  esc("Khalmyr", "justica", { efeitos: [ef("Escolhido de Khalmyr", [{ key: "system.tracos.ic.value", mode: 2, value: "confuso" }])] }),
+  esc("Lena", "vida"),
+  esc("Lin-Wu", "samurai", { efeitos: [ef("Escolhido de Lin-Wu", [per("vont", 2)])] }),
+  esc("Marah", "paz", { efeitos: [ef("Escolhido de Marah", [per("ades", 2), per("atua", 2), per("dipl", 2)])] }),
+  esc("Megalokk", "monstros", { ativacao: { execucao: "free", custo: 1 }, rolls: rolls("1d6") }),
+  esc("Nimb", "caos", { ativacao: { execucao: "free", custo: 1 } }),
+  // ponytail: 9 m = deslocamento padrão; raça com outro deslocamento acerta na mão.
+  esc("Oceano", "mares", { efeitos: [ef("Escolhido de Oceano (natação)", [{ key: "system.attributes.movement.swim.base", mode: 4, value: "9" }])] }),
+  esc("Ragnar", "", { efeitos: [ef("Escolhido de Ragnar", [{ key: "system.modificadores.dano.geral", mode: 2, value: "1" }])] }),
+  esc("Sszzaas", "traicao", { efeitos: [ef("Escolhido de Sszzaas", [per("furt", 2)])] }),
+  esc("Tanna-Toh", "conhecimento"),
+  esc("Tauron", "", {
+    efeitos: [ef("Escolhido de Tauron: +4 em teste de Força (2 PM)", [{ key: "roll", mode: 2, value: "4" }], { tipo: "uso", skill: true, ability: true, custo: "2" })],
+  }),
+  esc("Tenebra", "trevas", {
+    ativacao: { execucao: "action", custo: 2 },
+    efeitos: [ef("Aura de sombras (Tenebra): +5 Furtividade, camuflagem leve, redução de luz 5", [per("furt", 5)], { tipo: "cena" })],
+  }),
+  esc("Thwor", "goblinoides", {
+    efeitos: [ef("Escolhido de Thwor: +2 na primeira vez que usa a perícia na cena", [{ key: "roll", mode: 2, value: "2" }], { tipo: "uso", skill: true })],
+  }),
+  esc("Thyatis", "ressurreicao"),
+  esc("Valkaria", "ambicao", {
+    efeitos: [ef("Escolhido de Valkaria: +2 na perícia do objetivo (se já treinado)", [{ key: "roll", mode: 2, value: "2" }], { tipo: "uso", skill: true })],
+  }),
+  esc("Wynna", "magia", {
+    efeitos: [["int", "Inteligência"], ["sab", "Sabedoria"], ["car", "Carisma"]].map(([k, n]) =>
+      ef(`Escolhido de Wynna: ${n} nos PM`, [{ key: `system.attributes.pm.atributos.${k}`, mode: 5, value: "true" }], { tipo: "opcional" })
+    ),
+  }),
 ];
 
 /** Id de 16 caracteres estável por slug — rodar de novo não duplica item. */
@@ -261,18 +368,45 @@ function magiaItem(m, pastaId) {
   return { item, efeitos };
 }
 
-function poderItem(p, textos, pastaId) {
+/** Um efeito de poder (ver `ef`) → Active Effect no formato do sistema. */
+function efeitoDePoder(p, e, i, itemId) {
+  const tipo = e.tipo ?? "passivo";
+  const uso = tipo === "uso";
+  const flags = {
+    onuse: uso,
+    durationScene: tipo === "cena",
+    self: false,
+    attack: !!e.attack,
+    skill: !!e.skill,
+    ability: !!e.ability,
+    power: false,
+    spell: false,
+    consumable: false,
+    items: "",
+    aumenta: false,
+    custo: e.custo ?? "",
+  };
+  return efeitoBase(idDe("pef", `${p.slug}${i || ""}`), e.nome, uso ? "icons/svg/upgrade.svg" : p.img, e.changes, flags, {
+    // onuse ligado = "sempre aplicar"; opcional nasce desligado para o jogador ligar.
+    disabled: tipo === "opcional" || (uso && !e.sempre),
+    transfer: tipo !== "cena",
+    duration: { startTime: null, seconds: null, combat: null, rounds: tipo === "cena" ? 999 : null, turns: null, startRound: null, startTurn: null },
+    origin: `Item.${itemId}`,
+  });
+}
+
+function poderItem(p, textos, pastaId, todos = PODERES) {
   const id = idDe("pod", p.slug);
-  const texto = textos[p.slug] ?? "";
+  let texto = textos[p.slug] ?? "";
   if (!texto) throw new Error(`sem texto do livro para ${p.slug} (rode "npm run textos")`);
-  // Passivo de item: `transfer: true` leva o efeito para a ficha com o poder.
-  const efeitos = [
-    efeitoBase(idDe("pef", p.slug), p.nome, p.img, p.changes, { onuse: false, durationScene: false }, {
-      disabled: false,
-      transfer: true,
-      origin: `Item.${id}`,
-    }),
-  ];
+  if (p.variantes) {
+    const links = todos
+      .filter((q) => q.subtipo === p.nome)
+      .map((q) => `<li>@UUID[Compendium.t20-poderes-que-faltam.poderes-que-faltam.Item.${idDe("pod", q.slug)}]{${q.nome}}</li>`);
+    texto += `</p><ul>${links.join("")}</ul><p>`;
+  }
+  const specs = p.efeitos ?? (p.changes ? [ef(p.nome, p.changes)] : []);
+  const efeitos = specs.map((e, i) => efeitoDePoder(p, e, i, id));
   return {
     item: {
       _id: id,
@@ -288,19 +422,20 @@ function poderItem(p, textos, pastaId) {
       system: {
         description: { value: `<p>${texto}</p>`, chat: "", unidentified: "" },
         source: p.fonte,
-        ativacao: { execucao: "passive", custo: 0, qtd: "", condicao: "", special: "" },
+        ativacao: { execucao: "passive", custo: 0, qtd: "", condicao: "", special: "", ...(p.ativacao ?? {}) },
         duracao: { value: 0, units: "inst", special: "" },
         target: { value: null, width: null, units: "", type: "" },
         range: { value: null, units: "" },
         consume: { type: "", target: "", amount: null, mpMultiplier: false },
         efeito: "",
-        requisitos: "",
-        tipo: "racial",
-        subtipo: p.subtipo,
-        rolls: [],
+        requisitos: p.requisitos ?? "",
+        tipo: p.tipo ?? "racial",
+        subtipo: p.subtipo ?? "",
+        rolls: p.rolls ?? [],
         tags: [],
         chatFlavor: "",
         chatGif: "",
+        ...(p.rolltags ? { rolltags: p.rolltags } : {}),
       },
     },
     efeitos,
@@ -428,7 +563,17 @@ await escreverModulo({
 });
 
 // ── Poderes que faltam ─────────────────────────────────────────────────────
-const textos = JSON.parse(await readFile(resolve(HERE, "../src/data/textos.json"), "utf8")).poderes ?? {};
+// textos.json vem dos livros em markdown (`npm run textos`); textos-extra.json é
+// escrito à mão com o que não está em livro nenhum convertido (Libertação de
+// Valkaria). Os dois são gitignorados: texto da Jambo.
+const lerTextos = async (nome) => {
+  try {
+    return JSON.parse(await readFile(resolve(HERE, "../src/data", nome), "utf8")).poderes ?? {};
+  } catch {
+    return {};
+  }
+};
+const textos = { ...(await lerTextos("textos.json")), ...(await lerTextos("textos-extra.json")) };
 const pastasPoder = new Map();
 for (const p of PODERES) {
   if (!pastasPoder.has(p.pasta)) {
